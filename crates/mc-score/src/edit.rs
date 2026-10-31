@@ -98,6 +98,81 @@ impl Score {
         Ok(vec![DomainEvent::TrackChanged { track: id }])
     }
 
+    /// Replaces the instrument and moves every note on string `s` by `fret_deltas[s - 1]`
+    /// frets, all or nothing. Every shifted note is validated against the new instrument
+    /// (H-03, H-04, H-10). Ties stay valid (H-06) because tied notes share a string and
+    /// therefore move by the same delta. `None` keeps all frets (same as
+    /// `set_instrument`). The deltas come from the Guitar context's retune planning.
+    pub fn retune_track(
+        &mut self,
+        id: TrackId,
+        instrument: InstrumentSpec,
+        fret_deltas: Option<&[i16]>,
+    ) -> Result<Events, DomainError> {
+        let Some(deltas) = fret_deltas else {
+            return self.set_instrument(id, instrument);
+        };
+        let t = self.track_index(id)?;
+        let InstrumentSpec::Fretted(inst) = &instrument;
+        check_instrument(inst).map_err(|m| DomainError::invariant("H-10", m))?;
+        let delta_for = |note: &Note| -> Result<i16, DomainError> {
+            let s = note.position().string.get();
+            deltas.get(s as usize - 1).copied().ok_or_else(|| {
+                DomainError::invariant("H-03", format!("no fret delta for string {s}"))
+            })
+        };
+        for (b, bar) in self.tracks[t].bars.iter().enumerate() {
+            for voice in &bar.voices {
+                for beat in &voice.beats {
+                    for note in &beat.notes {
+                        let shifted = shifted_note(note, delta_for(note)?).ok_or_else(|| {
+                            DomainError::invariant(
+                                "H-04",
+                                format!(
+                                    "bar {b}, note {}: fret below 0 or above 255",
+                                    note.id.raw()
+                                ),
+                            )
+                        })?;
+                        check_note(inst, &shifted).map_err(|(rule, m)| {
+                            DomainError::invariant(
+                                rule,
+                                format!("bar {b}, note {}: {m}", note.id.raw()),
+                            )
+                        })?;
+                    }
+                }
+            }
+        }
+        let bar_count = self.master_bars.len();
+        let track = Arc::make_mut(&mut self.tracks[t]);
+        track.instrument = instrument;
+        for bar in track.bars.iter_mut() {
+            if bar
+                .voices
+                .iter()
+                .all(|v| v.beats.iter().all(|b| b.notes.is_empty()))
+            {
+                continue;
+            }
+            for voice in Arc::make_mut(bar).voices.iter_mut() {
+                for beat in voice.beats.iter_mut() {
+                    for note in beat.notes.iter_mut() {
+                        let d = deltas[note.position().string.get() as usize - 1];
+                        *note = shifted_note(note, d).expect("checked above");
+                    }
+                }
+            }
+        }
+        Ok(vec![
+            DomainEvent::TrackChanged { track: id },
+            DomainEvent::BarContentChanged {
+                track: id,
+                bars: 0..bar_count,
+            },
+        ])
+    }
+
     pub fn move_track(&mut self, id: TrackId, to: usize) -> Result<Events, DomainError> {
         let t = self.track_index(id)?;
         if to >= self.tracks.len() {

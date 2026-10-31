@@ -5,6 +5,7 @@
 //! appended, but any path is accepted for reading and writing, because a file is
 //! identified by its manifest (`format`, `format_version`), not by its name.
 
+mod guitar;
 mod script;
 
 use mc_app::infra::{FsProjectStore, SystemClock, SystemEntropy, cleanup_temp_files};
@@ -29,7 +30,10 @@ Project files use the extension .giproj; it is appended to <out> when <out> has 
   dump <file>                          print score.json (pretty)
   roundtrip <file>                     load, save to memory, load again, compare
   format-fixtures <mc-project dir>     create missing FF-11 fixtures and FF-32 schema snapshots
-                                       for the current format version (never overwrites)";
+                                       for the current format version (never overwrites)
+
+Guitar queries (no project file needed):
+";
 
 /// Product-level project file extension (Q-08). Not used by the Music Core.
 const PROJECT_EXTENSION: &str = "giproj";
@@ -113,10 +117,18 @@ fn save_new(session: &mut DocumentSession, out: &Path) -> Result<(), String> {
     Ok(())
 }
 
+fn usage() -> String {
+    format!("{USAGE}{}", guitar::USAGE)
+}
+
 fn run(args: &[String]) -> Result<(), String> {
-    let cmd = args.first().ok_or(USAGE)?.as_str();
+    let cmd = args.first().ok_or_else(usage)?.as_str();
     let rest = &args[1..];
     match cmd {
+        "chord" => guitar::chord(rest)?,
+        "identify" => guitar::identify(rest)?,
+        "scale" => guitar::scale(rest)?,
+        "tunings" => guitar::tunings(),
         "new" => {
             let out = output_path(&positional(rest, 0, "output path")?);
             let bars = flag(rest, "--bars")
@@ -277,7 +289,7 @@ fn run(args: &[String]) -> Result<(), String> {
             }
             println!("ok: load, save and load give an identical score and identical score.json");
         }
-        _ => return Err(USAGE.to_string()),
+        _ => return Err(usage()),
     }
     Ok(())
 }

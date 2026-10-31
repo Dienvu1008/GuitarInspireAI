@@ -1,0 +1,285 @@
+# Phase 2 golden set: chord symbols, voicing identification, voicing search,
+# constraint boundaries, retune planning and scale positions.
+#
+# Deterministic and version-controlled. Loaded with include_str! by tests/golden.rs.
+# One case per non-comment line: <kind> [key=value ...] <subject> [=> <expected>] [?]
+# A trailing "?" marks a case whose musical interpretation is ambiguous and awaits a
+# decision. All Phase 2 ambiguities were decided at closure (exit report section 6).
+# id results: a ranked candidate list, "none" (no Phase 2 quality fits) or
+# "insufficient" (fewer than three distinct pitch classes).
+#
+# Shapes are written low string first (string 6 ... string 1); "x" is muted.
+# id: the full ranked candidate list; the first is preferred. "[no5]" marks a
+#     candidate that omits its perfect fifth. "none" means nothing in the Phase 2
+#     vocabulary fits.
+# Options: tuning=<preset> capo=<n> omit=no span=<n> fingers=<n> open=no min=<n>
+#          max=<n> bass=any limit=<n>
+# Defaults: standard tuning, capo 0, span 4, fingers 4, open strings allowed,
+#           frets 0..=12, omitted fifth allowed, bass = root or slash note.
+
+# ---------------------------------------------------------------- symbols
+sym C => C
+sym Am => Am
+sym Bdim => Bdim
+sym Eaug => Eaug
+sym G7 => G7
+sym Fmaj7 => Fmaj7
+sym Dm7 => Dm7
+sym G#dim7 => G#dim7
+sym Bm7b5 => Bm7b5
+sym Dsus2 => Dsus2
+sym Asus4 => Asus4
+sym C6 => C6
+sym Em6 => Em6
+sym Cadd9 => Cadd9
+sym E9 => E9
+sym CΔ7 => Cmaj7
+sym Bø7 => Bm7b5
+sym C° => Cdim
+sym C°7 => Cdim7
+sym Amin => Am
+sym Amin7 => Am7
+sym Dmin6 => Dm6
+sym C+ => Caug
+sym C/E => C/E
+sym G/B => G/B
+sym D/F# => D/F#
+sym C/C => C
+sym Bb/D => Bb/D
+sym F#m7b5 => F#m7b5
+sym Ebmaj7/G => Ebmaj7/G
+sym Bbm7b5 => Bbm7b5
+sym Cb => Cb
+sym-err H
+sym-err Cmaj9
+sym-err C7b9
+sym-err C7#9
+sym-err C7#11
+sym-err C7b13
+sym-err Cm9
+sym-err C11
+sym-err C13
+sym-err C5
+sym-err Csus
+sym-err cm
+sym-err C/H
+sym-err Cmaj7/
+sym-err Cmin9
+sym-err 7
+
+# ---------------------------------------------------------- chord spelling
+tones C7 => C E G Bb
+tones Cdim7 => C Eb Gb Bbb
+tones Bm7b5 => B D F A
+tones F#aug => F# A# C##
+tones Ebm6 => Eb Gb Bb C
+tones Dbmaj7 => Db F Ab C
+tones G9 => G B D F A
+tones Asus2 => A B E
+tones Esus4 => E A B
+tones Cadd9 => C E G D
+tones Abdim => Ab Cb Ebb
+
+# ------------------------------------------- identification: triads, root position
+id x32010 => C
+id 320003 => G
+id x02220 => A
+id xx0232 => D
+id 022100 => E
+id 133211 => F
+id x35553 => C
+id 577655 => A
+id x13331 => Bb
+id x-6-5-3-4-3 => Eb
+id 466544 => Ab
+# Canonical no-context spelling uses C# for pitch class 1 (closure decision D).
+id x46664 => C#
+# Minor triads always admit the relative major sixth without its fifth.
+id 022000 => Em, G6/E[no5]
+id x02210 => Am, C6/A[no5]
+id xx0231 => Dm, F6/D[no5]
+id 577555 => Am, C6/A[no5]
+id x24432 => Bm, D6/B[no5]
+id 244222 => F#m, A6/F#[no5]
+id x46654 => C#m, E6/C#[no5]
+id x2343x => Bdim, Dm6/B[no5]
+# Symmetric chords: every chord tone is a valid root.
+# Slash basses use the canonical display spelling: Eaug/C, not Eaug/B# (closure decision C).
+id x3211x => Caug, Eaug/C, Abaug/C
+
+# ---------------------------------------------------- identification: sevenths
+id x02020 => A7
+id 020100 => E7
+id 320001 => G7
+id 131211 => F7
+id x13131 => Bb7
+id x32000 => Cmaj7
+id xx0222 => Dmaj7
+id xx3210 => Fmaj7
+id x02120 => Amaj7
+id x02010 => Am7, C6/A
+id xx0211 => Dm7, F6/D
+id 022030 => Em7, G6/E
+id x-3-5-3-4-3 => Cm7, Eb6/C
+id x2323x => Bm7b5, Dm6/B
+id x-0-1-0-1-x => Am7b5, Cm6/A
+id xx1212 => Ebdim7, F#dim7/Eb, Adim7/Eb, Cdim7/Eb
+id x-3-4-2-4-x => Cdim7, Ebdim7/C, F#dim7/C, Adim7/C
+
+# ------------------------------------------- identification: sus, sixth, add9, 9
+id x30033 => Csus2, Gsus4/C
+id xx0233 => Dsus4, Gsus2/D
+id xx0230 => Dsus2, Asus4/D
+id x02230 => Asus4, Dsus2/A
+id 330013 => Gsus4, Csus2/G
+id 022200 => Esus4, Asus2/E
+id x32253 => C6, Am7/C
+id 320000 => G6, Em7/G
+id xx0201 => Dm6, Bm7b5/D
+id x02212 => Am6, F#m7b5/A
+id x32030 => Cadd9
+id x-3-2-x-3-x => Cadd9[no5]
+id x32333 => C9
+id x3233x => C9[no5]
+id 020102 => E9
+id x02423 => A9
+
+# ------------------------------------------------ identification: inversions
+id 032010 => C/E
+id x20003 => G/B
+id 2x0232 => D/F#
+id 332010 => C/G
+id x00232 => D/A
+id xx0003 => G/D
+id x33211 => F/C
+id x20001 => G7/B
+id 1x0003 => G7/F
+id 032000 => Cmaj7/E
+id 3x2210 => Am7/G, C6/G
+id 002210 => Am/E, C6/E[no5]
+id 032310 => C7/E[no5]
+# Root in the bass ranks first (closure decision A): x32210 is C6 (no 5) before Am/C.
+id x32210 => C6[no5], Am/C
+id 322000 => G6[no5], Em/G
+id 1x0231 => F6[no5], Dm/F
+
+# ----------------------------------- identification: omitted fifth and incomplete
+# Fewer than three distinct pitch classes get no chord name (closure decision E).
+id x32x1x => insufficient
+id omit=no x32x1x => insufficient
+id x3x45x => Cmaj7[no5]
+id x-5-x-5-6-x => Dm7[no5]
+id x-3-x-3-5-x => C7[no5]
+id x-3-x-2-4-x => Cm6[no5], Adim/C
+id omit=no x-3-x-2-4-x => Adim/C
+# Power chords, dyads and single notes: insufficient pitch content, not a chord name.
+id x355xx => insufficient
+id x-3-4-5-x-x => insufficient
+id xxxxx0 => insufficient
+id xxxxxx => insufficient
+id-err x3201
+shape-err x3201?
+shape-err abcdef
+shape-err 256-0-0-0-0-0
+shape-err --
+
+# ------------------------------------------ identification: tunings and capo
+id tuning=drop-d 000232 => D
+id tuning=drop-d 0x0231 => Dm, F6/D[no5]
+id tuning=drop-d 000xxx => insufficient
+id tuning=drop-d 202220 => A/E
+id tuning=dadgad 000000 => Dsus4, Gsus2/D
+id tuning=open-g 000000 => G/D
+id tuning=open-g 5-5-5-5-5-5 => C/G
+id tuning=open-d 000000 => D
+id tuning=half-step-down 022000 => Ebm, F#6/Eb[no5]
+id tuning=half-step-down x32010 => B
+id capo=2 x32010 => D
+id capo=5 x02210 => Dm, F6/D[no5]
+
+# ---------------------------------------------------- constraint boundaries (G-02)
+check x32010 => ok
+check 133211 => ok
+check 000000 => ok
+check 1-1-0-1-1-1 => ok
+check x-1-x-x-4-0 => ok
+check x-1-x-x-5-0 => span
+check span=5 x-1-x-x-5-0 => ok
+check x-x-10-12-12-12 => ok
+check x-x-10-12-13-12 => above
+check max=15 x-x-10-12-13-12 => ok
+check x-0-0-14-x-x => above
+check 1-2-x-3-4-1 => fingers
+check fingers=5 1-2-x-3-4-1 => ok
+check x-1-2-3-4-2 => ok
+check fingers=3 133211 => fingers
+check open=no x32010 => open
+check open=no x35553 => ok
+check min=3 x32010 => below
+check min=3 x35553 => ok
+check xx0x0x => strings
+
+# ------------------------------------------------------------ voicing search
+# A triad without its fifth has two pitch classes, so search no longer returns x32x1x.
+find C => contains x32010 x35553 x-3-2-0-5-x; excludes 032010 332010 x32x1x; first x32010
+find bass=any C => contains 032010 332010 x32010
+find omit=no C => contains x32010; excludes x32x1x
+find open=no C => contains x35553 8-10-10-9-8-8; excludes x32010
+find min=5 C => contains 8-10-10-9-8-8; excludes x35553 x32010
+find max=3 C => contains x32010; excludes x35553
+find span=3 C => contains x32010; excludes x-3-2-0-5-x
+find fingers=2 C => contains x3x010; excludes x32010
+find max=0 C => none
+find limit=5 C => count 5
+find C/E => contains 032010; excludes x32010
+find C/G => contains 332010
+find G => contains 320003 320033 355433; first 320003
+find G/B => contains x20003
+find D => contains xx0232 x54232
+find D/F# => contains 2x0232
+find A => contains x02220 577655
+find Am => contains x02210 577555; excludes x02220
+find E => contains 022100
+find Em => contains 022000
+find F => contains 133211 xx3211
+find A7 => contains x02020 x02223
+find E7 => contains 020100 022130
+find G7 => contains 320001
+find Cmaj7 => contains x32000 x35453
+find Dm7 => contains xx0211
+find Bm7b5 => contains x2323x
+find Cdim7 => contains x-3-4-2-4-x
+find Caug => contains x3211x
+find Csus2 => contains x30033 x30013
+find Dsus4 => contains xx0233
+find Asus2 => contains x02200
+find C6 => contains x32253 x32210
+find Am6 => contains x02212
+find Cadd9 => contains x32030
+find C9 => contains x32333 x3233x
+find E9 => contains 020102
+find tuning=drop-d D => contains 000232
+find tuning=drop-d Dm => contains 0x0231
+find tuning=drop-d G => contains 5-x-5-4-3-3; excludes 320003
+find tuning=open-g G => contains x00000; excludes 000000
+find tuning=open-g bass=any G => contains 000000
+find tuning=open-d D => contains 000000
+find capo=2 D => contains x32010
+
+# ------------------------------------------------------------ retune planning
+retune standard drop-d keep-pitches => 0 0 0 0 0 2
+retune drop-d standard keep-pitches => 0 0 0 0 0 -2
+retune standard drop-d keep-frets => none
+retune standard half-step-down keep-pitches => 1 1 1 1 1 1
+retune standard open-g keep-pitches => 2 0 0 0 2 2
+retune standard dadgad keep-pitches => 2 2 0 0 0 2
+retune standard open-d keep-pitches => 2 2 1 0 0 2
+retune standard standard@2 keep-pitches => -2 -2 -2 -2 -2 -2
+retune standard@2 drop-d keep-pitches => 2 2 2 2 2 4
+
+# --------------------------------------------------- scale and note positions
+scale A minor-pentatonic 5-8 => count 12
+scale C major 0-3 => count 17
+scale E minor-pentatonic 0-3 => 1:0 1:3 2:0 2:3 3:0 3:2 4:0 4:2 5:0 5:2 6:0 6:3
+pos A 0-5 => 1:5 3:2 5:0 6:5
+pos tuning=drop-d D 0-5 => 2:3 4:0 5:5 6:0

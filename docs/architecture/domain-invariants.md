@@ -103,9 +103,22 @@ PB-01 to PB-08 are `mc-score` tests (Phase 1). PB-09 and timeline-level variants
 
 | Id | Rule | Owner | Cat. | Enforcement | Test |
 |---|---|---|---|---|---|
-| G-01 | A voicing has at most one position per string | Guitar | H | `Voicing` constructor | Unit |
-| G-02 | Voicing search results satisfy the supplied `VoicingConstraints` (stretch, fingers, fret range) | Guitar | C | Search filter | Proptest |
-| G-03 | Chord finder identifies only chords whose formula pitch classes cover the voicing (with configurable omission of fifth) | Guitar | C | Service | Golden cases |
+| G-01 | A voicing has at most one position per string | Guitar | H | `Voicing` constructor (one slot per string; `from_positions` rejects duplicates) | Unit, proptest (`g01_`) |
+| G-02 | Voicing search results satisfy the supplied `VoicingConstraints` (span, fingers, open strings, fret range, sounding strings) | Guitar | C | `VoicingConstraints::check` in the search | Proptest, golden cases (`g02_`) |
+| G-03 | Chord finder names only chords whose pitch classes cover every sounding note, whose root sounds, and whose missing tones are omissible perfect fifths (when allowed) | Guitar | C | `identify` | Golden set, proptest (`g03_`) |
+
+Guitar constraint definitions (Phase 2 decisions; configurable defaults, not invariants):
+
+- Span: highest minus lowest fretted fret plus one, so frets 1 to 4 have span 4. Open strings do not count. Default maximum 4.
+- Fingers: one per fretted note, except that notes at the same fret may share one barre finger when they lie on a run of adjacent strings all fretted at that fret or higher (an open, muted or lower-fretted string breaks the run). At most one barre. Open strings take no finger. Default maximum 4.
+- Fret range: fretted notes within `min_fret..=max_fret` (default 0 to 12, fret 12 included). Open strings are governed only by "allow open strings" (default yes).
+- At least 3 sounding strings. Bass: the root, or the slash bass for a slash chord (inversions on request).
+- Omitted fifth: only a perfect fifth, and not in sus chords (without it the quality is no longer identifiable). Allowed by default. Thirds, sevenths, sixths and ninths are never omitted; rootless voicings are not named in Phase 2.
+- Minimum pitch content: a voicing is named only if it sounds at least three distinct pitch classes. Fewer (single notes, dyads, power chords) gives the explicit result "insufficient pitch content", never a chord name; voicing search returns only voicings that meet this minimum. Dyad, power chord and interval naming are deferred.
+- Identification ranks all valid candidates (no harmonic context): root in the bass first, then fewer missing tones, then fewer chord tones, then quality order, then root distance above the bass. The first is the preferred name, not the only valid one (`x32210`: C6 without fifth, then Am/C).
+- Display spelling without key or harmonic context: C, C#, D, Eb, E, F, F#, G, Ab, A, Bb, B for chord roots and slash basses (C#m, Eaug/C). It is a display convention; pitch identity is the pitch class, and chord-tone spellings from the root (Cdim7: C Eb Gb Bbb) are unchanged. Contextual spelling can replace it later.
+
+These are Phase 2 domain and search conventions, not universal music-theory rules.
 | PT-01 | Sum of step durations equals the declared pattern length | Pattern | H | Semantic validation stage | Unit |
 | PT-02 | Every selector resolves for a given voicing at bind time, or binding fails with a typed error | Pattern | H at bind | Bind stage | Proptest |
 | P-01 | Every asset reference resolves to an entry in the package | Project | H | Loader | Fixture tests |

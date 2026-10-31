@@ -21,6 +21,8 @@ pub const IMPLEMENTED: &[&str] = &[
     "cargo-deny:bans",
     "xtask:rule-coverage",
     "xtask:freshness",
+    "xtask:coupling",
+    "xtask:module-cycles",
     "ci:complexity",
     "workflow:public-api",
     "workflow:coverage",
@@ -267,6 +269,8 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
             "workflow:coverage" => Some((WEEKLY_WORKFLOW, "cargo llvm-cov")),
             "xtask:freshness" => Some((WEEKLY_WORKFLOW, "xtask fitness freshness")),
             "xtask:rule-coverage" => Some((CI_WORKFLOW, "xtask fitness rule-coverage")),
+            "xtask:coupling" => Some((CI_WORKFLOW, "xtask fitness coupling")),
+            "xtask:module-cycles" => Some((CI_WORKFLOW, "xtask fitness module-cycles")),
             _ => None,
         };
         if let Some((file, needle)) = required {

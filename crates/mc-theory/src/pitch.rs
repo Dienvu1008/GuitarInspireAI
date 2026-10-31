@@ -29,7 +29,7 @@ impl Letter {
         }
     }
 
-    fn from_char(c: char) -> Option<Self> {
+    pub(crate) fn from_char(c: char) -> Option<Self> {
         Some(match c.to_ascii_uppercase() {
             'C' => Letter::C,
             'D' => Letter::D,

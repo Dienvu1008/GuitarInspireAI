@@ -1,0 +1,421 @@
+pub mod mc_guitar
+pub enum mc_guitar::BassRule
+pub mc_guitar::BassRule::AnyChordTone
+pub mc_guitar::BassRule::ChordBass
+impl core::clone::Clone for mc_guitar::BassRule
+pub fn mc_guitar::BassRule::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::BassRule
+impl core::cmp::PartialEq for mc_guitar::BassRule
+pub fn mc_guitar::BassRule::eq(&self, &Self) -> bool
+impl core::default::Default for mc_guitar::BassRule
+pub fn mc_guitar::BassRule::default() -> Self
+impl core::fmt::Debug for mc_guitar::BassRule
+pub fn mc_guitar::BassRule::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::BassRule
+pub fn mc_guitar::BassRule::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::BassRule
+impl core::marker::StructuralPartialEq for mc_guitar::BassRule
+impl core::marker::Freeze for mc_guitar::BassRule
+impl core::marker::Send for mc_guitar::BassRule
+impl core::marker::Sync for mc_guitar::BassRule
+impl core::marker::Unpin for mc_guitar::BassRule
+impl core::marker::UnsafeUnpin for mc_guitar::BassRule
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::BassRule
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::BassRule
+pub enum mc_guitar::ConstraintViolation
+pub mc_guitar::ConstraintViolation::Fingers
+pub mc_guitar::ConstraintViolation::Fingers::fingers: u8
+pub mc_guitar::ConstraintViolation::Fingers::max: u8
+pub mc_guitar::ConstraintViolation::FretAboveMax
+pub mc_guitar::ConstraintViolation::FretAboveMax::fret: u8
+pub mc_guitar::ConstraintViolation::FretAboveMax::max: u8
+pub mc_guitar::ConstraintViolation::FretBelowMin
+pub mc_guitar::ConstraintViolation::FretBelowMin::fret: u8
+pub mc_guitar::ConstraintViolation::FretBelowMin::min: u8
+pub mc_guitar::ConstraintViolation::OpenString
+pub mc_guitar::ConstraintViolation::Span
+pub mc_guitar::ConstraintViolation::Span::max: u8
+pub mc_guitar::ConstraintViolation::Span::span: u8
+pub mc_guitar::ConstraintViolation::TooFewStrings
+pub mc_guitar::ConstraintViolation::TooFewStrings::min: u8
+pub mc_guitar::ConstraintViolation::TooFewStrings::sounding: u8
+impl core::clone::Clone for mc_guitar::ConstraintViolation
+pub fn mc_guitar::ConstraintViolation::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::ConstraintViolation
+impl core::cmp::PartialEq for mc_guitar::ConstraintViolation
+pub fn mc_guitar::ConstraintViolation::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::ConstraintViolation
+pub fn mc_guitar::ConstraintViolation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_guitar::ConstraintViolation
+pub fn mc_guitar::ConstraintViolation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_guitar::ConstraintViolation
+impl core::marker::StructuralPartialEq for mc_guitar::ConstraintViolation
+impl core::marker::Freeze for mc_guitar::ConstraintViolation
+impl core::marker::Send for mc_guitar::ConstraintViolation
+impl core::marker::Sync for mc_guitar::ConstraintViolation
+impl core::marker::Unpin for mc_guitar::ConstraintViolation
+impl core::marker::UnsafeUnpin for mc_guitar::ConstraintViolation
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::ConstraintViolation
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::ConstraintViolation
+pub enum mc_guitar::GuitarError
+pub mc_guitar::GuitarError::DuplicateString(u8)
+pub mc_guitar::GuitarError::InvalidShape(alloc::string::String)
+pub mc_guitar::GuitarError::RetuneStringCount
+pub mc_guitar::GuitarError::RetuneStringCount::new: u8
+pub mc_guitar::GuitarError::RetuneStringCount::old: u8
+pub mc_guitar::GuitarError::StringCountMismatch
+pub mc_guitar::GuitarError::StringCountMismatch::tuning: u8
+pub mc_guitar::GuitarError::StringCountMismatch::voicing: u8
+pub mc_guitar::GuitarError::StringOutOfRange
+pub mc_guitar::GuitarError::StringOutOfRange::string: u8
+pub mc_guitar::GuitarError::StringOutOfRange::strings: u8
+pub mc_guitar::GuitarError::UnknownPreset(alloc::string::String)
+impl core::clone::Clone for mc_guitar::GuitarError
+pub fn mc_guitar::GuitarError::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::GuitarError
+impl core::cmp::PartialEq for mc_guitar::GuitarError
+pub fn mc_guitar::GuitarError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_guitar::GuitarError
+impl core::fmt::Debug for mc_guitar::GuitarError
+pub fn mc_guitar::GuitarError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_guitar::GuitarError
+pub fn mc_guitar::GuitarError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_guitar::GuitarError
+impl core::marker::Freeze for mc_guitar::GuitarError
+impl core::marker::Send for mc_guitar::GuitarError
+impl core::marker::Sync for mc_guitar::GuitarError
+impl core::marker::Unpin for mc_guitar::GuitarError
+impl core::marker::UnsafeUnpin for mc_guitar::GuitarError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::GuitarError
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::GuitarError
+pub enum mc_guitar::IdentifyStatus
+pub mc_guitar::IdentifyStatus::Identified
+pub mc_guitar::IdentifyStatus::Insufficient
+pub mc_guitar::IdentifyStatus::Insufficient::distinct: usize
+pub mc_guitar::IdentifyStatus::NoMatch
+impl core::clone::Clone for mc_guitar::IdentifyStatus
+pub fn mc_guitar::IdentifyStatus::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::IdentifyStatus
+impl core::cmp::PartialEq for mc_guitar::IdentifyStatus
+pub fn mc_guitar::IdentifyStatus::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::IdentifyStatus
+pub fn mc_guitar::IdentifyStatus::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::IdentifyStatus
+pub fn mc_guitar::IdentifyStatus::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::IdentifyStatus
+impl core::marker::StructuralPartialEq for mc_guitar::IdentifyStatus
+impl core::marker::Freeze for mc_guitar::IdentifyStatus
+impl core::marker::Send for mc_guitar::IdentifyStatus
+impl core::marker::Sync for mc_guitar::IdentifyStatus
+impl core::marker::Unpin for mc_guitar::IdentifyStatus
+impl core::marker::UnsafeUnpin for mc_guitar::IdentifyStatus
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::IdentifyStatus
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::IdentifyStatus
+pub enum mc_guitar::RetuneMode
+pub mc_guitar::RetuneMode::KeepFrets
+pub mc_guitar::RetuneMode::KeepPitches
+impl mc_guitar::RetuneMode
+pub fn mc_guitar::RetuneMode::from_name(&str) -> core::option::Option<Self>
+pub fn mc_guitar::RetuneMode::name(self) -> &'static str
+impl core::clone::Clone for mc_guitar::RetuneMode
+pub fn mc_guitar::RetuneMode::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::RetuneMode
+impl core::cmp::PartialEq for mc_guitar::RetuneMode
+pub fn mc_guitar::RetuneMode::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::RetuneMode
+pub fn mc_guitar::RetuneMode::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::RetuneMode
+pub fn mc_guitar::RetuneMode::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::RetuneMode
+impl core::marker::StructuralPartialEq for mc_guitar::RetuneMode
+impl core::marker::Freeze for mc_guitar::RetuneMode
+impl core::marker::Send for mc_guitar::RetuneMode
+impl core::marker::Sync for mc_guitar::RetuneMode
+impl core::marker::Unpin for mc_guitar::RetuneMode
+impl core::marker::UnsafeUnpin for mc_guitar::RetuneMode
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::RetuneMode
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::RetuneMode
+pub enum mc_guitar::TuningPreset
+pub mc_guitar::TuningPreset::Dadgad
+pub mc_guitar::TuningPreset::DropD
+pub mc_guitar::TuningPreset::HalfStepDown
+pub mc_guitar::TuningPreset::OpenD
+pub mc_guitar::TuningPreset::OpenG
+pub mc_guitar::TuningPreset::Standard
+impl mc_guitar::TuningPreset
+pub const mc_guitar::TuningPreset::ALL: [mc_guitar::TuningPreset; 6]
+pub fn mc_guitar::TuningPreset::from_name(&str) -> core::result::Result<Self, mc_guitar::GuitarError>
+pub fn mc_guitar::TuningPreset::name(self) -> &'static str
+pub fn mc_guitar::TuningPreset::pitches(self) -> [&'static str; 6]
+pub fn mc_guitar::TuningPreset::tuning(self) -> mc_theory::fretted::Tuning
+impl core::clone::Clone for mc_guitar::TuningPreset
+pub fn mc_guitar::TuningPreset::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::TuningPreset
+impl core::cmp::PartialEq for mc_guitar::TuningPreset
+pub fn mc_guitar::TuningPreset::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::TuningPreset
+pub fn mc_guitar::TuningPreset::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::TuningPreset
+pub fn mc_guitar::TuningPreset::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::TuningPreset
+impl core::marker::StructuralPartialEq for mc_guitar::TuningPreset
+impl core::marker::Freeze for mc_guitar::TuningPreset
+impl core::marker::Send for mc_guitar::TuningPreset
+impl core::marker::Sync for mc_guitar::TuningPreset
+impl core::marker::Unpin for mc_guitar::TuningPreset
+impl core::marker::UnsafeUnpin for mc_guitar::TuningPreset
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::TuningPreset
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::TuningPreset
+pub struct mc_guitar::CandidateTone
+pub mc_guitar::CandidateTone::interval: mc_theory::chord::ChordInterval
+pub mc_guitar::CandidateTone::name: mc_theory::note_name::NoteName
+pub mc_guitar::CandidateTone::sounding: bool
+impl core::clone::Clone for mc_guitar::CandidateTone
+pub fn mc_guitar::CandidateTone::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::CandidateTone
+impl core::cmp::PartialEq for mc_guitar::CandidateTone
+pub fn mc_guitar::CandidateTone::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::CandidateTone
+pub fn mc_guitar::CandidateTone::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::CandidateTone
+pub fn mc_guitar::CandidateTone::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::CandidateTone
+impl core::marker::StructuralPartialEq for mc_guitar::CandidateTone
+impl core::marker::Freeze for mc_guitar::CandidateTone
+impl core::marker::Send for mc_guitar::CandidateTone
+impl core::marker::Sync for mc_guitar::CandidateTone
+impl core::marker::Unpin for mc_guitar::CandidateTone
+impl core::marker::UnsafeUnpin for mc_guitar::CandidateTone
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::CandidateTone
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::CandidateTone
+pub struct mc_guitar::ChordCandidate
+pub mc_guitar::ChordCandidate::bass: mc_guitar::CandidateTone
+pub mc_guitar::ChordCandidate::chord: mc_theory::chord::Chord
+pub mc_guitar::ChordCandidate::explanation: alloc::vec::Vec<alloc::string::String>
+pub mc_guitar::ChordCandidate::symbol: alloc::string::String
+pub mc_guitar::ChordCandidate::tones: alloc::vec::Vec<mc_guitar::CandidateTone>
+impl mc_guitar::ChordCandidate
+pub fn mc_guitar::ChordCandidate::missing(&self) -> impl core::iter::traits::iterator::Iterator<Item = &mc_guitar::CandidateTone>
+pub fn mc_guitar::ChordCandidate::root_in_bass(&self) -> bool
+impl core::clone::Clone for mc_guitar::ChordCandidate
+pub fn mc_guitar::ChordCandidate::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::ChordCandidate
+impl core::cmp::PartialEq for mc_guitar::ChordCandidate
+pub fn mc_guitar::ChordCandidate::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::ChordCandidate
+pub fn mc_guitar::ChordCandidate::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_guitar::ChordCandidate
+impl core::marker::Freeze for mc_guitar::ChordCandidate
+impl core::marker::Send for mc_guitar::ChordCandidate
+impl core::marker::Sync for mc_guitar::ChordCandidate
+impl core::marker::Unpin for mc_guitar::ChordCandidate
+impl core::marker::UnsafeUnpin for mc_guitar::ChordCandidate
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::ChordCandidate
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::ChordCandidate
+pub struct mc_guitar::Identification
+pub mc_guitar::Identification::bass: core::option::Option<mc_guitar::SoundingNote>
+pub mc_guitar::Identification::candidates: alloc::vec::Vec<mc_guitar::ChordCandidate>
+pub mc_guitar::Identification::notes: alloc::vec::Vec<mc_guitar::SoundingNote>
+pub mc_guitar::Identification::pitch_classes: alloc::vec::Vec<mc_theory::pitch::PitchClass>
+pub mc_guitar::Identification::status: mc_guitar::IdentifyStatus
+impl mc_guitar::Identification
+pub fn mc_guitar::Identification::preferred(&self) -> core::option::Option<&mc_guitar::ChordCandidate>
+impl core::clone::Clone for mc_guitar::Identification
+pub fn mc_guitar::Identification::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::Identification
+impl core::cmp::PartialEq for mc_guitar::Identification
+pub fn mc_guitar::Identification::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::Identification
+pub fn mc_guitar::Identification::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_guitar::Identification
+impl core::marker::Freeze for mc_guitar::Identification
+impl core::marker::Send for mc_guitar::Identification
+impl core::marker::Sync for mc_guitar::Identification
+impl core::marker::Unpin for mc_guitar::Identification
+impl core::marker::UnsafeUnpin for mc_guitar::Identification
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::Identification
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::Identification
+pub struct mc_guitar::IdentifyOptions
+pub mc_guitar::IdentifyOptions::allow_omitted_fifth: bool
+impl core::clone::Clone for mc_guitar::IdentifyOptions
+pub fn mc_guitar::IdentifyOptions::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::IdentifyOptions
+impl core::cmp::PartialEq for mc_guitar::IdentifyOptions
+pub fn mc_guitar::IdentifyOptions::eq(&self, &Self) -> bool
+impl core::default::Default for mc_guitar::IdentifyOptions
+pub fn mc_guitar::IdentifyOptions::default() -> Self
+impl core::fmt::Debug for mc_guitar::IdentifyOptions
+pub fn mc_guitar::IdentifyOptions::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::IdentifyOptions
+pub fn mc_guitar::IdentifyOptions::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::IdentifyOptions
+impl core::marker::StructuralPartialEq for mc_guitar::IdentifyOptions
+impl core::marker::Freeze for mc_guitar::IdentifyOptions
+impl core::marker::Send for mc_guitar::IdentifyOptions
+impl core::marker::Sync for mc_guitar::IdentifyOptions
+impl core::marker::Unpin for mc_guitar::IdentifyOptions
+impl core::marker::UnsafeUnpin for mc_guitar::IdentifyOptions
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::IdentifyOptions
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::IdentifyOptions
+pub struct mc_guitar::RetunePlan
+pub mc_guitar::RetunePlan::fret_deltas: core::option::Option<alloc::vec::Vec<i16>>
+impl core::clone::Clone for mc_guitar::RetunePlan
+pub fn mc_guitar::RetunePlan::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::RetunePlan
+impl core::cmp::PartialEq for mc_guitar::RetunePlan
+pub fn mc_guitar::RetunePlan::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::RetunePlan
+pub fn mc_guitar::RetunePlan::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::RetunePlan
+pub fn mc_guitar::RetunePlan::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::StructuralPartialEq for mc_guitar::RetunePlan
+impl core::marker::Freeze for mc_guitar::RetunePlan
+impl core::marker::Send for mc_guitar::RetunePlan
+impl core::marker::Sync for mc_guitar::RetunePlan
+impl core::marker::Unpin for mc_guitar::RetunePlan
+impl core::marker::UnsafeUnpin for mc_guitar::RetunePlan
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::RetunePlan
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::RetunePlan
+pub struct mc_guitar::ScaleNote
+pub mc_guitar::ScaleNote::degree: u8
+pub mc_guitar::ScaleNote::pitch_class: mc_theory::pitch::PitchClass
+pub mc_guitar::ScaleNote::position: mc_theory::fretted::FretPosition
+impl core::clone::Clone for mc_guitar::ScaleNote
+pub fn mc_guitar::ScaleNote::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::ScaleNote
+impl core::cmp::PartialEq for mc_guitar::ScaleNote
+pub fn mc_guitar::ScaleNote::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::ScaleNote
+pub fn mc_guitar::ScaleNote::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::ScaleNote
+pub fn mc_guitar::ScaleNote::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::ScaleNote
+impl core::marker::StructuralPartialEq for mc_guitar::ScaleNote
+impl core::marker::Freeze for mc_guitar::ScaleNote
+impl core::marker::Send for mc_guitar::ScaleNote
+impl core::marker::Sync for mc_guitar::ScaleNote
+impl core::marker::Unpin for mc_guitar::ScaleNote
+impl core::marker::UnsafeUnpin for mc_guitar::ScaleNote
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::ScaleNote
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::ScaleNote
+pub struct mc_guitar::SearchOptions
+pub mc_guitar::SearchOptions::constraints: mc_guitar::VoicingConstraints
+pub mc_guitar::SearchOptions::max_results: usize
+impl core::clone::Clone for mc_guitar::SearchOptions
+pub fn mc_guitar::SearchOptions::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::SearchOptions
+impl core::cmp::PartialEq for mc_guitar::SearchOptions
+pub fn mc_guitar::SearchOptions::eq(&self, &Self) -> bool
+impl core::default::Default for mc_guitar::SearchOptions
+pub fn mc_guitar::SearchOptions::default() -> Self
+impl core::fmt::Debug for mc_guitar::SearchOptions
+pub fn mc_guitar::SearchOptions::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::SearchOptions
+pub fn mc_guitar::SearchOptions::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::SearchOptions
+impl core::marker::StructuralPartialEq for mc_guitar::SearchOptions
+impl core::marker::Freeze for mc_guitar::SearchOptions
+impl core::marker::Send for mc_guitar::SearchOptions
+impl core::marker::Sync for mc_guitar::SearchOptions
+impl core::marker::Unpin for mc_guitar::SearchOptions
+impl core::marker::UnsafeUnpin for mc_guitar::SearchOptions
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::SearchOptions
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::SearchOptions
+pub struct mc_guitar::SoundingNote
+pub mc_guitar::SoundingNote::fret: mc_theory::fretted::Fret
+pub mc_guitar::SoundingNote::semitone: i32
+pub mc_guitar::SoundingNote::string: mc_theory::fretted::StringIndex
+impl core::clone::Clone for mc_guitar::SoundingNote
+pub fn mc_guitar::SoundingNote::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::SoundingNote
+impl core::cmp::PartialEq for mc_guitar::SoundingNote
+pub fn mc_guitar::SoundingNote::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::SoundingNote
+pub fn mc_guitar::SoundingNote::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::SoundingNote
+pub fn mc_guitar::SoundingNote::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::SoundingNote
+impl core::marker::StructuralPartialEq for mc_guitar::SoundingNote
+impl core::marker::Freeze for mc_guitar::SoundingNote
+impl core::marker::Send for mc_guitar::SoundingNote
+impl core::marker::Sync for mc_guitar::SoundingNote
+impl core::marker::Unpin for mc_guitar::SoundingNote
+impl core::marker::UnsafeUnpin for mc_guitar::SoundingNote
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::SoundingNote
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::SoundingNote
+pub struct mc_guitar::Voicing
+impl mc_guitar::Voicing
+pub fn mc_guitar::Voicing::fingers(&self) -> u8
+pub fn mc_guitar::Voicing::fret(&self, mc_theory::fretted::StringIndex) -> core::option::Option<mc_theory::fretted::Fret>
+pub fn mc_guitar::Voicing::frets(&self) -> &[core::option::Option<mc_theory::fretted::Fret>]
+pub fn mc_guitar::Voicing::fretted_span(&self) -> u8
+pub fn mc_guitar::Voicing::from_positions(&[mc_theory::fretted::FretPosition], u8) -> core::result::Result<Self, mc_guitar::GuitarError>
+pub fn mc_guitar::Voicing::has_open_strings(&self) -> bool
+pub fn mc_guitar::Voicing::highest_fretted(&self) -> core::option::Option<u8>
+pub fn mc_guitar::Voicing::lowest_fretted(&self) -> core::option::Option<u8>
+pub fn mc_guitar::Voicing::new(alloc::vec::Vec<core::option::Option<mc_theory::fretted::Fret>>) -> core::result::Result<Self, mc_guitar::GuitarError>
+pub fn mc_guitar::Voicing::positions(&self) -> alloc::vec::Vec<mc_theory::fretted::FretPosition>
+pub fn mc_guitar::Voicing::sounding(&self, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo) -> core::result::Result<alloc::vec::Vec<mc_guitar::SoundingNote>, mc_guitar::GuitarError>
+pub fn mc_guitar::Voicing::sounding_count(&self) -> usize
+pub fn mc_guitar::Voicing::string_count(&self) -> u8
+impl core::clone::Clone for mc_guitar::Voicing
+pub fn mc_guitar::Voicing::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::Voicing
+impl core::cmp::PartialEq for mc_guitar::Voicing
+pub fn mc_guitar::Voicing::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::Voicing
+pub fn mc_guitar::Voicing::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_guitar::Voicing
+pub fn mc_guitar::Voicing::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::Voicing
+pub fn mc_guitar::Voicing::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::StructuralPartialEq for mc_guitar::Voicing
+impl core::str::traits::FromStr for mc_guitar::Voicing
+pub type mc_guitar::Voicing::Err = mc_guitar::GuitarError
+pub fn mc_guitar::Voicing::from_str(&str) -> core::result::Result<Self, Self::Err>
+impl core::marker::Freeze for mc_guitar::Voicing
+impl core::marker::Send for mc_guitar::Voicing
+impl core::marker::Sync for mc_guitar::Voicing
+impl core::marker::Unpin for mc_guitar::Voicing
+impl core::marker::UnsafeUnpin for mc_guitar::Voicing
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::Voicing
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::Voicing
+pub struct mc_guitar::VoicingConstraints
+pub mc_guitar::VoicingConstraints::allow_omitted_fifth: bool
+pub mc_guitar::VoicingConstraints::allow_open_strings: bool
+pub mc_guitar::VoicingConstraints::bass: mc_guitar::BassRule
+pub mc_guitar::VoicingConstraints::max_fingers: u8
+pub mc_guitar::VoicingConstraints::max_fret: u8
+pub mc_guitar::VoicingConstraints::max_span: u8
+pub mc_guitar::VoicingConstraints::min_fret: u8
+pub mc_guitar::VoicingConstraints::min_sounding: u8
+impl mc_guitar::VoicingConstraints
+pub fn mc_guitar::VoicingConstraints::check(&self, &mc_guitar::Voicing) -> core::result::Result<(), mc_guitar::ConstraintViolation>
+impl core::clone::Clone for mc_guitar::VoicingConstraints
+pub fn mc_guitar::VoicingConstraints::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::VoicingConstraints
+impl core::cmp::PartialEq for mc_guitar::VoicingConstraints
+pub fn mc_guitar::VoicingConstraints::eq(&self, &Self) -> bool
+impl core::default::Default for mc_guitar::VoicingConstraints
+pub fn mc_guitar::VoicingConstraints::default() -> Self
+impl core::fmt::Debug for mc_guitar::VoicingConstraints
+pub fn mc_guitar::VoicingConstraints::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::VoicingConstraints
+pub fn mc_guitar::VoicingConstraints::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::VoicingConstraints
+impl core::marker::StructuralPartialEq for mc_guitar::VoicingConstraints
+impl core::marker::Freeze for mc_guitar::VoicingConstraints
+impl core::marker::Send for mc_guitar::VoicingConstraints
+impl core::marker::Sync for mc_guitar::VoicingConstraints
+impl core::marker::Unpin for mc_guitar::VoicingConstraints
+impl core::marker::UnsafeUnpin for mc_guitar::VoicingConstraints
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::VoicingConstraints
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::VoicingConstraints
+pub const mc_guitar::MIN_DISTINCT_PITCH_CLASSES: usize
+pub fn mc_guitar::candidates_for(&[i32], mc_guitar::IdentifyOptions) -> alloc::vec::Vec<mc_guitar::ChordCandidate>
+pub fn mc_guitar::find_voicings(&mc_theory::chord::Chord, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, &mc_guitar::SearchOptions) -> alloc::vec::Vec<mc_guitar::Voicing>
+pub fn mc_guitar::identify(&mc_guitar::Voicing, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_guitar::IdentifyOptions) -> core::result::Result<mc_guitar::Identification, mc_guitar::GuitarError>
+pub fn mc_guitar::interval_name(&mc_theory::chord::ChordInterval) -> &'static str
+pub fn mc_guitar::plan_retune(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_guitar::RetuneMode) -> core::result::Result<mc_guitar::RetunePlan, mc_guitar::GuitarError>
+pub fn mc_guitar::positions_of(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_theory::pitch::PitchClass, core::ops::range::RangeInclusive<u8>) -> alloc::vec::Vec<mc_theory::fretted::FretPosition>
+pub fn mc_guitar::scale_positions(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_theory::pitch::PitchClass, mc_theory::scale::ScaleFormula, core::ops::range::RangeInclusive<u8>) -> alloc::vec::Vec<mc_guitar::ScaleNote>

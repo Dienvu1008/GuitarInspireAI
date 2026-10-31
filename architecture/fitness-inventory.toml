@@ -6,7 +6,7 @@
 # "Architecture-Change: ADR-NNN" trailer (FF-19 also protects this file).
 
 [meta]
-current_phase = 1
+current_phase = 2
 
 [FF-01]
 name = "Internal crate dependency matrix"
@@ -147,12 +147,14 @@ check = "xtask:rule-coverage"
 [FF-25]
 name = "Coupling report"
 phase = 2
-status = "planned"
+status = "active"
+check = "xtask:coupling"
 
 [FF-26]
 name = "Intra-crate module cycles"
 phase = 2
-status = "planned"
+status = "active"
+check = "xtask:module-cycles"
 
 [FF-27]
 name = "Test coverage report"

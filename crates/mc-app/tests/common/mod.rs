@@ -172,6 +172,12 @@ pub enum Op {
         len: usize,
         delta: i16,
     },
+    Retune {
+        track: usize,
+        preset: usize,
+        capo: u8,
+        keep_pitches: bool,
+    },
 }
 
 pub fn op() -> impl Strategy<Value = Op> {
@@ -245,6 +251,14 @@ pub fn op() -> impl Strategy<Value = Op> {
                 delta,
             }
         }),
+        (0usize..3, 0usize..6, 0u8..3, any::<bool>()).prop_map(
+            |(track, preset, capo, keep_pitches)| Op::Retune {
+                track,
+                preset,
+                capo,
+                keep_pitches,
+            }
+        ),
     ]
 }
 
@@ -384,5 +398,26 @@ pub fn to_command(s: &DocumentSession, op: &Op) -> Command {
             bars: (from, from + len),
             delta,
         }),
+        Op::Retune {
+            track,
+            preset,
+            capo,
+            keep_pitches,
+        } => {
+            let preset = mc_app::guitar::TuningPreset::ALL[preset % 6];
+            Command::Guitar(mc_app::GuitarCommand::Retune {
+                track: tid(track),
+                instrument: InstrumentSpecInput {
+                    tuning: preset.pitches().map(String::from).to_vec(),
+                    capo,
+                    ..InstrumentSpecInput::standard_guitar()
+                },
+                mode: if keep_pitches {
+                    mc_app::guitar::RetuneMode::KeepPitches
+                } else {
+                    mc_app::guitar::RetuneMode::KeepFrets
+                },
+            })
+        }
     }
 }

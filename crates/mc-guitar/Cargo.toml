@@ -1,0 +1,16 @@
+[package]
+name = "mc-guitar"
+version = "0.1.0"
+description = "Guitar context: tuning presets, fretboard queries, chord finder in both directions, voicing constraints, scale positions and retune planning (pure services)."
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+mc-theory.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true

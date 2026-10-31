@@ -1,4 +1,61 @@
 pub mod mc_app
+pub mod mc_app::guitar
+pub use mc_app::guitar::BassRule
+pub use mc_app::guitar::CandidateTone
+pub use mc_app::guitar::Chord
+pub use mc_app::guitar::ChordCandidate
+pub use mc_app::guitar::ChordInterval
+pub use mc_app::guitar::ChordQuality
+pub use mc_app::guitar::ConstraintViolation
+pub use mc_app::guitar::GuitarError
+pub use mc_app::guitar::Identification
+pub use mc_app::guitar::IdentifyOptions
+pub use mc_app::guitar::IdentifyStatus
+pub use mc_app::guitar::MIN_DISTINCT_PITCH_CLASSES
+pub use mc_app::guitar::RetuneMode
+pub use mc_app::guitar::ScaleNote
+pub use mc_app::guitar::SearchOptions
+pub use mc_app::guitar::SoundingNote
+pub use mc_app::guitar::Tuning
+pub use mc_app::guitar::TuningPreset
+pub use mc_app::guitar::Voicing
+pub use mc_app::guitar::VoicingConstraints
+pub use mc_app::guitar::interval_name
+pub enum mc_app::guitar::QueryError
+pub mc_app::guitar::QueryError::Guitar(mc_guitar::error::GuitarError)
+pub mc_app::guitar::QueryError::Theory(mc_theory::error::TheoryError)
+pub mc_app::guitar::QueryError::UnknownScale(alloc::string::String)
+impl core::clone::Clone for mc_app::guitar::QueryError
+pub fn mc_app::guitar::QueryError::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::guitar::QueryError
+impl core::cmp::PartialEq for mc_app::guitar::QueryError
+pub fn mc_app::guitar::QueryError::eq(&self, &Self) -> bool
+impl core::convert::From<mc_guitar::error::GuitarError> for mc_app::guitar::QueryError
+pub fn mc_app::guitar::QueryError::from(mc_guitar::error::GuitarError) -> Self
+impl core::convert::From<mc_theory::error::TheoryError> for mc_app::guitar::QueryError
+pub fn mc_app::guitar::QueryError::from(mc_theory::error::TheoryError) -> Self
+impl core::error::Error for mc_app::guitar::QueryError
+impl core::fmt::Debug for mc_app::guitar::QueryError
+pub fn mc_app::guitar::QueryError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_app::guitar::QueryError
+pub fn mc_app::guitar::QueryError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::guitar::QueryError
+impl core::marker::Freeze for mc_app::guitar::QueryError
+impl core::marker::Send for mc_app::guitar::QueryError
+impl core::marker::Sync for mc_app::guitar::QueryError
+impl core::marker::Unpin for mc_app::guitar::QueryError
+impl core::marker::UnsafeUnpin for mc_app::guitar::QueryError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::guitar::QueryError
+impl core::panic::unwind_safe::UnwindSafe for mc_app::guitar::QueryError
+pub fn mc_app::guitar::chord_tones(&mc_theory::chord::Chord) -> alloc::vec::Vec<alloc::string::String>
+pub fn mc_app::guitar::chord_voicings(&str, &mc_theory::fretted::Tuning, u8, &mc_guitar::search::SearchOptions) -> core::result::Result<(mc_theory::chord::Chord, alloc::vec::Vec<mc_guitar::voicing::Voicing>), mc_app::guitar::QueryError>
+pub fn mc_app::guitar::format_chord(&mc_theory::chord::Chord) -> alloc::string::String
+pub fn mc_app::guitar::identify_shape(&str, &mc_theory::fretted::Tuning, u8, mc_guitar::identify::IdentifyOptions) -> core::result::Result<mc_guitar::identify::Identification, mc_app::guitar::QueryError>
+pub fn mc_app::guitar::note_name(i32) -> alloc::string::String
+pub fn mc_app::guitar::parse_chord(&str) -> core::result::Result<mc_theory::chord::Chord, mc_app::guitar::QueryError>
+pub fn mc_app::guitar::parse_tuning(&str) -> core::result::Result<mc_theory::fretted::Tuning, mc_app::guitar::QueryError>
+pub fn mc_app::guitar::scale_names() -> alloc::vec::Vec<&'static str>
+pub fn mc_app::guitar::scale_positions(&str, &str, &mc_theory::fretted::Tuning, u8, core::ops::range::RangeInclusive<u8>) -> core::result::Result<alloc::vec::Vec<mc_guitar::scales::ScaleNote>, mc_app::guitar::QueryError>
 pub mod mc_app::infra
 pub struct mc_app::infra::FsProjectStore
 pub mc_app::infra::FsProjectStore::keep_backup: bool
@@ -223,6 +280,7 @@ impl core::marker::UnsafeUnpin for mc_app::AppEvent
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::AppEvent
 impl core::panic::unwind_safe::UnwindSafe for mc_app::AppEvent
 pub enum mc_app::Command
+pub mc_app::Command::Guitar(mc_app::GuitarCommand)
 pub mc_app::Command::Score(mc_app::ScoreCommand)
 pub mc_app::Command::Track(mc_app::TrackCommand)
 impl core::clone::Clone for mc_app::Command
@@ -244,6 +302,7 @@ pub mc_app::CommandError::Constraint
 pub mc_app::CommandError::Constraint::message: alloc::string::String
 pub mc_app::CommandError::Constraint::rule: &'static str
 pub mc_app::CommandError::Domain(mc_score::error::DomainError)
+pub mc_app::CommandError::Guitar(mc_guitar::error::GuitarError)
 pub mc_app::CommandError::NothingToRedo
 pub mc_app::CommandError::NothingToUndo
 pub mc_app::CommandError::StaleRevision
@@ -257,6 +316,8 @@ pub fn mc_app::CommandError::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::CommandError
 impl core::cmp::PartialEq for mc_app::CommandError
 pub fn mc_app::CommandError::eq(&self, &Self) -> bool
+impl core::convert::From<mc_guitar::error::GuitarError> for mc_app::CommandError
+pub fn mc_app::CommandError::from(mc_guitar::error::GuitarError) -> Self
 impl core::convert::From<mc_score::error::DomainError> for mc_app::CommandError
 pub fn mc_app::CommandError::from(mc_score::error::DomainError) -> Self
 impl core::convert::From<mc_theory::error::TheoryError> for mc_app::CommandError
@@ -292,6 +353,25 @@ impl core::marker::Unpin for mc_app::EventPayload
 impl core::marker::UnsafeUnpin for mc_app::EventPayload
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::EventPayload
 impl core::panic::unwind_safe::UnwindSafe for mc_app::EventPayload
+pub enum mc_app::GuitarCommand
+pub mc_app::GuitarCommand::Retune
+pub mc_app::GuitarCommand::Retune::instrument: mc_app::InstrumentSpecInput
+pub mc_app::GuitarCommand::Retune::mode: mc_guitar::retune::RetuneMode
+pub mc_app::GuitarCommand::Retune::track: mc_score::ids::TrackId
+impl core::clone::Clone for mc_app::GuitarCommand
+pub fn mc_app::GuitarCommand::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_app::GuitarCommand
+pub fn mc_app::GuitarCommand::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::GuitarCommand
+pub fn mc_app::GuitarCommand::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::GuitarCommand
+impl core::marker::Freeze for mc_app::GuitarCommand
+impl core::marker::Send for mc_app::GuitarCommand
+impl core::marker::Sync for mc_app::GuitarCommand
+impl core::marker::Unpin for mc_app::GuitarCommand
+impl core::marker::UnsafeUnpin for mc_app::GuitarCommand
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::GuitarCommand
+impl core::panic::unwind_safe::UnwindSafe for mc_app::GuitarCommand
 pub enum mc_app::OpenError
 pub mc_app::OpenError::Load(mc_project::error::LoadError)
 pub mc_app::OpenError::Store(mc_app::ports::StoreError)

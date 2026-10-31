@@ -29,6 +29,8 @@ pub enum TheoryError {
     EmptyTuning,
     /// String index 0 (string numbering is 1-based, string 1 is the highest).
     InvalidStringIndex,
+    /// Unparseable or out-of-vocabulary chord symbol.
+    InvalidChordSymbol(String),
 }
 
 impl fmt::Display for TheoryError {
@@ -54,6 +56,7 @@ impl fmt::Display for TheoryError {
             Self::InvalidTempo => write!(f, "tempo must be greater than zero (T-05)"),
             Self::EmptyTuning => write!(f, "a tuning needs at least one string (T-04)"),
             Self::InvalidStringIndex => write!(f, "string index must be 1 or greater"),
+            Self::InvalidChordSymbol(s) => write!(f, "unknown or unsupported chord symbol '{s}'"),
         }
     }
 }

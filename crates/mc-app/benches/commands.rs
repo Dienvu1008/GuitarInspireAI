@@ -154,5 +154,38 @@ fn commands(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, commands);
+/// Phase 2 acceptance: voicing search under 50 ms for one chord [Assumption]. The
+/// heaviest Phase 2 chord (five tones, every result kept) is measured alongside a triad.
+fn guitar_queries(c: &mut Criterion) {
+    use mc_app::guitar::{
+        IdentifyOptions, SearchOptions, chord_voicings, identify_shape, parse_tuning,
+    };
+    let tuning = parse_tuning("standard").expect("preset");
+    let all = SearchOptions {
+        max_results: usize::MAX,
+        ..SearchOptions::default()
+    };
+    for symbol in ["C", "C9", "Cdim7"] {
+        let mut samples = Vec::with_capacity(200);
+        for _ in 0..200 {
+            let t = Instant::now();
+            black_box(chord_voicings(symbol, &tuning, 0, &all).expect("valid"));
+            samples.push(t.elapsed().as_nanos());
+        }
+        percentiles(&format!("chord_voicings/{symbol} (budget 50 ms)"), samples);
+    }
+    let mut group = c.benchmark_group("guitar");
+    group.sample_size(20);
+    group.bench_function("chord_voicings/C9", |bench| {
+        bench.iter(|| black_box(chord_voicings("C9", &tuning, 0, &all).expect("valid")))
+    });
+    group.bench_function("identify/x02010", |bench| {
+        bench.iter(|| {
+            black_box(identify_shape("x02010", &tuning, 0, IdentifyOptions::default()).expect("ok"))
+        })
+    });
+    group.finish();
+}
+
+criterion_group!(benches, commands, guitar_queries);
 criterion_main!(benches);

@@ -428,6 +428,7 @@ name = "mc-app"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "mc-guitar",
  "mc-project",
  "mc-score",
  "mc-theory",
@@ -440,6 +441,14 @@ version = "0.1.0"
 dependencies = [
  "mc-app",
  "mc-project",
+]
+
+[[package]]
+name = "mc-guitar"
+version = "0.1.0"
+dependencies = [
+ "mc-theory",
+ "proptest",
 ]
 
 [[package]]

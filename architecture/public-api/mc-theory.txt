@@ -1,4 +1,8 @@
 pub mod mc_theory
+pub mod mc_theory::chord_symbol
+pub fn mc_theory::chord_symbol::format(&mc_theory::Chord) -> alloc::string::String
+pub fn mc_theory::chord_symbol::parse(&str) -> core::result::Result<mc_theory::Chord, mc_theory::TheoryError>
+pub fn mc_theory::chord_symbol::suffix(mc_theory::ChordQuality) -> &'static str
 pub mod mc_theory::fretted
 pub struct mc_theory::fretted::Capo(pub u8)
 impl core::clone::Clone for mc_theory::fretted::Capo
@@ -120,6 +124,49 @@ impl core::marker::UnsafeUnpin for mc_theory::fretted::Tuning
 impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::fretted::Tuning
 impl core::panic::unwind_safe::UnwindSafe for mc_theory::fretted::Tuning
 pub fn mc_theory::fretted::pitch_at(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_theory::fretted::FretPosition) -> core::option::Option<i32>
+pub enum mc_theory::ChordQuality
+pub mc_theory::ChordQuality::Add9
+pub mc_theory::ChordQuality::Augmented
+pub mc_theory::ChordQuality::Diminished
+pub mc_theory::ChordQuality::Diminished7
+pub mc_theory::ChordQuality::Dominant7
+pub mc_theory::ChordQuality::Dominant9
+pub mc_theory::ChordQuality::HalfDiminished7
+pub mc_theory::ChordQuality::Major
+pub mc_theory::ChordQuality::Major7
+pub mc_theory::ChordQuality::Minor
+pub mc_theory::ChordQuality::Minor6
+pub mc_theory::ChordQuality::Minor7
+pub mc_theory::ChordQuality::Sixth
+pub mc_theory::ChordQuality::Sus2
+pub mc_theory::ChordQuality::Sus4
+impl mc_theory::ChordQuality
+pub const mc_theory::ChordQuality::ALL: [mc_theory::ChordQuality; 15]
+pub fn mc_theory::ChordQuality::intervals(self) -> &'static [mc_theory::ChordInterval]
+pub fn mc_theory::ChordQuality::pitch_classes(self, mc_theory::PitchClass) -> alloc::vec::Vec<mc_theory::PitchClass>
+pub fn mc_theory::ChordQuality::tone_count(self) -> usize
+impl core::clone::Clone for mc_theory::ChordQuality
+pub fn mc_theory::ChordQuality::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::ChordQuality
+impl core::cmp::Ord for mc_theory::ChordQuality
+pub fn mc_theory::ChordQuality::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::ChordQuality
+pub fn mc_theory::ChordQuality::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::ChordQuality
+pub fn mc_theory::ChordQuality::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_theory::ChordQuality
+pub fn mc_theory::ChordQuality::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::ChordQuality
+pub fn mc_theory::ChordQuality::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::ChordQuality
+impl core::marker::StructuralPartialEq for mc_theory::ChordQuality
+impl core::marker::Freeze for mc_theory::ChordQuality
+impl core::marker::Send for mc_theory::ChordQuality
+impl core::marker::Sync for mc_theory::ChordQuality
+impl core::marker::Unpin for mc_theory::ChordQuality
+impl core::marker::UnsafeUnpin for mc_theory::ChordQuality
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::ChordQuality
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::ChordQuality
 pub enum mc_theory::Letter
 pub mc_theory::Letter::A
 pub mc_theory::Letter::B
@@ -173,10 +220,40 @@ impl core::marker::Unpin for mc_theory::Mode
 impl core::marker::UnsafeUnpin for mc_theory::Mode
 impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::Mode
 impl core::panic::unwind_safe::UnwindSafe for mc_theory::Mode
+pub enum mc_theory::ScaleFormula
+pub mc_theory::ScaleFormula::Major
+pub mc_theory::ScaleFormula::MajorPentatonic
+pub mc_theory::ScaleFormula::MinorPentatonic
+pub mc_theory::ScaleFormula::NaturalMinor
+impl mc_theory::ScaleFormula
+pub const mc_theory::ScaleFormula::ALL: [mc_theory::ScaleFormula; 4]
+pub fn mc_theory::ScaleFormula::degree_of(self, mc_theory::PitchClass, mc_theory::PitchClass) -> core::option::Option<u8>
+pub fn mc_theory::ScaleFormula::from_name(&str) -> core::option::Option<Self>
+pub fn mc_theory::ScaleFormula::name(self) -> &'static str
+pub fn mc_theory::ScaleFormula::semitones(self) -> &'static [u8]
+impl core::clone::Clone for mc_theory::ScaleFormula
+pub fn mc_theory::ScaleFormula::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::ScaleFormula
+impl core::cmp::PartialEq for mc_theory::ScaleFormula
+pub fn mc_theory::ScaleFormula::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::ScaleFormula
+pub fn mc_theory::ScaleFormula::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::ScaleFormula
+pub fn mc_theory::ScaleFormula::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::ScaleFormula
+impl core::marker::StructuralPartialEq for mc_theory::ScaleFormula
+impl core::marker::Freeze for mc_theory::ScaleFormula
+impl core::marker::Send for mc_theory::ScaleFormula
+impl core::marker::Sync for mc_theory::ScaleFormula
+impl core::marker::Unpin for mc_theory::ScaleFormula
+impl core::marker::UnsafeUnpin for mc_theory::ScaleFormula
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::ScaleFormula
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::ScaleFormula
 pub enum mc_theory::TheoryError
 pub mc_theory::TheoryError::AlterOutOfRange(i8)
 pub mc_theory::TheoryError::EmptyTuning
 pub mc_theory::TheoryError::InvalidBaseValue(u8)
+pub mc_theory::TheoryError::InvalidChordSymbol(alloc::string::String)
 pub mc_theory::TheoryError::InvalidKey(i8)
 pub mc_theory::TheoryError::InvalidPitch(alloc::string::String)
 pub mc_theory::TheoryError::InvalidStringIndex
@@ -268,6 +345,54 @@ impl core::marker::Unpin for mc_theory::BaseValue
 impl core::marker::UnsafeUnpin for mc_theory::BaseValue
 impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::BaseValue
 impl core::panic::unwind_safe::UnwindSafe for mc_theory::BaseValue
+pub struct mc_theory::Chord
+pub mc_theory::Chord::bass: core::option::Option<mc_theory::NoteName>
+pub mc_theory::Chord::quality: mc_theory::ChordQuality
+pub mc_theory::Chord::root: mc_theory::NoteName
+impl mc_theory::Chord
+pub const fn mc_theory::Chord::new(mc_theory::NoteName, mc_theory::ChordQuality) -> Self
+pub fn mc_theory::Chord::pitch_classes(&self) -> alloc::vec::Vec<mc_theory::PitchClass>
+pub fn mc_theory::Chord::spelled_tones(&self) -> core::option::Option<alloc::vec::Vec<mc_theory::NoteName>>
+impl core::clone::Clone for mc_theory::Chord
+pub fn mc_theory::Chord::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::Chord
+impl core::cmp::PartialEq for mc_theory::Chord
+pub fn mc_theory::Chord::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::Chord
+pub fn mc_theory::Chord::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::Chord
+pub fn mc_theory::Chord::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::Chord
+impl core::marker::StructuralPartialEq for mc_theory::Chord
+impl core::marker::Freeze for mc_theory::Chord
+impl core::marker::Send for mc_theory::Chord
+impl core::marker::Sync for mc_theory::Chord
+impl core::marker::Unpin for mc_theory::Chord
+impl core::marker::UnsafeUnpin for mc_theory::Chord
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::Chord
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::Chord
+pub struct mc_theory::ChordInterval
+pub mc_theory::ChordInterval::degree: u8
+pub mc_theory::ChordInterval::omissible_fifth: bool
+pub mc_theory::ChordInterval::semitones: u8
+impl core::clone::Clone for mc_theory::ChordInterval
+pub fn mc_theory::ChordInterval::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::ChordInterval
+impl core::cmp::PartialEq for mc_theory::ChordInterval
+pub fn mc_theory::ChordInterval::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::ChordInterval
+pub fn mc_theory::ChordInterval::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::ChordInterval
+pub fn mc_theory::ChordInterval::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::ChordInterval
+impl core::marker::StructuralPartialEq for mc_theory::ChordInterval
+impl core::marker::Freeze for mc_theory::ChordInterval
+impl core::marker::Send for mc_theory::ChordInterval
+impl core::marker::Sync for mc_theory::ChordInterval
+impl core::marker::Unpin for mc_theory::ChordInterval
+impl core::marker::UnsafeUnpin for mc_theory::ChordInterval
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::ChordInterval
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::ChordInterval
 pub struct mc_theory::KeySignature
 impl mc_theory::KeySignature
 pub const mc_theory::KeySignature::C_MAJOR: mc_theory::KeySignature
@@ -292,6 +417,41 @@ impl core::marker::Unpin for mc_theory::KeySignature
 impl core::marker::UnsafeUnpin for mc_theory::KeySignature
 impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::KeySignature
 impl core::panic::unwind_safe::UnwindSafe for mc_theory::KeySignature
+pub struct mc_theory::NoteName
+impl mc_theory::NoteName
+pub const fn mc_theory::NoteName::alter(self) -> mc_theory::Alter
+pub fn mc_theory::NoteName::default_for(mc_theory::PitchClass) -> Self
+pub const fn mc_theory::NoteName::letter(self) -> mc_theory::Letter
+pub const fn mc_theory::NoteName::new(mc_theory::Letter, mc_theory::Alter) -> Self
+pub fn mc_theory::NoteName::pitch_class(self) -> mc_theory::PitchClass
+pub fn mc_theory::NoteName::up(self, u8, u8) -> core::option::Option<mc_theory::NoteName>
+impl core::clone::Clone for mc_theory::NoteName
+pub fn mc_theory::NoteName::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::NoteName
+impl core::cmp::Ord for mc_theory::NoteName
+pub fn mc_theory::NoteName::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::NoteName
+pub fn mc_theory::NoteName::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::NoteName
+pub fn mc_theory::NoteName::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_theory::NoteName
+pub fn mc_theory::NoteName::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_theory::NoteName
+pub fn mc_theory::NoteName::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::NoteName
+pub fn mc_theory::NoteName::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::NoteName
+impl core::marker::StructuralPartialEq for mc_theory::NoteName
+impl core::str::traits::FromStr for mc_theory::NoteName
+pub type mc_theory::NoteName::Err = mc_theory::TheoryError
+pub fn mc_theory::NoteName::from_str(&str) -> core::result::Result<Self, Self::Err>
+impl core::marker::Freeze for mc_theory::NoteName
+impl core::marker::Send for mc_theory::NoteName
+impl core::marker::Sync for mc_theory::NoteName
+impl core::marker::Unpin for mc_theory::NoteName
+impl core::marker::UnsafeUnpin for mc_theory::NoteName
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::NoteName
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::NoteName
 pub struct mc_theory::NoteValue
 impl mc_theory::NoteValue
 pub const mc_theory::NoteValue::MAX_DOTS: u8

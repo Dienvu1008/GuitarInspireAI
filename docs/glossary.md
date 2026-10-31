@@ -35,7 +35,15 @@ Related documents: [docs/README.md](README.md), [bounded-contexts.md](architectu
 | Effective bar duration | Playback length of a master bar: the maximum of its nominal length and the longest voice across all tracks. See [domain-invariants.md](architecture/domain-invariants.md) section 4a. |
 | Fret | Integer fret number, 0 means open string. |
 | Capo | Fret offset applied to all strings. |
-| Voicing | A concrete set of string and fret positions realizing a chord. |
+| Voicing | A concrete set of string and fret positions realizing a chord. At most one position per string. |
+| Shape text | Chord-chart notation of a voicing, lowest-pitched string (string 6) first, `x` for a muted string: `x32010` is open C. Frets above 9 use separators: `x-3-5-5-5-3`. |
+| Chord quality | Interval structure of a chord (major, m7, m7b5 ...). Display symbols and aliases (`Δ7`, `ø7`, `°`, `+`, `min`) only spell a quality; they are not separate concepts. |
+| Slash chord | A chord whose lowest note is not its root, written `C/E` (chord / bass note). |
+| Omitted fifth | A perfect fifth left out of a voicing. Allowed by default for chord identification and search; never for dim, aug, m7b5, dim7 or sus chords. |
+| Fret span | Highest minus lowest fretted fret plus one. Open strings do not count. |
+| Display spelling | How a pitch class is written when no key or harmonic context decides it: C, C#, D, Eb, E, F, F#, G, Ab, A, Bb, B. A display convention only; pitch identity is unchanged. |
+| Insufficient pitch content | Identification result for a voicing with fewer than three distinct pitch classes (single notes, dyads, power chords): no chord name is given. |
+| Barre | One finger pressing several adjacent strings at the same fret; counts as one fretting finger. |
 | CAGED | A system relating five open chord shapes (C, A, G, E, D) to positions on the neck. |
 | Pattern | A reusable rhythmic and string-selection template that binds to a voicing. |
 | Overfull / underfull bar | A voice whose summed durations are more / less than the time signature length. |
