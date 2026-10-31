@@ -63,3 +63,4 @@ Related documents: links
 | [ADR-018](ADR-018-notation-layout-in-rust.md) | Notation layout in Rust, painting in Flutter | Accepted (S4) |
 | [ADR-019](ADR-019-fretted-instrument-shared-kernel.md) | Fretted-instrument value objects in the shared kernel | Accepted |
 | [ADR-020](ADR-020-invariants-vs-diagnostics.md) | Invariants vs diagnostics model | Accepted |
+| [ADR-021](ADR-021-bundled-font-ofl.md) | Bundled TAB font under SIL OFL 1.1 (Noto Sans Mono) | Accepted (2026-10-31) |

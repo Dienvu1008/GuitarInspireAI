@@ -1,0 +1,94 @@
+layout strings=6 width=1000.0 height=124.0
+system 0 y=0.0 h=124.0 staff_top=28.0 bars=[0@52.0+234.2 1@286.2+173.8]
+  line String 24.0,28.0 -> 460.0,28.0
+  line String 24.0,40.0 -> 460.0,40.0
+  line String 24.0,52.0 -> 460.0,52.0
+  line String 24.0,64.0 -> 460.0,64.0
+  line String 24.0,76.0 -> 460.0,76.0
+  line String 24.0,88.0 -> 460.0,88.0
+  line BarLine 52.0,28.0 -> 52.0,88.0
+  line Stem 92.2,92.8 -> 92.2,112.8
+  line Stem 121.0,92.8 -> 121.0,112.8
+  line Stem 146.2,92.8 -> 146.2,112.8
+  line Stem 167.8,92.8 -> 167.8,112.8
+  line Stem 185.8,92.8 -> 185.8,112.8
+  line Stem 203.8,92.8 -> 203.8,112.8
+  line Stem 221.8,92.8 -> 221.8,112.8
+  line Stem 245.5,92.8 -> 245.5,112.8
+  line Stem 269.2,92.8 -> 269.2,112.8
+  line Beam 121.0,112.8 -> 146.2,112.8
+  line Beam 167.8,112.8 -> 185.8,112.8
+  line Beam 185.8,112.8 -> 203.8,112.8
+  line Beam 203.8,112.8 -> 221.8,112.8
+  line Beam 167.8,108.6 -> 185.8,108.6
+  line Beam 185.8,108.6 -> 203.8,108.6
+  line Beam 203.8,108.6 -> 221.8,108.6
+  line Beam 245.5,112.8 -> 269.2,112.8
+  line Beam 269.2,108.6 -> 260.8,108.6
+  line BarLine 286.2,28.0 -> 286.2,88.0
+  line BarLine 456.0,28.0 -> 456.0,88.0
+  line ThickBarLine 459.0,28.0 -> 459.0,88.0
+  line Stem 307.4,92.8 -> 307.4,112.8
+  line Stem 333.2,92.8 -> 333.2,112.8
+  line Stem 352.7,92.8 -> 352.7,112.8
+  line Stem 366.5,92.8 -> 366.5,112.8
+  line Stem 380.3,92.8 -> 380.3,112.8
+  line Stem 432.2,92.8 -> 432.2,102.8
+  line Beam 307.4,112.8 -> 333.2,112.8
+  line Beam 352.7,112.8 -> 366.5,112.8
+  line Beam 366.5,112.8 -> 380.3,112.8
+  line Beam 352.7,108.6 -> 366.5,108.6
+  line Beam 366.5,108.6 -> 380.3,108.6
+  line Stem 307.4,23.2 -> 307.4,13.2
+  line Stem 432.2,23.2 -> 432.2,13.2
+  glyph TabClef 42.2,58.0 w=14.0
+  glyph StringName { string: 1, name: "E" } 28.2,28.0 w=7.0
+  glyph StringName { string: 2, name: "B" } 28.2,40.0 w=7.0
+  glyph StringName { string: 3, name: "G" } 28.2,52.0 w=7.0
+  glyph StringName { string: 4, name: "D" } 28.2,64.0 w=7.0
+  glyph StringName { string: 5, name: "A" } 28.2,76.0 w=7.0
+  glyph StringName { string: 6, name: "E" } 28.2,88.0 w=7.0
+  glyph TimeSignature { numerator: 4, denominator: 4 } 64.0,58.0 w=16.0
+  glyph Fret { fret: 2, tied: false, dead: false, let_ring: false } 92.2,76.0 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: false } 92.2,88.0 w=7.0
+  glyph Fret { fret: 0, tied: false, dead: false, let_ring: false } 121.0,28.0 w=7.0
+  glyph Fret { fret: 1, tied: false, dead: false, let_ring: false } 146.2,40.0 w=7.0
+  glyph Fret { fret: 5, tied: false, dead: false, let_ring: false } 167.8,52.0 w=7.0
+  glyph Fret { fret: 7, tied: false, dead: false, let_ring: false } 185.8,52.0 w=7.0
+  glyph Fret { fret: 8, tied: false, dead: false, let_ring: false } 203.8,52.0 w=7.0
+  glyph Fret { fret: 10, tied: false, dead: false, let_ring: false } 221.8,52.0 w=14.0
+  glyph Fret { fret: 12, tied: false, dead: false, let_ring: false } 245.5,64.0 w=14.0
+  glyph Fret { fret: 12, tied: false, dead: false, let_ring: false } 269.2,64.0 w=14.0
+  glyph Dot 250.4,109.2 w=2.0
+  glyph BarNumber { number: 1 } 59.0,18.2 w=7.0
+  glyph Fret { fret: 12, tied: true, dead: false, let_ring: false } 307.4,64.0 w=22.4
+  glyph Fret { fret: 0, tied: false, dead: true, let_ring: false } 333.2,88.0 w=7.0
+  glyph Fret { fret: 0, tied: false, dead: false, let_ring: false } 352.7,28.0 w=7.0
+  glyph Fret { fret: 2, tied: false, dead: false, let_ring: false } 366.5,28.0 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: false } 380.3,28.0 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: false } 432.2,40.0 w=7.0
+  glyph Rest { exponent: 3, dots: 0 } 399.8,104.8 w=7.0
+  glyph Tuplet { actual: 3 } 366.5,122.4 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: false } 307.4,76.0 w=7.0
+  glyph Fret { fret: 5, tied: false, dead: false, let_ring: false } 432.2,76.0 w=7.0
+  hit bar=0 beat v0 #0 x=76.0 w=32.4
+  hit bar=0 beat v0 #1 x=108.4 w=25.2
+  hit bar=0 beat v0 #2 x=133.6 w=25.2
+  hit bar=0 beat v0 #3 x=158.8 w=18.0
+  hit bar=0 beat v0 #4 x=176.8 w=18.0
+  hit bar=0 beat v0 #5 x=194.8 w=18.0
+  hit bar=0 beat v0 #6 x=212.8 w=18.0
+  hit bar=0 beat v0 #7 x=230.8 w=29.4
+  hit bar=0 beat v0 #8 x=260.2 w=18.0
+  hit bar=0 append v0 x=278.2 w=8.0
+  hit bar=1 beat v0 #0 x=294.2 w=26.4
+  hit bar=1 beat v0 #1 x=320.6 w=25.2
+  hit bar=1 beat v0 #2 x=345.8 w=13.8
+  hit bar=1 beat v0 #3 x=359.6 w=13.8
+  hit bar=1 beat v0 #4 x=373.4 w=13.8
+  hit bar=1 beat v0 #5 x=387.2 w=25.2
+  hit bar=1 beat v0 #6 x=412.4 w=39.6
+  hit bar=1 append v0 x=452.0 w=8.0
+  hit bar=1 beat v1 #0 x=294.2 w=26.4
+  hit bar=1 beat v1 #1 x=412.4 w=39.6
+  hit bar=1 append v1 x=452.0 w=8.0

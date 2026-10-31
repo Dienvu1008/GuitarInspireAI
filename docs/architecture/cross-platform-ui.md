@@ -51,7 +51,7 @@ Docking, custom workspaces, mixer and audio timeline are Deferred (post-MVP). Pa
 | Panel layout, theme, shortcuts | Dart preferences | JSON in app data |
 | Playback position | Rust engine stream | Dart renders latest value |
 
-State management library (Riverpod or flutter_bloc): decided at Phase 3 start using the criteria in [technology-evaluation.md](../research/technology-evaluation.md). Projections are cached in Dart keyed by (track, bar range, revision) and invalidated by events.
+State management (Q-12, decided at Phase 3 start): Riverpod (`flutter_riverpod`) without code generation, chosen using the criteria in [technology-evaluation.md](../research/technology-evaluation.md): fakes are injected with provider overrides in widget tests, `StreamProvider` integrates the Rust event stream, and per-feature boilerplate is small. Projections are cached in Dart keyed by (track, bar range, revision) and invalidated by events.
 
 ## 5. TAB rendering
 

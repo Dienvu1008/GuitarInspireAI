@@ -1,0 +1,27 @@
+layout strings=6 width=1000.0 height=124.0
+system 0 y=0.0 h=124.0 staff_top=28.0 bars=[0@52.0+112.0 1@164.0+96.0 2@260.0+96.0 3@356.0+96.0]
+  line String 24.0,28.0 -> 452.0,28.0
+  line String 24.0,40.0 -> 452.0,40.0
+  line String 24.0,52.0 -> 452.0,52.0
+  line String 24.0,64.0 -> 452.0,64.0
+  line String 24.0,76.0 -> 452.0,76.0
+  line String 24.0,88.0 -> 452.0,88.0
+  line BarLine 52.0,28.0 -> 52.0,88.0
+  line BarLine 164.0,28.0 -> 164.0,88.0
+  line BarLine 260.0,28.0 -> 260.0,88.0
+  line BarLine 356.0,28.0 -> 356.0,88.0
+  line BarLine 448.0,28.0 -> 448.0,88.0
+  line ThickBarLine 451.0,28.0 -> 451.0,88.0
+  glyph TabClef 42.2,58.0 w=14.0
+  glyph StringName { string: 1, name: "E" } 28.2,28.0 w=7.0
+  glyph StringName { string: 2, name: "B" } 28.2,40.0 w=7.0
+  glyph StringName { string: 3, name: "G" } 28.2,52.0 w=7.0
+  glyph StringName { string: 4, name: "D" } 28.2,64.0 w=7.0
+  glyph StringName { string: 5, name: "A" } 28.2,76.0 w=7.0
+  glyph StringName { string: 6, name: "E" } 28.2,88.0 w=7.0
+  glyph TimeSignature { numerator: 4, denominator: 4 } 64.0,58.0 w=16.0
+  glyph BarNumber { number: 1 } 59.0,18.2 w=7.0
+  hit bar=0 append v0 x=76.0 w=80.0
+  hit bar=1 append v0 x=172.0 w=80.0
+  hit bar=2 append v0 x=268.0 w=80.0
+  hit bar=3 append v0 x=364.0 w=80.0

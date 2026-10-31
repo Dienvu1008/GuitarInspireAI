@@ -1,0 +1,58 @@
+layout strings=6 width=1000.0 height=124.0
+system 0 y=0.0 h=124.0 staff_top=28.0 bars=[0@52.0+64.4 1@116.4+72.8! 2@189.2+72.8! 3@262.0+62.8! 4@324.8+75.8!]
+  line String 24.0,28.0 -> 400.6,28.0
+  line String 24.0,40.0 -> 400.6,40.0
+  line String 24.0,52.0 -> 400.6,52.0
+  line String 24.0,64.0 -> 400.6,64.0
+  line String 24.0,76.0 -> 400.6,76.0
+  line String 24.0,88.0 -> 400.6,88.0
+  line BarLine 52.0,28.0 -> 52.0,88.0
+  line Stem 92.2,92.8 -> 92.2,112.8
+  line ThickBarLine 117.4,28.0 -> 117.4,88.0
+  line BarLine 120.4,28.0 -> 120.4,88.0
+  line Stem 157.8,92.8 -> 157.8,102.8
+  line BarLine 189.2,28.0 -> 189.2,88.0
+  line BarLine 258.0,28.0 -> 258.0,88.0
+  line ThickBarLine 261.0,28.0 -> 261.0,88.0
+  line Volta 191.2,11.2 -> 260.0,11.2
+  line Volta 191.2,11.2 -> 191.2,18.4
+  line Stem 220.6,92.8 -> 220.6,102.8
+  line BarLine 262.0,28.0 -> 262.0,88.0
+  line Volta 264.0,11.2 -> 322.8,11.2
+  line Volta 264.0,11.2 -> 264.0,18.4
+  line Stem 293.4,92.8 -> 293.4,102.8
+  line BarLine 324.8,28.0 -> 324.8,88.0
+  line BarLine 396.6,28.0 -> 396.6,88.0
+  line ThickBarLine 399.6,28.0 -> 399.6,88.0
+  line Stem 370.7,92.8 -> 370.7,102.8
+  glyph TabClef 42.2,58.0 w=14.0
+  glyph StringName { string: 1, name: "E" } 28.2,28.0 w=7.0
+  glyph StringName { string: 2, name: "B" } 28.2,40.0 w=7.0
+  glyph StringName { string: 3, name: "G" } 28.2,52.0 w=7.0
+  glyph StringName { string: 4, name: "D" } 28.2,64.0 w=7.0
+  glyph StringName { string: 5, name: "A" } 28.2,76.0 w=7.0
+  glyph StringName { string: 6, name: "E" } 28.2,88.0 w=7.0
+  glyph TimeSignature { numerator: 4, denominator: 4 } 64.0,58.0 w=16.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: false } 92.2,28.0 w=7.0
+  glyph BarNumber { number: 1 } 59.0,18.2 w=7.0
+  glyph RepeatDots 123.9,58.0 w=2.0
+  glyph Marker { text: "Intro" } 141.9,4.2 w=35.0
+  glyph Fret { fret: 2, tied: false, dead: false, let_ring: false } 157.8,52.0 w=7.0
+  glyph RepeatDots 254.5,58.0 w=2.0
+  glyph RepeatCount { count: 2 } 252.0,18.4 w=14.0
+  glyph Volta { endings: [1] } 201.7,17.2 w=14.0
+  glyph Fret { fret: 2, tied: false, dead: false, let_ring: false } 220.6,52.0 w=7.0
+  glyph Volta { endings: [2] } 274.5,17.2 w=14.0
+  glyph Fret { fret: 2, tied: false, dead: false, let_ring: false } 293.4,52.0 w=7.0
+  glyph TimeSignature { numerator: 3, denominator: 4 } 336.8,58.0 w=16.0
+  glyph Fret { fret: 2, tied: false, dead: false, let_ring: false } 370.7,52.0 w=7.0
+  hit bar=0 beat v0 #0 x=76.0 w=32.4
+  hit bar=0 append v0 x=108.4 w=8.0
+  hit bar=1 beat v0 #0 x=134.4 w=46.8
+  hit bar=1 append v0 x=181.2 w=8.0
+  hit bar=2 beat v0 #0 x=197.2 w=46.8
+  hit bar=2 append v0 x=244.0 w=18.0
+  hit bar=3 beat v0 #0 x=270.0 w=46.8
+  hit bar=3 append v0 x=316.8 w=8.0
+  hit bar=4 beat v0 #0 x=348.8 w=43.8
+  hit bar=4 append v0 x=392.6 w=8.0

@@ -1,0 +1,310 @@
+pub mod mc_notation
+pub enum mc_notation::GlyphKind
+pub mc_notation::GlyphKind::BarNumber
+pub mc_notation::GlyphKind::BarNumber::number: usize
+pub mc_notation::GlyphKind::Dot
+pub mc_notation::GlyphKind::Fret
+pub mc_notation::GlyphKind::Fret::dead: bool
+pub mc_notation::GlyphKind::Fret::fret: u8
+pub mc_notation::GlyphKind::Fret::let_ring: bool
+pub mc_notation::GlyphKind::Fret::tied: bool
+pub mc_notation::GlyphKind::Marker
+pub mc_notation::GlyphKind::Marker::text: alloc::string::String
+pub mc_notation::GlyphKind::RepeatCount
+pub mc_notation::GlyphKind::RepeatCount::count: u8
+pub mc_notation::GlyphKind::RepeatDots
+pub mc_notation::GlyphKind::Rest
+pub mc_notation::GlyphKind::Rest::dots: u8
+pub mc_notation::GlyphKind::Rest::exponent: u8
+pub mc_notation::GlyphKind::StringName
+pub mc_notation::GlyphKind::StringName::name: alloc::string::String
+pub mc_notation::GlyphKind::StringName::string: u8
+pub mc_notation::GlyphKind::TabClef
+pub mc_notation::GlyphKind::TimeSignature
+pub mc_notation::GlyphKind::TimeSignature::denominator: u8
+pub mc_notation::GlyphKind::TimeSignature::numerator: u8
+pub mc_notation::GlyphKind::Tuplet
+pub mc_notation::GlyphKind::Tuplet::actual: u8
+pub mc_notation::GlyphKind::Volta
+pub mc_notation::GlyphKind::Volta::endings: alloc::vec::Vec<u8>
+impl core::clone::Clone for mc_notation::GlyphKind
+pub fn mc_notation::GlyphKind::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::GlyphKind
+impl core::cmp::PartialEq for mc_notation::GlyphKind
+pub fn mc_notation::GlyphKind::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::GlyphKind
+pub fn mc_notation::GlyphKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::GlyphKind
+impl core::marker::Freeze for mc_notation::GlyphKind
+impl core::marker::Send for mc_notation::GlyphKind
+impl core::marker::Sync for mc_notation::GlyphKind
+impl core::marker::Unpin for mc_notation::GlyphKind
+impl core::marker::UnsafeUnpin for mc_notation::GlyphKind
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::GlyphKind
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::GlyphKind
+pub enum mc_notation::HitTarget
+pub mc_notation::HitTarget::Append
+pub mc_notation::HitTarget::Append::voice: usize
+pub mc_notation::HitTarget::Beat
+pub mc_notation::HitTarget::Beat::beat: usize
+pub mc_notation::HitTarget::Beat::beat_id: mc_score::ids::BeatId
+pub mc_notation::HitTarget::Beat::voice: usize
+impl core::clone::Clone for mc_notation::HitTarget
+pub fn mc_notation::HitTarget::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::HitTarget
+impl core::cmp::PartialEq for mc_notation::HitTarget
+pub fn mc_notation::HitTarget::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::HitTarget
+pub fn mc_notation::HitTarget::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_notation::HitTarget
+pub fn mc_notation::HitTarget::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_notation::HitTarget
+impl core::marker::StructuralPartialEq for mc_notation::HitTarget
+impl core::marker::Freeze for mc_notation::HitTarget
+impl core::marker::Send for mc_notation::HitTarget
+impl core::marker::Sync for mc_notation::HitTarget
+impl core::marker::Unpin for mc_notation::HitTarget
+impl core::marker::UnsafeUnpin for mc_notation::HitTarget
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::HitTarget
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::HitTarget
+pub enum mc_notation::LineKind
+pub mc_notation::LineKind::BarLine
+pub mc_notation::LineKind::Beam
+pub mc_notation::LineKind::Stem
+pub mc_notation::LineKind::String
+pub mc_notation::LineKind::ThickBarLine
+pub mc_notation::LineKind::Volta
+impl core::clone::Clone for mc_notation::LineKind
+pub fn mc_notation::LineKind::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::LineKind
+impl core::cmp::PartialEq for mc_notation::LineKind
+pub fn mc_notation::LineKind::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::LineKind
+pub fn mc_notation::LineKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_notation::LineKind
+pub fn mc_notation::LineKind::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_notation::LineKind
+impl core::marker::StructuralPartialEq for mc_notation::LineKind
+impl core::marker::Freeze for mc_notation::LineKind
+impl core::marker::Send for mc_notation::LineKind
+impl core::marker::Sync for mc_notation::LineKind
+impl core::marker::Unpin for mc_notation::LineKind
+impl core::marker::UnsafeUnpin for mc_notation::LineKind
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::LineKind
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::LineKind
+pub enum mc_notation::NotationError
+pub mc_notation::NotationError::InvalidMetrics(alloc::string::String)
+pub mc_notation::NotationError::Overflow
+pub mc_notation::NotationError::UnknownTrack(mc_score::ids::TrackId)
+impl core::clone::Clone for mc_notation::NotationError
+pub fn mc_notation::NotationError::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::NotationError
+impl core::cmp::PartialEq for mc_notation::NotationError
+pub fn mc_notation::NotationError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_notation::NotationError
+impl core::fmt::Debug for mc_notation::NotationError
+pub fn mc_notation::NotationError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_notation::NotationError
+pub fn mc_notation::NotationError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::NotationError
+impl core::marker::Freeze for mc_notation::NotationError
+impl core::marker::Send for mc_notation::NotationError
+impl core::marker::Sync for mc_notation::NotationError
+impl core::marker::Unpin for mc_notation::NotationError
+impl core::marker::UnsafeUnpin for mc_notation::NotationError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::NotationError
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::NotationError
+pub struct mc_notation::BarLayout
+pub mc_notation::BarLayout::bar: usize
+pub mc_notation::BarLayout::diagnostic: bool
+pub mc_notation::BarLayout::width: f32
+pub mc_notation::BarLayout::x: f32
+impl core::clone::Clone for mc_notation::BarLayout
+pub fn mc_notation::BarLayout::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::BarLayout
+pub fn mc_notation::BarLayout::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::BarLayout
+pub fn mc_notation::BarLayout::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::BarLayout
+impl core::marker::StructuralPartialEq for mc_notation::BarLayout
+impl core::marker::Freeze for mc_notation::BarLayout
+impl core::marker::Send for mc_notation::BarLayout
+impl core::marker::Sync for mc_notation::BarLayout
+impl core::marker::Unpin for mc_notation::BarLayout
+impl core::marker::UnsafeUnpin for mc_notation::BarLayout
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::BarLayout
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::BarLayout
+pub struct mc_notation::Glyph
+pub mc_notation::Glyph::kind: mc_notation::GlyphKind
+pub mc_notation::Glyph::width: f32
+pub mc_notation::Glyph::x: f32
+pub mc_notation::Glyph::y: f32
+impl core::clone::Clone for mc_notation::Glyph
+pub fn mc_notation::Glyph::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Glyph
+pub fn mc_notation::Glyph::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Glyph
+pub fn mc_notation::Glyph::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::Glyph
+impl core::marker::Freeze for mc_notation::Glyph
+impl core::marker::Send for mc_notation::Glyph
+impl core::marker::Sync for mc_notation::Glyph
+impl core::marker::Unpin for mc_notation::Glyph
+impl core::marker::UnsafeUnpin for mc_notation::Glyph
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Glyph
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Glyph
+pub struct mc_notation::HitRegion
+pub mc_notation::HitRegion::bar: usize
+pub mc_notation::HitRegion::rect: mc_notation::Rect
+pub mc_notation::HitRegion::string: u8
+pub mc_notation::HitRegion::target: mc_notation::HitTarget
+impl core::clone::Clone for mc_notation::HitRegion
+pub fn mc_notation::HitRegion::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::HitRegion
+pub fn mc_notation::HitRegion::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::HitRegion
+pub fn mc_notation::HitRegion::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::HitRegion
+impl core::marker::StructuralPartialEq for mc_notation::HitRegion
+impl core::marker::Freeze for mc_notation::HitRegion
+impl core::marker::Send for mc_notation::HitRegion
+impl core::marker::Sync for mc_notation::HitRegion
+impl core::marker::Unpin for mc_notation::HitRegion
+impl core::marker::UnsafeUnpin for mc_notation::HitRegion
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::HitRegion
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::HitRegion
+pub struct mc_notation::LayoutMetrics
+pub mc_notation::LayoutMetrics::above_staff: f32
+pub mc_notation::LayoutMetrics::bar_padding: f32
+pub mc_notation::LayoutMetrics::below_staff: f32
+pub mc_notation::LayoutMetrics::digit_width: f32
+pub mc_notation::LayoutMetrics::duration_spacing: f32
+pub mc_notation::LayoutMetrics::empty_bar_width: f32
+pub mc_notation::LayoutMetrics::glyph_padding: f32
+pub mc_notation::LayoutMetrics::header_width: f32
+pub mc_notation::LayoutMetrics::margin_left: f32
+pub mc_notation::LayoutMetrics::margin_right: f32
+pub mc_notation::LayoutMetrics::min_column_width: f32
+pub mc_notation::LayoutMetrics::repeat_width: f32
+pub mc_notation::LayoutMetrics::stem_length: f32
+pub mc_notation::LayoutMetrics::string_spacing: f32
+pub mc_notation::LayoutMetrics::system_gap: f32
+pub mc_notation::LayoutMetrics::time_signature_width: f32
+pub mc_notation::LayoutMetrics::width: f32
+impl mc_notation::LayoutMetrics
+pub fn mc_notation::LayoutMetrics::content_width(&self) -> f32
+pub fn mc_notation::LayoutMetrics::validate(&self) -> core::result::Result<(), mc_notation::NotationError>
+impl core::clone::Clone for mc_notation::LayoutMetrics
+pub fn mc_notation::LayoutMetrics::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::LayoutMetrics
+pub fn mc_notation::LayoutMetrics::eq(&self, &Self) -> bool
+impl core::default::Default for mc_notation::LayoutMetrics
+pub fn mc_notation::LayoutMetrics::default() -> Self
+impl core::fmt::Debug for mc_notation::LayoutMetrics
+pub fn mc_notation::LayoutMetrics::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::LayoutMetrics
+impl core::marker::StructuralPartialEq for mc_notation::LayoutMetrics
+impl core::marker::Freeze for mc_notation::LayoutMetrics
+impl core::marker::Send for mc_notation::LayoutMetrics
+impl core::marker::Sync for mc_notation::LayoutMetrics
+impl core::marker::Unpin for mc_notation::LayoutMetrics
+impl core::marker::UnsafeUnpin for mc_notation::LayoutMetrics
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::LayoutMetrics
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::LayoutMetrics
+pub struct mc_notation::Line
+pub mc_notation::Line::kind: mc_notation::LineKind
+pub mc_notation::Line::x1: f32
+pub mc_notation::Line::x2: f32
+pub mc_notation::Line::y1: f32
+pub mc_notation::Line::y2: f32
+impl core::clone::Clone for mc_notation::Line
+pub fn mc_notation::Line::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Line
+pub fn mc_notation::Line::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Line
+pub fn mc_notation::Line::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::Line
+impl core::marker::StructuralPartialEq for mc_notation::Line
+impl core::marker::Freeze for mc_notation::Line
+impl core::marker::Send for mc_notation::Line
+impl core::marker::Sync for mc_notation::Line
+impl core::marker::Unpin for mc_notation::Line
+impl core::marker::UnsafeUnpin for mc_notation::Line
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Line
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Line
+pub struct mc_notation::Rect
+pub mc_notation::Rect::h: f32
+pub mc_notation::Rect::w: f32
+pub mc_notation::Rect::x: f32
+pub mc_notation::Rect::y: f32
+impl mc_notation::Rect
+pub fn mc_notation::Rect::bottom(&self) -> f32
+pub fn mc_notation::Rect::contains(&self, f32, f32) -> bool
+pub fn mc_notation::Rect::right(&self) -> f32
+impl core::clone::Clone for mc_notation::Rect
+pub fn mc_notation::Rect::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Rect
+pub fn mc_notation::Rect::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Rect
+pub fn mc_notation::Rect::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::Rect
+impl core::marker::StructuralPartialEq for mc_notation::Rect
+impl core::marker::Freeze for mc_notation::Rect
+impl core::marker::Send for mc_notation::Rect
+impl core::marker::Sync for mc_notation::Rect
+impl core::marker::Unpin for mc_notation::Rect
+impl core::marker::UnsafeUnpin for mc_notation::Rect
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Rect
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Rect
+pub struct mc_notation::SystemLayout
+pub mc_notation::SystemLayout::bars: alloc::vec::Vec<mc_notation::BarLayout>
+pub mc_notation::SystemLayout::glyphs: alloc::vec::Vec<mc_notation::Glyph>
+pub mc_notation::SystemLayout::height: f32
+pub mc_notation::SystemLayout::hits: alloc::vec::Vec<mc_notation::HitRegion>
+pub mc_notation::SystemLayout::index: usize
+pub mc_notation::SystemLayout::lines: alloc::vec::Vec<mc_notation::Line>
+pub mc_notation::SystemLayout::staff_top: f32
+pub mc_notation::SystemLayout::y: f32
+impl mc_notation::SystemLayout
+pub fn mc_notation::SystemLayout::end_bar(&self) -> usize
+pub fn mc_notation::SystemLayout::first_bar(&self) -> usize
+pub fn mc_notation::SystemLayout::hit_test(&self, f32, f32, usize) -> core::option::Option<&mc_notation::HitRegion>
+impl core::clone::Clone for mc_notation::SystemLayout
+pub fn mc_notation::SystemLayout::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::SystemLayout
+pub fn mc_notation::SystemLayout::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::SystemLayout
+pub fn mc_notation::SystemLayout::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::SystemLayout
+impl core::marker::Freeze for mc_notation::SystemLayout
+impl core::marker::Send for mc_notation::SystemLayout
+impl core::marker::Sync for mc_notation::SystemLayout
+impl core::marker::Unpin for mc_notation::SystemLayout
+impl core::marker::UnsafeUnpin for mc_notation::SystemLayout
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::SystemLayout
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::SystemLayout
+pub struct mc_notation::TabLayout
+pub mc_notation::TabLayout::height: f32
+pub mc_notation::TabLayout::strings: u8
+pub mc_notation::TabLayout::systems: alloc::vec::Vec<mc_notation::SystemLayout>
+pub mc_notation::TabLayout::track: mc_score::ids::TrackId
+pub mc_notation::TabLayout::width: f32
+impl mc_notation::TabLayout
+pub fn mc_notation::TabLayout::cursor_rect(&self, usize, u8, mc_notation::HitTarget) -> core::option::Option<(usize, mc_notation::Rect)>
+pub fn mc_notation::TabLayout::system_of_bar(&self, usize) -> core::option::Option<usize>
+pub fn mc_notation::TabLayout::visible(&self, f32, f32) -> impl core::iter::traits::iterator::Iterator<Item = &mc_notation::SystemLayout>
+impl core::clone::Clone for mc_notation::TabLayout
+pub fn mc_notation::TabLayout::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::TabLayout
+pub fn mc_notation::TabLayout::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::TabLayout
+pub fn mc_notation::TabLayout::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::TabLayout
+impl core::marker::Freeze for mc_notation::TabLayout
+impl core::marker::Send for mc_notation::TabLayout
+impl core::marker::Sync for mc_notation::TabLayout
+impl core::marker::Unpin for mc_notation::TabLayout
+impl core::marker::UnsafeUnpin for mc_notation::TabLayout
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::TabLayout
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::TabLayout
+pub fn mc_notation::layout_tab(&mc_score::score::Score, mc_score::ids::TrackId, &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::TabLayout, mc_notation::NotationError>
