@@ -1,7 +1,7 @@
 # Dart and Rust Interop Architecture
 
 Purpose: Define how the Flutter app and the Rust Music Core communicate: transport, API surface, commands, queries, events, high-frequency streams, serialization, versioning, contract tests and benchmarks.
-Status: Accepted (approach B). Details marked Proposed depend on spike S1.
+Status: Accepted (approach B), validated by S1 on Windows with the amendments in [ADR-005](decisions/ADR-005-dart-rust-interop-frb.md). Sync vs async `tab_layout`: sync is acceptable for TAB (S4: about 50 µs per system including FFI).
 Related documents: [architecture-overview.md](architecture-overview.md), [score-model-and-undo.md](score-model-and-undo.md), [audio-dsp-architecture.md](audio-dsp-architecture.md), [ADR-005](decisions/ADR-005-dart-rust-interop-frb.md), [ADR-006](decisions/ADR-006-event-model.md), [technical-spikes.md](../research/technical-spikes.md).
 
 ## 1. Alternatives
@@ -105,7 +105,7 @@ pub struct EventEnvelope {
 - Events are invalidation hints. Payloads carry ids and ranges, not content. Dart re-queries projections, so music data is not duplicated in Dart.
 - Resync: if Dart detects a gap in `seq` or a revision older than one it has seen, it discards caches and issues a full resync query (`document_summary` plus visible layout).
 - Errors: command errors are returned as typed `Result` values, never as events.
-- Lifecycle: a stream is created by `document_events(handle, sink)` and closed when the document handle is closed or dropped. Dart cancelling the subscription releases the sink. At most one subscriber per document stream; Dart fans out locally.
+- Lifecycle (revised after S1): a stream is created by `document_events(handle, sink)` and is owned by Rust. It ends when Dart calls an explicit `unsubscribe_events(handle)` or when the document handle is closed or dropped; Rust then drops the sink, which completes the Dart stream. Cancelling the Dart subscription alone does not release the Rust sink, and awaiting that cancel did not complete in S1. At most one subscriber per document stream; Dart fans out locally.
 - No global event bus. Each document session and the audio engine expose their own streams.
 - Backpressure: the document stream is low-rate (one batch per command). If the sink fails (Dart side gone), the session drops the sink and logs.
 
@@ -117,7 +117,7 @@ pub struct EventEnvelope {
 | Tuner reading | 20 to 30 Hz | Hz, nearest note, cents, clarity | Tuner thread, coalesced |
 | Meters (later) | 30 Hz | peak, RMS per channel | Audio control thread |
 
-Rules: latest-value semantics (drop intermediate values, never queue unboundedly); no audio samples cross FFI; RT threads never call frb directly. Waveform or spectrogram views (later) receive pre-reduced data (min/max per pixel column), requested as queries.
+Rules: latest-value semantics (drop intermediate values, never queue unboundedly); no audio samples cross FFI; RT threads never call frb directly; the Dart playback cursor extrapolates from tempo between updates so a single late update does not stall it (S1 saw one 56 ms gap in 10 minutes at 60 Hz). Numeric fields use types that map to Dart `int`; Rust `u64` maps to `BigInt` (S1). Waveform or spectrogram views (later) receive pre-reduced data (min/max per pixel column), requested as queries.
 
 ## 6. API sketches
 

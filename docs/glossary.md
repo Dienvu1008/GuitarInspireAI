@@ -31,7 +31,8 @@ Related documents: [docs/README.md](README.md), [bounded-contexts.md](architectu
 | Pitch class | Pitch modulo octave, 0 to 11. |
 | MIDI note | Integer 0 to 127. A playback and interchange type, not a theory type. |
 | Tuning | Ordered open-string pitches of a fretted instrument. |
-| String index | Position of a string in a tuning. Convention defined in [bounded-contexts.md](architecture/bounded-contexts.md). |
+| String index | Physical position of a string, 1-based. String 1 is the highest-pitched string of the standard layout. Stable under retuning; never renumbered by pitch. See [bounded-contexts.md](architecture/bounded-contexts.md). |
+| Effective bar duration | Playback length of a master bar: the maximum of its nominal length and the longest voice across all tracks. See [domain-invariants.md](architecture/domain-invariants.md) section 4a. |
 | Fret | Integer fret number, 0 means open string. |
 | Capo | Fret offset applied to all strings. |
 | Voicing | A concrete set of string and fret positions realizing a chord. |

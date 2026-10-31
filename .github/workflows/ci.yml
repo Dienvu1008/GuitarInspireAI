@@ -1,0 +1,55 @@
+# Phase 0 CI: governance checks only (no production code exists yet).
+# Active fitness functions: FF-09, FF-10 (cargo-deny), FF-19, FF-20, FF-33 (xtask + mermaid-check).
+# Later phases add jobs as their fitness functions activate (docs/architecture/fitness-functions.md).
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pinned Rust toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+
+      - name: xtask self-tests
+        run: cargo test --package xtask --locked
+
+      - name: Fitness checks (FF-19 trailers, FF-20 inventory, FF-33 links)
+        shell: pwsh
+        env:
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          $base = if ($env:PR_BASE) { $env:PR_BASE } else { $env:PUSH_BEFORE }
+          if ($base) { cargo xtask fitness all --base $base } else { cargo xtask fitness all }
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Mermaid diagrams (FF-33)
+        working-directory: tools/mermaid-check
+        run: |
+          npm ci --no-audit --no-fund
+          node check.mjs ../../docs
+
+  cargo-deny:
+    # cargo-deny-action is a container action and needs a Linux runner.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: cargo-deny (FF-09 licenses, FF-10 advisories and sources)
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check advisories licenses sources bans

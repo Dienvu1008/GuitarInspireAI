@@ -1,0 +1,13 @@
+# Protected paths (GR-13, GR-14, FF-19).
+# A commit that changes any path starting with one of these prefixes must carry
+# the trailer "Architecture-Change: ADR-NNN" referencing an existing ADR file.
+# Changing this file is itself a protected change.
+architecture/
+deny.toml
+clippy.toml
+xtask/src/fitness/
+.github/workflows/
+docs/architecture/dependency-rules.md
+docs/architecture/fitness-functions.md
+docs/architecture/decisions/
+.kiro/steering/architecture-guardrails.md

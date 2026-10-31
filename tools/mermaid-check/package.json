@@ -1,0 +1,13 @@
+{
+  "name": "mermaid-check",
+  "private": true,
+  "type": "module",
+  "description": "FF-33: validates Mermaid diagrams in docs/",
+  "scripts": {
+    "check": "node check.mjs ../../docs"
+  },
+  "dependencies": {
+    "jsdom": "25.0.1",
+    "mermaid": "11.17.2"
+  }
+}

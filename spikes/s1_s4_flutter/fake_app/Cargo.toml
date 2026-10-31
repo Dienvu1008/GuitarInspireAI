@@ -1,0 +1,9 @@
+[package]
+name = "fake_app"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+# Stand-in for mc-app. Deliberately has NO flutter_rust_bridge dependency:
+# S1 checks that frb can mirror these types without annotations here.
+[dependencies]

@@ -1,7 +1,7 @@
 # Audio and DSP Architecture
 
 Purpose: Define the real-time audio design (control plane vs data plane, threads, buffers, timeline swapping, tuner) and separate verified library capabilities from implementation assumptions that Phase 0 spikes must validate.
-Status: Proposed. Becomes Accepted when S2 and S3 pass. Using cpal, rustysynth and rtrb does not by itself guarantee real-time safety.
+Status: Playback design Accepted after S2 (A1 to A3 and A5 to A7 pass; A4 partially met). Tuner design (A8 to A10) Proposed until S3 in Phase 5. Using cpal, rustysynth and rtrb does not by itself guarantee real-time safety; S2 showed that thread priority promotion is also required.
 Related documents: [architecture-overview.md](architecture-overview.md), [interop-architecture.md](interop-architecture.md), [performance-requirements.md](performance-requirements.md), [ADR-007](decisions/ADR-007-audio-thread-isolation.md), [technical-spikes.md](../research/technical-spikes.md), [technology-evaluation.md](../research/technology-evaluation.md).
 
 ## 1. Threads and planes
@@ -43,7 +43,9 @@ Inside RT callbacks:
 - No allocation or deallocation, no locks (`Mutex`, `RwLock`, channel types that may block), no I/O, no logging or formatting, no syscalls that may block, no FFI calls into Dart.
 - Only wait-free ring operations, preallocated buffers, and atomics.
 - Bounded work per callback: messages processed per callback are capped.
-- Panics are caught at the callback boundary; on panic the callback outputs silence and sets an error flag [Proposed; behaviour of unwinding across cpal callback to be checked in S2].
+- Panics are caught at the callback boundary; on panic the callback outputs silence and sets an error flag [Proposed; unwinding across the cpal callback was not tested in S2, check in Phase 4].
+- The callback thread is promoted to real-time scheduling on its first invocation (Windows: MMCSS task "Audio"; see [ADR-007](decisions/ADR-007-audio-thread-isolation.md)). The one-time promotion call uses a preallocated task name and does not allocate.
+- Underruns are detected from callback timing (interval against reported output latency), because cpal reports no xruns on WASAPI shared render.
 
 Enforcement:
 
@@ -63,6 +65,20 @@ Enforcement:
 
 Score edits during playback: recompile and swap; continuity is checked by A6.
 
+## 3a. Timeline semantics (deterministic)
+
+`compile(snapshot, options) -> PerformanceTimeline` in `mc-playback` is a pure function: the same snapshot and options always produce an identical timeline (PB-09). No clocks, randomness or hash-map iteration order are involved.
+
+1. Playback order: master bars are expanded by repeats and alternate endings into a sequence of bar indices. A repeat without an explicit count plays twice. Expansion is capped at 10 000 played bars; beyond the cap compilation stops and returns a `PlaybackWarning`.
+2. Bar timing: each played bar starts at `start(k)` and lasts `E(m)` as defined in [domain-invariants.md](domain-invariants.md) section 4a. All tracks share these start times. Muted tracks contribute to `E(m)`; mute is applied by omitting their note events, not by changing timing.
+3. Ticks: score positions are rationals of a whole note. The timeline uses an integer `ticks_per_whole` equal to the least common multiple of all denominators of positions and durations in the snapshot. If that exceeds 2^20, it falls back to 215 040 (2^11 x 3 x 5 x 7, which is exact for base values down to 1/256 with up to three dots, combined with triplet, sextuplet, quintuplet and septuplet ratios; other tuplets such as 9:8 are rounded) and positions are rounded down to the nearest tick, with a `PlaybackWarning` listing the affected bars. Ticks are `i64`.
+4. Note events: note on at `start(k) + beat onset`. Note off at the end of the beat duration, extended across tie chains to the end of the last tied note. Let ring (when supported) extends the note off to the next onset on the same string in the same track, or to the end of the played bar, whichever comes first.
+5. Same-tick ordering: note off, then tempo, then program change, then note on. Ties within a category are ordered by track index, then voice index, then string index.
+6. Tempo: tempo map entries are converted to ticks. Seconds are derived by piecewise integration over tempo segments. The user tempo factor scales all tempos uniformly. Tick to sample conversion uses integer arithmetic (`u128` intermediates) with rounding down, so sample positions are reproducible on every platform.
+7. Pitch: sounding pitch comes from tuning, capo and fret. Pitches outside MIDI 0 to 127 are omitted with D-05 warnings.
+
+Tests: PB-09 (determinism), timeline variants of PB-02, PB-04 and PB-07, a golden timeline for the reference scores, and a property test that every note on has exactly one later or equal note off on the same channel and key. All are Phase 4 `mc-playback` tests; the bar timing rules they depend on are tested in Phase 1 (PB-01 to PB-08).
+
 ## 4. Tuner design
 
 - Input callback copies frames (mono mix) into a preallocated SPSC ring. Nothing else.
@@ -81,14 +97,14 @@ Verified (from READMEs and registry metadata, see [technology-evaluation.md](../
 | rtrb | Real-time-safe wait-free SPSC ring buffer, MIT OR Apache-2.0, maintained (release 2026-10) |
 | assert_no_alloc | Aborts or warns on allocation in marked scopes; disabled in release by default |
 
-Assumptions that must be validated (none are verified):
+Assumptions and their M0 status (measured values in [technical-spikes.md](../research/technical-spikes.md) S2 results): A1, A2, A3, A5, A6 and A7 pass; A4 is partially met (priority promotion required, rare OS stalls up to 44 ms remain); A8 to A10 are untested until S3.
 
 | Id | Assumption | Spike | Measurable criterion |
 |---|---|---|---|
 | A1 | rustysynth `render`, `note_on`, `note_off` do not allocate or lock after construction | S2 | assert_no_alloc passes over 10 min playback of the reference score including program changes |
 | A2 | The cpal WASAPI path does not block our callback beyond the buffer period | S2 | Callback p99 duration under 50 percent of buffer period |
 | A3 | rtrb push and pop do not allocate | S2 | assert_no_alloc passes |
-| A4 | No underruns during 10 min playback while the UI scrolls a large score | S2 | Zero gaps detected via callback timestamp deltas and stream error callbacks |
+| A4 | No underruns during 10 min playback under concurrent CPU load (S2 simulates UI load with busy threads; the real UI load case is repeated in Phase 4 with FF-18) | S2 | Zero gaps detected via callback timestamp deltas and stream error callbacks |
 | A5 | WASAPI shared-mode output latency is acceptable; whether cpal exposes exclusive mode or honors `BufferSize::Fixed` on WASAPI is unknown | S2 | Playback start under 100 ms perceived; output latency measured and recorded on reference machine |
 | A6 | Timeline swap during playback causes no glitch, no allocation in callback and correct cursor continuity | S2 | 100 swaps during playback: zero gaps, cursor tick monotonic, assert_no_alloc passes |
 | A7 | Rendering at device rate handles 44.1 and 48 kHz devices | S2 | Correct pitch (A4 renders 440 Hz within 1 cent) at both rates |
@@ -120,7 +136,7 @@ If A1 fails: preallocate voices via settings, patch or fork rustysynth, or repla
 
 ## 8. Platform notes
 
-- Windows (MVP): WASAPI shared mode. ASIO only as optional developer feature (requires ASIO SDK and drivers; licensing of the ASIO SDK [To verify]).
+- Windows (MVP): WASAPI shared mode. On the reference machine the period is fixed at 480 frames (10 ms) at 48 kHz and `BufferSize::Fixed` is not honored [Verified: S2]. Reported output latency was 33 to 53 ms. ASIO only as optional developer feature (requires ASIO SDK and drivers; licensing of the ASIO SDK [To verify]).
 - macOS: CoreAudio; cpal README lists macOS 14.2 minimum [Verified: README], which may constrain supported macOS versions [To verify impact].
 - Linux: ALSA dev libs required at build time; PipeWire optional.
 - Android: AAudio (API 26+). iOS: AVAudioSession configuration needed outside cpal [Assumption]; S12.

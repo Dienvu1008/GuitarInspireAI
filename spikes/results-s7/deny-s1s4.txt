@@ -1,0 +1,171 @@
+﻿cargo : warning[no-license-field]: license expression was not specified in manifest for crate 'allo-isolate = 0.1.27'
+At line:1 char:298
++ ... $m = $pair; cargo deny --manifest-path $m --config $cfg check --show- ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning[no-lice...olate = 0.1.27':String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ Γö£ allo-isolate v0.1.27
+   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0
+       ΓööΓöÇΓöÇ rust_lib_s1_s4_flutter v0.1.0
+
+warning[no-license-field]: license expression was not specified in manifest for crate 'rust_lib_s1_s4_flutter = 0.1.0'
+ Γö£ rust_lib_s1_s4_flutter v0.1.0
+
+warning[unlicensed]: a valid license expression could not be retrieved for the crate
+  ΓöîΓöÇ path+file:///C:/Users/Dienv/Desktop/My%20Projects/GuitarInspireAI/spikes/s1_s4_flutter/rust#rust_lib_s1_s4_flutter@0.1.
+0-synthesized.toml:2:9
+  Γöé
+2 Γöé name = "rust_lib_s1_s4_flutter"
+  Γöé         ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+  Γöé
+  Γö£ rust_lib_s1_s4_flutter v0.1.0 (*)
+
+error[unlicensed]: rust_lib_s1_s4_flutter = 0.1.0 is unlicensed
+ Γö£ rust_lib_s1_s4_flutter v0.1.0 (*)
+
+error[rejected]: failed to satisfy license requirements
+   ΓöîΓöÇ C:\Users\Dienv\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\unicode-ident-1.0.12\Cargo.toml:30:36
+   Γöé
+30 Γöé license = "(MIT OR Apache-2.0) AND Unicode-DFS-2016"
+   Γöé            
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü
+   Γöé                                    Γöé
+   Γöé                                    rejected: license is not explicitly allowed
+   Γöé
+   Γö£ Unicode-DFS-2016 - Unicode License Agreement - Data Files and Software (2016):
+   Γö£   - OSI approved
+   Γö£ unicode-ident v1.0.12
+     Γö£ΓöÇΓöÇ proc-macro2 v1.0.70
+     Γöé   Γö£ΓöÇΓöÇ delegate-attr v0.3.0
+     Γöé   Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0
+     Γöé   Γöé       ΓööΓöÇΓöÇ rust_lib_s1_s4_flutter v0.1.0
+     Γöé   Γö£ΓöÇΓöÇ flutter_rust_bridge_macros v2.13.0
+     Γöé   Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé   Γö£ΓöÇΓöÇ futures-macro v0.3.29
+     Γöé   Γöé   ΓööΓöÇΓöÇ futures-util v0.3.29
+     Γöé   Γöé       Γö£ΓöÇΓöÇ futures v0.3.29
+     Γöé   Γöé       Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé   Γöé       ΓööΓöÇΓöÇ futures-executor v0.3.29
+     Γöé   Γöé           ΓööΓöÇΓöÇ futures v0.3.29 (*)
+     Γöé   Γö£ΓöÇΓöÇ quote v1.0.33
+     Γöé   Γöé   Γö£ΓöÇΓöÇ delegate-attr v0.3.0 (*)
+     Γöé   Γöé   Γö£ΓöÇΓöÇ flutter_rust_bridge_macros v2.13.0 (*)
+     Γöé   Γöé   Γö£ΓöÇΓöÇ futures-macro v0.3.29 (*)
+     Γöé   Γöé   Γö£ΓöÇΓöÇ syn v2.0.39
+     Γöé   Γöé   Γöé   Γö£ΓöÇΓöÇ delegate-attr v0.3.0 (*)
+     Γöé   Γöé   Γöé   Γö£ΓöÇΓöÇ flutter_rust_bridge_macros v2.13.0 (*)
+     Γöé   Γöé   Γöé   Γö£ΓöÇΓöÇ futures-macro v0.3.29 (*)
+     Γöé   Γöé   Γöé   Γö£ΓöÇΓöÇ wasm-bindgen-backend v0.2.92
+     Γöé   Γöé   Γöé   Γöé   ΓööΓöÇΓöÇ wasm-bindgen-macro-support v0.2.92
+     Γöé   Γöé   Γöé   Γöé       ΓööΓöÇΓöÇ wasm-bindgen-macro v0.2.92
+     Γöé   Γöé   Γöé   Γöé           ΓööΓöÇΓöÇ wasm-bindgen v0.2.92
+     Γöé   Γöé   Γöé   Γöé               Γö£ΓöÇΓöÇ console_error_panic_hook v0.1.7
+     Γöé   Γöé   Γöé   Γöé               Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé   Γöé   Γöé   Γöé               Γö£ΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé   Γöé   Γöé   Γöé               Γö£ΓöÇΓöÇ js-sys v0.3.69
+     Γöé   Γöé   Γöé   Γöé               Γöé   Γö£ΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé   Γöé   Γöé   Γöé               Γöé   Γö£ΓöÇΓöÇ wasm-bindgen-futures v0.4.42
+     Γöé   Γöé   Γöé   Γöé               Γöé   Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé   Γöé   Γöé   Γöé               Γöé   ΓööΓöÇΓöÇ web-sys v0.3.66
+     Γöé   Γöé   Γöé   Γöé               Γöé       Γö£ΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé   Γöé   Γöé   Γöé               Γöé       ΓööΓöÇΓöÇ wasm-bindgen-futures v0.4.42 (*)
+     Γöé   Γöé   Γöé   Γöé               Γö£ΓöÇΓöÇ wasm-bindgen-futures v0.4.42 (*)
+     Γöé   Γöé   Γöé   Γöé               ΓööΓöÇΓöÇ web-sys v0.3.66 (*)
+     Γöé   Γöé   Γöé   ΓööΓöÇΓöÇ wasm-bindgen-macro-support v0.2.92 (*)
+     Γöé   Γöé   Γö£ΓöÇΓöÇ wasm-bindgen-backend v0.2.92 (*)
+     Γöé   Γöé   Γö£ΓöÇΓöÇ wasm-bindgen-macro v0.2.92 (*)
+     Γöé   Γöé   ΓööΓöÇΓöÇ wasm-bindgen-macro-support v0.2.92 (*)
+     Γöé   Γö£ΓöÇΓöÇ syn v2.0.39 (*)
+     Γöé   Γö£ΓöÇΓöÇ wasm-bindgen-backend v0.2.92 (*)
+     Γöé   ΓööΓöÇΓöÇ wasm-bindgen-macro-support v0.2.92 (*)
+     ΓööΓöÇΓöÇ syn v2.0.39 (*)
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:18:6
+   Γöé
+18 Γöé     "BSD-1-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:19:6
+   Γöé
+19 Γöé     "BSD-2-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:20:6
+   Γöé
+20 Γöé     "BSD-3-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:25:6
+   Γöé
+25 Γöé     "CC0-1.0",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:21:6
+   Γöé
+21 Γöé     "ISC",
+   Γöé      ΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:24:6
+   Γöé
+24 Γöé     "Unicode-3.0",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+error[wildcard]: found 1 wildcard dependency for crate 'rust_lib_s1_s4_flutter'
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\spikes\s1_s4_flutter\rust\Cargo.toml:11:12
+   Γöé
+11 Γöé fake_app = { path = "../fake_app" }
+   Γöé            ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü wildcard dependency
+   Γöé
+   Γö£ rust_lib_s1_s4_flutter v0.1.0
+
+error[unmaintained]: adler crate is unmaintained, use adler2 instead
+  ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\spikes\s1_s4_flutter\rust/Cargo.lock:2:1
+  Γöé
+2 Γöé adler 1.0.2 registry+https://github.com/rust-lang/crates.io-index
+  Γöé ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓö
+üΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmaintained advisory detected
+  Γöé
+  Γö£ ID: RUSTSEC-2025-0056
+  Γö£ Advisory: https://rustsec.org/advisories/RUSTSEC-2025-0056
+  Γö£ The `adler` crate is no longer actively maintained. If you rely on this crate, consider switching to a maintained 
+alternative.
+    
+    ## Recommended alternatives
+    
+    - [`adler2`](https://crates.io/crates/adler2)
+  Γö£ Announcement: https://github.com/jonas-schievink/adler
+  Γö£ Solution: No safe upgrade is available!
+  Γö£ adler v1.0.2
+    ΓööΓöÇΓöÇ miniz_oxide v0.7.1
+        ΓööΓöÇΓöÇ backtrace v0.3.69
+            Γö£ΓöÇΓöÇ allo-isolate v0.1.27
+            Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0
+            Γöé       ΓööΓöÇΓöÇ rust_lib_s1_s4_flutter v0.1.0
+            ΓööΓöÇΓöÇ tokio v1.34.0
+                ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+
+error[yanked]: detected yanked crate (try `cargo update -p futures-util`)
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\spikes\s1_s4_flutter\rust/Cargo.lock:37:1
+   Γöé
+37 Γöé futures-util 0.3.29 registry+https://github.com/rust-lang/crates.io-index
+   Γöé ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓ
+öüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü yanked version
+   Γöé
+   Γö£ futures-util v0.3.29
+     Γö£ΓöÇΓöÇ futures v0.3.29
+     Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0
+     Γöé       ΓööΓöÇΓöÇ rust_lib_s1_s4_flutter v0.1.0
+     ΓööΓöÇΓöÇ futures-executor v0.3.29
+         ΓööΓöÇΓöÇ futures v0.3.29 (*)
+
+ advisories FAILED: 2 errors, 0 warnings, 0 notes
+       bans FAILED: 1 errors, 0 warnings, 0 notes
+   licenses FAILED: 2 errors, 9 warnings, 81 notes
+        sources ok: 0 errors, 0 warnings, 0 notes

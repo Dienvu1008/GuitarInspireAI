@@ -4,7 +4,7 @@ Purpose: Entry point and navigation for the architecture, research and roadmap p
 Status: Accepted (documentation baseline, pre-implementation).
 Related documents: [Glossary](glossary.md), [Architecture summary](architecture/README.md), [Roadmap](roadmap/README.md).
 
-This package is documentation only. No application code, crates, packages, CI configuration or spike code exist yet. Phase 0 work and technical spikes are roadmap activities described in [implementation-phases.md](roadmap/implementation-phases.md) and [technical-spikes.md](research/technical-spikes.md).
+This package is the accepted pre-implementation baseline (2026-10-31). M0 is complete: governance tooling (`xtask`, `architecture/`, `deny.toml`, CI workflow) and throwaway spikes (`spikes/`) exist; no production crates or packages exist yet. Results: [m0-exit-report.md](roadmap/m0-exit-report.md).
 
 ## Conventions
 
@@ -55,6 +55,7 @@ This package is documentation only. No application code, crates, packages, CI co
 - [milestones.md](roadmap/milestones.md): M0 to M5 and later.
 - [risk-register.md](roadmap/risk-register.md): risks.
 - [dependency-map.md](roadmap/dependency-map.md): phase and spike dependencies.
+- [m0-exit-report.md](roadmap/m0-exit-report.md): M0 results and Phase 1 recommendation.
 
 ### Research
 - [technology-evaluation.md](research/technology-evaluation.md): libraries and tools.

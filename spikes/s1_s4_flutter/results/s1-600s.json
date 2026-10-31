@@ -1,0 +1,51 @@
+{
+  "execute_threadpool_us": {
+    "n": 10000,
+    "p50": 39,
+    "p99": 160,
+    "max": 789
+  },
+  "execute_async_rust_us": {
+    "n": 10000,
+    "p50": 41,
+    "p99": 208,
+    "max": 2056
+  },
+  "sync_query_us": {
+    "n": 10000,
+    "p50": 1,
+    "p99": 3,
+    "max": 310
+  },
+  "mirrored_payload_enum_ok": true,
+  "events": {
+    "expected": 20501,
+    "received": 20502,
+    "gapless_in_order": true,
+    "first_seq": 1,
+    "last_seq": 20502
+  },
+  "dart_cancel_completes_while_rust_holds_sink": false,
+  "events_delivered_after_cancel": 0,
+  "position_stream": {
+    "seconds": 600,
+    "received": 36000,
+    "expected": 36000,
+    "avg_rate_hz": 59.999997233256614,
+    "gap_us": {
+      "n": 35999,
+      "p50": 16635,
+      "p99": 17596,
+      "max": 56053
+    },
+    "gaps_over_50ms": 1
+  },
+  "ui_frames_during_stream_after_2s_warmup": {
+    "n": 43209,
+    "p50": 511,
+    "p99": 2309,
+    "max": 22153,
+    "over_16ms": 1,
+    "over_33ms": 0
+  }
+}

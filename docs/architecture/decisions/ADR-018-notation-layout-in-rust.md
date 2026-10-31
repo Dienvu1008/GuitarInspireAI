@@ -1,6 +1,6 @@
 # ADR-018 Notation layout in Rust, painting in Flutter
 
-Status: Proposed (Accepted when S4 passes)
+Status: Accepted (2026-10-31, after S4)
 Date: 2026-10-31
 Related documents: [cross-platform-ui.md](../cross-platform-ui.md), [bounded-contexts.md](../bounded-contexts.md), [technical-spikes.md](../../research/technical-spikes.md)
 
@@ -14,7 +14,7 @@ TAB layout logic (spacing, beaming, system breaking) is music logic that a CLI, 
 Layout in Dart; Rust renders pixels into a texture; third-party engraving engine (Verovio, LGPL-3.0 [To verify]).
 
 ## Trade-offs
-Reusable, testable layout (golden display lists), at the cost of a metrics contract between Dart and Rust and projection payload sizes.
+Reusable, testable layout (golden display lists), at the cost of a metrics contract between Dart and Rust and projection payload sizes. S4 measured the cost as negligible for TAB: 5 µs layout per 4-bar system in Rust, about 50 µs including FFI, 1.5 KB payload per system as typed arrays, and frame p99 under 12 ms while scrolling 500 bars. Synchronous layout calls from `build` are acceptable at this cost. Standard notation (Phase 6c) has much denser output and must be re-measured.
 
 ## Consequences
 Golden tests of layout output in Rust. PDF export can reuse the display list.

@@ -10,6 +10,16 @@ The project license is undecided (user decision). The code base must remain dist
 ## Decision
 Allow-list: MIT, Apache-2.0, BSD-1/2/3-Clause, ISC, Zlib, Unlicense, Unicode-3.0, CC0-1.0. Any other license (GPL, LGPL, MPL, AGPL, custom, data licenses for SoundFonts and models) requires an ADR evaluating usage category (learn, implement format, link, copy), isolation options and distribution impact. Copying code from copyleft projects is prohibited. Bundled data (SoundFonts, models) follows the same policy. The project license itself is not chosen by this ADR.
 
+## S7 audit result (2026-10-31)
+
+- The allow-list is unchanged. Every recommended Phase 1 to 5 dependency tree measured in M0 passes (see [technical-spikes.md](../../research/technical-spikes.md) S7). Non-listed licenses appear only as `OR` alternatives that resolve to listed ones.
+- `deny.toml` now sets `allow-wildcard-paths = true` so internal path dependencies of unpublished crates pass the wildcard ban.
+- Pending user decision: cpal's optional `realtime` feature depends on `audio_thread_priority` (MPL-2.0). Evaluation, which is technical and not legal advice:
+  - Usage category: (c) linking an unmodified library.
+  - MPL-2.0 is file-level copyleft. Distributing a binary requires making the source of the MPL-covered files available (for an unmodified crate this can point to the published source) and keeping its notices. It does not extend to our own files, and it allows combination with proprietary or permissively licensed code.
+  - Alternative measured as technically equivalent in S2: calling `AvSetMmThreadCharacteristicsW` directly through `windows-sys` (MIT OR Apache-2.0), about 20 lines on Windows. Other platforms would need their own small implementations later.
+  - Recommendation: use the own implementation and keep MPL-2.0 out of the allow-list. The user may instead accept MPL-2.0 for this single crate by ADR amendment.
+
 ## Alternatives
 Allow LGPL with dynamic linking; decide project license first.
 
