@@ -1,0 +1,88 @@
+﻿cargo : warning[no-license-field]: license expression was not specified in manifest for crate 'allo-isolate = 0.1.27'
+At line:1 char:360
++ ... toml).Path; cargo deny --manifest-path Cargo.toml --config $cfg check ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning[no-lice...olate = 0.1.27':String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ Γö£ allo-isolate v0.1.27
+   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0
+       ΓööΓöÇΓöÇ rust_lib_s1_s4_flutter v0.1.0
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:18:6
+   Γöé
+18 Γöé     "BSD-1-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:19:6
+   Γöé
+19 Γöé     "BSD-2-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:20:6
+   Γöé
+20 Γöé     "BSD-3-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:25:6
+   Γöé
+25 Γöé     "CC0-1.0",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:21:6
+   Γöé
+21 Γöé     "ISC",
+   Γöé      ΓöüΓöüΓöü unmatched license allowance
+
+error[wildcard]: found 1 wildcard dependency for crate 'rust_lib_s1_s4_flutter'
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\spikes\s1_s4_flutter\rust\Cargo.toml:12:12
+   Γöé
+12 Γöé fake_app = { path = "../fake_app" }
+   Γöé            ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü wildcard dependency
+   Γöé
+   Γö£ rust_lib_s1_s4_flutter v0.1.0
+
+warning[duplicate]: found 2 duplicate entries for crate 'syn'
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\spikes\s1_s4_flutter\rust/Cargo.lock:71:1
+   Γöé  
+71 Γöé Γò¡ syn 2.0.119 registry+https://github.com/rust-lang/crates.io-index
+72 Γöé Γöé syn 3.0.9 registry+https://github.com/rust-lang/crates.io-index
+   Γöé Γò░ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓ
+öÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ lock entries
+   Γöé  
+   Γö£ syn v2.0.119
+     ΓööΓöÇΓöÇ flutter_rust_bridge_macros v2.13.0
+         ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0
+             ΓööΓöÇΓöÇ rust_lib_s1_s4_flutter v0.1.0
+   Γö£ syn v3.0.9
+     Γö£ΓöÇΓöÇ delegate-attr v0.3.1
+     Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0
+     Γöé       ΓööΓöÇΓöÇ rust_lib_s1_s4_flutter v0.1.0
+     Γö£ΓöÇΓöÇ futures-macro v0.3.34
+     Γöé   ΓööΓöÇΓöÇ futures-util v0.3.34
+     Γöé       Γö£ΓöÇΓöÇ futures v0.3.34
+     Γöé       Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé       Γö£ΓöÇΓöÇ futures-executor v0.3.34
+     Γöé       Γöé   ΓööΓöÇΓöÇ futures v0.3.34 (*)
+     Γöé       ΓööΓöÇΓöÇ js-sys v0.3.107
+     Γöé           Γö£ΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé           Γö£ΓöÇΓöÇ wasm-bindgen-futures v0.4.80
+     Γöé           Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     Γöé           ΓööΓöÇΓöÇ web-sys v0.3.107
+     Γöé               ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+     ΓööΓöÇΓöÇ wasm-bindgen-macro-support v0.2.130
+         ΓööΓöÇΓöÇ wasm-bindgen-macro v0.2.130
+             ΓööΓöÇΓöÇ wasm-bindgen v0.2.130
+                 Γö£ΓöÇΓöÇ console_error_panic_hook v0.1.7
+                 Γöé   ΓööΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+                 Γö£ΓöÇΓöÇ flutter_rust_bridge v2.13.0 (*)
+                 Γö£ΓöÇΓöÇ js-sys v0.3.107 (*)
+                 Γö£ΓöÇΓöÇ wasm-bindgen-futures v0.4.80 (*)
+                 ΓööΓöÇΓöÇ web-sys v0.3.107 (*)
+
+advisories ok, bans FAILED, licenses ok, sources ok

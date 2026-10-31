@@ -1,0 +1,70 @@
+﻿cargo : warning[license-not-encountered]: license was not encountered
+At line:1 char:298
++ ... $m = $pair; cargo deny --manifest-path $m --config $cfg check --show- ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning[license...not encountered:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:17:6
+   Γöé
+17 Γöé     "Apache-2.0",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:18:6
+   Γöé
+18 Γöé     "BSD-1-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:19:6
+   Γöé
+19 Γöé     "BSD-2-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:20:6
+   Γöé
+20 Γöé     "BSD-3-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:25:6
+   Γöé
+25 Γöé     "CC0-1.0",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:21:6
+   Γöé
+21 Γöé     "ISC",
+   Γöé      ΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:16:6
+   Γöé
+16 Γöé     "MIT",
+   Γöé      ΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:24:6
+   Γöé
+24 Γöé     "Unicode-3.0",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:23:6
+   Γöé
+23 Γöé     "Unlicense",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\deny.toml:22:6
+   Γöé
+22 Γöé     "Zlib",
+   Γöé      ΓöüΓöüΓöüΓöü unmatched license allowance
+
+ advisories ok: 0 errors, 0 warnings, 0 notes
+       bans ok: 0 errors, 0 warnings, 0 notes
+   licenses ok: 0 errors, 10 warnings, 1 notes
+    sources ok: 0 errors, 0 warnings, 0 notes

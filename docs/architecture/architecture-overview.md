@@ -72,7 +72,7 @@ From Phase 6, `mc-project` and `mc-app` also depend on `mc-pattern`. There is no
 | `mc-notation` | Projection | Phase 3 | TAB layout display list | none |
 | `mc-ffi` | Adapter (interop, composition root) | Phase 3 | frb API, DTO mapping, streams | flutter_rust_bridge |
 | `mc-playback` | Domain service (pure) | Phase 4 | Score to PerformanceTimeline, MIDI mapping | midly (in adapter module) |
-| `mc-audio` | Adapter (RT) | Phase 4 | cpal streams, synth, RT queues, tuner thread | cpal, rustysynth, rtrb |
+| `mc-audio` | Adapter (RT) | Phase 4 | cpal streams, synth, RT queues, tuner thread; small Windows-only module for callback thread priority (MMCSS) | cpal (without `realtime`), rustysynth, rtrb, windows-sys (Windows only) |
 | `mc-dsp` | Generic (pure) | Phase 5 | YIN/MPM, FFT wrappers | realfft or rustfft |
 | `mc-pattern` | Domain (supporting) | Phase 6a | Pattern IR and binding | none |
 

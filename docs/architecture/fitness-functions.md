@@ -22,14 +22,14 @@ Planned implementation home: a Rust `xtask` crate (`cargo xtask fitness`) plus c
 | FF-08 | `dart:io` and `Platform` only in `platform` package and `app` | GR-11 | Dart import test | Important | Phase 3 | Binary |
 | FF-09 | License policy (Rust and Dart) | ADR-015 | cargo-deny `licenses` allow-list; Dart license check script over `pubspec.lock` [tool To verify] | Critical | Phase 0 | Allow-list from ADR-015 |
 | FF-10 | Security advisories and sources | Security | cargo-deny `advisories`, `sources` | Important | Phase 0 | Any advisory requires triage within the PR |
-| FF-11 | Project format round-trip suite (9 items) | GR-08, P-01 to P-06 | Rust tests with fixture corpus | Critical | Phase 1 | Binary; fixture corpus is append-only |
+| FF-11 | Project format round-trip suite ([project-format.md](project-format.md) section 14). Item 4 covers U1 detection (4a) and U2 Save As protection (4b) from Phase 1; 4c (U3 full preservation) is added with format 1.1 | GR-08, P-01 to P-06 | Rust tests with fixture corpus | Critical | Phase 1 | Binary; fixture corpus is append-only |
 | FF-12 | Generated bindings in sync | ADR-005 | Run frb codegen, `git diff --exit-code` | Critical | Phase 3 | Binary |
 | FF-13 | Hard invariants hold under random command sequences | H rules | proptest | Critical | Phase 1 | Fixed case count (for example 256 per run in CI, more nightly); seed failures saved as regressions |
 | FF-14 | Undo and redo restore identical state | ADR-016 | proptest | Critical | Phase 1 | Same as FF-13 |
 | FF-15 | Importer and loader fuzzing | GR-09 | cargo-fuzz (Linux CI, scheduled) | Important | Phase 4 | Any crash creates a regression fixture that then becomes part of FF-11 (Critical) |
 | FF-16 | No allocation in RT callback bodies | GR-10 | assert_no_alloc in test harness | Critical | Phase 4 | Binary |
 | FF-17 | RT module forbidden-construct lint | GR-10 | xtask scan of `mc-audio/src/rt/` | Critical | Phase 4 | Binary; list in [audio-dsp-architecture.md](audio-dsp-architecture.md) |
-| FF-18 | Playback glitch test (10 min, UI load simulated) | GR-10, A4 | Scheduled job on a real Windows machine (not hosted CI; hosted runners lack audio devices [Assumption]) | Important | Phase 4 | Zero gaps |
+| FF-18 | Playback glitch test (10 min, UI load simulated). Gaps are detected from callback intervals compared with the reported output latency, because cpal reports no xruns on WASAPI shared render (S2) | GR-10, A4 | Scheduled job on a real Windows machine (not hosted CI; hosted runners lack audio devices [Assumption]) | Important | Phase 4 | Zero callback intervals above the reported output latency; intervals above 1.5x the period are reported. Thresholds from S2 measurements |
 | FF-19 | Protected paths require `Architecture-Change: ADR-NNN` trailer referencing an existing ADR file | GR-13, GR-14 | xtask or CI script on the commit range | Critical | Phase 0 | Binary |
 | FF-20 | Fitness inventory cannot shrink | GR-14 | `architecture/fitness-inventory.toml` lists check ids; xtask verifies each exists and runs; removals require FF-19 trailer | Critical | Phase 0 | Binary |
 | FF-21 | Benchmark regression | Performance | criterion with stored baselines | Important | Phase 1 | More than 10 percent regression in 3 consecutive runs on the reference machine; see [performance-requirements.md](performance-requirements.md) |
@@ -45,6 +45,20 @@ Planned implementation home: a Rust `xtask` crate (`cargo xtask fitness`) plus c
 | FF-31 | Candidate acceptance passes domain validation | GR-04, AI-02 | Integration test with invalid candidate | Critical | Phase 8 | Binary |
 | FF-32 | DTO JSON schema snapshot requires version bump | GR-08 | schemars snapshot test | Critical | Phase 1 | Binary |
 | FF-33 | Documentation links and Mermaid diagrams valid | GR-12 | Link check script, mermaid-cli | Important | Phase 0 | Binary |
+
+## Activation by phase
+
+Fitness functions are implemented when the code they guard first exists. M0 implements only the five Phase 0 checks. The inventory (`architecture/fitness-inventory.toml`) lists all 33 with status `active` or `planned`; FF-20 verifies that every `active` entry is implemented and that no entry is removed or downgraded without an ADR trailer.
+
+| Phase | Checks activated | Count |
+|---|---|---|
+| 0 | FF-09 (Rust part; Dart part in Phase 3), FF-10, FF-19, FF-20, FF-33 | 5 |
+| 1 | FF-01, FF-02, FF-03, FF-04, FF-07, FF-11, FF-13, FF-14, FF-21, FF-22, FF-23, FF-24, FF-27, FF-28, FF-30, FF-32 | 16 |
+| 2 | FF-25, FF-26 | 2 |
+| 3 | FF-05, FF-06, FF-08, FF-12, FF-29 | 5 |
+| 4 | FF-15, FF-16, FF-17, FF-18 | 4 |
+| 8 | FF-31 | 1 |
+| Total | | 33 |
 
 ## Notes on thresholds
 

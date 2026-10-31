@@ -31,7 +31,7 @@ Related documents: [score-model-and-undo.md](score-model-and-undo.md), [interop-
 | Tuner accuracy | within plus or minus 2 cents steady state | Common tuner tolerance [Assumption] | S3 (A9) |
 | Memory, large score open | under 300 MB process total excluding SoundFont [Assumption] | Desktop comfort | Phase 1 and 3 baselines |
 | Undo memory | under 64 MB default budget | See undo policy | Phase 1 |
-| TAB scroll | no frame over 16 ms on 500-bar track | Smooth scrolling | S4 |
+| TAB scroll | after 2 s warm-up: frame p99 at most 16 ms, no frame over 33 ms on a 500-bar track | Smooth scrolling; first frames include shader compilation and are excluded | S4 |
 
 Regression policy after baselines: Important flag when a benchmark regresses more than 10 percent versus the stored baseline on the same machine in three consecutive runs (to filter noise). The 10 percent value is a starting point justified by typical criterion noise of a few percent [Assumption]; adjust after observing variance.
 

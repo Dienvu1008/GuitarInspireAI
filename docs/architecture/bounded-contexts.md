@@ -21,7 +21,7 @@ Type names are illustrative, not final API.
 
 Kernel bloat rule (enforced by review, GR-13): only value objects and pure arithmetic. Any search, optimization or catalogue (voicing search, fingering cost, instrument technique lists) belongs to its owning context.
 
-String index convention (Proposed): `StringIndex(1)` is the highest-pitched string, matching standard TAB numbering. Stored as `u8`, 1-based. Confirm in [open-questions.md](../research/open-questions.md) Q-07.
+String index convention (Accepted, Q-07): `StringIndex(1)` is the highest-pitched string of the standard layout, matching conventional guitar and TAB numbering. Stored as `u8`, 1-based. String numbers are physical positions: they stay stable when the tuning changes and are never renumbered by pitch (for example, in an unusual tuning where string 2 is tuned above string 1, numbering does not change).
 
 ## 2. Composition (`mc-score`, core domain)
 

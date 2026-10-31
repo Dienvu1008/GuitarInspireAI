@@ -1,0 +1,46 @@
+{
+  "bars": 500,
+  "notes": 9615,
+  "systems": 125,
+  "window": "Instance of 'Size'",
+  "pass1_down_layout_on_first_visit": {
+    "n": 1467,
+    "p50": 5630,
+    "p99": 11258,
+    "max": 17411,
+    "over_16ms": 1,
+    "over_33ms": 0
+  },
+  "layout_call_us_with_ffi": {
+    "n": 125,
+    "p50": 29,
+    "p99": 46,
+    "max": 94
+  },
+  "layout_rust_us": {
+    "n": 125,
+    "p50": 3,
+    "p99": 5,
+    "max": 8
+  },
+  "payload_bytes_per_system": {
+    "n": 125,
+    "p50": 1500,
+    "p99": 2080,
+    "max": 2143
+  },
+  "pass2_up_no_cache": {
+    "n": 1537,
+    "p50": 5574,
+    "p99": 9830,
+    "max": 12107,
+    "over_16ms": 0,
+    "over_33ms": 0
+  },
+  "pass2_layout_call_us_with_ffi": {
+    "n": 125,
+    "p50": 29,
+    "p99": 56,
+    "max": 111
+  }
+}

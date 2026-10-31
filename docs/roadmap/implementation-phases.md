@@ -33,7 +33,7 @@ All estimates are FTE weeks for one developer. Research items are timeboxed and 
 - Objective: Remove the highest architectural uncertainties before production code.
 - Scope: Repository and CI skeleton (Windows runner), cargo-deny configuration, protected-path trailer check (FF-19), fitness inventory (FF-20), docs link and Mermaid check (FF-33), steering file, reference machine record; spikes S1, S2, S4, S5, S7. No production crates.
 - Dependencies: This documentation package.
-- Architectural prerequisites: ADR-001 to ADR-020 reviewed by the user; Q-07 and Q-09 answered if possible.
+- Architectural prerequisites: ADR-001 to ADR-020 reviewed by the user; Q-07, Q-09 and Q-17 answered (done).
 - Deliverables: CI pipeline running governance checks; spike result notes; ADR-005, ADR-007 (partly), ADR-008 and ADR-018 moved to Accepted or revised; SoundFont choice.
 - Technical risks: frb build issues on Windows (R-01), RT safety of synth (R-02), canvas performance (R-03).
 - Acceptance criteria: Each spike has a recorded result against its success criteria; CI fails on a deliberately added forbidden dependency and on a protected-path change without trailer.
@@ -48,8 +48,8 @@ All estimates are FTE weeks for one developer. Research items are timeboxed and 
 - Dependencies: Phase 0.
 - Architectural prerequisites: ADR-008, ADR-011, ADR-016, ADR-019, ADR-020; FF-01 to FF-04, FF-11, FF-13, FF-14, FF-32 activated.
 - Deliverables: Crates above; fixture corpus v1.0; criterion benchmarks with baselines; reference score generator.
-- Technical risks: Unknown-field preservation complexity (R-06); rational arithmetic overflow; undo memory (R-07).
-- Acceptance criteria: All H rules covered by tests (FF-24 report clean for H rules); round-trip suite items 1 to 8 pass; CLI can build the large reference score and round-trip it; benchmarks recorded.
+- Technical risks: Unknown content handling (R-06); rational arithmetic overflow; undo memory (R-07).
+- Acceptance criteria: All H rules covered by tests (FF-24 report clean for H rules); PB-01 to PB-08 (effective bar duration) pass; round-trip suite items 1 to 8 pass, with item 4 at levels 4a (U1 detection) and 4b (U2 Save As protection) only (4c and U3 come with format 1.1); CLI can build the large reference score and round-trip it; benchmarks recorded.
 - Testing strategy: Unit, proptest command sequences, golden files, malicious ZIP fixtures.
 - Estimated complexity: Medium.
 - Exit criteria: Milestone M1.
@@ -75,7 +75,7 @@ All estimates are FTE weeks for one developer. Research items are timeboxed and 
 - Architectural prerequisites: ADR-002, ADR-004, ADR-005, ADR-006, ADR-018 accepted; Q-12 decided; FF-05, FF-06, FF-08, FF-12 activated.
 - Deliverables: Windows app build; Dart contract tests against fake and real implementations; layout golden tests.
 - Technical risks: Editor UX effort underestimated (R-04), layout metrics coupling (R-05), frb build complexity (R-01).
-- Acceptance criteria: User can create a 2-track song, enter notes by keyboard, undo and redo, save, reopen identically, recover after a forced kill; edit feedback within budget on the typical score.
+- Acceptance criteria: User can create a 2-track song, switch the active TAB track from the track list, enter notes by keyboard, undo and redo, save, reopen identically, recover after a forced kill; edit feedback within budget on the typical score.
 - Testing strategy: Rust layout goldens, Dart widget tests with fakes, integration tests on Windows, manual exploratory test script.
 - Estimated complexity: High.
 - Exit criteria: Milestone M3.
@@ -86,9 +86,9 @@ All estimates are FTE weeks for one developer. Research items are timeboxed and 
 - Scope: `mc-playback` (timeline compile, tempo map, MIDI mapping), `mc-audio` (cpal output, rustysynth, rings, control thread), transport UI and position stream, MIDI import (with string assignment and report) and export.
 - Dependencies: Phase 3 (UI), S2 results.
 - Architectural prerequisites: ADR-007 accepted; FF-15 to FF-18 activated.
-- Deliverables: Playback in the app; MIDI adapters with fixtures; glitch test procedure.
+- Deliverables: Playback in the app; MIDI adapters with fixtures; glitch test procedure based on callback timing; Windows MMCSS thread promotion in `mc-audio`; bundled FluidR3 GM with its original license text and a provenance record (source, version, SHA-256) (ADR-015).
 - Technical risks: RT glitches (R-02), device handling (R-08), MIDI string assignment quality (R-10).
-- Acceptance criteria: A1 to A7 hold in the product build; play, stop, seek, tempo factor and mute work; MIDI round trip preserves pitches and rhythm within reported quantization.
+- Acceptance criteria: A1 to A7 hold in the product build; all tracks play simultaneously regardless of the displayed track; play, stop, seek, tempo factor and per-track mute work; PB-09 and timeline variants of PB-02, PB-04 and PB-07 pass; MIDI round trip preserves pitches and rhythm within reported quantization.
 - Testing strategy: Timeline unit tests, assert_no_alloc tests, fuzzing of MIDI import, manual glitch test.
 - Estimated complexity: Medium to high.
 - Exit criteria: Milestone M4.
@@ -111,7 +111,7 @@ All estimates are FTE weeks for one developer. Research items are timeboxed and 
 Sub-phases can be reordered by user priority.
 
 - 6a Pattern engine: Objective: reusable patterns bound to chords. Prerequisites: Q-01 to Q-06 answered, example corpus. Deliverables: `mc-pattern`, text front end, bind to score fragment. Acceptance: example corpus produces expected TAB. Complexity: Medium.
-- 6b Multi-track polish and MusicXML export: simultaneous multi-track view, track mixer basics, MusicXML export with ExportReport. Complexity: Medium.
+- 6b Multi-track polish and MusicXML export: simultaneous multi-track notation display (deferred from MVP by Q-17), track mixer basics, MusicXML export with ExportReport. Complexity: Medium.
 - 6c Standard notation and PDF: entry gate S11. High uncertainty; engraving quality is a long tail. Complexity: High.
 - 6d Guitar Pro import: entry gate S10. Acceptance: fixture files of each supported version import with reports. Complexity: Medium to high with format risk.
 

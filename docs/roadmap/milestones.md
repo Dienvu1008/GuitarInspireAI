@@ -15,3 +15,5 @@ Related documents: [implementation-phases.md](implementation-phases.md), [roadma
 | M6 and later | Phases 6 to 11 | Defined at each phase entry | Per phase |
 
 Recommended first implementation milestone: M0, with S1, S2, S4 and S5 first because they carry the highest architectural risk.
+
+Status: M0 accepted on 2026-10-31. First CI run (`6dcb8bc`) succeeded; the workflow update in the baseline commit is validated on its push. Evidence: [m0-exit-report.md](m0-exit-report.md). Next milestone: M1.

@@ -12,8 +12,8 @@ A Windows desktop app that validates the architecture end to end and is useful w
 
 | Capability | MVP scope | Not in MVP |
 |---|---|---|
-| TAB editor | One or more fretted tracks; add, select, rename tracks; edit tuning; insert, delete, change notes by keyboard and mouse; rests; durations with dots and triplets; ties; bars with time signature changes; copy and paste within a track; undo and redo; diagnostics shown | Standard notation, effects beyond tie, let ring and dead note, simultaneous multi-track view (unless Q-17 says otherwise), lyrics, repeats editing UI beyond simple start and end |
-| Playback | Play, stop, seek, loop selection [Proposed], tempo factor, per-track mute; SoundFont synth | Mixer, effects, audio tracks, count-in [Proposed later] |
+| TAB editor | Multiple fretted tracks managed in the track list (add, remove, rename, reorder, switch); one active TAB track displayed and edited at a time (Q-17); edit tuning; insert, delete, change notes by keyboard and mouse; rests; durations with dots and triplets; ties; bars with time signature changes; copy and paste within a track; undo and redo; diagnostics shown | Standard notation, effects beyond tie, let ring and dead note, simultaneous multi-track notation display (deferred to Phase 6b), lyrics, repeats editing UI beyond simple start and end |
+| Playback | All tracks play simultaneously, independent of which track is displayed; play, stop, seek, loop selection [Proposed], tempo factor, per-track mute; SoundFont synth | Mixer, effects, audio tracks, count-in [Proposed later] |
 | Project | New, open, save, save as, autosave and crash recovery; MIDI import and export | MusicXML, Guitar Pro, PDF |
 | Tuner | Microphone tuner for the track tuning or standard presets | Polyphonic tuning, calibration beyond A4 reference |
 | Chord finder and fretboard | Chord symbol to voicings, voicing to chord name, fretboard view with scale and chord tones; insert chord into TAB | CAGED explorer, fingering optimization |

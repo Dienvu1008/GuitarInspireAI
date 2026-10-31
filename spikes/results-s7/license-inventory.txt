@@ -1,0 +1,10 @@
+0BSD: 1 crates: adler2 2.0.1
+Apache-2.0: 143 crates
+Apache-2.0 WITH LLVM-exception: 2 crates: linux-raw-sys 0.12.1, rustix 1.1.6
+BSD-2-Clause: 1 crates: mach2 0.6.0
+BSD-3-Clause: 2 crates: num_enum 0.7.6, num_enum_derive 0.7.6
+LGPL-2.1-or-later: 1 crates: r-efi 6.0.0
+MIT: 170 crates
+Unicode-3.0: 1 crates: unicode-ident 1.0.27
+Unlicense: 6 crates
+Zlib: 9 crates

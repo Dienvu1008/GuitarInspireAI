@@ -1,0 +1,10 @@
+[package]
+name = "xtask"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+description = "Repository governance tooling: architecture fitness functions (docs/architecture/fitness-functions.md)."
+
+# Intentionally no dependencies: keeps the governance tool auditable and outside the license surface.
+[dependencies]

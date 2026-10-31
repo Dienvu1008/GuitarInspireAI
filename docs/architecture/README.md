@@ -1,7 +1,7 @@
 # Architecture Summary
 
 Purpose: Executive summary of the architecture, plus the independent review findings and the revisions they caused.
-Status: Accepted as the pre-implementation baseline. Items marked Proposed depend on Phase 0 spikes or user decisions.
+Status: Accepted pre-implementation baseline (2026-10-31, after the final consistency pass). Items marked Proposed depend on Phase 0 spikes. M0 results are in [m0-exit-report.md](../roadmap/m0-exit-report.md).
 Related documents: [docs/README.md](../README.md), [architecture-overview.md](architecture-overview.md), [domain-map.md](domain-map.md), [decisions/README.md](decisions/README.md), [roadmap/README.md](../roadmap/README.md), [open-questions.md](../research/open-questions.md).
 
 ## 1. Recommended architecture
@@ -31,7 +31,7 @@ Music Theory (shared kernel, including fretted-instrument value objects), Compos
 
 ## 4. Critical invariants
 
-Positive rational durations (T-01); unique ids (H-01); track bars aligned with master bars as a v1 model limit (H-02); string and fret ranges (H-03, H-04, H-10); one note per string per beat per voice (H-05); valid ties (H-06); validated loads and imports (P-05, IM-01); candidates only through `AcceptCandidate` (AI-02). Overfull and underfull bars are diagnostics (D-01, Proposed). MIDI range is a playback concern (D-05). Details: [domain-invariants.md](domain-invariants.md).
+Positive rational durations (T-01); unique ids (H-01); track bars aligned with master bars as a v1 model limit (H-02); string and fret ranges (H-03, H-04, H-10); one note per string per beat per voice (H-05); valid ties (H-06); validated loads and imports (P-05, IM-01); candidates only through `AcceptCandidate` (AI-02). Overfull and underfull bars are diagnostics (D-01, Accepted), with playback using the effective master bar duration across all tracks and voices so bars stay globally synchronized. MIDI range is a playback concern (D-05). Details: [domain-invariants.md](domain-invariants.md).
 
 ## 5. Fitness functions
 
@@ -63,11 +63,11 @@ TAB editor effort (R-04), solo capacity (R-17), RT audio safety (R-02), frb depe
 
 ## 12. Unresolved questions
 
-Project license (Q-10), file extension (Q-08), pattern DSL semantics (Q-01 to Q-06), overfull bar policy confirmation (Q-09), string numbering (Q-07), state management library (Q-12), SoundFont (Q-11), minimum Windows and macOS versions (Q-13), Web priority (Q-14), multi-track view in MVP (Q-17). Full list: [open-questions.md](../research/open-questions.md).
+Project license (Q-10), file extension (Q-08), pattern DSL semantics (Q-01 to Q-06), state management library (Q-12), SoundFont (Q-11), minimum Windows and macOS versions (Q-13), Web priority (Q-14). Resolved on 2026-10-31: string numbering (Q-07), bar diagnostics (Q-09), single active TAB track in MVP (Q-17). Full list: [open-questions.md](../research/open-questions.md).
 
 ## 13. Recommended next actions
 
-1. User review of this package; answer Q-07, Q-09 and Q-17 before Phase 1, and Q-08 before Phase 1 exit.
+1. Done: user review; Q-07, Q-09 and Q-17 answered. Still needed: Q-08 before Phase 1 exit.
 2. Start M0: repository and CI skeleton with FF-09, FF-10, FF-19, FF-20, FF-33.
 3. Run S1, S2, S4, S5 first, then S7. Update ADR-005, ADR-007, ADR-008 and ADR-018 with results.
 4. Begin Phase 1 only after Phase 0 exit criteria are met.
@@ -88,7 +88,7 @@ Review lenses: overengineering, unnecessary abstraction, premature optimization,
 |---|---|
 | The dependency matrix allowed `mc-ffi` and `mc-cli` to depend on every domain crate, contradicting the DAG and letting the bridge bypass `mc-app` (hidden coupling, unenforceable rule) | `mc-ffi` may depend only on `mc-app` and `mc-audio`; `mc-app` re-exports needed types; `mc-cli` limited to `mc-app`, `mc-project`, optional `mc-audio`. FF-01 now enforces the boundary ([dependency-rules.md](dependency-rules.md)) |
 | No owner for the file-system project store (atomic save, recovery); `mc-project` is bytes-only and banned from `std::fs` (unclear ownership) | Placed in `mc-app::infra::fs_store` behind feature `native-fs` ([architecture-overview.md](architecture-overview.md), [bounded-contexts.md](bounded-contexts.md), Phase 1 scope) |
-| Full unknown-field side-map preservation before any 1.1 format exists (premature complexity) | MVP: `extra` maps on DTOs plus forced Save As; side-map re-emission built with the first 1.1 change ([project-format.md](project-format.md)) |
+| Full unknown-field side-map preservation before any 1.1 format exists (premature complexity) | MVP: U1 detection and U2 Save As protection; U3 full preservation built with the first 1.1 change ([project-format.md](project-format.md) section 9) |
 | Spike timeboxes (earlier 15+ days) exceeded the Phase 0 estimate (planning inconsistency) | Timeboxes reduced and treated as maxima; S3 moved into the Phase 5 budget; S6 optional; reconciliation in [technical-spikes.md](../research/technical-spikes.md) |
 | `mc-score -> mc-guitar` edge (core depends on supporting context) | Fretted value objects moved to `mc-theory` ([ADR-019](decisions/ADR-019-fretted-instrument-shared-kernel.md)) |
 | Overfull bars, cross-voice string collisions and MIDI range as hard invariants (over-restrictive) | Reclassified as diagnostics or playback constraints ([ADR-020](decisions/ADR-020-invariants-vs-diagnostics.md)) |

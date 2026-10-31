@@ -1,0 +1,179 @@
+# Fitness function inventory (FF-20). Source of truth for which checks exist.
+# Every id in docs/architecture/fitness-functions.md must appear here with the same phase.
+# status = "active" requires a registered implementation (see xtask/src/fitness/inventory.rs).
+# Entries with phase <= current_phase must be active.
+# Removing an entry or downgrading active -> planned requires an
+# "Architecture-Change: ADR-NNN" trailer (FF-19 also protects this file).
+
+[meta]
+current_phase = 0
+
+[FF-01]
+name = "Internal crate dependency matrix"
+phase = 1
+status = "planned"
+
+[FF-02]
+name = "External crate bans"
+phase = 1
+status = "planned"
+
+[FF-03]
+name = "Domain purity lints"
+phase = 1
+status = "planned"
+
+[FF-04]
+name = "Domain crates compile for wasm32"
+phase = 1
+status = "planned"
+
+[FF-05]
+name = "Dart import boundaries"
+phase = 3
+status = "planned"
+
+[FF-06]
+name = "Dart package cycles"
+phase = 3
+status = "planned"
+
+[FF-07]
+name = "cfg(target_os) only in adapter crates"
+phase = 1
+status = "planned"
+
+[FF-08]
+name = "dart:io only in platform package and app"
+phase = 3
+status = "planned"
+
+[FF-09]
+name = "License policy (Rust part; Dart part from Phase 3)"
+phase = 0
+status = "active"
+check = "cargo-deny:licenses"
+
+[FF-10]
+name = "Security advisories and sources"
+phase = 0
+status = "active"
+check = "cargo-deny:advisories"
+
+[FF-11]
+name = "Project format round-trip suite"
+phase = 1
+status = "planned"
+
+[FF-12]
+name = "Generated bindings in sync"
+phase = 3
+status = "planned"
+
+[FF-13]
+name = "Hard invariants under random command sequences"
+phase = 1
+status = "planned"
+
+[FF-14]
+name = "Undo and redo restore identical state"
+phase = 1
+status = "planned"
+
+[FF-15]
+name = "Importer and loader fuzzing"
+phase = 4
+status = "planned"
+
+[FF-16]
+name = "No allocation in RT callback bodies"
+phase = 4
+status = "planned"
+
+[FF-17]
+name = "RT module forbidden-construct lint"
+phase = 4
+status = "planned"
+
+[FF-18]
+name = "Playback glitch test"
+phase = 4
+status = "planned"
+
+[FF-19]
+name = "Protected paths require ADR trailer"
+phase = 0
+status = "active"
+check = "xtask:trailers"
+
+[FF-20]
+name = "Fitness inventory cannot shrink"
+phase = 0
+status = "active"
+check = "xtask:inventory"
+
+[FF-21]
+name = "Benchmark regression"
+phase = 1
+status = "planned"
+
+[FF-22]
+name = "Public API diff"
+phase = 1
+status = "planned"
+
+[FF-23]
+name = "Memory baselines"
+phase = 1
+status = "planned"
+
+[FF-24]
+name = "Invariant rule ids without tests"
+phase = 1
+status = "planned"
+
+[FF-25]
+name = "Coupling report"
+phase = 2
+status = "planned"
+
+[FF-26]
+name = "Intra-crate module cycles"
+phase = 2
+status = "planned"
+
+[FF-27]
+name = "Test coverage report"
+phase = 1
+status = "planned"
+
+[FF-28]
+name = "Complexity lints"
+phase = 1
+status = "planned"
+
+[FF-29]
+name = "Binary and bundle size"
+phase = 3
+status = "planned"
+
+[FF-30]
+name = "Dependency freshness"
+phase = 1
+status = "planned"
+
+[FF-31]
+name = "Candidate acceptance passes domain validation"
+phase = 8
+status = "planned"
+
+[FF-32]
+name = "DTO JSON schema snapshot requires version bump"
+phase = 1
+status = "planned"
+
+[FF-33]
+name = "Documentation links and Mermaid diagrams valid"
+phase = 0
+status = "active"
+check = "xtask:docs-links"

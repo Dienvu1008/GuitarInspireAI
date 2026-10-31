@@ -1,7 +1,7 @@
 # Domain Invariants
 
 Purpose: Catalogue the rules that protect domain correctness, classify them, and state owner, enforcement point and test for each.
-Status: Accepted, except D-01 (overfull bars as diagnostics), which is Proposed pending user confirmation ([ADR-020](decisions/ADR-020-invariants-vs-diagnostics.md)).
+Status: Accepted. D-01 (underfull and overfull bars as diagnostics) confirmed by the user (Q-09), with the effective bar duration rule in section 4a ([ADR-020](decisions/ADR-020-invariants-vs-diagnostics.md)).
 Related documents: [bounded-contexts.md](bounded-contexts.md), [score-model-and-undo.md](score-model-and-undo.md), [project-format.md](project-format.md), [ai-music-architecture.md](ai-music-architecture.md), [fitness-functions.md](fitness-functions.md).
 
 ## 1. Categories
@@ -56,7 +56,7 @@ Why H-05 is per beat and per voice: a beat is one attack event, so two different
 
 | Id | Rule | Owner | Behaviour |
 |---|---|---|---|
-| D-01 | Voice duration differs from the time signature (underfull or overfull) | Composition | Proposed: both are diagnostics, like Guitar Pro red bars. Playback treats bar length as max(nominal, longest voice), so no content is lost. Layout draws as written. Exporters report. Pickup bars are explicit master bar flags and do not raise D-01 |
+| D-01 | Voice duration differs from the time signature (underfull or overfull) | Composition | Accepted (Q-09): both are diagnostics, like Guitar Pro red bars, and never block saving. Playback uses the effective master bar duration (section 4a), so no content is lost and all tracks stay synchronized. Layout draws as written. Exporters report. Pickup bars are explicit master bar flags and do not raise D-01 for being short |
 | D-02 | Unplayable stretch in a beat (fret span beyond configured hand span) | Guitar | Reported in inspector |
 | D-03 | Same string used by two voices at the same time | Guitar | Reported; playback plays both |
 | D-04 | Note outside instrument practical range after retune | Guitar | Reported |
@@ -64,6 +64,40 @@ Why H-05 is per beat and per voice: a beat is one attack event, so two different
 | D-06 | Tie chain broken by an import | Composition | Reported in ImportReport; tie removed |
 
 Why D-01 is a diagnostic, not a hard invariant: editors need to insert and delete beats one at a time, which passes through underfull and overfull bars. Imports from MIDI and Guitar Pro frequently contain malformed bars. Forcing exact fill would either reject realistic files or silently rewrite user content. Alternative considered: strict fill with automatic rebarring (TuxGuitar style). Rejected as default because automatic rebarring changes content the user did not edit. It can be offered as an explicit command.
+
+## 4a. Effective master bar duration (playback semantics of D-01)
+
+Definitions, all in exact rationals (fractions of a whole note):
+
+- `nominal(m)`: time signature length of master bar `m` (for example 4/4 = 1). For a master bar flagged as pickup, `nominal(m) = 0`.
+- `voice_len(t, m, v)`: sum of beat durations in voice `v` of track `t` in bar `m`.
+- `E(m) = max(nominal(m), max over every track t and every voice v of voice_len(t, m, v))`.
+- Bar start times: `start(0) = 0`, `start(k + 1) = start(k) + E(bar at playback position k)`, computed over the repeat-expanded playback order.
+
+Rules:
+
+1. `E(m)` is a property of the master bar, shared by all tracks. Every track's bar `m` starts at the same `start`, so later bars stay globally synchronized.
+2. All tracks count, including muted tracks and empty voices. Mute only silences output; it never changes timing.
+3. An underfull voice ends early; the remainder up to `E(m)` is silence for that voice. An overfull voice plays completely; the other tracks wait (silence or held notes) until `E(m)`.
+4. A pickup bar with no notes in any voice has `E(m) = 0` and is skipped in playback.
+5. `E(m)` is computed by `mc-score` (`Score::effective_bar_duration`, Phase 1) and consumed by `mc-playback` (Phase 4). Layout does not use it; it draws bars as written.
+6. Tempo map positions are expressed in score positions (bar index, offset within bar). An offset beyond `nominal(m)` but within `E(m)` is valid; an offset beyond `E(m)` is rejected by H-11 checks.
+
+Required tests (ids used as test name prefixes):
+
+| Id | Case | Expected |
+|---|---|---|
+| PB-01 | All voices exactly full | `E(m) = nominal(m)` |
+| PB-02 | Track 2 voice overfull by 1/8 in bar 3 of 4/4 | `E(3) = 9/8`; bar 4 starts at `3 + 9/8` for every track |
+| PB-03 | One track underfull in bar 2 | `E(2) = nominal`; that track is silent for the remainder; bar 3 start unchanged |
+| PB-04 | Overfull voice in a muted track | Same `E(m)` and start times as unmuted |
+| PB-05 | Two voices in one track, voice 2 longer | `E(m)` uses voice 2 |
+| PB-06 | Empty pickup bar | `E = 0`, skipped; first real bar starts at 0 |
+| PB-07 | Overfull bar inside a repeated section played twice | Each pass uses the same `E(m)`; start times additive |
+| PB-08 | Property: for random scores, start times are non-decreasing, identical across tracks, and `E(m) >= nominal(m)` | Holds |
+| PB-09 | Determinism: compiling the same snapshot twice | Identical timelines (byte-equal serialized events) |
+
+PB-01 to PB-08 are `mc-score` tests (Phase 1). PB-09 and timeline-level variants of PB-02, PB-04 and PB-07 are `mc-playback` tests (Phase 4). Timeline compilation rules are in [audio-dsp-architecture.md](audio-dsp-architecture.md) section 3a.
 
 ## 5. Other contexts
 

@@ -52,8 +52,8 @@ Allowed by default (via cargo-deny allow-list): MIT, Apache-2.0, BSD-1/2/3-Claus
 ### cpal
 - Why: Cross-platform audio I/O in Rust with a callback model.
 - Platforms: WASAPI (Windows default, optional ASIO and JACK, minimum Windows 10), CoreAudio (macOS minimum 14.2 per README, iOS), ALSA plus optional PipeWire/PulseAudio/JACK on Linux (needs ALSA dev libs), AAudio (Android 8.0, API 26), Web Audio API, AudioWorklet (nightly, atomics, SharedArrayBuffer and cross-origin headers). MSRV 1.85. Optional `realtime` feature raises callback thread priority [Verified: README].
-- License: Apache-2.0 [To verify].
-- Limits: Whether WASAPI exclusive mode is exposed and whether `BufferSize::Fixed` is honored on WASAPI is not documented in what was read [To verify, S2]. The macOS 14.2 minimum may matter for distribution [To verify].
+- Limits: `BufferSize::Fixed` is not honored in WASAPI shared mode; the period stayed at 480 frames [Verified: S2]. Whether exclusive mode is exposed is still unknown [To verify]. The optional `realtime` feature depends on `audio_thread_priority` 0.35.1, MPL-2.0 [Verified: S7]. On WASAPI shared render, underruns are not reported through the error callback [Verified: S2]. The macOS 14.2 minimum may matter for distribution [To verify].
+- License: Apache-2.0 [Verified: crates.io API, 2026-10].
 - Alternatives: `miniaudio` via bindings (C, public domain or MIT-0 [To verify]); `rodio` (higher level, built on cpal); PortAudio (C, MIT-like); JUCE (GPL or commercial).
 - Exit strategy: cpal is used only in `mc-audio` behind the `AudioPort` port.
 
@@ -61,7 +61,8 @@ Allowed by default (via cargo-deny allow-list): MIT, Apache-2.0, BSD-1/2/3-Claus
 - Why: Pure-Rust SoundFont synth, no dependencies beyond std, real-time and offline rendering, MIDI file sequencer, dynamic tempo [Verified: README].
 - License: MIT [Verified: README].
 - Maintenance: [To verify] last release date.
-- Limits: Allocation and locking behaviour in `render`, `note_on`, `note_off` is not documented [To verify, S2, assumption A1]. Reverb and chorus supported [Verified: README].
+- Limits: `render`, `note_on`, `note_off`, program changes and `note_off_all` performed no allocation after construction, with a generated font and with the 261-preset GeneralUser GS bank [Verified: S2]. Reverb and chorus supported [Verified: README]. SF2 only; SF3 not documented.
+- Maintenance: 1.3.8 released 2026-10 [Verified: crates.io API, 2026-10].
 - Alternatives: FluidSynth (LGPL-2.1, C, linking concerns), `oxisynth` (port of FluidSynth, LGPL [To verify]), own simple sampler.
 - Exit strategy: Wrapped behind a `Synth` trait inside `mc-audio`. If A1 fails, options are a patched fork, preallocated voices, or a different synth.
 
@@ -167,11 +168,13 @@ Allowed by default (via cargo-deny allow-list): MIT, Apache-2.0, BSD-1/2/3-Claus
 
 | Area | MVP choice | Status |
 |---|---|---|
-| Interop | flutter_rust_bridge v2 | Proposed, pending S1 |
-| Audio I/O | cpal | Proposed, pending S2 |
-| Synth | rustysynth + permissive SoundFont | Proposed, pending S2 and S7 |
-| RT queue | rtrb | Proposed, pending S2 |
+| Interop | flutter_rust_bridge 2.13.0 (+ Dart `freezed` toolchain for payload enums) | Accepted after S1 |
+| Audio I/O | cpal 0.18.2, without the `realtime` feature (MPL-2.0 dependency); thread promotion via own `windows-sys` MMCSS call in `mc-audio` | Accepted after S2 and user decision |
+| Synth | rustysynth 1.3.8 (SF2 only) + FluidR3 GM (MIT) | Accepted after S2 and user decision (Q-11) |
+| RT queue | rtrb 0.4.1 | Accepted after S2 |
 | Pitch | Own YIN/MPM in `mc-dsp` | Proposed, pending S3 |
 | MIDI | midly | Proposed |
-| Package | zip (deflate only) + serde_json | Proposed, pending S5 |
-| Tests | proptest, criterion, cargo-deny, assert_no_alloc | Proposed |
+| Package | zip 9.1.3 (`default-features = false`, `deflate-flate2-zlib-rs`) + serde_json; `std::fs::rename` for replace; `tempfile::persist` rejected | Accepted after S5 |
+| Tests | proptest, criterion, cargo-deny 0.20.2; allocation checks via a counting global allocator (used in S2, about 40 lines) or assert_no_alloc, decided in Phase 4 | Proposed |
+
+S7 audit details and the license inventory are in [technical-spikes.md](technical-spikes.md) S7 results.

@@ -1,0 +1,14 @@
+# Root Cargo workspace.
+# M0 contains only the governance tooling (xtask). Production crates are added
+# in the phase that introduces them (see docs/architecture/architecture-overview.md).
+# Spikes are throwaway code with their own workspaces and are excluded here.
+[workspace]
+resolver = "3"
+members = ["xtask"]
+exclude = ["spikes"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.88"
+# No license field: the project license is undecided (Q-10, ADR-015).
+publish = false

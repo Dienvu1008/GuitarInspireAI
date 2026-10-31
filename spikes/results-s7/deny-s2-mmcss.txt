@@ -1,0 +1,142 @@
+﻿cargo : warning[license-not-encountered]: license was not encountered
+At line:1 char:518
++ ... time) ==="; cargo deny --manifest-path spikes\s2-audio\Cargo.toml --f ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning[license...not encountered:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   ΓöîΓöÇ C:\Users\Dienv\AppData\Local\Temp\deny-no-allfeatures.toml:18:6
+   Γöé
+18 Γöé     "BSD-1-Clause",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\AppData\Local\Temp\deny-no-allfeatures.toml:25:6
+   Γöé
+25 Γöé     "CC0-1.0",
+   Γöé      ΓöüΓöüΓöüΓöüΓöüΓöüΓöü unmatched license allowance
+
+warning[license-not-encountered]: license was not encountered
+   ΓöîΓöÇ C:\Users\Dienv\AppData\Local\Temp\deny-no-allfeatures.toml:21:6
+   Γöé
+21 Γöé     "ISC",
+   Γöé      ΓöüΓöüΓöü unmatched license allowance
+
+warning[duplicate]: found 2 duplicate entries for crate 'jni-sys'
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\spikes\s2-audio/Cargo.lock:22:1
+   Γöé  
+22 Γöé Γò¡ jni-sys 0.3.1 registry+https://github.com/rust-lang/crates.io-index
+23 Γöé Γöé jni-sys 0.4.1 registry+https://github.com/rust-lang/crates.io-index
+   Γöé Γò░ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓ
+öÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ lock entries
+   Γöé  
+   Γö£ jni-sys v0.3.1
+     Γö£ΓöÇΓöÇ ndk v0.9.0
+     Γöé   ΓööΓöÇΓöÇ cpal v0.18.2
+     Γöé       ΓööΓöÇΓöÇ s2-audio v0.0.0
+     ΓööΓöÇΓöÇ ndk-sys v0.6.0+11769913
+         ΓööΓöÇΓöÇ ndk v0.9.0 (*)
+   Γö£ jni-sys v0.4.1
+     Γö£ΓöÇΓöÇ jni v0.22.4
+     Γöé   ΓööΓöÇΓöÇ cpal v0.18.2
+     Γöé       ΓööΓöÇΓöÇ s2-audio v0.0.0
+     ΓööΓöÇΓöÇ jni-sys v0.3.1
+         Γö£ΓöÇΓöÇ ndk v0.9.0
+         Γöé   ΓööΓöÇΓöÇ cpal v0.18.2 (*)
+         ΓööΓöÇΓöÇ ndk-sys v0.6.0+11769913
+             ΓööΓöÇΓöÇ ndk v0.9.0 (*)
+
+warning[duplicate]: found 2 duplicate entries for crate 'syn'
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\spikes\s2-audio/Cargo.lock:60:1
+   Γöé  
+60 Γöé Γò¡ syn 2.0.119 registry+https://github.com/rust-lang/crates.io-index
+61 Γöé Γöé syn 3.0.9 registry+https://github.com/rust-lang/crates.io-index
+   Γöé Γò░ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓ
+öÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ lock entries
+   Γöé  
+   Γö£ syn v2.0.119
+     Γö£ΓöÇΓöÇ jni-macros v0.22.4
+     Γöé   ΓööΓöÇΓöÇ jni v0.22.4
+     Γöé       ΓööΓöÇΓöÇ cpal v0.18.2
+     Γöé           ΓööΓöÇΓöÇ s2-audio v0.0.0
+     Γö£ΓöÇΓöÇ jni-sys-macros v0.4.1
+     Γöé   ΓööΓöÇΓöÇ jni-sys v0.4.1
+     Γöé       Γö£ΓöÇΓöÇ jni v0.22.4 (*)
+     Γöé       ΓööΓöÇΓöÇ jni-sys v0.3.1
+     Γöé           Γö£ΓöÇΓöÇ ndk v0.9.0
+     Γöé           Γöé   ΓööΓöÇΓöÇ cpal v0.18.2 (*)
+     Γöé           ΓööΓöÇΓöÇ ndk-sys v0.6.0+11769913
+     Γöé               ΓööΓöÇΓöÇ ndk v0.9.0 (*)
+     Γö£ΓöÇΓöÇ num-derive v0.4.2
+     Γöé   ΓööΓöÇΓöÇ cpal v0.18.2 (*)
+     Γö£ΓöÇΓöÇ num_enum_derive v0.7.6
+     Γöé   ΓööΓöÇΓöÇ num_enum v0.7.6
+     Γöé       ΓööΓöÇΓöÇ ndk v0.9.0 (*)
+     Γö£ΓöÇΓöÇ thiserror-impl v1.0.69
+     Γöé   ΓööΓöÇΓöÇ thiserror v1.0.69
+     Γöé       ΓööΓöÇΓöÇ ndk v0.9.0 (*)
+     Γö£ΓöÇΓöÇ windows-implement v0.60.2
+     Γöé   ΓööΓöÇΓöÇ windows-core v0.62.2
+     Γöé       Γö£ΓöÇΓöÇ cpal v0.18.2 (*)
+     Γöé       Γö£ΓöÇΓöÇ windows v0.62.2
+     Γöé       Γöé   ΓööΓöÇΓöÇ cpal v0.18.2 (*)
+     Γöé       Γö£ΓöÇΓöÇ windows-collections v0.3.2
+     Γöé       Γöé   ΓööΓöÇΓöÇ windows v0.62.2 (*)
+     Γöé       Γö£ΓöÇΓöÇ windows-future v0.3.2
+     Γöé       Γöé   ΓööΓöÇΓöÇ windows v0.62.2 (*)
+     Γöé       ΓööΓöÇΓöÇ windows-numerics v0.3.1
+     Γöé           ΓööΓöÇΓöÇ windows v0.62.2 (*)
+     ΓööΓöÇΓöÇ windows-interface v0.59.3
+         ΓööΓöÇΓöÇ windows-core v0.62.2 (*)
+   Γö£ syn v3.0.9
+     Γö£ΓöÇΓöÇ thiserror-impl v2.0.21
+     Γöé   ΓööΓöÇΓöÇ thiserror v2.0.21
+     Γöé       ΓööΓöÇΓöÇ jni v0.22.4
+     Γöé           ΓööΓöÇΓöÇ cpal v0.18.2
+     Γöé               ΓööΓöÇΓöÇ s2-audio v0.0.0
+     ΓööΓöÇΓöÇ wasm-bindgen-macro-support v0.2.130
+         ΓööΓöÇΓöÇ wasm-bindgen-macro v0.2.130
+             ΓööΓöÇΓöÇ wasm-bindgen v0.2.130
+                 Γö£ΓöÇΓöÇ js-sys v0.3.107
+                 Γöé   Γö£ΓöÇΓöÇ cpal v0.18.2 (*)
+                 Γöé   ΓööΓöÇΓöÇ web-sys v0.3.107
+                 Γöé       ΓööΓöÇΓöÇ cpal v0.18.2 (*)
+                 ΓööΓöÇΓöÇ web-sys v0.3.107 (*)
+
+warning[duplicate]: found 2 duplicate entries for crate 'thiserror'
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\spikes\s2-audio/Cargo.lock:62:1
+   Γöé  
+62 Γöé Γò¡ thiserror 1.0.69 registry+https://github.com/rust-lang/crates.io-index
+63 Γöé Γöé thiserror 2.0.21 registry+https://github.com/rust-lang/crates.io-index
+   Γöé Γò░ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓ
+öÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ lock entries
+   Γöé  
+   Γö£ thiserror v1.0.69
+     ΓööΓöÇΓöÇ ndk v0.9.0
+         ΓööΓöÇΓöÇ cpal v0.18.2
+             ΓööΓöÇΓöÇ s2-audio v0.0.0
+   Γö£ thiserror v2.0.21
+     ΓööΓöÇΓöÇ jni v0.22.4
+         ΓööΓöÇΓöÇ cpal v0.18.2
+             ΓööΓöÇΓöÇ s2-audio v0.0.0
+
+warning[duplicate]: found 2 duplicate entries for crate 'thiserror-impl'
+   ΓöîΓöÇ C:\Users\Dienv\Desktop\My Projects\GuitarInspireAI\spikes\s2-audio/Cargo.lock:64:1
+   Γöé  
+64 Γöé Γò¡ thiserror-impl 1.0.69 registry+https://github.com/rust-lang/crates.io-index
+65 Γöé Γöé thiserror-impl 2.0.21 registry+https://github.com/rust-lang/crates.io-index
+   Γöé Γò░ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓ
+öÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ lock entries
+   Γöé  
+   Γö£ thiserror-impl v1.0.69
+     ΓööΓöÇΓöÇ thiserror v1.0.69
+         ΓööΓöÇΓöÇ ndk v0.9.0
+             ΓööΓöÇΓöÇ cpal v0.18.2
+                 ΓööΓöÇΓöÇ s2-audio v0.0.0
+   Γö£ thiserror-impl v2.0.21
+     ΓööΓöÇΓöÇ thiserror v2.0.21
+         ΓööΓöÇΓöÇ jni v0.22.4
+             ΓööΓöÇΓöÇ cpal v0.18.2
+                 ΓööΓöÇΓöÇ s2-audio v0.0.0
+
+advisories ok, bans ok, licenses ok, sources ok
