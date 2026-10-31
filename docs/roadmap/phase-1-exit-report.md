@@ -96,7 +96,7 @@ No ADR was reversed. No crate boundary, dependency edge or domain rule from the 
 
 ## 7. CI status
 
-Local runs of every CI step passed (fmt, clippy `-D warnings`, workspace tests, bench compilation, all xtask checks, Mermaid, cargo-deny). The push of this branch triggers GitHub Actions; the result is reported with the commit. The new weekly workflow (FF-22, FF-27, FF-30, macOS and Linux tests) runs on schedule or manual dispatch and has not run on GitHub yet; its commands were run locally on Windows, except the macOS and Linux test jobs.
+Local runs of every CI step passed (fmt, clippy `-D warnings`, workspace tests, bench compilation, all xtask checks, Mermaid, cargo-deny). GitHub Actions passed on `16d621e` (branch `phase-1-core`): governance job 279 s (fmt, clippy, 125 tests, benchmark build, fitness checks, Mermaid) and cargo-deny 38 s. The new weekly workflow (FF-22, FF-27, FF-30, macOS and Linux tests) runs on schedule or manual dispatch and has not run on GitHub yet; its commands were run locally on Windows, except the macOS and Linux test jobs.
 
 ## 8. Remaining risks
 
