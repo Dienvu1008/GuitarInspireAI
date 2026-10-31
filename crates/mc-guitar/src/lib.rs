@@ -22,8 +22,8 @@ pub use constraints::{BassRule, ConstraintViolation, VoicingConstraints};
 pub use error::GuitarError;
 pub use fretboard::positions_of;
 pub use identify::{
-    CandidateTone, ChordCandidate, Identification, IdentifyOptions, candidates_for, identify,
-    interval_name,
+    CandidateTone, ChordCandidate, Identification, IdentifyOptions, IdentifyStatus,
+    MIN_DISTINCT_PITCH_CLASSES, candidates_for, identify, interval_name,
 };
 pub use presets::TuningPreset;
 pub use retune::{RetuneMode, RetunePlan, plan_retune};

@@ -1,5 +1,9 @@
 //! Chord identification from sounding notes (G-03).
 //!
+//! A voicing is named only when it sounds at least three distinct pitch classes
+//! (`MIN_DISTINCT_PITCH_CLASSES`); dyads, power chords and single notes get the explicit
+//! status `IdentifyStatus::Insufficient` instead of a chord name.
+//!
 //! A candidate is a (root, quality) pair such that:
 //! - every sounding pitch class is a chord tone,
 //! - the root sounds (rootless voicings are not named in Phase 2),
@@ -7,9 +11,14 @@
 //!
 //! Several candidates are usually valid (C6 and Am7/C share their notes). They are all
 //! returned, ranked; the first is the preferred name, not the only interpretation.
-//! Ranking: fewer missing tones, then root in the bass, then fewer chord tones, then
-//! the quality order of `ChordQuality::ALL`, then the root's distance above the bass
-//! (the last two only make the order deterministic and transposition-invariant).
+//! Ranking (Phase 2 convention, no harmonic context): root in the bass first, then
+//! fewer missing tones, then fewer chord tones, then the quality order of
+//! `ChordQuality::ALL`, then the root's distance above the bass (the last two only make
+//! the order deterministic and transposition-invariant).
+//!
+//! Display spelling is separate from pitch identity: the symbol's root and slash bass
+//! use the canonical no-context spelling `NoteName::default_for` (so `Eaug/C`, not
+//! `Eaug/B#`); `CandidateTone::name` keeps the interval spelling from the root.
 
 use crate::{GuitarError, SoundingNote, Voicing};
 use mc_theory::chord_symbol;
@@ -20,6 +29,21 @@ use mc_theory::{Chord, ChordInterval, ChordQuality, NoteName, PitchClass};
 pub struct IdentifyOptions {
     /// A missing perfect fifth is accepted (default true).
     pub allow_omitted_fifth: bool,
+}
+
+/// Fewest distinct sounding pitch classes that can receive a chord name.
+pub const MIN_DISTINCT_PITCH_CLASSES: usize = 3;
+
+/// Overall result of an identification.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum IdentifyStatus {
+    /// At least one candidate fits.
+    Identified,
+    /// Enough pitch content, but nothing in the Phase 2 vocabulary fits.
+    NoMatch,
+    /// Fewer than `MIN_DISTINCT_PITCH_CLASSES` distinct pitch classes sound (single
+    /// notes, dyads, power chords). No chord name is given.
+    Insufficient { distinct: usize },
 }
 
 impl Default for IdentifyOptions {
@@ -50,6 +74,8 @@ pub struct ChordCandidate {
     /// The chord tone that sounds lowest.
     pub bass: CandidateTone,
     /// Human-readable reasons for the candidate and its rank.
+    /// Tone names here are interval spellings from the root; the symbol uses the
+    /// canonical display spelling for root and bass.
     pub explanation: Vec<String>,
 }
 
@@ -62,14 +88,14 @@ impl ChordCandidate {
         self.bass.interval.degree == 1
     }
 
-    fn rank_key(&self) -> (usize, bool, usize, usize, u8) {
+    fn rank_key(&self) -> (bool, usize, usize, usize, u8) {
         let quality_index = ChordQuality::ALL
             .iter()
             .position(|q| *q == self.chord.quality)
             .expect("listed");
         (
-            self.missing().count(),
             !self.root_in_bass(),
+            self.missing().count(),
             self.tones.len(),
             quality_index,
             (12 - self.bass.interval.semitones % 12) % 12,
@@ -85,9 +111,9 @@ pub struct Identification {
     pub pitch_classes: Vec<PitchClass>,
     /// Lowest sounding note.
     pub bass: Option<SoundingNote>,
-    /// Ranked candidates; the first is preferred. Empty when nothing in the Phase 2
-    /// vocabulary fits.
+    /// Ranked candidates; the first is preferred. Empty unless `status` is `Identified`.
     pub candidates: Vec<ChordCandidate>,
+    pub status: IdentifyStatus,
 }
 
 impl Identification {
@@ -114,15 +140,27 @@ pub fn identify(
             pitch_classes.push(pc);
         }
     }
+    let candidates = candidates_for(&semitones, options);
+    let status = if pitch_classes.len() < MIN_DISTINCT_PITCH_CLASSES {
+        IdentifyStatus::Insufficient {
+            distinct: pitch_classes.len(),
+        }
+    } else if candidates.is_empty() {
+        IdentifyStatus::NoMatch
+    } else {
+        IdentifyStatus::Identified
+    };
     Ok(Identification {
         bass: notes.first().copied(),
-        candidates: candidates_for(&semitones, options),
+        candidates,
+        status,
         pitch_classes,
         notes,
     })
 }
 
 /// Ranked candidates for a set of sounding semitones (any order; the lowest is the bass).
+/// Empty when fewer than `MIN_DISTINCT_PITCH_CLASSES` distinct pitch classes sound.
 pub fn candidates_for(semitones: &[i32], options: IdentifyOptions) -> Vec<ChordCandidate> {
     let Some(&bass_semitone) = semitones.iter().min() else {
         return Vec::new();
@@ -131,6 +169,9 @@ pub fn candidates_for(semitones: &[i32], options: IdentifyOptions) -> Vec<ChordC
     let mut sounding = [false; 12];
     for s in semitones {
         sounding[PitchClass::from_semitone(*s).value() as usize] = true;
+    }
+    if sounding.iter().filter(|s| **s).count() < MIN_DISTINCT_PITCH_CLASSES {
+        return Vec::new();
     }
     let mut out = Vec::new();
     for root_value in 0..12u8 {
@@ -187,10 +228,12 @@ fn candidate(
         .iter()
         .find(|t| pc_of(&t.interval) == bass_pc)
         .expect("the bass sounds and every sounding note is a chord tone");
+    // Display spelling of the slash bass: canonical for its pitch class, not the
+    // interval spelling (Eaug/C rather than Eaug/B#).
     let chord = Chord {
         root,
         quality,
-        bass: (bass.interval.degree != 1).then_some(bass.name),
+        bass: (bass.interval.degree != 1).then(|| NoteName::default_for(bass_pc)),
     };
     let mut explanation = Vec::new();
     let missing: Vec<&CandidateTone> = tones.iter().filter(|t| !t.sounding).collect();
@@ -255,9 +298,9 @@ fn explain_ranks(candidates: &mut [ChordCandidate]) {
         } else {
             let k = c.rank_key();
             let reason = if k.0 != first_key.0 {
-                "it leaves out more chord tones"
-            } else if k.1 != first_key.1 {
                 "its root is not in the bass"
+            } else if k.1 != first_key.1 {
+                "it leaves out more chord tones"
             } else if k.2 != first_key.2 {
                 "it has more chord tones"
             } else {
@@ -314,8 +357,8 @@ mod tests {
     #[test]
     fn g03_open_c_and_c6_vs_am7() {
         assert_eq!(symbols("x32010"), ["C"]);
-        // C E A C E: Am/C is complete; C6 lacks its (omissible) fifth, so it ranks second.
-        assert_eq!(symbols("x32210"), ["Am/C", "C6"]);
+        // C E A C E: C6 (no 5th) has its root in the bass, so it ranks above Am/C.
+        assert_eq!(symbols("x32210"), ["C6", "Am/C"]);
         // A E A C E: Am; C6/A (no 5th) is also a valid reading.
         assert_eq!(symbols("x02210"), ["Am", "C6/A"]);
         // C E A C G: both complete; C6 has its root in the bass.
@@ -324,10 +367,10 @@ mod tests {
 
     #[test]
     fn g03_fifth_omission_is_configurable() {
-        let v: Voicing = "x32x1x".parse().unwrap(); // C E C: C without fifth
+        let v: Voicing = "x3x45x".parse().unwrap(); // C B E: Cmaj7 without fifth
         let t = Tuning::standard_guitar();
         let on = identify(&v, &t, Capo(0), IdentifyOptions::default()).unwrap();
-        assert_eq!(on.candidates[0].symbol, "C");
+        assert_eq!(on.candidates[0].symbol, "Cmaj7");
         assert_eq!(on.candidates[0].missing().count(), 1);
         let off = identify(
             &v,
@@ -339,11 +382,36 @@ mod tests {
         )
         .unwrap();
         assert!(off.candidates.is_empty());
+        assert_eq!(off.status, IdentifyStatus::NoMatch);
     }
 
     #[test]
-    fn g03_thirds_are_never_omitted() {
-        // C and G only (power chord): out of vocabulary.
-        assert!(symbols("x355xx").is_empty());
+    fn g03_fewer_than_three_pitch_classes_are_insufficient() {
+        let t = Tuning::standard_guitar();
+        for (shape, distinct) in [("x355xx", 2), ("x32x1x", 2), ("xxxxx0", 1), ("xxxxxx", 0)] {
+            let v: Voicing = shape.parse().unwrap();
+            let id = identify(&v, &t, Capo(0), IdentifyOptions::default()).unwrap();
+            assert!(id.candidates.is_empty(), "{shape}");
+            assert_eq!(
+                id.status,
+                IdentifyStatus::Insufficient { distinct },
+                "{shape}"
+            );
+        }
+    }
+
+    #[test]
+    fn g03_slash_bass_uses_display_spelling() {
+        // C E G# C: Eaug/C, not Eaug/B#; the tone itself keeps its interval spelling.
+        let v: Voicing = "x3211x".parse().unwrap();
+        let id = identify(
+            &v,
+            &Tuning::standard_guitar(),
+            Capo(0),
+            IdentifyOptions::default(),
+        )
+        .unwrap();
+        let e = id.candidates.iter().find(|c| c.symbol == "Eaug/C").unwrap();
+        assert_eq!(e.bass.name.to_string(), "B#");
     }
 }

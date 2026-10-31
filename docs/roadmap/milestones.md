@@ -20,4 +20,4 @@ Status: M0 accepted on 2026-10-31. First CI run (`6dcb8bc`) succeeded; the workf
 
 M1 reached and Phase 1 accepted on 2026-10-31 (Q-08 decided: `.giproj`; merged from `phase-1-core`). Evidence: [phase-1-exit-report.md](phase-1-exit-report.md).
 
-M2 demo works on branch `phase-2-guitar` (golden set of 235 cases passes; `mc-cli chord` in standard and drop D). Not accepted yet: interpretations and ambiguous cases await user review. Evidence: [phase-2-exit-report.md](phase-2-exit-report.md).
+M2 reached and Phase 2 accepted on 2026-10-31 after the closure decisions on ranking, display spelling and minimum pitch content (golden set of 235 cases passes; `mc-cli chord` in standard and drop D; merged from `phase-2-guitar`). Evidence: [phase-2-exit-report.md](phase-2-exit-report.md). Next milestone: M3 (Phase 3).

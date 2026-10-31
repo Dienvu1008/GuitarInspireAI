@@ -1,8 +1,8 @@
 //! Property tests for the Guitar context (G-01, G-02, G-03).
 
 use mc_guitar::{
-    BassRule, IdentifyOptions, SearchOptions, TuningPreset, Voicing, VoicingConstraints,
-    find_voicings, identify,
+    BassRule, IdentifyOptions, IdentifyStatus, MIN_DISTINCT_PITCH_CLASSES, SearchOptions,
+    TuningPreset, Voicing, VoicingConstraints, find_voicings, identify,
 };
 use mc_theory::fretted::{Capo, Fret, FretPosition, StringIndex, Tuning};
 use mc_theory::{Chord, ChordQuality, NoteName, PitchClass, SpelledPitch};
@@ -129,6 +129,15 @@ proptest! {
         let t = Tuning::standard_guitar();
         let id = identify(&v, &t, Capo(0), IdentifyOptions { allow_omitted_fifth: omit }).unwrap();
         let sounding: u16 = id.pitch_classes.iter().fold(0, |m, pc| m | (1 << pc.value()));
+        if id.pitch_classes.len() < MIN_DISTINCT_PITCH_CLASSES {
+            prop_assert!(id.candidates.is_empty());
+            prop_assert_eq!(
+                id.status,
+                IdentifyStatus::Insufficient { distinct: id.pitch_classes.len() }
+            );
+        } else {
+            prop_assert_eq!(id.status == IdentifyStatus::Identified, !id.candidates.is_empty());
+        }
         for c in &id.candidates {
             let mask = pc_mask(&c.chord);
             prop_assert_eq!(sounding & !mask, 0, "{} misses a sounding note", c.symbol);

@@ -2,7 +2,7 @@
 //! over `mc_app::guitar`; every musical decision is made by the core.
 
 use mc_app::guitar::{
-    self, BassRule, Identification, IdentifyOptions, SearchOptions, TuningPreset,
+    self, BassRule, Identification, IdentifyOptions, IdentifyStatus, SearchOptions, TuningPreset,
     VoicingConstraints, interval_name,
 };
 
@@ -160,9 +160,19 @@ fn print_identification(shape: &str, tuning: &str, capo: u8, id: &Identification
             .map(|b| format!(" (bass {})", octave_name(b.semitone)))
             .unwrap_or_default()
     );
-    if id.candidates.is_empty() {
-        println!("no chord in the Phase 2 vocabulary has exactly these notes");
-        return;
+    match id.status {
+        IdentifyStatus::Insufficient { distinct } => {
+            println!(
+                "insufficient pitch content: {distinct} distinct pitch class(es); a chord name needs at least {}",
+                guitar::MIN_DISTINCT_PITCH_CLASSES
+            );
+            return;
+        }
+        IdentifyStatus::NoMatch => {
+            println!("no chord in the Phase 2 vocabulary has exactly these notes");
+            return;
+        }
+        IdentifyStatus::Identified => {}
     }
     for (i, c) in id.candidates.iter().enumerate() {
         let tones: Vec<String> = c

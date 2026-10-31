@@ -10,6 +10,8 @@ pub use mc_app::guitar::ConstraintViolation
 pub use mc_app::guitar::GuitarError
 pub use mc_app::guitar::Identification
 pub use mc_app::guitar::IdentifyOptions
+pub use mc_app::guitar::IdentifyStatus
+pub use mc_app::guitar::MIN_DISTINCT_PITCH_CLASSES
 pub use mc_app::guitar::RetuneMode
 pub use mc_app::guitar::ScaleNote
 pub use mc_app::guitar::SearchOptions

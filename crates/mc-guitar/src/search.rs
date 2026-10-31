@@ -1,7 +1,8 @@
 //! Voicing search: all voicings of a chord that satisfy the constraints (G-02).
 //!
 //! A result sounds only chord tones (plus the slash bass), sounds every chord tone
-//! except an omissible fifth when allowed, has the required bass as its lowest
+//! except an omissible fifth when allowed, sounds at least three distinct pitch
+//! classes (so a triad without its fifth is never returned), has the required bass as its lowest
 //! pitch, and passes `VoicingConstraints::check`. Order: lowest fretted fret, then
 //! more sounding strings, then fewer muted strings inside the sounding range, then
 //! the per-string frets (string 1 first) for determinism.
@@ -151,6 +152,10 @@ fn leaf(ctx: &mut Ctx<'_>, frets: &[Option<Fret>]) {
         used |= bit(PitchClass::from_semitone(n.semitone));
     }
     if used & ctx.required != ctx.required {
+        return;
+    }
+    // Results must be nameable by `identify` (G-03): at least three pitch classes.
+    if (used.count_ones() as usize) < crate::MIN_DISTINCT_PITCH_CLASSES {
         return;
     }
     if let Some(b) = ctx.bass {

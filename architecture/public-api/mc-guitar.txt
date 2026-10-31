@@ -88,6 +88,29 @@ impl core::marker::Unpin for mc_guitar::GuitarError
 impl core::marker::UnsafeUnpin for mc_guitar::GuitarError
 impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::GuitarError
 impl core::panic::unwind_safe::UnwindSafe for mc_guitar::GuitarError
+pub enum mc_guitar::IdentifyStatus
+pub mc_guitar::IdentifyStatus::Identified
+pub mc_guitar::IdentifyStatus::Insufficient
+pub mc_guitar::IdentifyStatus::Insufficient::distinct: usize
+pub mc_guitar::IdentifyStatus::NoMatch
+impl core::clone::Clone for mc_guitar::IdentifyStatus
+pub fn mc_guitar::IdentifyStatus::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::IdentifyStatus
+impl core::cmp::PartialEq for mc_guitar::IdentifyStatus
+pub fn mc_guitar::IdentifyStatus::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::IdentifyStatus
+pub fn mc_guitar::IdentifyStatus::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_guitar::IdentifyStatus
+pub fn mc_guitar::IdentifyStatus::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_guitar::IdentifyStatus
+impl core::marker::StructuralPartialEq for mc_guitar::IdentifyStatus
+impl core::marker::Freeze for mc_guitar::IdentifyStatus
+impl core::marker::Send for mc_guitar::IdentifyStatus
+impl core::marker::Sync for mc_guitar::IdentifyStatus
+impl core::marker::Unpin for mc_guitar::IdentifyStatus
+impl core::marker::UnsafeUnpin for mc_guitar::IdentifyStatus
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::IdentifyStatus
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::IdentifyStatus
 pub enum mc_guitar::RetuneMode
 pub mc_guitar::RetuneMode::KeepFrets
 pub mc_guitar::RetuneMode::KeepPitches
@@ -194,6 +217,7 @@ pub mc_guitar::Identification::bass: core::option::Option<mc_guitar::SoundingNot
 pub mc_guitar::Identification::candidates: alloc::vec::Vec<mc_guitar::ChordCandidate>
 pub mc_guitar::Identification::notes: alloc::vec::Vec<mc_guitar::SoundingNote>
 pub mc_guitar::Identification::pitch_classes: alloc::vec::Vec<mc_theory::pitch::PitchClass>
+pub mc_guitar::Identification::status: mc_guitar::IdentifyStatus
 impl mc_guitar::Identification
 pub fn mc_guitar::Identification::preferred(&self) -> core::option::Option<&mc_guitar::ChordCandidate>
 impl core::clone::Clone for mc_guitar::Identification
@@ -387,6 +411,7 @@ impl core::marker::Unpin for mc_guitar::VoicingConstraints
 impl core::marker::UnsafeUnpin for mc_guitar::VoicingConstraints
 impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::VoicingConstraints
 impl core::panic::unwind_safe::UnwindSafe for mc_guitar::VoicingConstraints
+pub const mc_guitar::MIN_DISTINCT_PITCH_CLASSES: usize
 pub fn mc_guitar::candidates_for(&[i32], mc_guitar::IdentifyOptions) -> alloc::vec::Vec<mc_guitar::ChordCandidate>
 pub fn mc_guitar::find_voicings(&mc_theory::chord::Chord, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, &mc_guitar::SearchOptions) -> alloc::vec::Vec<mc_guitar::Voicing>
 pub fn mc_guitar::identify(&mc_guitar::Voicing, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_guitar::IdentifyOptions) -> core::result::Result<mc_guitar::Identification, mc_guitar::GuitarError>

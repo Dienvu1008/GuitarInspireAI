@@ -1,7 +1,7 @@
 # Phase 2 Exit Report
 
-Purpose: Evidence against the Phase 2 acceptance criteria (Guitar core), the golden set, benchmark results, interpretations that need user confirmation, ambiguous musical cases, and architecture changes.
-Status: Draft for user review. Phase 2 is not accepted yet: the interpretations in section 5 and the ambiguous cases in section 6 need a decision. CI status in section 9.
+Purpose: Evidence against the Phase 2 acceptance criteria (Guitar core), the golden set, benchmark results, the Phase 2 conventions, the closure decisions on ambiguous musical cases, and architecture changes.
+Status: Final. Phase 2 accepted in principle by the user on 2026-10-31, subject to the closure decisions in section 6, which are applied. CI status in section 9.
 Related documents: [implementation-phases.md](implementation-phases.md), [milestones.md](milestones.md), [phase-1-exit-report.md](phase-1-exit-report.md), [domain-invariants.md](../architecture/domain-invariants.md), [bounded-contexts.md](../architecture/bounded-contexts.md), [fitness-functions.md](../architecture/fitness-functions.md).
 
 ## 1. Outcome
@@ -21,12 +21,12 @@ Phase 2 delivered `mc-guitar` and the Phase 2 roadmap scope: tuning presets, fre
 
 | Criterion ([implementation-phases.md](implementation-phases.md) Phase 2) | Evidence | Result |
 |---|---|---|
-| Golden set of at least 100 chord and voicing cases agreed with the user passes | `crates/mc-guitar/tests/golden/chords.txt`: 235 cases, all passing (`g03_golden_set`). Agreement pending: section 6 | Passes; agreement pending |
-| Voicing search under 50 ms for one chord [Assumption] | Section 4: p99 5.0 ms for the heaviest chord (C9, all results kept) | Met |
+| Golden set of at least 100 chord and voicing cases agreed with the user passes | `crates/mc-guitar/tests/golden/chords.txt`: 235 cases, all passing (`g03_golden_set`), updated to the closure decisions (section 6); no case left flagged ambiguous | Met |
+| Voicing search under 50 ms for one chord [Assumption] | Section 4: p99 3.9 ms for the heaviest chord (C9, all results kept) after the closure changes | Met |
 | Property tests G-01, G-02 | `crates/mc-guitar/tests/properties.rs` (`g01_`, `g02_`, two `g03_` properties, shape round trip) | Met |
 | Golden tests in standard and alternate tunings | Drop D, DADGAD, open G, open D, half-step down and capo cases in the golden set | Met |
 
-Milestone M2 demo ("CLI lists voicings for chords in standard and drop D"): `mc-cli chord C` lists `x32010` first; `mc-cli chord D --tuning drop-d` lists `000232` first. `mc-cli identify x32210` prints the ranked candidates with tones, missing tones and explanations.
+Milestone M2 demo ("CLI lists voicings for chords in standard and drop D"): `mc-cli chord C` lists `x32010` first; `mc-cli chord D --tuning drop-d` lists `000232` first. `mc-cli identify x32210` prints C6 (preferred), then Am/C, with tones, missing tones and explanations; `mc-cli identify x355xx` reports insufficient pitch content.
 
 ## 3. Golden set composition
 
@@ -37,7 +37,7 @@ Milestone M2 demo ("CLI lists voicings for chords in standard and drop D"): `mc-
 | Chord spelling (`C E G Bb`, `C Eb Gb Bbb` ...) | 11 |
 | Identification: triads, sevenths, sus, sixth, add9, 9, every quality | 54 |
 | Identification: inversions and slash chords | 16 |
-| Identification: omitted fifth, incomplete and invalid voicings | 16 |
+| Identification: omitted fifth, insufficient pitch content and invalid voicings | 16 |
 | Identification: alternate tunings and capo | 12 |
 | Constraint boundaries (span 4/5, fret 12/13, fingers, open strings, min fret, string count) | 20 |
 | Voicing search (contains, excludes, first, count; constraint options; tunings; capo) | 44 |
@@ -48,18 +48,22 @@ Every candidate list is the full ranked list, not a single name. For every searc
 
 ## 4. Benchmarks (reference machine, release)
 
+After the closure changes (full `cargo bench --workspace` run):
+
 | Query | p50 | p99 | Budget |
 |---|---|---|---|
-| `chord_voicings` C, all results | 0.40 ms | 1.1 ms | 50 ms |
-| `chord_voicings` C9, all results | 2.7 ms | 5.0 ms | 50 ms |
-| `chord_voicings` Cdim7, all results | 0.50 ms | 3.1 ms | 50 ms |
-| `identify` x02010 (criterion mean) | 4.8 µs | | |
+| `chord_voicings` C, all results | 0.51 ms | 0.62 ms | 50 ms |
+| `chord_voicings` C9, all results | 3.0 ms | 3.9 ms | 50 ms |
+| `chord_voicings` Cdim7, all results | 0.41 ms | 0.61 ms | 50 ms |
+| `identify` x02010 (criterion mean) | 3.8 µs | | |
+
+A separate guitar-only run on a busy machine showed p99 tails up to 9.4 ms (C) with unchanged p50; the full run above did not reproduce them. The Phase 1 command and format benchmarks were rerun in the same session and stay within their budgets (note edit p99 11.4 µs typical, 21.8 µs large; open large 280 ms against 2 s).
 
 Measured in `crates/mc-app/benches/commands.rs` (`guitar_queries`), compiled in CI (FF-21).
 
-## 5. Interpretations that need confirmation
+## 5. Phase 2 conventions
 
-These follow the approved conventions but fill in details the conventions did not fix. All are configurable defaults or documented rules; none is an invariant.
+These fill in details the approved conventions did not fix. The user kept them at closure as explicit Phase 2 domain and search conventions, not universal music-theory rules. All are configurable defaults or documented rules; none is an invariant. I-9 was changed by decisions C and D (section 6).
 
 | # | Interpretation | Alternative |
 |---|---|---|
@@ -71,21 +75,23 @@ These follow the approved conventions but fill in details the conventions did no
 | I-6 | Search needs at least 3 sounding strings; the bass is the root (or the slash note); `--inversions` allows any chord tone in the bass | other minimums |
 | I-7 | Search order: lowest fretted fret, then more sounding strings, then fewer muted strings inside the shape, then per-string frets; default limit 50 | a playability score (Phase 6 fingering work) |
 | I-8 | A slash bass that is not a chord tone (for example `C/D`) is supported by the search, but identification only produces slash chords whose bass is a chord tone | name non-chord-tone basses |
-| I-9 | Default root spelling for pitch classes without context: C, Db, D, Eb, E, F, F#, G, Ab, A, Bb, B. Chord tones and slash basses are spelled from the root | key-aware spelling (section 6, group D) |
+| I-9 | Display spelling without key or harmonic context: C, C#, D, Eb, E, F, F#, G, Ab, A, Bb, B for chord roots and slash basses. Chord-tone spellings from the root are kept for tone lists (Cdim7: C Eb Gb Bbb) | key-aware spelling, later |
 
-## 6. Ambiguous cases (flagged with `?` in the golden set)
+## 6. Closure decisions on the ambiguous cases (user, 2026-10-31)
 
-The expected results are what the agreed rules produce. They were not changed to match any preference; each needs a decision to keep or change the rule.
+All 14 cases flagged `?` are resolved; the golden set has no remaining flags. Applying the decisions changed exactly 17 golden expectations, all listed below; no other case changed.
 
-| Group | Cases (shape: ranked result) | Question |
-|---|---|---|
-| A. Complete slash chord ranks above a root-position chord with no fifth | `x32210`: Am/C, C6 (no 5); `322000`: Em/G, G6 (no 5); `1x0231`: Dm/F, F6 (no 5); `x-3-x-2-4-x`: Adim/C, Cm6 (no 5) | Chord charts usually call `x32210` "C6". Keep "fewer missing tones" before "root in bass", or swap the two keys? Swapping makes C6 preferred here; it also prefers e.g. "G6 (no 5)" over "Em/G" |
-| B. Same notes, both complete | `x02010`: Am7, C6/A; `x2323x`: Bm7b5, Dm6/B; `x32253`: C6, Am7/C; `3x2210`: Am7/G, C6/G | Inherent; root in bass decides, then quality order. Keep? |
-| C. Symmetric chords | `x3211x`: Caug, Eaug/B#, Abaug/C; `xx1212`: Ebdim7, F#dim7/Eb, Adim7/Eb, Cdim7/Eb; `x-3-4-2-4-x`: Cdim7, Ebdim7/Dbb, F#dim7/C, Adim7/C | Slash basses are spelled as chord tones (B#, Dbb). Keep, or spell the bass with the default spelling (Eaug/C, Ebdim7/C)? |
-| D. Root spelling without key context | `x46654`: Dbm, E6/C# (most charts say C#m); half-step-down `022000`: Ebm, F#6/D# | Keep the default table until key-aware spelling exists (when chords are inserted into a score with a key signature), or prefer C# and G# for minor roots now? |
-| E. Two pitch classes | `x32x1x` (C E C): C (no 5) | Name dyads as triads without fifth, or require at least 3 distinct pitch classes for a name? |
+| Group | Decision | Implementation | Golden result after closure |
+|---|---|---|---|
+| A. Root in bass vs complete slash chord | Without harmonic context, prefer the interpretation whose root is the bass, then the more direct name; keep all valid candidates | Ranking key order is now: root in bass, fewer missing tones, fewer chord tones, quality order | `x32210`: C6 (no 5), Am/C; `322000`: G6 (no 5), Em/G; `1x0231`: F6 (no 5), Dm/F; `x-3-x-2-4-x`: Cm6 (no 5), Adim/C |
+| B. Same notes, both complete | Kept (consistent with A) | Unchanged | `x02010`: Am7, C6/A; `x32253`: C6, Am7/C; `3x2210`: Am7/G, C6/G |
+| C. Theoretical bass spelling | No theoretical enharmonics without context; slash basses use the canonical sounding-pitch display spelling | `Chord::bass` in a candidate is the display spelling of the bass pitch class; `CandidateTone::name` keeps the interval spelling (B#), so pitch representation and display stay separate | `x3211x`: Caug, Eaug/C, Abaug/C; `x-3-4-2-4-x`: Cdim7, Ebdim7/C, F#dim7/C, Adim7/C; half-step-down `022000`: Ebm, F#6/Eb (no 5) |
+| D. No-key root spelling | Deterministic, guitarist-friendly canonical spelling; C#m over Dbm. Display convention only | `NoteName::default_for` table: C, C#, D, Eb, E, F, F#, G, Ab, A, Bb, B | `x46654`: C#m, E6/C# (no 5). Consequence of one deterministic table: `x46664` now reads C# (was Db) |
+| E. Insufficient pitch content | At least three distinct pitch classes for a chord name; otherwise an explicit insufficient result | `IdentifyStatus::{Identified, NoMatch, Insufficient { distinct }}` and `MIN_DISTINCT_PITCH_CLASSES = 3`; the CLI prints "insufficient pitch content". Voicing search applies the same minimum so every result stays nameable (G-03) | `x32x1x`, `x355xx`, `x-3-4-5-x-x`, `xxxxx0`, `xxxxxx`, drop-d `000xxx`: insufficient. Search for C no longer returns `x32x1x` |
 
-Groups A, D and E affect which name is shown first; none affects which voicings the search returns.
+Note on group A: the closure text names "Am7/C" as the alternative for `x32210`. That shape (C E A C E) has no G, so the valid alternative is Am/C; Am7/C is the alternative for `x32253` (C E A C G), which already ranked C6 first.
+
+Consequence of E for search: a triad voicing that omits its fifth has only two pitch classes, so search no longer returns triads without a fifth; four- and five-note chords without a fifth (for example `x3x45x` Cmaj7, `x3233x` C9) are still returned and named. Dyad, power chord and interval identification are deferred to a later phase.
 
 ## 7. Fitness functions
 
@@ -96,13 +102,13 @@ Groups A, D and E affect which name is shown first; none affects which voicings 
 | FF-01 | 6 crates checked; `mc-guitar` depends on `mc-theory` only; `mc-app` gained `mc-guitar` (already allowed by the matrix in dependency-rules section 1) |
 | FF-03, FF-04 | `mc-guitar` has the domain `clippy.toml` and compiles for wasm32; the golden set is embedded with `include_str!` (no file I/O in domain tests) |
 | FF-13, FF-14 | The random command generator gained a retune operation (all presets, capo 0 to 2, both modes) |
-| FF-22 | Snapshots regenerated for mc-theory, mc-score, mc-app; `mc-guitar.txt` added; weekly job covers mc-guitar |
+| FF-22 | Snapshots regenerated for mc-theory, mc-score, mc-app; `mc-guitar.txt` added; weekly job covers mc-guitar. Closure added `IdentifyStatus`, `MIN_DISTINCT_PITCH_CLASSES` and `Identification::status` (snapshots regenerated) |
 | FF-24 | 41 of 55 rule ids have tests (was 38); G-01, G-02, G-03 covered |
 | FF-25 | Crate fan-in/fan-out: mc-theory 4/0, mc-score 2/1, mc-guitar 1/1, mc-project 2/2, mc-app 1/4, mc-cli 0/2 |
 | FF-26 | One existing cycle reported: `mc-score` modules `score` and `validate` (Phase 1 code; advisory). Not changed in Phase 2 |
 | FF-28 | 0 cognitive-complexity warnings; 7 functions over 100 lines (advisory; new: the golden runner's case dispatcher) |
 
-Workspace tests: 164 passing (including xtask self-tests), 0 failing.
+Workspace tests: 165 passing after closure (including xtask self-tests), 0 failing. Closure added unit tests for insufficient pitch content and slash-bass display spelling, and the G-03 property now checks the status.
 
 ## 8. Architecture changes supported by implementation evidence
 
@@ -118,14 +124,12 @@ No ADR was reversed. No fitness function, lint or dependency rule was weakened.
 
 ## 9. CI status
 
-Local runs of every CI step passed: fmt, clippy `-D warnings`, workspace tests, benchmark build, `xtask fitness all`, FF-24/25/26 reports, Mermaid, cargo-deny. GitHub Actions passed on `4c3780d` (branch `phase-2-guitar`); the follow-up commit with formatting and documentation fixes is verified on its own push.
+Local runs of every CI step passed after the closure changes: fmt, clippy `-D warnings`, workspace tests, benchmark build and full benchmark run, `xtask fitness all`, FF-24/25/26 reports, Mermaid, cargo-deny. GitHub Actions passed on `4c3780d` and `93e5f48` (branch `phase-2-guitar`); the closure commit and the merge into `main` are verified on their pushes.
 
 ## 10. Not done in Phase 2
 
 `CagedShape` and the fingering optimizer (later phases), diagnostics D-02 (unplayable stretch in a beat) and D-04 (note outside practical range after retune), which need the editor (Phase 3). A retune that would move a note outside the fret range is rejected as a whole (H-04), not reported per note.
 
-## 11. Decisions needed
+## 11. Closure
 
-1. Section 5: confirm I-1 to I-9, or name the ones to change.
-2. Section 6: keep or change each of groups A to E.
-3. Then: accept Phase 2 and merge `phase-2-guitar` into `main`.
+Decisions (user, 2026-10-31): Phase 2 accepted in principle; conventions I-1 to I-8 kept as Phase 2 conventions (span 4 as an inclusive four-fret window, barres where the search model permits them, the sus2/sus4 fifth requirement, rootless voicings not named); groups A to E decided as in section 6. No feature, UI, audio, AI, tuner work or chord vocabulary was added at closure. Phase 2 closes when `phase-2-guitar` is merged into `main` with CI passing. Next phase per the roadmap: Phase 3 (Flutter shell, bridge and desktop TAB editor), on a new branch.

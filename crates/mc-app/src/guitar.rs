@@ -10,8 +10,8 @@ use std::ops::RangeInclusive;
 
 pub use mc_guitar::{
     BassRule, CandidateTone, ChordCandidate, ConstraintViolation, GuitarError, Identification,
-    IdentifyOptions, RetuneMode, ScaleNote, SearchOptions, SoundingNote, TuningPreset, Voicing,
-    VoicingConstraints, interval_name,
+    IdentifyOptions, IdentifyStatus, MIN_DISTINCT_PITCH_CLASSES, RetuneMode, ScaleNote,
+    SearchOptions, SoundingNote, TuningPreset, Voicing, VoicingConstraints, interval_name,
 };
 pub use mc_theory::fretted::Tuning;
 pub use mc_theory::{Chord, ChordInterval, ChordQuality};
@@ -135,7 +135,7 @@ pub fn scale_names() -> Vec<&'static str> {
     ScaleFormula::ALL.iter().map(|s| s.name()).collect()
 }
 
-/// Note name in the default spelling for a sounding semitone (for display only).
+/// Note name in the canonical no-context spelling for a sounding semitone (display only).
 pub fn note_name(semitone: i32) -> String {
     NoteName::default_for(mc_theory::PitchClass::from_semitone(semitone)).to_string()
 }

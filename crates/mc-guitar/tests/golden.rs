@@ -4,8 +4,8 @@
 //! for review; they must still produce the expected result.
 
 use mc_guitar::{
-    BassRule, ConstraintViolation, IdentifyOptions, RetuneMode, SearchOptions, TuningPreset,
-    Voicing, VoicingConstraints, find_voicings, identify, plan_retune, positions_of,
+    BassRule, ConstraintViolation, IdentifyOptions, IdentifyStatus, RetuneMode, SearchOptions,
+    TuningPreset, Voicing, VoicingConstraints, find_voicings, identify, plan_retune, positions_of,
     scale_positions,
 };
 use mc_theory::fretted::{Capo, Tuning};
@@ -152,10 +152,10 @@ fn run(kind: &str, args: &str, expected: &str) -> Result<(), String> {
                     }
                 })
                 .collect();
-            if names.is_empty() {
-                "none".into()
-            } else {
-                names.join(", ")
+            match id.status {
+                IdentifyStatus::Insufficient { .. } => "insufficient".into(),
+                IdentifyStatus::NoMatch => "none".into(),
+                IdentifyStatus::Identified => names.join(", "),
             }
         }
         "check" => {

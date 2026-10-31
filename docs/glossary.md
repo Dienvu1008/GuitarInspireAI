@@ -41,6 +41,8 @@ Related documents: [docs/README.md](README.md), [bounded-contexts.md](architectu
 | Slash chord | A chord whose lowest note is not its root, written `C/E` (chord / bass note). |
 | Omitted fifth | A perfect fifth left out of a voicing. Allowed by default for chord identification and search; never for dim, aug, m7b5, dim7 or sus chords. |
 | Fret span | Highest minus lowest fretted fret plus one. Open strings do not count. |
+| Display spelling | How a pitch class is written when no key or harmonic context decides it: C, C#, D, Eb, E, F, F#, G, Ab, A, Bb, B. A display convention only; pitch identity is unchanged. |
+| Insufficient pitch content | Identification result for a voicing with fewer than three distinct pitch classes (single notes, dyads, power chords): no chord name is given. |
 | Barre | One finger pressing several adjacent strings at the same fret; counts as one fretting finger. |
 | CAGED | A system relating five open chord shapes (C, A, G, E, D) to positions on the neck. |
 | Pattern | A reusable rhythmic and string-selection template that binds to a voicing. |

@@ -114,7 +114,11 @@ Guitar constraint definitions (Phase 2 decisions; configurable defaults, not inv
 - Fret range: fretted notes within `min_fret..=max_fret` (default 0 to 12, fret 12 included). Open strings are governed only by "allow open strings" (default yes).
 - At least 3 sounding strings. Bass: the root, or the slash bass for a slash chord (inversions on request).
 - Omitted fifth: only a perfect fifth, and not in sus chords (without it the quality is no longer identifiable). Allowed by default. Thirds, sevenths, sixths and ninths are never omitted; rootless voicings are not named in Phase 2.
-- Identification ranks all valid candidates: fewer missing tones, then root in the bass, then fewer chord tones, then quality order, then root distance above the bass. The first is the preferred name, not the only valid one.
+- Minimum pitch content: a voicing is named only if it sounds at least three distinct pitch classes. Fewer (single notes, dyads, power chords) gives the explicit result "insufficient pitch content", never a chord name; voicing search returns only voicings that meet this minimum. Dyad, power chord and interval naming are deferred.
+- Identification ranks all valid candidates (no harmonic context): root in the bass first, then fewer missing tones, then fewer chord tones, then quality order, then root distance above the bass. The first is the preferred name, not the only valid one (`x32210`: C6 without fifth, then Am/C).
+- Display spelling without key or harmonic context: C, C#, D, Eb, E, F, F#, G, Ab, A, Bb, B for chord roots and slash basses (C#m, Eaug/C). It is a display convention; pitch identity is the pitch class, and chord-tone spellings from the root (Cdim7: C Eb Gb Bbb) are unchanged. Contextual spelling can replace it later.
+
+These are Phase 2 domain and search conventions, not universal music-theory rules.
 | PT-01 | Sum of step durations equals the declared pattern length | Pattern | H | Semantic validation stage | Unit |
 | PT-02 | Every selector resolves for a given voicing at bind time, or binding fails with a typed error | Pattern | H at bind | Bind stage | Proptest |
 | P-01 | Every asset reference resolves to an entry in the package | Project | H | Loader | Fixture tests |

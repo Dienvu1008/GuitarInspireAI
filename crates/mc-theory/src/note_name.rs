@@ -37,12 +37,14 @@ impl NoteName {
         PitchClass::from_semitone(self.letter.natural_semitone() + self.alter.semitones() as i32)
     }
 
-    /// Default spelling of a pitch class when no context decides it: naturals, and
-    /// Db, Eb, F#, Ab, Bb for the black keys (the common choice in guitar chord charts).
+    /// Canonical display spelling of a pitch class when no key or harmonic context
+    /// decides it (Phase 2 convention): naturals, and C#, Eb, F#, Ab, Bb for the black
+    /// keys, a deterministic guitar-chart choice (C#m rather than Dbm). This is display
+    /// only; pitch identity is the pitch class. Contextual spelling can replace it later.
     pub fn default_for(pc: PitchClass) -> Self {
         const TABLE: [(Letter, i8); 12] = [
             (Letter::C, 0),
-            (Letter::D, -1),
+            (Letter::C, 1),
             (Letter::D, 0),
             (Letter::E, -1),
             (Letter::E, 0),
@@ -156,7 +158,7 @@ mod tests {
         assert_eq!(
             names,
             [
-                "C", "Db", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"
+                "C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"
             ]
         );
     }
