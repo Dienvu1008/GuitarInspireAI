@@ -429,6 +429,7 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "mc-guitar",
+ "mc-notation",
  "mc-project",
  "mc-score",
  "mc-theory",
