@@ -17,6 +17,7 @@ fixtures = ["mc-score/fixtures"]
 mc-theory.workspace = true
 mc-score.workspace = true
 mc-project.workspace = true
+mc-guitar.workspace = true
 
 [dev-dependencies]
 mc-score = { workspace = true, features = ["fixtures"] }

@@ -4,6 +4,7 @@
 pub mod deps;
 pub mod docs_links;
 pub mod inventory;
+pub mod modularity;
 pub mod purity;
 pub mod reports;
 pub mod trailers;

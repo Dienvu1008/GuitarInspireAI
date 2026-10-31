@@ -7,6 +7,7 @@ mod constraints;
 mod diff;
 mod error;
 mod events;
+pub mod guitar;
 mod handlers;
 mod history;
 pub mod ports;
@@ -16,8 +17,8 @@ mod session;
 pub mod infra;
 
 pub use command::{
-    BeatAddress, Command, CommandEnvelope, CommandId, DurationSpec, InstrumentSpecInput, Revision,
-    ScoreCommand, TrackCommand,
+    BeatAddress, Command, CommandEnvelope, CommandId, DurationSpec, GuitarCommand,
+    InstrumentSpecInput, Revision, ScoreCommand, TrackCommand,
 };
 pub use constraints::Constraints;
 pub use error::{CommandError, OpenError, SaveError};

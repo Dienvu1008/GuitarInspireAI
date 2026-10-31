@@ -15,16 +15,20 @@
 //! remove-note <t> <bar> <voice> <beat> <string>
 //! tie <t> <bar> <voice> <beat> <string> on|off
 //! voice <t> <bar>                       shift <t> <from-bar> <to-bar> <delta>
+//! retune <t> <preset|pitch,...> [capo] keep-pitches|keep-frets
 //! undo                                  redo
 //! ```
+//!
+//! Tuning presets: standard, drop-d, dadgad, open-g, open-d, half-step-down.
 //!
 //! Durations: `w h q e s t` (whole ... 1/32) or a number 0..=8, with `.` per dot and a
 //! `/3` suffix for a triplet, for example `q.`, `e/3`, `h..`.
 
+use mc_app::guitar::{RetuneMode, TuningPreset};
 use mc_app::types::{MasterBar, Score, TimeSignature};
 use mc_app::{
-    BeatAddress, Command, CommandEnvelope, DocumentSession, DurationSpec, InstrumentSpecInput,
-    ScoreCommand, TrackCommand,
+    BeatAddress, Command, CommandEnvelope, DocumentSession, DurationSpec, GuitarCommand,
+    InstrumentSpecInput, ScoreCommand, TrackCommand,
 };
 
 pub enum Step {
@@ -220,6 +224,39 @@ pub fn parse(score: &Score, line: &str) -> Result<Step, String> {
                 },
             })
         }
+        "retune" => {
+            let index: usize = num(a.first(), "track")?;
+            let track = track_id(score, index)?;
+            let spec = a.get(1).ok_or("missing tuning")?;
+            let tuning = match TuningPreset::from_name(spec) {
+                Ok(p) => p.pitches().map(String::from).to_vec(),
+                Err(_) => spec.split(',').map(String::from).collect(),
+            };
+            let (capo, mode) = match a.len() {
+                3 => (0, a[2]),
+                4 => (num(a.get(2), "capo")?, a[3]),
+                _ => {
+                    return Err(
+                        "expected retune <t> <tuning> [capo] keep-pitches|keep-frets".into(),
+                    );
+                }
+            };
+            let mode = RetuneMode::from_name(mode)
+                .ok_or_else(|| format!("expected keep-pitches or keep-frets, got '{mode}'"))?;
+            let fret_count = score
+                .track(track)
+                .map(|t| t.fretted().fret_count)
+                .unwrap_or(24);
+            Ok(Step::Command(Command::Guitar(GuitarCommand::Retune {
+                track,
+                instrument: InstrumentSpecInput {
+                    tuning,
+                    fret_count,
+                    capo,
+                },
+                mode,
+            })))
+        }
         "insert-bars" => {
             let mut template = MasterBar::default();
             if let Some(ts) = a.get(2) {
@@ -365,5 +402,21 @@ mod tests {
         assert_eq!(duration("6").unwrap().base, 6);
         assert!(duration("x").is_err());
         assert!(duration("q/5").is_err());
+    }
+
+    #[test]
+    fn retune_lines() {
+        let score = mc_app::new_score("t", 1).unwrap();
+        let Ok(Step::Command(Command::Guitar(GuitarCommand::Retune {
+            instrument, mode, ..
+        }))) = parse(&score, "retune 0 drop-d 2 keep-pitches")
+        else {
+            panic!("expected a retune command");
+        };
+        assert_eq!(instrument.tuning[5], "D2");
+        assert_eq!((instrument.capo, mode), (2, RetuneMode::KeepPitches));
+        assert!(parse(&score, "retune 0 E4,B3,G3,D3,A2,E2 keep-frets").is_ok());
+        assert!(parse(&score, "retune 0 drop-d sideways").is_err());
+        assert!(parse(&score, "retune 0").is_err());
     }
 }

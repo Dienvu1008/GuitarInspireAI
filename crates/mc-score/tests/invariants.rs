@@ -240,6 +240,85 @@ fn h03_retune_to_fewer_strings_is_rejected_while_notes_use_them() {
     assert_eq!(rule(s.set_instrument(t, bass).unwrap_err()), "H-03");
 }
 
+fn drop_d() -> InstrumentSpec {
+    let tuning = Tuning::new(
+        ["E4", "B3", "G3", "D3", "A2", "D2"]
+            .map(|p| p.parse().unwrap())
+            .to_vec(),
+    )
+    .unwrap();
+    InstrumentSpec::Fretted(FrettedInstrument {
+        tuning,
+        ..FrettedInstrument::standard_guitar()
+    })
+}
+
+#[test]
+fn h04_h06_retune_shifts_frets_per_string_and_keeps_ties() {
+    let mut s = score(2, 1);
+    let t = track(&s, 0);
+    let b0 = fill(&mut s, t, 0, 0, &[q()]);
+    let b1 = fill(&mut s, t, 1, 0, &[q()]);
+    note(&mut s, b0[0], 6, 3);
+    note(&mut s, b0[0], 1, 0);
+    let tied = note(&mut s, b1[0], 6, 3);
+    s.set_tie(b1[0], tied, true).unwrap();
+
+    let events = s
+        .retune_track(t, drop_d(), Some(&[0, 0, 0, 0, 0, 2]))
+        .unwrap();
+    assert!(events.contains(&DomainEvent::TrackChanged { track: t }));
+    let tr = s.track(t).unwrap();
+    assert_eq!(tr.instrument(), &drop_d());
+    let frets = |bar: usize| -> Vec<(u8, u8)> {
+        tr.bar(bar).unwrap().voices[0].beats[0]
+            .notes
+            .iter()
+            .map(|n| (n.position().string.get(), n.position().fret.0))
+            .collect()
+    };
+    assert_eq!(frets(0), [(1, 0), (6, 5)]);
+    assert_eq!(frets(1), [(6, 5)]);
+    assert!(tr.bar(1).unwrap().voices[0].beats[0].notes[0].tie);
+    assert!(s.validate().is_empty());
+}
+
+#[test]
+fn h04_retune_is_all_or_nothing() {
+    let mut s = score(2, 1);
+    let t = track(&s, 0);
+    let b0 = fill(&mut s, t, 0, 0, &[q()]);
+    let b1 = fill(&mut s, t, 1, 0, &[q()]);
+    note(&mut s, b0[0], 6, 3);
+    note(&mut s, b1[0], 1, 0);
+    let before = s.clone();
+    // String 1 open would need fret -1.
+    let err = s
+        .retune_track(t, guitar(), Some(&[-1, 0, 0, 0, 0, 0]))
+        .unwrap_err();
+    assert_eq!(rule(err), "H-04");
+    assert_eq!(s, before);
+    // Fret above the fret count.
+    let err = s
+        .retune_track(t, guitar(), Some(&[0, 0, 0, 0, 0, 22]))
+        .unwrap_err();
+    assert_eq!(rule(err), "H-04");
+    assert_eq!(s, before);
+    // A missing delta for a used string.
+    let err = s.retune_track(t, guitar(), Some(&[0])).unwrap_err();
+    assert_eq!(rule(err), "H-03");
+    assert_eq!(s, before);
+    // No deltas: frets are kept.
+    s.retune_track(t, drop_d(), None).unwrap();
+    assert_eq!(
+        s.track(t).unwrap().bar(0).unwrap().voices[0].beats[0].notes[0]
+            .position()
+            .fret
+            .0,
+        3
+    );
+}
+
 #[test]
 fn h11_tempo_map_rules() {
     let mut s = score(2, 1);

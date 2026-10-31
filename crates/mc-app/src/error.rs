@@ -1,4 +1,5 @@
 use crate::{Revision, ports::StoreError};
+use mc_guitar::GuitarError;
 use mc_project::LoadError;
 use mc_score::DomainError;
 use mc_theory::TheoryError;
@@ -21,6 +22,8 @@ pub enum CommandError {
         rule: &'static str,
         message: String,
     },
+    /// A Guitar context service rejected the input (for example a retune plan).
+    Guitar(GuitarError),
     NothingToUndo,
     NothingToRedo,
 }
@@ -32,6 +35,7 @@ impl CommandError {
             CommandError::Value(_) => "T",
             CommandError::Domain(d) => d.rule(),
             CommandError::Constraint { rule, .. } => rule,
+            CommandError::Guitar(_) => "G",
             CommandError::NothingToUndo | CommandError::NothingToRedo => "E-05",
         }
     }
@@ -40,6 +44,12 @@ impl CommandError {
 impl From<DomainError> for CommandError {
     fn from(e: DomainError) -> Self {
         CommandError::Domain(e)
+    }
+}
+
+impl From<GuitarError> for CommandError {
+    fn from(e: GuitarError) -> Self {
+        CommandError::Guitar(e)
     }
 }
 
@@ -62,6 +72,7 @@ impl fmt::Display for CommandError {
             CommandError::Value(e) => write!(f, "{e}"),
             CommandError::Domain(e) => write!(f, "{e}"),
             CommandError::Constraint { rule, message } => write!(f, "{rule}: {message}"),
+            CommandError::Guitar(e) => write!(f, "{e}"),
             CommandError::NothingToUndo => write!(f, "nothing to undo"),
             CommandError::NothingToRedo => write!(f, "nothing to redo"),
         }

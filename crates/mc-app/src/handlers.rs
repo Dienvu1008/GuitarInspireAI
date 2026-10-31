@@ -117,6 +117,36 @@ pub(crate) mod score_handlers {
     }
 }
 
+pub(crate) mod guitar_handlers {
+    use super::*;
+    use crate::command::GuitarCommand;
+    use mc_score::DomainError;
+
+    pub(crate) fn handle(
+        score: &mut Score,
+        cmd: GuitarCommand,
+        c: &Constraints,
+    ) -> Result<Events, CommandError> {
+        match cmd {
+            GuitarCommand::Retune {
+                track,
+                instrument: i,
+                mode,
+            } => {
+                let new = instrument(&i, c)?;
+                let old = score
+                    .track(track)
+                    .ok_or_else(|| DomainError::NotFound(format!("track {}", track.raw())))?
+                    .fretted()
+                    .clone();
+                let InstrumentSpec::Fretted(n) = &new;
+                let plan = mc_guitar::plan_retune(&old.tuning, old.capo, &n.tuning, n.capo, mode)?;
+                Ok(score.retune_track(track, new, plan.fret_deltas.as_deref())?)
+            }
+        }
+    }
+}
+
 pub(crate) mod track_handlers {
     use super::*;
 

@@ -26,7 +26,7 @@ jobs:
       - name: Diff against snapshots
         shell: pwsh
         run: |
-          foreach ($c in 'mc-theory','mc-score','mc-project','mc-app') {
+          foreach ($c in 'mc-theory','mc-score','mc-guitar','mc-project','mc-app') {
             cargo +nightly public-api -p $c --simplified | Out-File -Encoding utf8NoBOM "architecture/public-api/$c.txt"
           }
           git diff --stat --exit-code -- architecture/public-api

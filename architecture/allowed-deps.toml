@@ -34,7 +34,8 @@ dev_external = ["proptest", "criterion"]
 [mc-app]
 layer = "application"
 phase = 1
-internal = ["mc-theory", "mc-score", "mc-project"]
+# mc-guitar added in Phase 2 (ADR-003 context map: Application -> Guitar; ADR-019).
+internal = ["mc-theory", "mc-score", "mc-project", "mc-guitar"]
 external = []
 dev_external = ["proptest", "criterion"]
 

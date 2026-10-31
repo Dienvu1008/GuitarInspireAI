@@ -3,7 +3,7 @@
 
 use crate::command::{Command, CommandEnvelope, Revision};
 use crate::events::{AppEvent, DocumentId, EventEnvelope, EventPayload, EventSink};
-use crate::handlers::{score_handlers, track_handlers};
+use crate::handlers::{guitar_handlers, score_handlers, track_handlers};
 use crate::history::{History, HistoryLimits};
 use crate::ports::{Clock, Entropy, ProjectStore};
 use crate::{CommandError, CommandId, Constraints, OpenError, SaveError, diff};
@@ -178,6 +178,7 @@ impl DocumentSession {
         let domain = match env.command {
             Command::Score(c) => score_handlers::handle(&mut next, c, &constraints)?,
             Command::Track(c) => track_handlers::handle(&mut next, c, &constraints)?,
+            Command::Guitar(c) => guitar_handlers::handle(&mut next, c, &constraints)?,
         };
         let before = std::mem::replace(&mut self.score, next);
         let could_undo = self.history.can_undo();

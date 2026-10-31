@@ -46,6 +46,12 @@ jobs:
       - name: Rule coverage report (FF-24, advisory)
         run: cargo xtask fitness rule-coverage
 
+      - name: Coupling report (FF-25, advisory)
+        run: cargo xtask fitness coupling
+
+      - name: Module cycle report (FF-26, advisory)
+        run: cargo xtask fitness module-cycles
+
       - name: Complexity report (FF-28, advisory; warnings do not fail the job)
         run: cargo clippy --workspace --all-targets --all-features --locked -- -W clippy::cognitive_complexity -W clippy::too_many_lines
 

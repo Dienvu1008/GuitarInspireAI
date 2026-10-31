@@ -1,6 +1,7 @@
 //! Commands are application-layer types with plain values, as adapters (CLI, later FFI)
 //! send them. Handlers convert them into value objects; the domain validates the rest.
 
+use mc_guitar::RetuneMode;
 use mc_score::{BeatId, MasterBar, NoteEffects, NoteId, TrackId};
 
 /// Opaque id chosen by the caller; copied into every event as the correlation id.
@@ -38,6 +39,19 @@ impl CommandEnvelope {
 pub enum Command {
     Score(ScoreCommand),
     Track(TrackCommand),
+    Guitar(GuitarCommand),
+}
+
+/// Commands that use Guitar context services to plan a score change.
+#[derive(Clone, Debug, PartialEq)]
+pub enum GuitarCommand {
+    /// Changes the track's tuning and capo. `KeepPitches` moves every note so it sounds
+    /// the same; `KeepFrets` keeps strings and frets. All or nothing.
+    Retune {
+        track: TrackId,
+        instrument: InstrumentSpecInput,
+        mode: RetuneMode,
+    },
 }
 
 /// Written duration as plain values: base exponent (0 = whole ... 8), dots, tuplet.

@@ -8,6 +8,8 @@
 //!   cargo xtask fitness platform                    (FF-07)
 //!   cargo xtask fitness rule-coverage               (FF-24, advisory report)
 //!   cargo xtask fitness freshness                   (FF-30, advisory report, needs network)
+//!   cargo xtask fitness coupling                    (FF-25, advisory report)
+//!   cargo xtask fitness module-cycles               (FF-26, advisory report)
 //!   cargo xtask fitness trailers   [--base <rev>]   (FF-19)
 //!   cargo xtask fitness inventory  [--base <rev>]   (FF-20)
 //!   cargo xtask fitness docs-links                  (FF-33, link part)
@@ -57,6 +59,8 @@ fn run(root: &std::path::Path, args: &[String]) -> Result<(), String> {
         "platform" => fitness::purity::run_platform(root),
         "rule-coverage" => fitness::reports::run_rule_coverage(root),
         "freshness" => fitness::reports::run_freshness(root),
+        "coupling" => fitness::modularity::run_coupling(root),
+        "module-cycles" => fitness::modularity::run_module_cycles(root),
         "all" => {
             let results = [
                 ("FF-01 deps", fitness::deps::run(root)),
@@ -90,6 +94,6 @@ fn parse_base(rest: &[String]) -> Result<Option<String>, String> {
 }
 
 fn usage() -> String {
-    "usage: cargo xtask fitness <all|deps|purity|wasm|platform|trailers|inventory|docs-links|rule-coverage|freshness> [--base <rev>]"
+    "usage: cargo xtask fitness <all|deps|purity|wasm|platform|trailers|inventory|docs-links|rule-coverage|freshness|coupling|module-cycles> [--base <rev>]"
         .to_string()
 }

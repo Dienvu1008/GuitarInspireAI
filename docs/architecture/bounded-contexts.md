@@ -62,6 +62,8 @@ Reconsideration triggers for extracting `mc-instrument`: instrument ranges and t
 3. Value objects: `Voicing` (list of `Option<FretPosition>` per string), `VoicingConstraints` (max stretch, max fingers, allow open strings, fret range), `ScalePosition`, `CagedShape`, `TuningPreset`.
 4. Aggregates: None (stateless services).
 5. Domain services: `Fretboard::positions_of(pitch_class, tuning, fret_range)`, `ChordFinder::voicings(chord, tuning, constraints)`, `ChordFinder::identify(voicing, tuning) -> Vec<ChordSymbol>`, `ScaleMap`, `Retune::plan(track_notes, from, to, mode)`, later `FingeringOptimizer`.
+
+Phase 2 implementation (2026-10-31): `TuningPreset` (standard, drop-d, dadgad, open-g, open-d, half-step-down), `positions_of`, `find_voicings`, `identify` (ranked `ChordCandidate`s with tones, bass, missing tones and explanations), `VoicingConstraints`, `scale_positions` and `plan_retune` (per-string fret deltas; the score applies them atomically with `Score::retune_track`). Chord qualities, `ChordInterval`, `NoteName`, `ScaleFormula` and chord-symbol notation (`chord_symbol`, kept apart from the interval model; aliases map to canonical qualities) are value objects in `mc-theory`. `CagedShape` and `FingeringOptimizer` are not implemented yet.
 6. Domain events: None.
 7. Public interface: Pure functions and query structs.
 8. Dependencies: `mc-theory`.
