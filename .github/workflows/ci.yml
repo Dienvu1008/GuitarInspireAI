@@ -1,6 +1,6 @@
-# Phase 0 CI: governance checks only (no production code exists yet).
-# Active fitness functions: FF-09, FF-10 (cargo-deny), FF-19, FF-20, FF-33 (xtask + mermaid-check).
-# Later phases add jobs as their fitness functions activate (docs/architecture/fitness-functions.md).
+# CI for the Rust workspace and governance checks.
+# The authoritative list of active fitness functions is architecture/fitness-inventory.toml;
+# FF-20 verifies that every active check is wired into this workflow or weekly.yml.
 name: ci
 
 on:
@@ -21,10 +21,19 @@ jobs:
       - name: Install pinned Rust toolchain
         run: rustup show active-toolchain || rustup toolchain install
 
-      - name: xtask self-tests
-        run: cargo test --package xtask --locked
+      - name: Formatting
+        run: cargo fmt --all --check
 
-      - name: Fitness checks (FF-19 trailers, FF-20 inventory, FF-33 links)
+      - name: Clippy (FF-03 domain purity is enforced here via per-crate clippy.toml)
+        run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+
+      - name: Tests (FF-11 round trip, FF-13 and FF-14 properties, FF-23 memory, FF-32 schema, xtask self-tests)
+        run: cargo test --workspace --all-features --locked
+
+      - name: Benchmarks compile (FF-21; timings are measured on the reference machine)
+        run: cargo bench --workspace --no-run --locked
+
+      - name: Fitness checks (FF-01, FF-03, FF-04, FF-07, FF-19, FF-20, FF-33)
         shell: pwsh
         env:
           PR_BASE: ${{ github.event.pull_request.base.sha }}
@@ -33,6 +42,12 @@ jobs:
           $base = if ($env:PR_BASE) { $env:PR_BASE } else { $env:PUSH_BEFORE }
           if ($base) { cargo xtask fitness all --base $base } else { cargo xtask fitness all }
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Rule coverage report (FF-24, advisory)
+        run: cargo xtask fitness rule-coverage
+
+      - name: Complexity report (FF-28, advisory; warnings do not fail the job)
+        run: cargo clippy --workspace --all-targets --all-features --locked -- -W clippy::cognitive_complexity -W clippy::too_many_lines
 
       - uses: actions/setup-node@v7
         with:

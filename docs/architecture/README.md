@@ -63,11 +63,11 @@ TAB editor effort (R-04), solo capacity (R-17), RT audio safety (R-02), frb depe
 
 ## 12. Unresolved questions
 
-Project license (Q-10), file extension (Q-08), pattern DSL semantics (Q-01 to Q-06), state management library (Q-12), SoundFont (Q-11), minimum Windows and macOS versions (Q-13), Web priority (Q-14). Resolved on 2026-10-31: string numbering (Q-07), bar diagnostics (Q-09), single active TAB track in MVP (Q-17). Full list: [open-questions.md](../research/open-questions.md).
+Project license (Q-10), pattern DSL semantics (Q-01 to Q-06), state management library (Q-12), SoundFont (Q-11), minimum Windows and macOS versions (Q-13), Web priority (Q-14). Resolved on 2026-10-31: string numbering (Q-07), file extension `.giproj` (Q-08), bar diagnostics (Q-09), default SoundFont (Q-11), single active TAB track in MVP (Q-17). Full list: [open-questions.md](../research/open-questions.md).
 
 ## 13. Recommended next actions
 
-1. Done: user review; Q-07, Q-09 and Q-17 answered. Still needed: Q-08 before Phase 1 exit.
+1. Done: user review; Q-07, Q-08, Q-09 and Q-17 answered. M0 and Phase 1 complete (see the roadmap exit reports).
 2. Start M0: repository and CI skeleton with FF-09, FF-10, FF-19, FF-20, FF-33.
 3. Run S1, S2, S4, S5 first, then S7. Update ADR-005, ADR-007, ADR-008 and ADR-018 with results.
 4. Begin Phase 1 only after Phase 0 exit criteria are met.

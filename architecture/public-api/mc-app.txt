@@ -1,0 +1,777 @@
+pub mod mc_app
+pub mod mc_app::infra
+pub struct mc_app::infra::FsProjectStore
+pub mc_app::infra::FsProjectStore::keep_backup: bool
+pub mc_app::infra::FsProjectStore::retry: mc_app::infra::RetryPolicy
+impl core::clone::Clone for mc_app::infra::FsProjectStore
+pub fn mc_app::infra::FsProjectStore::clone(&self) -> Self
+impl core::default::Default for mc_app::infra::FsProjectStore
+pub fn mc_app::infra::FsProjectStore::default() -> Self
+impl core::fmt::Debug for mc_app::infra::FsProjectStore
+pub fn mc_app::infra::FsProjectStore::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl mc_app::ports::ProjectStore for mc_app::infra::FsProjectStore
+pub fn mc_app::infra::FsProjectStore::read(&self, &std::path::Path) -> core::result::Result<alloc::vec::Vec<u8>, mc_app::ports::StoreError>
+pub fn mc_app::infra::FsProjectStore::write_atomic(&self, &std::path::Path, &[u8]) -> core::result::Result<(), mc_app::ports::StoreError>
+impl core::marker::Freeze for mc_app::infra::FsProjectStore
+impl core::marker::Send for mc_app::infra::FsProjectStore
+impl core::marker::Sync for mc_app::infra::FsProjectStore
+impl core::marker::Unpin for mc_app::infra::FsProjectStore
+impl core::marker::UnsafeUnpin for mc_app::infra::FsProjectStore
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::infra::FsProjectStore
+impl core::panic::unwind_safe::UnwindSafe for mc_app::infra::FsProjectStore
+pub struct mc_app::infra::FsRecoveryStore
+pub mc_app::infra::FsRecoveryStore::dir: std::path::PathBuf
+pub mc_app::infra::FsRecoveryStore::keep: usize
+impl mc_app::infra::FsRecoveryStore
+pub fn mc_app::infra::FsRecoveryStore::new(impl core::convert::Into<std::path::PathBuf>) -> Self
+impl core::clone::Clone for mc_app::infra::FsRecoveryStore
+pub fn mc_app::infra::FsRecoveryStore::clone(&self) -> Self
+impl core::fmt::Debug for mc_app::infra::FsRecoveryStore
+pub fn mc_app::infra::FsRecoveryStore::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl mc_app::ports::RecoveryStore for mc_app::infra::FsRecoveryStore
+pub fn mc_app::infra::FsRecoveryStore::begin_session(&self) -> core::result::Result<bool, mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::discard(&self, &str) -> core::result::Result<(), mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::end_session(&self) -> core::result::Result<(), mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::list(&self) -> core::result::Result<alloc::vec::Vec<mc_app::ports::RecoveryEntry>, mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::read(&self, &mc_app::ports::RecoveryEntry) -> core::result::Result<alloc::vec::Vec<u8>, mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::write_autosave(&self, &str, core::option::Option<&std::path::Path>, &[u8], u64) -> core::result::Result<std::path::PathBuf, mc_app::ports::StoreError>
+impl core::marker::Freeze for mc_app::infra::FsRecoveryStore
+impl core::marker::Send for mc_app::infra::FsRecoveryStore
+impl core::marker::Sync for mc_app::infra::FsRecoveryStore
+impl core::marker::Unpin for mc_app::infra::FsRecoveryStore
+impl core::marker::UnsafeUnpin for mc_app::infra::FsRecoveryStore
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::infra::FsRecoveryStore
+impl core::panic::unwind_safe::UnwindSafe for mc_app::infra::FsRecoveryStore
+pub struct mc_app::infra::RetryPolicy
+pub mc_app::infra::RetryPolicy::attempts: u32
+pub mc_app::infra::RetryPolicy::first_delay: core::time::Duration
+impl core::clone::Clone for mc_app::infra::RetryPolicy
+pub fn mc_app::infra::RetryPolicy::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::infra::RetryPolicy
+impl core::cmp::PartialEq for mc_app::infra::RetryPolicy
+pub fn mc_app::infra::RetryPolicy::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::infra::RetryPolicy
+pub fn mc_app::infra::RetryPolicy::default() -> Self
+impl core::fmt::Debug for mc_app::infra::RetryPolicy
+pub fn mc_app::infra::RetryPolicy::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::infra::RetryPolicy
+impl core::marker::StructuralPartialEq for mc_app::infra::RetryPolicy
+impl core::marker::Freeze for mc_app::infra::RetryPolicy
+impl core::marker::Send for mc_app::infra::RetryPolicy
+impl core::marker::Sync for mc_app::infra::RetryPolicy
+impl core::marker::Unpin for mc_app::infra::RetryPolicy
+impl core::marker::UnsafeUnpin for mc_app::infra::RetryPolicy
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::infra::RetryPolicy
+impl core::panic::unwind_safe::UnwindSafe for mc_app::infra::RetryPolicy
+pub struct mc_app::infra::SystemClock
+impl core::clone::Clone for mc_app::infra::SystemClock
+pub fn mc_app::infra::SystemClock::clone(&self) -> Self
+impl core::default::Default for mc_app::infra::SystemClock
+pub fn mc_app::infra::SystemClock::default() -> Self
+impl core::fmt::Debug for mc_app::infra::SystemClock
+pub fn mc_app::infra::SystemClock::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::infra::SystemClock
+impl mc_app::ports::Clock for mc_app::infra::SystemClock
+pub fn mc_app::infra::SystemClock::now_unix_millis(&self) -> u64
+impl core::marker::Freeze for mc_app::infra::SystemClock
+impl core::marker::Send for mc_app::infra::SystemClock
+impl core::marker::Sync for mc_app::infra::SystemClock
+impl core::marker::Unpin for mc_app::infra::SystemClock
+impl core::marker::UnsafeUnpin for mc_app::infra::SystemClock
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::infra::SystemClock
+impl core::panic::unwind_safe::UnwindSafe for mc_app::infra::SystemClock
+pub struct mc_app::infra::SystemEntropy
+impl core::clone::Clone for mc_app::infra::SystemEntropy
+pub fn mc_app::infra::SystemEntropy::clone(&self) -> Self
+impl core::default::Default for mc_app::infra::SystemEntropy
+pub fn mc_app::infra::SystemEntropy::default() -> Self
+impl core::fmt::Debug for mc_app::infra::SystemEntropy
+pub fn mc_app::infra::SystemEntropy::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::infra::SystemEntropy
+impl mc_app::ports::Entropy for mc_app::infra::SystemEntropy
+pub fn mc_app::infra::SystemEntropy::random_u128(&self) -> u128
+impl core::marker::Freeze for mc_app::infra::SystemEntropy
+impl core::marker::Send for mc_app::infra::SystemEntropy
+impl core::marker::Sync for mc_app::infra::SystemEntropy
+impl core::marker::Unpin for mc_app::infra::SystemEntropy
+impl core::marker::UnsafeUnpin for mc_app::infra::SystemEntropy
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::infra::SystemEntropy
+impl core::panic::unwind_safe::UnwindSafe for mc_app::infra::SystemEntropy
+pub fn mc_app::infra::cleanup_temp_files(&std::path::Path) -> usize
+pub mod mc_app::ports
+pub enum mc_app::ports::StoreError
+pub mc_app::ports::StoreError::Io
+pub mc_app::ports::StoreError::Io::message: alloc::string::String
+pub mc_app::ports::StoreError::Io::path: std::path::PathBuf
+pub mc_app::ports::StoreError::Locked(std::path::PathBuf)
+pub mc_app::ports::StoreError::NotFound(std::path::PathBuf)
+pub mc_app::ports::StoreError::PermissionDenied(std::path::PathBuf)
+impl core::clone::Clone for mc_app::ports::StoreError
+pub fn mc_app::ports::StoreError::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::ports::StoreError
+impl core::cmp::PartialEq for mc_app::ports::StoreError
+pub fn mc_app::ports::StoreError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_app::ports::StoreError
+impl core::fmt::Debug for mc_app::ports::StoreError
+pub fn mc_app::ports::StoreError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_app::ports::StoreError
+pub fn mc_app::ports::StoreError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::ports::StoreError
+impl core::marker::Freeze for mc_app::ports::StoreError
+impl core::marker::Send for mc_app::ports::StoreError
+impl core::marker::Sync for mc_app::ports::StoreError
+impl core::marker::Unpin for mc_app::ports::StoreError
+impl core::marker::UnsafeUnpin for mc_app::ports::StoreError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::ports::StoreError
+impl core::panic::unwind_safe::UnwindSafe for mc_app::ports::StoreError
+pub struct mc_app::ports::RecoveryEntry
+pub mc_app::ports::RecoveryEntry::path: std::path::PathBuf
+pub mc_app::ports::RecoveryEntry::project_id: alloc::string::String
+pub mc_app::ports::RecoveryEntry::source: core::option::Option<std::path::PathBuf>
+pub mc_app::ports::RecoveryEntry::written_unix_millis: u64
+impl core::clone::Clone for mc_app::ports::RecoveryEntry
+pub fn mc_app::ports::RecoveryEntry::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::ports::RecoveryEntry
+impl core::cmp::PartialEq for mc_app::ports::RecoveryEntry
+pub fn mc_app::ports::RecoveryEntry::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::ports::RecoveryEntry
+pub fn mc_app::ports::RecoveryEntry::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::ports::RecoveryEntry
+impl core::marker::Freeze for mc_app::ports::RecoveryEntry
+impl core::marker::Send for mc_app::ports::RecoveryEntry
+impl core::marker::Sync for mc_app::ports::RecoveryEntry
+impl core::marker::Unpin for mc_app::ports::RecoveryEntry
+impl core::marker::UnsafeUnpin for mc_app::ports::RecoveryEntry
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::ports::RecoveryEntry
+impl core::panic::unwind_safe::UnwindSafe for mc_app::ports::RecoveryEntry
+pub trait mc_app::ports::Clock
+pub fn mc_app::ports::Clock::now_unix_millis(&self) -> u64
+impl mc_app::ports::Clock for mc_app::infra::SystemClock
+pub fn mc_app::infra::SystemClock::now_unix_millis(&self) -> u64
+pub trait mc_app::ports::Entropy
+pub fn mc_app::ports::Entropy::random_u128(&self) -> u128
+impl mc_app::ports::Entropy for mc_app::infra::SystemEntropy
+pub fn mc_app::infra::SystemEntropy::random_u128(&self) -> u128
+pub trait mc_app::ports::ProjectStore
+pub fn mc_app::ports::ProjectStore::read(&self, &std::path::Path) -> core::result::Result<alloc::vec::Vec<u8>, mc_app::ports::StoreError>
+pub fn mc_app::ports::ProjectStore::write_atomic(&self, &std::path::Path, &[u8]) -> core::result::Result<(), mc_app::ports::StoreError>
+impl mc_app::ports::ProjectStore for mc_app::infra::FsProjectStore
+pub fn mc_app::infra::FsProjectStore::read(&self, &std::path::Path) -> core::result::Result<alloc::vec::Vec<u8>, mc_app::ports::StoreError>
+pub fn mc_app::infra::FsProjectStore::write_atomic(&self, &std::path::Path, &[u8]) -> core::result::Result<(), mc_app::ports::StoreError>
+pub trait mc_app::ports::RecoveryStore
+pub fn mc_app::ports::RecoveryStore::begin_session(&self) -> core::result::Result<bool, mc_app::ports::StoreError>
+pub fn mc_app::ports::RecoveryStore::discard(&self, &str) -> core::result::Result<(), mc_app::ports::StoreError>
+pub fn mc_app::ports::RecoveryStore::end_session(&self) -> core::result::Result<(), mc_app::ports::StoreError>
+pub fn mc_app::ports::RecoveryStore::list(&self) -> core::result::Result<alloc::vec::Vec<mc_app::ports::RecoveryEntry>, mc_app::ports::StoreError>
+pub fn mc_app::ports::RecoveryStore::read(&self, &mc_app::ports::RecoveryEntry) -> core::result::Result<alloc::vec::Vec<u8>, mc_app::ports::StoreError>
+pub fn mc_app::ports::RecoveryStore::write_autosave(&self, &str, core::option::Option<&std::path::Path>, &[u8], u64) -> core::result::Result<std::path::PathBuf, mc_app::ports::StoreError>
+impl mc_app::ports::RecoveryStore for mc_app::infra::FsRecoveryStore
+pub fn mc_app::infra::FsRecoveryStore::begin_session(&self) -> core::result::Result<bool, mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::discard(&self, &str) -> core::result::Result<(), mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::end_session(&self) -> core::result::Result<(), mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::list(&self) -> core::result::Result<alloc::vec::Vec<mc_app::ports::RecoveryEntry>, mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::read(&self, &mc_app::ports::RecoveryEntry) -> core::result::Result<alloc::vec::Vec<u8>, mc_app::ports::StoreError>
+pub fn mc_app::infra::FsRecoveryStore::write_autosave(&self, &str, core::option::Option<&std::path::Path>, &[u8], u64) -> core::result::Result<std::path::PathBuf, mc_app::ports::StoreError>
+pub mod mc_app::types
+pub use mc_app::types::AppInfo
+pub use mc_app::types::BarContent
+pub use mc_app::types::Beat
+pub use mc_app::types::BeatId
+pub use mc_app::types::Diagnostic
+pub use mc_app::types::DiagnosticKind
+pub use mc_app::types::DomainError
+pub use mc_app::types::DomainEvent
+pub use mc_app::types::FORMAT_VERSION
+pub use mc_app::types::FormatVersion
+pub use mc_app::types::InstrumentSpec
+pub use mc_app::types::KeySignature
+pub use mc_app::types::LoadError
+pub use mc_app::types::MasterBar
+pub use mc_app::types::Mode
+pub use mc_app::types::Note
+pub use mc_app::types::NoteEffects
+pub use mc_app::types::NoteId
+pub use mc_app::types::Rational
+pub use mc_app::types::Score
+pub use mc_app::types::TimeSignature
+pub use mc_app::types::Track
+pub use mc_app::types::TrackId
+pub use mc_app::types::Violation
+pub use mc_app::types::Voice
+pub enum mc_app::AppEvent
+pub mc_app::AppEvent::DirtyChanged
+pub mc_app::AppEvent::DirtyChanged::dirty: bool
+pub mc_app::AppEvent::DocumentSaved
+pub mc_app::AppEvent::DocumentSaved::revision: mc_app::Revision
+pub mc_app::AppEvent::HistoryApplied
+pub mc_app::AppEvent::UndoAvailabilityChanged
+pub mc_app::AppEvent::UndoAvailabilityChanged::can_redo: bool
+pub mc_app::AppEvent::UndoAvailabilityChanged::can_undo: bool
+impl core::clone::Clone for mc_app::AppEvent
+pub fn mc_app::AppEvent::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::AppEvent
+impl core::cmp::PartialEq for mc_app::AppEvent
+pub fn mc_app::AppEvent::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::AppEvent
+pub fn mc_app::AppEvent::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::AppEvent
+impl core::marker::Freeze for mc_app::AppEvent
+impl core::marker::Send for mc_app::AppEvent
+impl core::marker::Sync for mc_app::AppEvent
+impl core::marker::Unpin for mc_app::AppEvent
+impl core::marker::UnsafeUnpin for mc_app::AppEvent
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::AppEvent
+impl core::panic::unwind_safe::UnwindSafe for mc_app::AppEvent
+pub enum mc_app::Command
+pub mc_app::Command::Score(mc_app::ScoreCommand)
+pub mc_app::Command::Track(mc_app::TrackCommand)
+impl core::clone::Clone for mc_app::Command
+pub fn mc_app::Command::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_app::Command
+pub fn mc_app::Command::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::Command
+pub fn mc_app::Command::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::Command
+impl core::marker::Freeze for mc_app::Command
+impl core::marker::Send for mc_app::Command
+impl core::marker::Sync for mc_app::Command
+impl core::marker::Unpin for mc_app::Command
+impl core::marker::UnsafeUnpin for mc_app::Command
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::Command
+impl core::panic::unwind_safe::UnwindSafe for mc_app::Command
+pub enum mc_app::CommandError
+pub mc_app::CommandError::Constraint
+pub mc_app::CommandError::Constraint::message: alloc::string::String
+pub mc_app::CommandError::Constraint::rule: &'static str
+pub mc_app::CommandError::Domain(mc_score::error::DomainError)
+pub mc_app::CommandError::NothingToRedo
+pub mc_app::CommandError::NothingToUndo
+pub mc_app::CommandError::StaleRevision
+pub mc_app::CommandError::StaleRevision::actual: mc_app::Revision
+pub mc_app::CommandError::StaleRevision::expected: mc_app::Revision
+pub mc_app::CommandError::Value(mc_theory::error::TheoryError)
+impl mc_app::CommandError
+pub fn mc_app::CommandError::rule(&self) -> &'static str
+impl core::clone::Clone for mc_app::CommandError
+pub fn mc_app::CommandError::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::CommandError
+impl core::cmp::PartialEq for mc_app::CommandError
+pub fn mc_app::CommandError::eq(&self, &Self) -> bool
+impl core::convert::From<mc_score::error::DomainError> for mc_app::CommandError
+pub fn mc_app::CommandError::from(mc_score::error::DomainError) -> Self
+impl core::convert::From<mc_theory::error::TheoryError> for mc_app::CommandError
+pub fn mc_app::CommandError::from(mc_theory::error::TheoryError) -> Self
+impl core::error::Error for mc_app::CommandError
+impl core::fmt::Debug for mc_app::CommandError
+pub fn mc_app::CommandError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_app::CommandError
+pub fn mc_app::CommandError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::CommandError
+impl core::marker::Freeze for mc_app::CommandError
+impl core::marker::Send for mc_app::CommandError
+impl core::marker::Sync for mc_app::CommandError
+impl core::marker::Unpin for mc_app::CommandError
+impl core::marker::UnsafeUnpin for mc_app::CommandError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::CommandError
+impl core::panic::unwind_safe::UnwindSafe for mc_app::CommandError
+pub enum mc_app::EventPayload
+pub mc_app::EventPayload::App(mc_app::AppEvent)
+pub mc_app::EventPayload::Domain(mc_score::events::DomainEvent)
+impl core::clone::Clone for mc_app::EventPayload
+pub fn mc_app::EventPayload::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::EventPayload
+impl core::cmp::PartialEq for mc_app::EventPayload
+pub fn mc_app::EventPayload::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::EventPayload
+pub fn mc_app::EventPayload::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::EventPayload
+impl core::marker::Freeze for mc_app::EventPayload
+impl core::marker::Send for mc_app::EventPayload
+impl core::marker::Sync for mc_app::EventPayload
+impl core::marker::Unpin for mc_app::EventPayload
+impl core::marker::UnsafeUnpin for mc_app::EventPayload
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::EventPayload
+impl core::panic::unwind_safe::UnwindSafe for mc_app::EventPayload
+pub enum mc_app::OpenError
+pub mc_app::OpenError::Load(mc_project::error::LoadError)
+pub mc_app::OpenError::Store(mc_app::ports::StoreError)
+impl core::clone::Clone for mc_app::OpenError
+pub fn mc_app::OpenError::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::OpenError
+impl core::cmp::PartialEq for mc_app::OpenError
+pub fn mc_app::OpenError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_app::OpenError
+impl core::fmt::Debug for mc_app::OpenError
+pub fn mc_app::OpenError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_app::OpenError
+pub fn mc_app::OpenError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::OpenError
+impl core::marker::Freeze for mc_app::OpenError
+impl core::marker::Send for mc_app::OpenError
+impl core::marker::Sync for mc_app::OpenError
+impl core::marker::Unpin for mc_app::OpenError
+impl core::marker::UnsafeUnpin for mc_app::OpenError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::OpenError
+impl core::panic::unwind_safe::UnwindSafe for mc_app::OpenError
+pub enum mc_app::SaveError
+pub mc_app::SaveError::NoLocation
+pub mc_app::SaveError::Store(mc_app::ports::StoreError)
+pub mc_app::SaveError::WouldDropUnknownContent
+pub mc_app::SaveError::WouldDropUnknownContent::paths: alloc::vec::Vec<alloc::string::String>
+impl core::clone::Clone for mc_app::SaveError
+pub fn mc_app::SaveError::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::SaveError
+impl core::cmp::PartialEq for mc_app::SaveError
+pub fn mc_app::SaveError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_app::SaveError
+impl core::fmt::Debug for mc_app::SaveError
+pub fn mc_app::SaveError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_app::SaveError
+pub fn mc_app::SaveError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::SaveError
+impl core::marker::Freeze for mc_app::SaveError
+impl core::marker::Send for mc_app::SaveError
+impl core::marker::Sync for mc_app::SaveError
+impl core::marker::Unpin for mc_app::SaveError
+impl core::marker::UnsafeUnpin for mc_app::SaveError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::SaveError
+impl core::panic::unwind_safe::UnwindSafe for mc_app::SaveError
+pub enum mc_app::ScoreCommand
+pub mc_app::ScoreCommand::AddVoice
+pub mc_app::ScoreCommand::AddVoice::bar: usize
+pub mc_app::ScoreCommand::AddVoice::track: mc_score::ids::TrackId
+pub mc_app::ScoreCommand::InsertBeat
+pub mc_app::ScoreCommand::InsertBeat::bar: usize
+pub mc_app::ScoreCommand::InsertBeat::duration: mc_app::DurationSpec
+pub mc_app::ScoreCommand::InsertBeat::index: usize
+pub mc_app::ScoreCommand::InsertBeat::track: mc_score::ids::TrackId
+pub mc_app::ScoreCommand::InsertBeat::voice: usize
+pub mc_app::ScoreCommand::InsertMasterBars
+pub mc_app::ScoreCommand::InsertMasterBars::at: usize
+pub mc_app::ScoreCommand::InsertMasterBars::count: usize
+pub mc_app::ScoreCommand::InsertMasterBars::template: mc_score::model::MasterBar
+pub mc_app::ScoreCommand::RemoveBeat
+pub mc_app::ScoreCommand::RemoveBeat::beat: mc_app::BeatAddress
+pub mc_app::ScoreCommand::RemoveMasterBars
+pub mc_app::ScoreCommand::RemoveMasterBars::at: usize
+pub mc_app::ScoreCommand::RemoveMasterBars::count: usize
+pub mc_app::ScoreCommand::RemoveNote
+pub mc_app::ScoreCommand::RemoveNote::beat: mc_app::BeatAddress
+pub mc_app::ScoreCommand::RemoveNote::note: mc_score::ids::NoteId
+pub mc_app::ScoreCommand::RemoveTempo
+pub mc_app::ScoreCommand::RemoveTempo::bar: usize
+pub mc_app::ScoreCommand::RemoveTempo::offset: (i64, i64)
+pub mc_app::ScoreCommand::RemoveVoice
+pub mc_app::ScoreCommand::RemoveVoice::bar: usize
+pub mc_app::ScoreCommand::RemoveVoice::track: mc_score::ids::TrackId
+pub mc_app::ScoreCommand::RemoveVoice::voice: usize
+pub mc_app::ScoreCommand::SetBeatDuration
+pub mc_app::ScoreCommand::SetBeatDuration::beat: mc_app::BeatAddress
+pub mc_app::ScoreCommand::SetBeatDuration::duration: mc_app::DurationSpec
+pub mc_app::ScoreCommand::SetMasterBar
+pub mc_app::ScoreCommand::SetMasterBar::bar: mc_score::model::MasterBar
+pub mc_app::ScoreCommand::SetMasterBar::index: usize
+pub mc_app::ScoreCommand::SetNote
+pub mc_app::ScoreCommand::SetNote::beat: mc_app::BeatAddress
+pub mc_app::ScoreCommand::SetNote::fret: u8
+pub mc_app::ScoreCommand::SetNote::string: u8
+pub mc_app::ScoreCommand::SetNoteEffects
+pub mc_app::ScoreCommand::SetNoteEffects::beat: mc_app::BeatAddress
+pub mc_app::ScoreCommand::SetNoteEffects::effects: mc_score::model::NoteEffects
+pub mc_app::ScoreCommand::SetNoteEffects::note: mc_score::ids::NoteId
+pub mc_app::ScoreCommand::SetTempo
+pub mc_app::ScoreCommand::SetTempo::bar: usize
+pub mc_app::ScoreCommand::SetTempo::bpm: (i64, i64)
+pub mc_app::ScoreCommand::SetTempo::offset: (i64, i64)
+pub mc_app::ScoreCommand::SetTie
+pub mc_app::ScoreCommand::SetTie::beat: mc_app::BeatAddress
+pub mc_app::ScoreCommand::SetTie::note: mc_score::ids::NoteId
+pub mc_app::ScoreCommand::SetTie::tie: bool
+pub mc_app::ScoreCommand::ShiftFrets
+pub mc_app::ScoreCommand::ShiftFrets::bars: (usize, usize)
+pub mc_app::ScoreCommand::ShiftFrets::delta: i16
+pub mc_app::ScoreCommand::ShiftFrets::track: mc_score::ids::TrackId
+impl core::clone::Clone for mc_app::ScoreCommand
+pub fn mc_app::ScoreCommand::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_app::ScoreCommand
+pub fn mc_app::ScoreCommand::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::ScoreCommand
+pub fn mc_app::ScoreCommand::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::ScoreCommand
+impl core::marker::Freeze for mc_app::ScoreCommand
+impl core::marker::Send for mc_app::ScoreCommand
+impl core::marker::Sync for mc_app::ScoreCommand
+impl core::marker::Unpin for mc_app::ScoreCommand
+impl core::marker::UnsafeUnpin for mc_app::ScoreCommand
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::ScoreCommand
+impl core::panic::unwind_safe::UnwindSafe for mc_app::ScoreCommand
+pub enum mc_app::TrackCommand
+pub mc_app::TrackCommand::Add
+pub mc_app::TrackCommand::Add::instrument: mc_app::InstrumentSpecInput
+pub mc_app::TrackCommand::Add::name: alloc::string::String
+pub mc_app::TrackCommand::Move
+pub mc_app::TrackCommand::Move::to: usize
+pub mc_app::TrackCommand::Move::track: mc_score::ids::TrackId
+pub mc_app::TrackCommand::Remove
+pub mc_app::TrackCommand::Remove::track: mc_score::ids::TrackId
+pub mc_app::TrackCommand::Rename
+pub mc_app::TrackCommand::Rename::name: alloc::string::String
+pub mc_app::TrackCommand::Rename::track: mc_score::ids::TrackId
+pub mc_app::TrackCommand::SetInstrument
+pub mc_app::TrackCommand::SetInstrument::instrument: mc_app::InstrumentSpecInput
+pub mc_app::TrackCommand::SetInstrument::track: mc_score::ids::TrackId
+impl core::clone::Clone for mc_app::TrackCommand
+pub fn mc_app::TrackCommand::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_app::TrackCommand
+pub fn mc_app::TrackCommand::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::TrackCommand
+pub fn mc_app::TrackCommand::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::TrackCommand
+impl core::marker::Freeze for mc_app::TrackCommand
+impl core::marker::Send for mc_app::TrackCommand
+impl core::marker::Sync for mc_app::TrackCommand
+impl core::marker::Unpin for mc_app::TrackCommand
+impl core::marker::UnsafeUnpin for mc_app::TrackCommand
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::TrackCommand
+impl core::panic::unwind_safe::UnwindSafe for mc_app::TrackCommand
+pub struct mc_app::BeatAddress
+pub mc_app::BeatAddress::bar: usize
+pub mc_app::BeatAddress::beat: mc_score::ids::BeatId
+pub mc_app::BeatAddress::track: mc_score::ids::TrackId
+pub mc_app::BeatAddress::voice: usize
+impl core::clone::Clone for mc_app::BeatAddress
+pub fn mc_app::BeatAddress::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::BeatAddress
+impl core::cmp::PartialEq for mc_app::BeatAddress
+pub fn mc_app::BeatAddress::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::BeatAddress
+pub fn mc_app::BeatAddress::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::BeatAddress
+impl core::marker::StructuralPartialEq for mc_app::BeatAddress
+impl core::marker::Freeze for mc_app::BeatAddress
+impl core::marker::Send for mc_app::BeatAddress
+impl core::marker::Sync for mc_app::BeatAddress
+impl core::marker::Unpin for mc_app::BeatAddress
+impl core::marker::UnsafeUnpin for mc_app::BeatAddress
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::BeatAddress
+impl core::panic::unwind_safe::UnwindSafe for mc_app::BeatAddress
+pub struct mc_app::CollectingSink
+pub mc_app::CollectingSink::events: alloc::vec::Vec<mc_app::EventEnvelope>
+impl core::default::Default for mc_app::CollectingSink
+pub fn mc_app::CollectingSink::default() -> Self
+impl core::fmt::Debug for mc_app::CollectingSink
+pub fn mc_app::CollectingSink::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl mc_app::EventSink for mc_app::CollectingSink
+pub fn mc_app::CollectingSink::publish(&mut self, &[mc_app::EventEnvelope])
+impl core::marker::Freeze for mc_app::CollectingSink
+impl core::marker::Send for mc_app::CollectingSink
+impl core::marker::Sync for mc_app::CollectingSink
+impl core::marker::Unpin for mc_app::CollectingSink
+impl core::marker::UnsafeUnpin for mc_app::CollectingSink
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::CollectingSink
+impl core::panic::unwind_safe::UnwindSafe for mc_app::CollectingSink
+pub struct mc_app::CommandEnvelope
+pub mc_app::CommandEnvelope::coalesce_key: core::option::Option<u64>
+pub mc_app::CommandEnvelope::command: mc_app::Command
+pub mc_app::CommandEnvelope::expected_revision: core::option::Option<mc_app::Revision>
+pub mc_app::CommandEnvelope::id: mc_app::CommandId
+impl mc_app::CommandEnvelope
+pub fn mc_app::CommandEnvelope::new(u64, mc_app::Command) -> Self
+impl core::clone::Clone for mc_app::CommandEnvelope
+pub fn mc_app::CommandEnvelope::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_app::CommandEnvelope
+pub fn mc_app::CommandEnvelope::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::CommandEnvelope
+pub fn mc_app::CommandEnvelope::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::CommandEnvelope
+impl core::marker::Freeze for mc_app::CommandEnvelope
+impl core::marker::Send for mc_app::CommandEnvelope
+impl core::marker::Sync for mc_app::CommandEnvelope
+impl core::marker::Unpin for mc_app::CommandEnvelope
+impl core::marker::UnsafeUnpin for mc_app::CommandEnvelope
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::CommandEnvelope
+impl core::panic::unwind_safe::UnwindSafe for mc_app::CommandEnvelope
+pub struct mc_app::CommandId(pub u64)
+impl core::clone::Clone for mc_app::CommandId
+pub fn mc_app::CommandId::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::CommandId
+impl core::cmp::Ord for mc_app::CommandId
+pub fn mc_app::CommandId::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_app::CommandId
+pub fn mc_app::CommandId::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_app::CommandId
+pub fn mc_app::CommandId::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_app::CommandId
+pub fn mc_app::CommandId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_app::CommandId
+pub fn mc_app::CommandId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_app::CommandId
+impl core::marker::StructuralPartialEq for mc_app::CommandId
+impl core::marker::Freeze for mc_app::CommandId
+impl core::marker::Send for mc_app::CommandId
+impl core::marker::Sync for mc_app::CommandId
+impl core::marker::Unpin for mc_app::CommandId
+impl core::marker::UnsafeUnpin for mc_app::CommandId
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::CommandId
+impl core::panic::unwind_safe::UnwindSafe for mc_app::CommandId
+pub struct mc_app::CommandOutcome
+pub mc_app::CommandOutcome::events: alloc::vec::Vec<mc_app::EventEnvelope>
+pub mc_app::CommandOutcome::revision: mc_app::Revision
+impl core::clone::Clone for mc_app::CommandOutcome
+pub fn mc_app::CommandOutcome::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::CommandOutcome
+impl core::cmp::PartialEq for mc_app::CommandOutcome
+pub fn mc_app::CommandOutcome::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::CommandOutcome
+pub fn mc_app::CommandOutcome::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::CommandOutcome
+impl core::marker::Freeze for mc_app::CommandOutcome
+impl core::marker::Send for mc_app::CommandOutcome
+impl core::marker::Sync for mc_app::CommandOutcome
+impl core::marker::Unpin for mc_app::CommandOutcome
+impl core::marker::UnsafeUnpin for mc_app::CommandOutcome
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::CommandOutcome
+impl core::panic::unwind_safe::UnwindSafe for mc_app::CommandOutcome
+pub struct mc_app::Constraints
+pub mc_app::Constraints::max_fret_count: u8
+pub mc_app::Constraints::max_strings: u8
+pub mc_app::Constraints::max_track_name: usize
+pub mc_app::Constraints::tempo_max: u32
+pub mc_app::Constraints::tempo_min: u32
+impl mc_app::Constraints
+pub fn mc_app::Constraints::fret_count(&self, u8) -> core::result::Result<(), mc_app::CommandError>
+pub fn mc_app::Constraints::strings(&self, usize) -> core::result::Result<(), mc_app::CommandError>
+pub fn mc_app::Constraints::tempo(&self, mc_theory::rational::Rational) -> core::result::Result<(), mc_app::CommandError>
+pub fn mc_app::Constraints::track_name(&self, &str) -> core::result::Result<(), mc_app::CommandError>
+impl core::clone::Clone for mc_app::Constraints
+pub fn mc_app::Constraints::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::Constraints
+impl core::cmp::PartialEq for mc_app::Constraints
+pub fn mc_app::Constraints::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::Constraints
+pub fn mc_app::Constraints::default() -> Self
+impl core::fmt::Debug for mc_app::Constraints
+pub fn mc_app::Constraints::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::Constraints
+impl core::marker::StructuralPartialEq for mc_app::Constraints
+impl core::marker::Freeze for mc_app::Constraints
+impl core::marker::Send for mc_app::Constraints
+impl core::marker::Sync for mc_app::Constraints
+impl core::marker::Unpin for mc_app::Constraints
+impl core::marker::UnsafeUnpin for mc_app::Constraints
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::Constraints
+impl core::panic::unwind_safe::UnwindSafe for mc_app::Constraints
+pub struct mc_app::DocumentId(pub u64)
+impl core::clone::Clone for mc_app::DocumentId
+pub fn mc_app::DocumentId::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::DocumentId
+impl core::cmp::PartialEq for mc_app::DocumentId
+pub fn mc_app::DocumentId::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::DocumentId
+pub fn mc_app::DocumentId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_app::DocumentId
+pub fn mc_app::DocumentId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_app::DocumentId
+impl core::marker::StructuralPartialEq for mc_app::DocumentId
+impl core::marker::Freeze for mc_app::DocumentId
+impl core::marker::Send for mc_app::DocumentId
+impl core::marker::Sync for mc_app::DocumentId
+impl core::marker::Unpin for mc_app::DocumentId
+impl core::marker::UnsafeUnpin for mc_app::DocumentId
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::DocumentId
+impl core::panic::unwind_safe::UnwindSafe for mc_app::DocumentId
+pub struct mc_app::DocumentSession
+impl mc_app::DocumentSession
+pub fn mc_app::DocumentSession::autosave_due(&self, u64) -> bool
+pub fn mc_app::DocumentSession::can_redo(&self) -> bool
+pub fn mc_app::DocumentSession::can_undo(&self) -> bool
+pub fn mc_app::DocumentSession::diagnostics(&self) -> alloc::vec::Vec<mc_score::diagnostics::Diagnostic>
+pub fn mc_app::DocumentSession::execute(&mut self, mc_app::CommandEnvelope) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
+pub fn mc_app::DocumentSession::from_bytes(mc_app::DocumentId, &[u8], core::option::Option<std::path::PathBuf>, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
+pub fn mc_app::DocumentSession::history_bytes(&self) -> usize
+pub fn mc_app::DocumentSession::is_dirty(&self) -> bool
+pub fn mc_app::DocumentSession::location(&self) -> core::option::Option<&std::path::Path>
+pub fn mc_app::DocumentSession::mark_autosaved(&mut self, u64)
+pub fn mc_app::DocumentSession::new(mc_app::DocumentId, mc_score::score::Score, mc_app::SessionConfig, &dyn mc_app::ports::Clock, &dyn mc_app::ports::Entropy) -> Self
+pub fn mc_app::DocumentSession::open(mc_app::DocumentId, &dyn mc_app::ports::ProjectStore, &std::path::Path, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
+pub fn mc_app::DocumentSession::project_id(&self) -> &str
+pub fn mc_app::DocumentSession::redo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
+pub fn mc_app::DocumentSession::revision(&self) -> mc_app::Revision
+pub fn mc_app::DocumentSession::save(&mut self, &dyn mc_app::ports::ProjectStore, &mc_project::AppInfo) -> core::result::Result<mc_app::CommandOutcome, mc_app::SaveError>
+pub fn mc_app::DocumentSession::save_as(&mut self, &dyn mc_app::ports::ProjectStore, &std::path::Path, &mc_project::AppInfo) -> core::result::Result<mc_app::CommandOutcome, mc_app::SaveError>
+pub fn mc_app::DocumentSession::saved_revision(&self) -> core::option::Option<mc_app::Revision>
+pub fn mc_app::DocumentSession::score(&self) -> &mc_score::score::Score
+pub fn mc_app::DocumentSession::set_sink(&mut self, alloc::boxed::Box<dyn mc_app::EventSink>)
+pub fn mc_app::DocumentSession::snapshot(&self) -> mc_score::score::Score
+pub fn mc_app::DocumentSession::snapshot_bytes(&self, &mc_project::AppInfo) -> alloc::vec::Vec<u8>
+pub fn mc_app::DocumentSession::take_sink(&mut self) -> core::option::Option<alloc::boxed::Box<dyn mc_app::EventSink>>
+pub fn mc_app::DocumentSession::undo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
+pub fn mc_app::DocumentSession::undo_depth(&self) -> usize
+pub fn mc_app::DocumentSession::unknown_content(&self) -> &[alloc::string::String]
+impl core::fmt::Debug for mc_app::DocumentSession
+pub fn mc_app::DocumentSession::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for mc_app::DocumentSession
+impl core::marker::Send for mc_app::DocumentSession
+impl !core::marker::Sync for mc_app::DocumentSession
+impl core::marker::Unpin for mc_app::DocumentSession
+impl core::marker::UnsafeUnpin for mc_app::DocumentSession
+impl !core::panic::unwind_safe::RefUnwindSafe for mc_app::DocumentSession
+impl !core::panic::unwind_safe::UnwindSafe for mc_app::DocumentSession
+pub struct mc_app::DurationSpec
+pub mc_app::DurationSpec::base: u8
+pub mc_app::DurationSpec::dots: u8
+pub mc_app::DurationSpec::tuplet: core::option::Option<(u8, u8)>
+impl mc_app::DurationSpec
+pub const fn mc_app::DurationSpec::plain(u8) -> Self
+impl core::clone::Clone for mc_app::DurationSpec
+pub fn mc_app::DurationSpec::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::DurationSpec
+impl core::cmp::PartialEq for mc_app::DurationSpec
+pub fn mc_app::DurationSpec::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::DurationSpec
+pub fn mc_app::DurationSpec::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::DurationSpec
+impl core::marker::StructuralPartialEq for mc_app::DurationSpec
+impl core::marker::Freeze for mc_app::DurationSpec
+impl core::marker::Send for mc_app::DurationSpec
+impl core::marker::Sync for mc_app::DurationSpec
+impl core::marker::Unpin for mc_app::DurationSpec
+impl core::marker::UnsafeUnpin for mc_app::DurationSpec
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::DurationSpec
+impl core::panic::unwind_safe::UnwindSafe for mc_app::DurationSpec
+pub struct mc_app::EventEnvelope
+pub mc_app::EventEnvelope::causation: core::option::Option<u64>
+pub mc_app::EventEnvelope::correlation_id: core::option::Option<mc_app::CommandId>
+pub mc_app::EventEnvelope::document_id: mc_app::DocumentId
+pub mc_app::EventEnvelope::payload: mc_app::EventPayload
+pub mc_app::EventEnvelope::revision: mc_app::Revision
+pub mc_app::EventEnvelope::seq: u64
+impl core::clone::Clone for mc_app::EventEnvelope
+pub fn mc_app::EventEnvelope::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::EventEnvelope
+impl core::cmp::PartialEq for mc_app::EventEnvelope
+pub fn mc_app::EventEnvelope::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::EventEnvelope
+pub fn mc_app::EventEnvelope::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::EventEnvelope
+impl core::marker::Freeze for mc_app::EventEnvelope
+impl core::marker::Send for mc_app::EventEnvelope
+impl core::marker::Sync for mc_app::EventEnvelope
+impl core::marker::Unpin for mc_app::EventEnvelope
+impl core::marker::UnsafeUnpin for mc_app::EventEnvelope
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::EventEnvelope
+impl core::panic::unwind_safe::UnwindSafe for mc_app::EventEnvelope
+pub struct mc_app::HistoryLimits
+pub mc_app::HistoryLimits::max_bytes: usize
+pub mc_app::HistoryLimits::max_steps: usize
+impl core::clone::Clone for mc_app::HistoryLimits
+pub fn mc_app::HistoryLimits::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::HistoryLimits
+impl core::cmp::PartialEq for mc_app::HistoryLimits
+pub fn mc_app::HistoryLimits::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::HistoryLimits
+pub fn mc_app::HistoryLimits::default() -> Self
+impl core::fmt::Debug for mc_app::HistoryLimits
+pub fn mc_app::HistoryLimits::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::HistoryLimits
+impl core::marker::StructuralPartialEq for mc_app::HistoryLimits
+impl core::marker::Freeze for mc_app::HistoryLimits
+impl core::marker::Send for mc_app::HistoryLimits
+impl core::marker::Sync for mc_app::HistoryLimits
+impl core::marker::Unpin for mc_app::HistoryLimits
+impl core::marker::UnsafeUnpin for mc_app::HistoryLimits
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::HistoryLimits
+impl core::panic::unwind_safe::UnwindSafe for mc_app::HistoryLimits
+pub struct mc_app::InstrumentSpecInput
+pub mc_app::InstrumentSpecInput::capo: u8
+pub mc_app::InstrumentSpecInput::fret_count: u8
+pub mc_app::InstrumentSpecInput::tuning: alloc::vec::Vec<alloc::string::String>
+impl mc_app::InstrumentSpecInput
+pub fn mc_app::InstrumentSpecInput::standard_guitar() -> Self
+impl core::clone::Clone for mc_app::InstrumentSpecInput
+pub fn mc_app::InstrumentSpecInput::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::InstrumentSpecInput
+impl core::cmp::PartialEq for mc_app::InstrumentSpecInput
+pub fn mc_app::InstrumentSpecInput::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::InstrumentSpecInput
+pub fn mc_app::InstrumentSpecInput::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::InstrumentSpecInput
+impl core::marker::Freeze for mc_app::InstrumentSpecInput
+impl core::marker::Send for mc_app::InstrumentSpecInput
+impl core::marker::Sync for mc_app::InstrumentSpecInput
+impl core::marker::Unpin for mc_app::InstrumentSpecInput
+impl core::marker::UnsafeUnpin for mc_app::InstrumentSpecInput
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::InstrumentSpecInput
+impl core::panic::unwind_safe::UnwindSafe for mc_app::InstrumentSpecInput
+pub struct mc_app::OpenReport
+pub mc_app::OpenReport::newer_minor_version: bool
+pub mc_app::OpenReport::unknown_content: alloc::vec::Vec<alloc::string::String>
+impl core::clone::Clone for mc_app::OpenReport
+pub fn mc_app::OpenReport::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::OpenReport
+impl core::cmp::PartialEq for mc_app::OpenReport
+pub fn mc_app::OpenReport::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::OpenReport
+pub fn mc_app::OpenReport::default() -> Self
+impl core::fmt::Debug for mc_app::OpenReport
+pub fn mc_app::OpenReport::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::OpenReport
+impl core::marker::Freeze for mc_app::OpenReport
+impl core::marker::Send for mc_app::OpenReport
+impl core::marker::Sync for mc_app::OpenReport
+impl core::marker::Unpin for mc_app::OpenReport
+impl core::marker::UnsafeUnpin for mc_app::OpenReport
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::OpenReport
+impl core::panic::unwind_safe::UnwindSafe for mc_app::OpenReport
+pub struct mc_app::Revision(pub u64)
+impl core::clone::Clone for mc_app::Revision
+pub fn mc_app::Revision::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::Revision
+impl core::cmp::Ord for mc_app::Revision
+pub fn mc_app::Revision::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_app::Revision
+pub fn mc_app::Revision::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_app::Revision
+pub fn mc_app::Revision::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::default::Default for mc_app::Revision
+pub fn mc_app::Revision::default() -> Self
+impl core::fmt::Debug for mc_app::Revision
+pub fn mc_app::Revision::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_app::Revision
+pub fn mc_app::Revision::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_app::Revision
+impl core::marker::StructuralPartialEq for mc_app::Revision
+impl core::marker::Freeze for mc_app::Revision
+impl core::marker::Send for mc_app::Revision
+impl core::marker::Sync for mc_app::Revision
+impl core::marker::Unpin for mc_app::Revision
+impl core::marker::UnsafeUnpin for mc_app::Revision
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::Revision
+impl core::panic::unwind_safe::UnwindSafe for mc_app::Revision
+pub struct mc_app::SessionConfig
+pub mc_app::SessionConfig::autosave_interval_millis: u64
+pub mc_app::SessionConfig::constraints: mc_app::Constraints
+pub mc_app::SessionConfig::history: mc_app::HistoryLimits
+impl core::clone::Clone for mc_app::SessionConfig
+pub fn mc_app::SessionConfig::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::SessionConfig
+impl core::cmp::PartialEq for mc_app::SessionConfig
+pub fn mc_app::SessionConfig::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::SessionConfig
+pub fn mc_app::SessionConfig::default() -> Self
+impl core::fmt::Debug for mc_app::SessionConfig
+pub fn mc_app::SessionConfig::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::SessionConfig
+impl core::marker::StructuralPartialEq for mc_app::SessionConfig
+impl core::marker::Freeze for mc_app::SessionConfig
+impl core::marker::Send for mc_app::SessionConfig
+impl core::marker::Sync for mc_app::SessionConfig
+impl core::marker::Unpin for mc_app::SessionConfig
+impl core::marker::UnsafeUnpin for mc_app::SessionConfig
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::SessionConfig
+impl core::panic::unwind_safe::UnwindSafe for mc_app::SessionConfig
+pub trait mc_app::EventSink: core::marker::Send
+pub fn mc_app::EventSink::publish(&mut self, &[mc_app::EventEnvelope])
+impl mc_app::EventSink for mc_app::CollectingSink
+pub fn mc_app::CollectingSink::publish(&mut self, &[mc_app::EventEnvelope])
+pub fn mc_app::new_score(&str, usize) -> core::result::Result<mc_score::score::Score, mc_score::error::DomainError>

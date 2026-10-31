@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ManifestDto",
+  "type": "object",
+  "properties": {
+    "created_by": {
+      "$ref": "#/$defs/AppDto"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/EntryDto"
+      }
+    },
+    "format": {
+      "type": "string"
+    },
+    "format_version": {
+      "$ref": "#/$defs/VersionDto"
+    },
+    "optional_features": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "required_features": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "saved_by": {
+      "$ref": "#/$defs/AppDto"
+    },
+    "saved_revision": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "format",
+    "format_version",
+    "project_id",
+    "created_by",
+    "saved_by",
+    "saved_revision",
+    "entries"
+  ],
+  "$defs": {
+    "AppDto": {
+      "type": "object",
+      "properties": {
+        "app": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "app",
+        "version"
+      ]
+    },
+    "EntryDto": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "path",
+        "sha256",
+        "size"
+      ]
+    },
+    "VersionDto": {
+      "type": "object",
+      "properties": {
+        "major": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "minor": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "major",
+        "minor"
+      ]
+    }
+  }
+}

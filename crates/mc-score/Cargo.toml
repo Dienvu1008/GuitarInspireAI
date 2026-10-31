@@ -1,0 +1,20 @@
+[package]
+name = "mc-score"
+version = "0.1.0"
+description = "Composition core domain: the Score aggregate, its invariants, timing and diagnostics."
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+# Deterministic reference scores (small, typical, large) for tests, benchmarks and the CLI.
+fixtures = []
+
+[dependencies]
+mc-theory.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true

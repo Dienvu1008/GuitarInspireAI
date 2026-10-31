@@ -11,10 +11,22 @@ use std::path::Path;
 const INVENTORY: &str = "architecture/fitness-inventory.toml";
 const CATALOGUE: &str = "docs/architecture/fitness-functions.md";
 const CI_WORKFLOW: &str = ".github/workflows/ci.yml";
+const WEEKLY_WORKFLOW: &str = ".github/workflows/weekly.yml";
 const DENY: &str = "deny.toml";
 
 /// Check implementations that exist. An `active` entry must name one of these.
+/// `test:` and `bench:` references are validated against the repository instead.
 pub const IMPLEMENTED: &[&str] = &[
+    "xtask:deps",
+    "cargo-deny:bans",
+    "xtask:rule-coverage",
+    "xtask:freshness",
+    "ci:complexity",
+    "workflow:public-api",
+    "workflow:coverage",
+    "xtask:purity",
+    "xtask:wasm",
+    "xtask:platform",
     "cargo-deny:licenses",
     "cargo-deny:advisories",
     "xtask:trailers",
@@ -202,7 +214,11 @@ pub fn consistency(inv: &Inventory, catalogue: &BTreeMap<String, u32>) -> Vec<St
         if e.active {
             match e.check.as_deref() {
                 None => errors.push(format!("{id} is active but names no check")),
-                Some(c) if !IMPLEMENTED.contains(&c) => {
+                Some(c)
+                    if !IMPLEMENTED.contains(&c)
+                        && !c.starts_with("test:")
+                        && !c.starts_with("bench:") =>
+                {
                     errors.push(format!("{id} is active but check '{c}' is not implemented"))
                 }
                 _ => {}
@@ -225,6 +241,9 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
             if !deny.contains(&format!("[{section}]")) {
                 errors.push(format!("{id}: {DENY} has no [{section}] section"));
             }
+            if section == "bans" && !deny.contains("deny = [") {
+                errors.push(format!("{id}: {DENY} [bans] has no 'deny = [' list"));
+            }
             if !ci.contains("cargo-deny") {
                 errors.push(format!("{id}: {CI_WORKFLOW} does not run cargo-deny"));
             }
@@ -232,6 +251,34 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
             errors.push(format!(
                 "{id}: {CI_WORKFLOW} does not run 'cargo xtask fitness all'"
             ));
+        }
+        // FF-03 is enforced by clippy with -D warnings; the xtask part only checks configuration.
+        if check == "xtask:purity" && !(ci.contains("cargo clippy") && ci.contains("-D warnings")) {
+            errors.push(format!(
+                "{id}: {CI_WORKFLOW} does not run 'cargo clippy ... -D warnings'"
+            ));
+        }
+        // Each remaining kind must be both present in the repository and run somewhere.
+        let required: Option<(&str, &str)> = match check {
+            c if c.starts_with("test:") => Some((CI_WORKFLOW, "cargo test --workspace")),
+            c if c.starts_with("bench:") => Some((CI_WORKFLOW, "cargo bench --workspace --no-run")),
+            "ci:complexity" => Some((CI_WORKFLOW, "clippy::cognitive_complexity")),
+            "workflow:public-api" => Some((WEEKLY_WORKFLOW, "cargo +nightly public-api")),
+            "workflow:coverage" => Some((WEEKLY_WORKFLOW, "cargo llvm-cov")),
+            "xtask:freshness" => Some((WEEKLY_WORKFLOW, "xtask fitness freshness")),
+            "xtask:rule-coverage" => Some((CI_WORKFLOW, "xtask fitness rule-coverage")),
+            _ => None,
+        };
+        if let Some((file, needle)) = required {
+            let text = fs::read_to_string(root.join(file)).unwrap_or_default();
+            if !text.contains(needle) {
+                errors.push(format!("{id}: {file} does not run '{needle}'"));
+            }
+        }
+        if (check.starts_with("test:") || check.starts_with("bench:"))
+            && let Some(problem) = super::reports::check_reference(root, check)
+        {
+            errors.push(format!("{id}: {problem}"));
         }
     }
     errors

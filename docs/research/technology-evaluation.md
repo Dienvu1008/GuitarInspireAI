@@ -178,3 +178,5 @@ Allowed by default (via cargo-deny allow-list): MIT, Apache-2.0, BSD-1/2/3-Claus
 | Tests | proptest, criterion, cargo-deny 0.20.2; allocation checks via a counting global allocator (used in S2, about 40 lines) or assert_no_alloc, decided in Phase 4 | Proposed |
 
 S7 audit details and the license inventory are in [technical-spikes.md](technical-spikes.md) S7 results.
+
+Dependency pin decision (2026-10-31): `zip` stays at 9.1.3; 9.2.0 (reported by FF-30) is reviewed at the next scheduled dependency and license review, unless a security fix or a concrete project-format issue requires it earlier. Any upgrade reruns cargo-deny, the FF-11 round-trip suite and the format benchmarks.

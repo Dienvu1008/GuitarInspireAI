@@ -1,7 +1,7 @@
 # Native Project Format
 
 Purpose: Specify the native project package: structure, manifest, versioning, serialization, migration, assets, revisions, integrity, import and export boundaries, compatibility, atomic save, recovery, ZIP safety, unknown content handling (detection, Save As protection, full preservation) and the round-trip test suite.
-Status: Accepted (ZIP + JSON with versioned DTOs), validated by S5. File extension: open (Q-08).
+Status: Accepted (ZIP + JSON with versioned DTOs), validated by S5. File extension: `.giproj` (Q-08, decided 2026-10-31; see section 2a).
 Related documents: [data-architecture.md](data-architecture.md), [domain-invariants.md](domain-invariants.md), [security-and-privacy.md](security-and-privacy.md), [ADR-008](decisions/ADR-008-native-project-format.md), [technical-spikes.md](../research/technical-spikes.md).
 
 ## 1. Container alternatives
@@ -17,7 +17,7 @@ Reconsideration trigger: projects with recorded audio over about 100 MB [Assumpt
 ## 2. Package structure
 
 ```text
-song.<ext>                 (ZIP, extension TBD)
+song.giproj                (ZIP)
   manifest.json            required, first entry
   score.json               required
   patterns/                Phase 6a, one JSON per pattern
@@ -27,6 +27,14 @@ song.<ext>                 (ZIP, extension TBD)
 ```
 
 Unknown top-level prefixes are rejected unless listed in `optional_features`, so a future version cannot smuggle unvalidated content.
+
+## 2a. File extension
+
+The product-level extension is `.giproj` (GuitarInspire Project). It is a naming convention for users, file dialogs and OS file association, not part of the format:
+
+- A file is identified and checked only by its content: the `format` identifier `guitarinspire.project` and `format_version` in `manifest.json`, then the schema of each entry. A renamed file opens normally; a non-project file with the extension is rejected by its content.
+- The extension is not part of the Music Core: `mc-project` reads bytes, `mc-app` accepts any path. It is defined in adapters only (`mc-cli` now, the Flutter app in Phase 3). Adapters may append it to a new file name; they never refuse a file because of its name.
+- A registered media type is not needed before public distribution and stays open.
 
 ## 3. Manifest (example)
 
@@ -114,7 +122,7 @@ Notes:
 Sequence:
 
 1. Take a structural-sharing snapshot of the score (cheap); serialize on a background thread.
-2. Write to a temp file in the same directory as the target (`.song.<ext>.tmp-<random>`), so the rename stays on one volume.
+2. Write to a temp file in the same directory as the target (`song.giproj.tmp-<pid>-<n>`), so the rename stays on one volume.
 3. Flush and `sync_all` (FlushFileBuffers on Windows).
 4. If a previous file exists and backups are enabled, keep it as `.bak` (single generation, configurable).
 5. Replace the target with `std::fs::rename` and bounded retry (S5 decision). On the reference machine it replaced the file while another reader held it open with full sharing, failed with access denied (os error 5) only against a handle without FILE_SHARE_DELETE, and succeeded on retry once that handle closed. `tempfile::NamedTempFile::persist` is rejected (it failed with a full-sharing reader open). `ReplaceFileW` behaved like rename and also preserved creation time; it is an optional Windows refinement.
@@ -141,7 +149,7 @@ Failure modes and handling:
 
 ## 12. Backup and crash recovery
 
-- Autosave: every 2 minutes when dirty (configurable), and on app backgrounding or window close prompts, to `recovery/<project-id>/autosave-<n>.<ext>` using the same atomic write. Retain 3 rotating files.
+- Autosave: every 2 minutes when dirty (configurable), and on app backgrounding or window close prompts, to `recovery/<project-id>/autosave-<millis>.recovery` using the same atomic write (an internal app-data name, not the product extension). Retain 3 rotating files.
 - Session marker: a lock file in app data written at start and removed on clean exit. If present at start, an unclean shutdown happened.
 - On start after unclean shutdown: list recovery files newer than their source project and offer Restore, Open original, or Discard.
 - Untitled documents autosave to recovery as well.

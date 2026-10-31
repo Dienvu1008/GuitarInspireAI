@@ -1,4 +1,6 @@
 [toolchain]
 channel = "1.98.0"
 components = ["clippy", "rustfmt"]
+# wasm32 is needed for FF-04 (domain crates must compile for wasm32-unknown-unknown, ADR-014).
+targets = ["wasm32-unknown-unknown"]
 profile = "minimal"

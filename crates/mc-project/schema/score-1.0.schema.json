@@ -1,0 +1,337 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ScoreDto",
+  "type": "object",
+  "properties": {
+    "master_bars": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MasterBarDto"
+      }
+    },
+    "tempo_map": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TempoChangeDto"
+      }
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TrackDto"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "master_bars",
+    "tempo_map",
+    "tracks"
+  ],
+  "$defs": {
+    "BarDto": {
+      "type": "object",
+      "properties": {
+        "voices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VoiceDto"
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "voices"
+      ]
+    },
+    "BeatDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NoteDto"
+          }
+        },
+        "value": {
+          "$ref": "#/$defs/ValueDto"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "value"
+      ]
+    },
+    "InstrumentDto": {
+      "description": "Format 1.x stores fretted instruments only. Other instrument kinds will be a\nrequired feature (old readers must refuse them, not misread them).",
+      "type": "object",
+      "properties": {
+        "capo": {
+          "type": "integer",
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "fret_count": {
+          "type": "integer",
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "tuning": {
+          "description": "Open-string pitches, string 1 (highest) first, for example \"E4\".",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "tuning",
+        "fret_count"
+      ]
+    },
+    "KeyDto": {
+      "type": "object",
+      "properties": {
+        "fifths": {
+          "type": "integer",
+          "format": "int8",
+          "maximum": 127,
+          "minimum": -128
+        },
+        "mode": {
+          "$ref": "#/$defs/ModeDto"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "fifths",
+        "mode"
+      ]
+    },
+    "MasterBarDto": {
+      "type": "object",
+      "properties": {
+        "alternate_endings": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "maximum": 255,
+            "minimum": 0
+          }
+        },
+        "key": {
+          "$ref": "#/$defs/KeyDto"
+        },
+        "marker": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pickup": {
+          "type": "boolean"
+        },
+        "repeat_end": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "repeat_start": {
+          "type": "boolean"
+        },
+        "time_signature": {
+          "description": "[numerator, denominator]",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "maxItems": 2,
+          "minItems": 2
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "time_signature",
+        "key"
+      ]
+    },
+    "ModeDto": {
+      "type": "string",
+      "enum": [
+        "major",
+        "minor"
+      ]
+    },
+    "NoteDto": {
+      "type": "object",
+      "properties": {
+        "dead": {
+          "type": "boolean"
+        },
+        "fret": {
+          "type": "integer",
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "let_ring": {
+          "type": "boolean"
+        },
+        "string": {
+          "type": "integer",
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "tie": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "string",
+        "fret"
+      ]
+    },
+    "TempoChangeDto": {
+      "type": "object",
+      "properties": {
+        "bar": {
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "bpm": {
+          "description": "Quarter-note beats per minute as [numerator, denominator].",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "offset": {
+          "description": "Offset in the bar as [numerator, denominator] of a whole note.",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxItems": 2,
+          "minItems": 2
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "bar",
+        "offset",
+        "bpm"
+      ]
+    },
+    "TrackDto": {
+      "type": "object",
+      "properties": {
+        "bars": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BarDto"
+          }
+        },
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "instrument": {
+          "$ref": "#/$defs/InstrumentDto"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "name",
+        "instrument",
+        "bars"
+      ]
+    },
+    "ValueDto": {
+      "type": "object",
+      "properties": {
+        "base": {
+          "description": "Power of two: 0 = whole ... 8 = 1/256.",
+          "type": "integer",
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "dots": {
+          "type": "integer",
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "tuplet": {
+          "description": "[actual, normal], for example [3, 2] for a triplet.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "maxItems": 2,
+          "minItems": 2
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "base"
+      ]
+    },
+    "VoiceDto": {
+      "type": "object",
+      "properties": {
+        "beats": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BeatDto"
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "beats"
+      ]
+    }
+  }
+}

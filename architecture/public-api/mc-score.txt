@@ -1,0 +1,579 @@
+pub mod mc_score
+pub enum mc_score::DiagnosticKind
+pub mc_score::DiagnosticKind::Overfull
+pub mc_score::DiagnosticKind::Overfull::actual: mc_theory::rational::Rational
+pub mc_score::DiagnosticKind::Overfull::nominal: mc_theory::rational::Rational
+pub mc_score::DiagnosticKind::Underfull
+pub mc_score::DiagnosticKind::Underfull::actual: mc_theory::rational::Rational
+pub mc_score::DiagnosticKind::Underfull::nominal: mc_theory::rational::Rational
+impl core::clone::Clone for mc_score::DiagnosticKind
+pub fn mc_score::DiagnosticKind::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::DiagnosticKind
+impl core::cmp::PartialEq for mc_score::DiagnosticKind
+pub fn mc_score::DiagnosticKind::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::DiagnosticKind
+pub fn mc_score::DiagnosticKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::DiagnosticKind
+impl core::marker::Freeze for mc_score::DiagnosticKind
+impl core::marker::Send for mc_score::DiagnosticKind
+impl core::marker::Sync for mc_score::DiagnosticKind
+impl core::marker::Unpin for mc_score::DiagnosticKind
+impl core::marker::UnsafeUnpin for mc_score::DiagnosticKind
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::DiagnosticKind
+impl core::panic::unwind_safe::UnwindSafe for mc_score::DiagnosticKind
+pub enum mc_score::DomainError
+pub mc_score::DomainError::CannotRemoveLast(&'static str)
+pub mc_score::DomainError::InvalidPosition(alloc::string::String)
+pub mc_score::DomainError::Invariant
+pub mc_score::DomainError::Invariant::message: alloc::string::String
+pub mc_score::DomainError::Invariant::rule: &'static str
+pub mc_score::DomainError::NotFound(alloc::string::String)
+pub mc_score::DomainError::Overflow
+pub mc_score::DomainError::Theory(mc_theory::error::TheoryError)
+impl mc_score::DomainError
+pub fn mc_score::DomainError::rule(&self) -> &'static str
+impl core::clone::Clone for mc_score::DomainError
+pub fn mc_score::DomainError::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::DomainError
+impl core::cmp::PartialEq for mc_score::DomainError
+pub fn mc_score::DomainError::eq(&self, &Self) -> bool
+impl core::convert::From<mc_theory::error::TheoryError> for mc_score::DomainError
+pub fn mc_score::DomainError::from(mc_theory::error::TheoryError) -> Self
+impl core::error::Error for mc_score::DomainError
+impl core::fmt::Debug for mc_score::DomainError
+pub fn mc_score::DomainError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_score::DomainError
+pub fn mc_score::DomainError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::DomainError
+impl core::marker::Freeze for mc_score::DomainError
+impl core::marker::Send for mc_score::DomainError
+impl core::marker::Sync for mc_score::DomainError
+impl core::marker::Unpin for mc_score::DomainError
+impl core::marker::UnsafeUnpin for mc_score::DomainError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::DomainError
+impl core::panic::unwind_safe::UnwindSafe for mc_score::DomainError
+pub enum mc_score::DomainEvent
+pub mc_score::DomainEvent::BarContentChanged
+pub mc_score::DomainEvent::BarContentChanged::bars: core::ops::range::Range<usize>
+pub mc_score::DomainEvent::BarContentChanged::track: mc_score::TrackId
+pub mc_score::DomainEvent::MasterBarsChanged
+pub mc_score::DomainEvent::MasterBarsChanged::bars: core::ops::range::Range<usize>
+pub mc_score::DomainEvent::MasterBarsInserted
+pub mc_score::DomainEvent::MasterBarsInserted::at: usize
+pub mc_score::DomainEvent::MasterBarsInserted::count: usize
+pub mc_score::DomainEvent::MasterBarsRemoved
+pub mc_score::DomainEvent::MasterBarsRemoved::at: usize
+pub mc_score::DomainEvent::MasterBarsRemoved::count: usize
+pub mc_score::DomainEvent::TempoMapChanged
+pub mc_score::DomainEvent::TiesRemoved
+pub mc_score::DomainEvent::TiesRemoved::notes: alloc::vec::Vec<mc_score::NoteId>
+pub mc_score::DomainEvent::TiesRemoved::track: mc_score::TrackId
+pub mc_score::DomainEvent::TrackAdded
+pub mc_score::DomainEvent::TrackAdded::track: mc_score::TrackId
+pub mc_score::DomainEvent::TrackChanged
+pub mc_score::DomainEvent::TrackChanged::track: mc_score::TrackId
+pub mc_score::DomainEvent::TrackRemoved
+pub mc_score::DomainEvent::TrackRemoved::track: mc_score::TrackId
+pub mc_score::DomainEvent::TracksReordered
+impl core::clone::Clone for mc_score::DomainEvent
+pub fn mc_score::DomainEvent::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::DomainEvent
+impl core::cmp::PartialEq for mc_score::DomainEvent
+pub fn mc_score::DomainEvent::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::DomainEvent
+pub fn mc_score::DomainEvent::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::DomainEvent
+impl core::marker::Freeze for mc_score::DomainEvent
+impl core::marker::Send for mc_score::DomainEvent
+impl core::marker::Sync for mc_score::DomainEvent
+impl core::marker::Unpin for mc_score::DomainEvent
+impl core::marker::UnsafeUnpin for mc_score::DomainEvent
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::DomainEvent
+impl core::panic::unwind_safe::UnwindSafe for mc_score::DomainEvent
+pub enum mc_score::InstrumentSpec
+pub mc_score::InstrumentSpec::Fretted(mc_score::FrettedInstrument)
+impl core::clone::Clone for mc_score::InstrumentSpec
+pub fn mc_score::InstrumentSpec::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::InstrumentSpec
+impl core::cmp::PartialEq for mc_score::InstrumentSpec
+pub fn mc_score::InstrumentSpec::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::InstrumentSpec
+pub fn mc_score::InstrumentSpec::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::InstrumentSpec
+impl core::marker::Freeze for mc_score::InstrumentSpec
+impl core::marker::Send for mc_score::InstrumentSpec
+impl core::marker::Sync for mc_score::InstrumentSpec
+impl core::marker::Unpin for mc_score::InstrumentSpec
+impl core::marker::UnsafeUnpin for mc_score::InstrumentSpec
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::InstrumentSpec
+impl core::panic::unwind_safe::UnwindSafe for mc_score::InstrumentSpec
+pub enum mc_score::NoteKind
+pub mc_score::NoteKind::Fretted(mc_theory::fretted::FretPosition)
+impl core::clone::Clone for mc_score::NoteKind
+pub fn mc_score::NoteKind::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::NoteKind
+impl core::cmp::PartialEq for mc_score::NoteKind
+pub fn mc_score::NoteKind::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::NoteKind
+pub fn mc_score::NoteKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_score::NoteKind
+impl core::marker::StructuralPartialEq for mc_score::NoteKind
+impl core::marker::Freeze for mc_score::NoteKind
+impl core::marker::Send for mc_score::NoteKind
+impl core::marker::Sync for mc_score::NoteKind
+impl core::marker::Unpin for mc_score::NoteKind
+impl core::marker::UnsafeUnpin for mc_score::NoteKind
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::NoteKind
+impl core::panic::unwind_safe::UnwindSafe for mc_score::NoteKind
+pub struct mc_score::BarContent
+pub mc_score::BarContent::voices: alloc::vec::Vec<mc_score::Voice>
+impl mc_score::BarContent
+pub fn mc_score::BarContent::empty() -> Self
+impl core::clone::Clone for mc_score::BarContent
+pub fn mc_score::BarContent::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::BarContent
+impl core::cmp::PartialEq for mc_score::BarContent
+pub fn mc_score::BarContent::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::BarContent
+pub fn mc_score::BarContent::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::BarContent
+impl core::marker::Freeze for mc_score::BarContent
+impl core::marker::Send for mc_score::BarContent
+impl core::marker::Sync for mc_score::BarContent
+impl core::marker::Unpin for mc_score::BarContent
+impl core::marker::UnsafeUnpin for mc_score::BarContent
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::BarContent
+impl core::panic::unwind_safe::UnwindSafe for mc_score::BarContent
+pub struct mc_score::Beat
+pub mc_score::Beat::id: mc_score::BeatId
+pub mc_score::Beat::notes: alloc::vec::Vec<mc_score::Note>
+pub mc_score::Beat::value: mc_theory::duration::NoteValue
+impl core::clone::Clone for mc_score::Beat
+pub fn mc_score::Beat::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::Beat
+impl core::cmp::PartialEq for mc_score::Beat
+pub fn mc_score::Beat::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::Beat
+pub fn mc_score::Beat::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::Beat
+impl core::marker::Freeze for mc_score::Beat
+impl core::marker::Send for mc_score::Beat
+impl core::marker::Sync for mc_score::Beat
+impl core::marker::Unpin for mc_score::Beat
+impl core::marker::UnsafeUnpin for mc_score::Beat
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Beat
+impl core::panic::unwind_safe::UnwindSafe for mc_score::Beat
+pub struct mc_score::BeatId(_)
+impl mc_score::BeatId
+pub const fn mc_score::BeatId::from_raw(u64) -> Self
+pub const fn mc_score::BeatId::raw(self) -> u64
+impl core::clone::Clone for mc_score::BeatId
+pub fn mc_score::BeatId::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::BeatId
+impl core::cmp::Ord for mc_score::BeatId
+pub fn mc_score::BeatId::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_score::BeatId
+pub fn mc_score::BeatId::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_score::BeatId
+pub fn mc_score::BeatId::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_score::BeatId
+pub fn mc_score::BeatId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_score::BeatId
+pub fn mc_score::BeatId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_score::BeatId
+impl core::marker::StructuralPartialEq for mc_score::BeatId
+impl core::marker::Freeze for mc_score::BeatId
+impl core::marker::Send for mc_score::BeatId
+impl core::marker::Sync for mc_score::BeatId
+impl core::marker::Unpin for mc_score::BeatId
+impl core::marker::UnsafeUnpin for mc_score::BeatId
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::BeatId
+impl core::panic::unwind_safe::UnwindSafe for mc_score::BeatId
+pub struct mc_score::BeatRef
+pub mc_score::BeatRef::bar: usize
+pub mc_score::BeatRef::beat: mc_score::BeatId
+pub mc_score::BeatRef::track: mc_score::TrackId
+pub mc_score::BeatRef::voice: usize
+impl core::clone::Clone for mc_score::BeatRef
+pub fn mc_score::BeatRef::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::BeatRef
+impl core::cmp::PartialEq for mc_score::BeatRef
+pub fn mc_score::BeatRef::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::BeatRef
+pub fn mc_score::BeatRef::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_score::BeatRef
+impl core::marker::StructuralPartialEq for mc_score::BeatRef
+impl core::marker::Freeze for mc_score::BeatRef
+impl core::marker::Send for mc_score::BeatRef
+impl core::marker::Sync for mc_score::BeatRef
+impl core::marker::Unpin for mc_score::BeatRef
+impl core::marker::UnsafeUnpin for mc_score::BeatRef
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::BeatRef
+impl core::panic::unwind_safe::UnwindSafe for mc_score::BeatRef
+pub struct mc_score::Diagnostic
+pub mc_score::Diagnostic::bar: usize
+pub mc_score::Diagnostic::kind: mc_score::DiagnosticKind
+pub mc_score::Diagnostic::rule: &'static str
+pub mc_score::Diagnostic::track: mc_score::TrackId
+pub mc_score::Diagnostic::voice: usize
+impl core::clone::Clone for mc_score::Diagnostic
+pub fn mc_score::Diagnostic::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::Diagnostic
+impl core::cmp::PartialEq for mc_score::Diagnostic
+pub fn mc_score::Diagnostic::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::Diagnostic
+pub fn mc_score::Diagnostic::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::Diagnostic
+impl core::marker::Freeze for mc_score::Diagnostic
+impl core::marker::Send for mc_score::Diagnostic
+impl core::marker::Sync for mc_score::Diagnostic
+impl core::marker::Unpin for mc_score::Diagnostic
+impl core::marker::UnsafeUnpin for mc_score::Diagnostic
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Diagnostic
+impl core::panic::unwind_safe::UnwindSafe for mc_score::Diagnostic
+pub struct mc_score::FrettedInstrument
+pub mc_score::FrettedInstrument::capo: mc_theory::fretted::Capo
+pub mc_score::FrettedInstrument::fret_count: u8
+pub mc_score::FrettedInstrument::tuning: mc_theory::fretted::Tuning
+impl mc_score::FrettedInstrument
+pub fn mc_score::FrettedInstrument::standard_guitar() -> Self
+impl core::clone::Clone for mc_score::FrettedInstrument
+pub fn mc_score::FrettedInstrument::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::FrettedInstrument
+impl core::cmp::PartialEq for mc_score::FrettedInstrument
+pub fn mc_score::FrettedInstrument::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::FrettedInstrument
+pub fn mc_score::FrettedInstrument::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::FrettedInstrument
+impl core::marker::Freeze for mc_score::FrettedInstrument
+impl core::marker::Send for mc_score::FrettedInstrument
+impl core::marker::Sync for mc_score::FrettedInstrument
+impl core::marker::Unpin for mc_score::FrettedInstrument
+impl core::marker::UnsafeUnpin for mc_score::FrettedInstrument
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::FrettedInstrument
+impl core::panic::unwind_safe::UnwindSafe for mc_score::FrettedInstrument
+pub struct mc_score::MasterBar
+pub mc_score::MasterBar::alternate_endings: alloc::vec::Vec<u8>
+pub mc_score::MasterBar::key: mc_theory::key::KeySignature
+pub mc_score::MasterBar::marker: core::option::Option<alloc::string::String>
+pub mc_score::MasterBar::pickup: bool
+pub mc_score::MasterBar::repeat_end: core::option::Option<u8>
+pub mc_score::MasterBar::repeat_start: bool
+pub mc_score::MasterBar::time_signature: mc_theory::time::TimeSignature
+impl mc_score::MasterBar
+pub fn mc_score::MasterBar::new(mc_theory::time::TimeSignature, mc_theory::key::KeySignature) -> Self
+impl core::clone::Clone for mc_score::MasterBar
+pub fn mc_score::MasterBar::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::MasterBar
+impl core::cmp::PartialEq for mc_score::MasterBar
+pub fn mc_score::MasterBar::eq(&self, &Self) -> bool
+impl core::default::Default for mc_score::MasterBar
+pub fn mc_score::MasterBar::default() -> Self
+impl core::fmt::Debug for mc_score::MasterBar
+pub fn mc_score::MasterBar::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::MasterBar
+impl core::marker::Freeze for mc_score::MasterBar
+impl core::marker::Send for mc_score::MasterBar
+impl core::marker::Sync for mc_score::MasterBar
+impl core::marker::Unpin for mc_score::MasterBar
+impl core::marker::UnsafeUnpin for mc_score::MasterBar
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::MasterBar
+impl core::panic::unwind_safe::UnwindSafe for mc_score::MasterBar
+pub struct mc_score::Note
+pub mc_score::Note::effects: mc_score::NoteEffects
+pub mc_score::Note::id: mc_score::NoteId
+pub mc_score::Note::kind: mc_score::NoteKind
+pub mc_score::Note::tie: bool
+impl mc_score::Note
+pub fn mc_score::Note::position(&self) -> mc_theory::fretted::FretPosition
+impl core::clone::Clone for mc_score::Note
+pub fn mc_score::Note::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::Note
+impl core::cmp::PartialEq for mc_score::Note
+pub fn mc_score::Note::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::Note
+pub fn mc_score::Note::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::Note
+impl core::marker::Freeze for mc_score::Note
+impl core::marker::Send for mc_score::Note
+impl core::marker::Sync for mc_score::Note
+impl core::marker::Unpin for mc_score::Note
+impl core::marker::UnsafeUnpin for mc_score::Note
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Note
+impl core::panic::unwind_safe::UnwindSafe for mc_score::Note
+pub struct mc_score::NoteEffects
+pub mc_score::NoteEffects::dead: bool
+pub mc_score::NoteEffects::let_ring: bool
+impl core::clone::Clone for mc_score::NoteEffects
+pub fn mc_score::NoteEffects::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::NoteEffects
+impl core::cmp::PartialEq for mc_score::NoteEffects
+pub fn mc_score::NoteEffects::eq(&self, &Self) -> bool
+impl core::default::Default for mc_score::NoteEffects
+pub fn mc_score::NoteEffects::default() -> Self
+impl core::fmt::Debug for mc_score::NoteEffects
+pub fn mc_score::NoteEffects::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_score::NoteEffects
+impl core::marker::StructuralPartialEq for mc_score::NoteEffects
+impl core::marker::Freeze for mc_score::NoteEffects
+impl core::marker::Send for mc_score::NoteEffects
+impl core::marker::Sync for mc_score::NoteEffects
+impl core::marker::Unpin for mc_score::NoteEffects
+impl core::marker::UnsafeUnpin for mc_score::NoteEffects
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::NoteEffects
+impl core::panic::unwind_safe::UnwindSafe for mc_score::NoteEffects
+pub struct mc_score::NoteId(_)
+impl mc_score::NoteId
+pub const fn mc_score::NoteId::from_raw(u64) -> Self
+pub const fn mc_score::NoteId::raw(self) -> u64
+impl core::clone::Clone for mc_score::NoteId
+pub fn mc_score::NoteId::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::NoteId
+impl core::cmp::Ord for mc_score::NoteId
+pub fn mc_score::NoteId::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_score::NoteId
+pub fn mc_score::NoteId::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_score::NoteId
+pub fn mc_score::NoteId::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_score::NoteId
+pub fn mc_score::NoteId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_score::NoteId
+pub fn mc_score::NoteId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_score::NoteId
+impl core::marker::StructuralPartialEq for mc_score::NoteId
+impl core::marker::Freeze for mc_score::NoteId
+impl core::marker::Send for mc_score::NoteId
+impl core::marker::Sync for mc_score::NoteId
+impl core::marker::Unpin for mc_score::NoteId
+impl core::marker::UnsafeUnpin for mc_score::NoteId
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::NoteId
+impl core::panic::unwind_safe::UnwindSafe for mc_score::NoteId
+pub struct mc_score::PlaybackOrder
+pub mc_score::PlaybackOrder::bars: alloc::vec::Vec<usize>
+pub mc_score::PlaybackOrder::truncated: bool
+impl core::clone::Clone for mc_score::PlaybackOrder
+pub fn mc_score::PlaybackOrder::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::PlaybackOrder
+impl core::cmp::PartialEq for mc_score::PlaybackOrder
+pub fn mc_score::PlaybackOrder::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::PlaybackOrder
+pub fn mc_score::PlaybackOrder::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::PlaybackOrder
+impl core::marker::Freeze for mc_score::PlaybackOrder
+impl core::marker::Send for mc_score::PlaybackOrder
+impl core::marker::Sync for mc_score::PlaybackOrder
+impl core::marker::Unpin for mc_score::PlaybackOrder
+impl core::marker::UnsafeUnpin for mc_score::PlaybackOrder
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::PlaybackOrder
+impl core::panic::unwind_safe::UnwindSafe for mc_score::PlaybackOrder
+pub struct mc_score::Score
+impl mc_score::Score
+pub fn mc_score::Score::add_track(&mut self, &str, mc_score::InstrumentSpec) -> core::result::Result<(mc_score::TrackId, alloc::vec::Vec<mc_score::DomainEvent>), mc_score::DomainError>
+pub fn mc_score::Score::add_voice(&mut self, mc_score::TrackId, usize) -> core::result::Result<(usize, alloc::vec::Vec<mc_score::DomainEvent>), mc_score::DomainError>
+pub fn mc_score::Score::insert_beat(&mut self, mc_score::TrackId, usize, usize, usize, mc_theory::duration::NoteValue) -> core::result::Result<(mc_score::BeatId, alloc::vec::Vec<mc_score::DomainEvent>), mc_score::DomainError>
+pub fn mc_score::Score::insert_master_bars(&mut self, usize, usize, mc_score::MasterBar) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::move_track(&mut self, mc_score::TrackId, usize) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::remove_beat(&mut self, mc_score::BeatRef) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::remove_master_bars(&mut self, usize, usize) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::remove_note(&mut self, mc_score::BeatRef, mc_score::NoteId) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::remove_tempo(&mut self, usize, mc_theory::rational::Rational) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::remove_track(&mut self, mc_score::TrackId) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::remove_voice(&mut self, mc_score::TrackId, usize, usize) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::rename_track(&mut self, mc_score::TrackId, &str) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::set_beat_value(&mut self, mc_score::BeatRef, mc_theory::duration::NoteValue) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::set_instrument(&mut self, mc_score::TrackId, mc_score::InstrumentSpec) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::set_master_bar(&mut self, usize, mc_score::MasterBar) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::set_note(&mut self, mc_score::BeatRef, mc_theory::fretted::FretPosition) -> core::result::Result<(mc_score::NoteId, alloc::vec::Vec<mc_score::DomainEvent>), mc_score::DomainError>
+pub fn mc_score::Score::set_note_effects(&mut self, mc_score::BeatRef, mc_score::NoteId, mc_score::NoteEffects) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::set_tempo(&mut self, usize, mc_theory::rational::Rational, mc_theory::time::Tempo) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::set_tie(&mut self, mc_score::BeatRef, mc_score::NoteId, bool) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::shift_frets(&mut self, mc_score::TrackId, core::ops::range::Range<usize>, i16) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::tempo_in_effect(&self, usize, mc_theory::rational::Rational) -> core::option::Option<mc_theory::time::Tempo>
+impl mc_score::Score
+pub fn mc_score::Score::bar_start_times(&self) -> core::result::Result<alloc::vec::Vec<(usize, mc_theory::rational::Rational)>, mc_score::DomainError>
+pub fn mc_score::Score::effective_bar_duration(&self, usize) -> core::result::Result<mc_theory::rational::Rational, mc_score::DomainError>
+pub fn mc_score::Score::nominal_bar_duration(&self, usize) -> core::option::Option<mc_theory::rational::Rational>
+pub fn mc_score::Score::playback_order(&self) -> mc_score::PlaybackOrder
+impl mc_score::Score
+pub fn mc_score::Score::diagnostics(&self, core::ops::range::Range<usize>) -> core::result::Result<alloc::vec::Vec<mc_score::Diagnostic>, mc_score::DomainError>
+impl mc_score::Score
+pub fn mc_score::Score::from_parts(mc_score::ScoreParts) -> core::result::Result<Self, alloc::vec::Vec<mc_score::Violation>>
+pub fn mc_score::Score::heap_bytes(&self) -> usize
+pub fn mc_score::Score::master_bar_count(&self) -> usize
+pub fn mc_score::Score::master_bars(&self) -> &[mc_score::MasterBar]
+pub fn mc_score::Score::new(&str, mc_score::InstrumentSpec, mc_score::MasterBar, mc_theory::time::Tempo) -> core::result::Result<Self, mc_score::DomainError>
+pub fn mc_score::Score::note_count(&self) -> usize
+pub fn mc_score::Score::shares_master_bars_with(&self, &mc_score::Score) -> bool
+pub fn mc_score::Score::shares_tempo_map_with(&self, &mc_score::Score) -> bool
+pub fn mc_score::Score::tempo_map(&self) -> &[mc_score::TempoChange]
+pub fn mc_score::Score::track(&self, mc_score::TrackId) -> core::option::Option<&mc_score::Track>
+pub fn mc_score::Score::track_at(&self, usize) -> core::option::Option<&mc_score::Track>
+pub fn mc_score::Score::track_count(&self) -> usize
+pub fn mc_score::Score::tracks(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = &mc_score::Track>
+pub fn mc_score::Score::unshared_bars(&self, &mc_score::Score) -> usize
+pub fn mc_score::Score::unshared_heap_bytes(&self, &mc_score::Score) -> usize
+pub fn mc_score::Score::validate(&self) -> alloc::vec::Vec<mc_score::Violation>
+impl core::clone::Clone for mc_score::Score
+pub fn mc_score::Score::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::Score
+impl core::cmp::PartialEq for mc_score::Score
+pub fn mc_score::Score::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::Score
+pub fn mc_score::Score::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::Score
+impl core::marker::Freeze for mc_score::Score
+impl core::marker::Send for mc_score::Score
+impl core::marker::Sync for mc_score::Score
+impl core::marker::Unpin for mc_score::Score
+impl core::marker::UnsafeUnpin for mc_score::Score
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Score
+impl core::panic::unwind_safe::UnwindSafe for mc_score::Score
+pub struct mc_score::ScoreParts
+pub mc_score::ScoreParts::master_bars: alloc::vec::Vec<mc_score::MasterBar>
+pub mc_score::ScoreParts::tempo_map: alloc::vec::Vec<mc_score::TempoChange>
+pub mc_score::ScoreParts::tracks: alloc::vec::Vec<mc_score::TrackData>
+impl core::clone::Clone for mc_score::ScoreParts
+pub fn mc_score::ScoreParts::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::ScoreParts
+impl core::cmp::PartialEq for mc_score::ScoreParts
+pub fn mc_score::ScoreParts::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::ScoreParts
+pub fn mc_score::ScoreParts::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::ScoreParts
+impl core::marker::Freeze for mc_score::ScoreParts
+impl core::marker::Send for mc_score::ScoreParts
+impl core::marker::Sync for mc_score::ScoreParts
+impl core::marker::Unpin for mc_score::ScoreParts
+impl core::marker::UnsafeUnpin for mc_score::ScoreParts
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::ScoreParts
+impl core::panic::unwind_safe::UnwindSafe for mc_score::ScoreParts
+pub struct mc_score::TempoChange
+pub mc_score::TempoChange::bar: usize
+pub mc_score::TempoChange::offset: mc_theory::rational::Rational
+pub mc_score::TempoChange::tempo: mc_theory::time::Tempo
+impl core::clone::Clone for mc_score::TempoChange
+pub fn mc_score::TempoChange::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::TempoChange
+impl core::cmp::PartialEq for mc_score::TempoChange
+pub fn mc_score::TempoChange::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::TempoChange
+pub fn mc_score::TempoChange::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_score::TempoChange
+impl core::marker::StructuralPartialEq for mc_score::TempoChange
+impl core::marker::Freeze for mc_score::TempoChange
+impl core::marker::Send for mc_score::TempoChange
+impl core::marker::Sync for mc_score::TempoChange
+impl core::marker::Unpin for mc_score::TempoChange
+impl core::marker::UnsafeUnpin for mc_score::TempoChange
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::TempoChange
+impl core::panic::unwind_safe::UnwindSafe for mc_score::TempoChange
+pub struct mc_score::Track
+impl mc_score::Track
+pub fn mc_score::Track::bar(&self, usize) -> core::option::Option<&mc_score::BarContent>
+pub fn mc_score::Track::bars(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = &mc_score::BarContent>
+pub fn mc_score::Track::fretted(&self) -> &mc_score::FrettedInstrument
+pub fn mc_score::Track::id(&self) -> mc_score::TrackId
+pub fn mc_score::Track::instrument(&self) -> &mc_score::InstrumentSpec
+pub fn mc_score::Track::name(&self) -> &str
+pub fn mc_score::Track::shares_bar_with(&self, &mc_score::Track, usize) -> bool
+impl core::clone::Clone for mc_score::Track
+pub fn mc_score::Track::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::Track
+impl core::cmp::PartialEq for mc_score::Track
+pub fn mc_score::Track::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::Track
+pub fn mc_score::Track::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::Track
+impl core::marker::Freeze for mc_score::Track
+impl core::marker::Send for mc_score::Track
+impl core::marker::Sync for mc_score::Track
+impl core::marker::Unpin for mc_score::Track
+impl core::marker::UnsafeUnpin for mc_score::Track
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Track
+impl core::panic::unwind_safe::UnwindSafe for mc_score::Track
+pub struct mc_score::TrackData
+pub mc_score::TrackData::bars: alloc::vec::Vec<mc_score::BarContent>
+pub mc_score::TrackData::id: mc_score::TrackId
+pub mc_score::TrackData::instrument: mc_score::InstrumentSpec
+pub mc_score::TrackData::name: alloc::string::String
+impl core::clone::Clone for mc_score::TrackData
+pub fn mc_score::TrackData::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::TrackData
+impl core::cmp::PartialEq for mc_score::TrackData
+pub fn mc_score::TrackData::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::TrackData
+pub fn mc_score::TrackData::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::TrackData
+impl core::marker::Freeze for mc_score::TrackData
+impl core::marker::Send for mc_score::TrackData
+impl core::marker::Sync for mc_score::TrackData
+impl core::marker::Unpin for mc_score::TrackData
+impl core::marker::UnsafeUnpin for mc_score::TrackData
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::TrackData
+impl core::panic::unwind_safe::UnwindSafe for mc_score::TrackData
+pub struct mc_score::TrackId(_)
+impl mc_score::TrackId
+pub const fn mc_score::TrackId::from_raw(u64) -> Self
+pub const fn mc_score::TrackId::raw(self) -> u64
+impl core::clone::Clone for mc_score::TrackId
+pub fn mc_score::TrackId::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::TrackId
+impl core::cmp::Ord for mc_score::TrackId
+pub fn mc_score::TrackId::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_score::TrackId
+pub fn mc_score::TrackId::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_score::TrackId
+pub fn mc_score::TrackId::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_score::TrackId
+pub fn mc_score::TrackId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_score::TrackId
+pub fn mc_score::TrackId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_score::TrackId
+impl core::marker::StructuralPartialEq for mc_score::TrackId
+impl core::marker::Freeze for mc_score::TrackId
+impl core::marker::Send for mc_score::TrackId
+impl core::marker::Sync for mc_score::TrackId
+impl core::marker::Unpin for mc_score::TrackId
+impl core::marker::UnsafeUnpin for mc_score::TrackId
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::TrackId
+impl core::panic::unwind_safe::UnwindSafe for mc_score::TrackId
+pub struct mc_score::Violation
+pub mc_score::Violation::location: alloc::string::String
+pub mc_score::Violation::message: alloc::string::String
+pub mc_score::Violation::rule: &'static str
+impl core::clone::Clone for mc_score::Violation
+pub fn mc_score::Violation::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::Violation
+impl core::cmp::PartialEq for mc_score::Violation
+pub fn mc_score::Violation::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::Violation
+pub fn mc_score::Violation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_score::Violation
+pub fn mc_score::Violation::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::Violation
+impl core::marker::Freeze for mc_score::Violation
+impl core::marker::Send for mc_score::Violation
+impl core::marker::Sync for mc_score::Violation
+impl core::marker::Unpin for mc_score::Violation
+impl core::marker::UnsafeUnpin for mc_score::Violation
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Violation
+impl core::panic::unwind_safe::UnwindSafe for mc_score::Violation
+pub struct mc_score::Voice
+pub mc_score::Voice::beats: alloc::vec::Vec<mc_score::Beat>
+impl core::clone::Clone for mc_score::Voice
+pub fn mc_score::Voice::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::Voice
+impl core::cmp::PartialEq for mc_score::Voice
+pub fn mc_score::Voice::eq(&self, &Self) -> bool
+impl core::default::Default for mc_score::Voice
+pub fn mc_score::Voice::default() -> Self
+impl core::fmt::Debug for mc_score::Voice
+pub fn mc_score::Voice::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_score::Voice
+impl core::marker::Freeze for mc_score::Voice
+impl core::marker::Send for mc_score::Voice
+impl core::marker::Sync for mc_score::Voice
+impl core::marker::Unpin for mc_score::Voice
+impl core::marker::UnsafeUnpin for mc_score::Voice
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Voice
+impl core::panic::unwind_safe::UnwindSafe for mc_score::Voice

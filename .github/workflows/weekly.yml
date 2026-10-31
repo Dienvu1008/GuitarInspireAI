@@ -1,0 +1,65 @@
+# Weekly governance and portability checks that are slow, noisy or need extra tools.
+# Important and Advisory fitness functions: a failure here asks for review; it does not
+# block merges (docs/architecture/fitness-functions.md).
+name: weekly
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-api:
+    # FF-22 (Important): public API of library crates against architecture/public-api/.
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Toolchains
+        run: |
+          rustup show active-toolchain || rustup toolchain install
+          rustup toolchain install nightly --profile minimal
+      - name: Install cargo-public-api
+        run: cargo install cargo-public-api --version 0.52.0 --locked
+      - name: Diff against snapshots
+        shell: pwsh
+        run: |
+          foreach ($c in 'mc-theory','mc-score','mc-project','mc-app') {
+            cargo +nightly public-api -p $c --simplified | Out-File -Encoding utf8NoBOM "architecture/public-api/$c.txt"
+          }
+          git diff --stat --exit-code -- architecture/public-api
+
+  coverage:
+    # FF-27 (Advisory): line and function coverage report.
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Toolchain
+        run: |
+          rustup show active-toolchain || rustup toolchain install
+          rustup component add llvm-tools-preview
+      - name: Install cargo-llvm-cov
+        run: cargo install cargo-llvm-cov --version 0.9.1 --locked
+      - name: Coverage summary
+        run: cargo llvm-cov --workspace --all-features --exclude xtask --summary-only
+
+  freshness:
+    # FF-30 (Advisory): pinned dependencies with newer releases.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - run: cargo xtask fitness freshness
+
+  portability:
+    # ADR-004: macOS and Linux keep building and passing tests before their port phase.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - run: cargo test --workspace --all-features --locked
+      - run: cargo xtask fitness wasm

@@ -64,6 +64,8 @@ Editing one bar: `Arc::make_mut` on the track (copies its bar pointer vector) an
 | Typical | 4 tracks x 150 bars | about 10k | under 1 MB |
 | Large (GP-style band score) | 20 tracks x 300 bars x about 16 beats x about 3 notes | about 288k | 15 to 30 MB |
 
+Measured in Phase 1 (reference machine, `benchmarks/baselines/memory.toml`; structural bytes, excluding strings and allocator overhead): typical 0.39 MB, large 8.8 MB. One undo step for a single-note edit retains 1.9 KB (typical) and 3.9 KB (large), in line with the section 5 estimate. 200 undo steps of such edits on the large score hold about 0.8 MB.
+
 ## 5. Undo and redo options
 
 | Option | Memory per step (large score) | Complexity | Assessment |
@@ -75,7 +77,9 @@ Editing one bar: `Arc::make_mut` on the track (copies its bar pointer vector) an
 
 Under (b), a snapshot is `score.clone()`: one `Arc` increment for master bars and one per track. Bulk edits (transpose whole song) copy all touched bars once per command, which is acceptable because it is one undo step.
 
-Undo stack policy: bounded by step count (default 200, configurable) and an approximate byte budget (default 64 MB) [Assumption, tune after benchmarks]. Coalescing: consecutive fret digits on the same note within one input gesture are one undo step; coalescing is decided in `mc-app`, not in Dart.
+Undo stack policy: bounded by step count (default 200, configurable) and an approximate byte budget (default 64 MB). The most recent step is always kept, even if it alone exceeds the byte budget, so the last edit can always be undone. Coalescing: commands with the same `coalesce_key` are one undo step until another key, an undo or a save breaks the run; the mechanism is in `mc-app`, and the exact typing rules are decided in Phase 3 (Q-15).
+
+Dirty state (Phase 1): a document is dirty when its content differs from the content last saved or opened, not when its revision differs. Undoing back to the saved state makes it clean again, while the revision stays monotonic (P-04). The comparison is cheap because unchanged tracks and bars are shared and compare by pointer.
 
 Snapshots also serve autosave and save: the save thread serializes an `Arc` snapshot while editing continues.
 

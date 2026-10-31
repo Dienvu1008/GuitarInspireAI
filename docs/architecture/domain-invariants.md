@@ -42,7 +42,7 @@ Temporary editing states (typing "1" then "2" for fret 12, a drag in progress, a
 | H-09 | Score has at least one master bar and each bar has at least one voice | H | Builder; delete commands | Unit |
 | H-10 | Capo plus fret does not exceed fret_count | H | Capo command and note commands | Unit |
 | H-11 | Tempo map entries are ordered by position and unique per position | H | Tempo map methods | Unit |
-| H-12 | Repeat structure is well-nested (start before end, alternate endings reference existing repeats) | H | Master bar commands | Unit |
+| H-12 | Repeat structure is valid: no nested repeats; repeat counts 2..=16; alternate ending numbers 1..=16, strictly increasing, not above the section's repeat count, and placed inside a repeated section or directly after its end bar. A repeat end without a start repeats from the score start (or from after the previous repeat) | H | Master bar commands; full validation on load | Unit (mc-score repeats tests, h12_) |
 | E-01 | `expected_revision`, if supplied, equals the current revision | E | Session | Unit |
 | E-02 | Target track, bar, beat or note exists | E | Handler | Unit |
 | E-03 | Cannot delete the last track or the last master bar | E | Handler | Unit |
@@ -81,7 +81,7 @@ Rules:
 3. An underfull voice ends early; the remainder up to `E(m)` is silence for that voice. An overfull voice plays completely; the other tracks wait (silence or held notes) until `E(m)`.
 4. A pickup bar with no notes in any voice has `E(m) = 0` and is skipped in playback.
 5. `E(m)` is computed by `mc-score` (`Score::effective_bar_duration`, Phase 1) and consumed by `mc-playback` (Phase 4). Layout does not use it; it draws bars as written.
-6. Tempo map positions are expressed in score positions (bar index, offset within bar). An offset beyond `nominal(m)` but within `E(m)` is valid; an offset beyond `E(m)` is rejected by H-11 checks.
+6. Tempo map positions are expressed in score positions (bar index, offset within bar). The offset must be in `0 <= offset < nominal(m)` (0 only, for a pickup bar), checked by H-11. Revised in Phase 1: the earlier draft allowed offsets up to `E(m)`, but `E(m)` changes with every content edit, so a beat deletion could have invalidated the tempo map. Bounding by the nominal length keeps H-11 independent of content. A tempo change inside the overfull part of a bar is placed at the start of the next bar.
 
 Required tests (ids used as test name prefixes):
 

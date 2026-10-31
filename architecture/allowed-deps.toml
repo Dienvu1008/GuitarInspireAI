@@ -1,0 +1,97 @@
+# Allowed dependency matrix (FF-01; GR-01, GR-03, GR-04, GR-05).
+# Mirrors docs/architecture/dependency-rules.md section 1 and the crate table in
+# docs/architecture/architecture-overview.md. Changing it requires an ADR trailer (protected path).
+#
+# Per crate:
+#   layer        domain | application | adapter
+#   phase        roadmap phase that introduces the crate
+#   internal     workspace crates this crate may depend on (normal, dev and build dependencies)
+#   external     third-party crates allowed as normal or build dependencies
+#   dev_external third-party crates allowed only as dev-dependencies (tests, benches)
+# A workspace crate that is not listed here fails FF-01. Listed crates may not exist yet.
+
+[mc-theory]
+layer = "domain"
+phase = 1
+internal = []
+external = []
+dev_external = ["proptest"]
+
+[mc-score]
+layer = "domain"
+phase = 1
+internal = ["mc-theory"]
+external = []
+dev_external = ["proptest"]
+
+[mc-project]
+layer = "domain"
+phase = 1
+internal = ["mc-theory", "mc-score"]
+external = ["serde", "serde_json", "zip", "sha2", "schemars"]
+dev_external = ["proptest", "criterion"]
+
+[mc-app]
+layer = "application"
+phase = 1
+internal = ["mc-theory", "mc-score", "mc-project"]
+external = []
+dev_external = ["proptest", "criterion"]
+
+[mc-cli]
+layer = "adapter"
+phase = 1
+internal = ["mc-app", "mc-project"]
+external = []
+dev_external = []
+
+# ---- Later phases (declared now so the matrix is complete; crates do not exist yet) ----
+
+[mc-guitar]
+layer = "domain"
+phase = 2
+internal = ["mc-theory"]
+external = []
+dev_external = ["proptest"]
+
+[mc-notation]
+layer = "domain"
+phase = 3
+internal = ["mc-theory", "mc-score"]
+external = []
+dev_external = []
+
+[mc-ffi]
+layer = "adapter"
+phase = 3
+internal = ["mc-app", "mc-audio"]
+external = ["flutter_rust_bridge"]
+dev_external = []
+
+[mc-playback]
+layer = "domain"
+phase = 4
+internal = ["mc-theory", "mc-score"]
+external = []
+dev_external = ["proptest"]
+
+[mc-audio]
+layer = "adapter"
+phase = 4
+internal = ["mc-theory", "mc-playback", "mc-dsp", "mc-app"]
+external = ["cpal", "rustysynth", "rtrb", "windows-sys"]
+dev_external = []
+
+[mc-dsp]
+layer = "domain"
+phase = 5
+internal = []
+external = ["realfft", "rustfft"]
+dev_external = []
+
+[mc-pattern]
+layer = "domain"
+phase = 6
+internal = ["mc-theory", "mc-score", "mc-guitar"]
+external = []
+dev_external = ["proptest"]

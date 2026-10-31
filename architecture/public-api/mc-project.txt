@@ -1,0 +1,726 @@
+pub mod mc_project
+pub mod mc_project::dto
+pub enum mc_project::dto::ModeDto
+pub mc_project::dto::ModeDto::Major
+pub mc_project::dto::ModeDto::Minor
+impl core::clone::Clone for mc_project::dto::ModeDto
+pub fn mc_project::dto::ModeDto::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::dto::ModeDto
+impl core::cmp::PartialEq for mc_project::dto::ModeDto
+pub fn mc_project::dto::ModeDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::ModeDto
+pub fn mc_project::dto::ModeDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::dto::ModeDto
+impl core::marker::StructuralPartialEq for mc_project::dto::ModeDto
+impl schemars::JsonSchema for mc_project::dto::ModeDto
+pub fn mc_project::dto::ModeDto::inline_schema() -> bool
+pub fn mc_project::dto::ModeDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::ModeDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::ModeDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::ModeDto
+pub fn mc_project::dto::ModeDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::ModeDto
+pub fn mc_project::dto::ModeDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::ModeDto
+impl core::marker::Send for mc_project::dto::ModeDto
+impl core::marker::Sync for mc_project::dto::ModeDto
+impl core::marker::Unpin for mc_project::dto::ModeDto
+impl core::marker::UnsafeUnpin for mc_project::dto::ModeDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::ModeDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::ModeDto
+pub struct mc_project::dto::AppDto
+pub mc_project::dto::AppDto::app: alloc::string::String
+pub mc_project::dto::AppDto::extra: mc_project::dto::Extra
+pub mc_project::dto::AppDto::version: alloc::string::String
+impl core::clone::Clone for mc_project::dto::AppDto
+pub fn mc_project::dto::AppDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::AppDto
+pub fn mc_project::dto::AppDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::AppDto
+pub fn mc_project::dto::AppDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::AppDto
+impl mc_project::dto::UnknownContent for mc_project::dto::AppDto
+pub fn mc_project::dto::AppDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::AppDto
+pub fn mc_project::dto::AppDto::inline_schema() -> bool
+pub fn mc_project::dto::AppDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::AppDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::AppDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::AppDto
+pub fn mc_project::dto::AppDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::AppDto
+pub fn mc_project::dto::AppDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::AppDto
+impl core::marker::Send for mc_project::dto::AppDto
+impl core::marker::Sync for mc_project::dto::AppDto
+impl core::marker::Unpin for mc_project::dto::AppDto
+impl core::marker::UnsafeUnpin for mc_project::dto::AppDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::AppDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::AppDto
+pub struct mc_project::dto::BarDto
+pub mc_project::dto::BarDto::extra: mc_project::dto::Extra
+pub mc_project::dto::BarDto::voices: alloc::vec::Vec<mc_project::dto::VoiceDto>
+impl core::clone::Clone for mc_project::dto::BarDto
+pub fn mc_project::dto::BarDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::BarDto
+pub fn mc_project::dto::BarDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::BarDto
+pub fn mc_project::dto::BarDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::BarDto
+impl mc_project::dto::UnknownContent for mc_project::dto::BarDto
+pub fn mc_project::dto::BarDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::BarDto
+pub fn mc_project::dto::BarDto::inline_schema() -> bool
+pub fn mc_project::dto::BarDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::BarDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::BarDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::BarDto
+pub fn mc_project::dto::BarDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::BarDto
+pub fn mc_project::dto::BarDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::BarDto
+impl core::marker::Send for mc_project::dto::BarDto
+impl core::marker::Sync for mc_project::dto::BarDto
+impl core::marker::Unpin for mc_project::dto::BarDto
+impl core::marker::UnsafeUnpin for mc_project::dto::BarDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::BarDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::BarDto
+pub struct mc_project::dto::BeatDto
+pub mc_project::dto::BeatDto::extra: mc_project::dto::Extra
+pub mc_project::dto::BeatDto::id: u64
+pub mc_project::dto::BeatDto::notes: alloc::vec::Vec<mc_project::dto::NoteDto>
+pub mc_project::dto::BeatDto::value: mc_project::dto::ValueDto
+impl core::clone::Clone for mc_project::dto::BeatDto
+pub fn mc_project::dto::BeatDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::BeatDto
+pub fn mc_project::dto::BeatDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::BeatDto
+pub fn mc_project::dto::BeatDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::BeatDto
+impl mc_project::dto::UnknownContent for mc_project::dto::BeatDto
+pub fn mc_project::dto::BeatDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::BeatDto
+pub fn mc_project::dto::BeatDto::inline_schema() -> bool
+pub fn mc_project::dto::BeatDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::BeatDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::BeatDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::BeatDto
+pub fn mc_project::dto::BeatDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::BeatDto
+pub fn mc_project::dto::BeatDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::BeatDto
+impl core::marker::Send for mc_project::dto::BeatDto
+impl core::marker::Sync for mc_project::dto::BeatDto
+impl core::marker::Unpin for mc_project::dto::BeatDto
+impl core::marker::UnsafeUnpin for mc_project::dto::BeatDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::BeatDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::BeatDto
+pub struct mc_project::dto::EntryDto
+pub mc_project::dto::EntryDto::extra: mc_project::dto::Extra
+pub mc_project::dto::EntryDto::path: alloc::string::String
+pub mc_project::dto::EntryDto::sha256: alloc::string::String
+pub mc_project::dto::EntryDto::size: u64
+impl core::clone::Clone for mc_project::dto::EntryDto
+pub fn mc_project::dto::EntryDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::EntryDto
+pub fn mc_project::dto::EntryDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::EntryDto
+pub fn mc_project::dto::EntryDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::EntryDto
+impl mc_project::dto::UnknownContent for mc_project::dto::EntryDto
+pub fn mc_project::dto::EntryDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::EntryDto
+pub fn mc_project::dto::EntryDto::inline_schema() -> bool
+pub fn mc_project::dto::EntryDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::EntryDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::EntryDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::EntryDto
+pub fn mc_project::dto::EntryDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::EntryDto
+pub fn mc_project::dto::EntryDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::EntryDto
+impl core::marker::Send for mc_project::dto::EntryDto
+impl core::marker::Sync for mc_project::dto::EntryDto
+impl core::marker::Unpin for mc_project::dto::EntryDto
+impl core::marker::UnsafeUnpin for mc_project::dto::EntryDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::EntryDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::EntryDto
+pub struct mc_project::dto::InstrumentDto
+pub mc_project::dto::InstrumentDto::capo: u8
+pub mc_project::dto::InstrumentDto::extra: mc_project::dto::Extra
+pub mc_project::dto::InstrumentDto::fret_count: u8
+pub mc_project::dto::InstrumentDto::tuning: alloc::vec::Vec<alloc::string::String>
+impl core::clone::Clone for mc_project::dto::InstrumentDto
+pub fn mc_project::dto::InstrumentDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::InstrumentDto
+pub fn mc_project::dto::InstrumentDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::InstrumentDto
+pub fn mc_project::dto::InstrumentDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::InstrumentDto
+impl mc_project::dto::UnknownContent for mc_project::dto::InstrumentDto
+pub fn mc_project::dto::InstrumentDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::InstrumentDto
+pub fn mc_project::dto::InstrumentDto::inline_schema() -> bool
+pub fn mc_project::dto::InstrumentDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::InstrumentDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::InstrumentDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::InstrumentDto
+pub fn mc_project::dto::InstrumentDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::InstrumentDto
+pub fn mc_project::dto::InstrumentDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::InstrumentDto
+impl core::marker::Send for mc_project::dto::InstrumentDto
+impl core::marker::Sync for mc_project::dto::InstrumentDto
+impl core::marker::Unpin for mc_project::dto::InstrumentDto
+impl core::marker::UnsafeUnpin for mc_project::dto::InstrumentDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::InstrumentDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::InstrumentDto
+pub struct mc_project::dto::KeyDto
+pub mc_project::dto::KeyDto::extra: mc_project::dto::Extra
+pub mc_project::dto::KeyDto::fifths: i8
+pub mc_project::dto::KeyDto::mode: mc_project::dto::ModeDto
+impl core::clone::Clone for mc_project::dto::KeyDto
+pub fn mc_project::dto::KeyDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::KeyDto
+pub fn mc_project::dto::KeyDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::KeyDto
+pub fn mc_project::dto::KeyDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::KeyDto
+impl mc_project::dto::UnknownContent for mc_project::dto::KeyDto
+pub fn mc_project::dto::KeyDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::KeyDto
+pub fn mc_project::dto::KeyDto::inline_schema() -> bool
+pub fn mc_project::dto::KeyDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::KeyDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::KeyDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::KeyDto
+pub fn mc_project::dto::KeyDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::KeyDto
+pub fn mc_project::dto::KeyDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::KeyDto
+impl core::marker::Send for mc_project::dto::KeyDto
+impl core::marker::Sync for mc_project::dto::KeyDto
+impl core::marker::Unpin for mc_project::dto::KeyDto
+impl core::marker::UnsafeUnpin for mc_project::dto::KeyDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::KeyDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::KeyDto
+pub struct mc_project::dto::ManifestDto
+pub mc_project::dto::ManifestDto::created_by: mc_project::dto::AppDto
+pub mc_project::dto::ManifestDto::entries: alloc::vec::Vec<mc_project::dto::EntryDto>
+pub mc_project::dto::ManifestDto::extra: mc_project::dto::Extra
+pub mc_project::dto::ManifestDto::format: alloc::string::String
+pub mc_project::dto::ManifestDto::format_version: mc_project::dto::VersionDto
+pub mc_project::dto::ManifestDto::optional_features: alloc::vec::Vec<alloc::string::String>
+pub mc_project::dto::ManifestDto::project_id: alloc::string::String
+pub mc_project::dto::ManifestDto::required_features: alloc::vec::Vec<alloc::string::String>
+pub mc_project::dto::ManifestDto::saved_by: mc_project::dto::AppDto
+pub mc_project::dto::ManifestDto::saved_revision: u64
+impl core::clone::Clone for mc_project::dto::ManifestDto
+pub fn mc_project::dto::ManifestDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::ManifestDto
+pub fn mc_project::dto::ManifestDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::ManifestDto
+pub fn mc_project::dto::ManifestDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::ManifestDto
+impl mc_project::dto::UnknownContent for mc_project::dto::ManifestDto
+pub fn mc_project::dto::ManifestDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::ManifestDto
+pub fn mc_project::dto::ManifestDto::inline_schema() -> bool
+pub fn mc_project::dto::ManifestDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::ManifestDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::ManifestDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::ManifestDto
+pub fn mc_project::dto::ManifestDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::ManifestDto
+pub fn mc_project::dto::ManifestDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::ManifestDto
+impl core::marker::Send for mc_project::dto::ManifestDto
+impl core::marker::Sync for mc_project::dto::ManifestDto
+impl core::marker::Unpin for mc_project::dto::ManifestDto
+impl core::marker::UnsafeUnpin for mc_project::dto::ManifestDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::ManifestDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::ManifestDto
+pub struct mc_project::dto::MasterBarDto
+pub mc_project::dto::MasterBarDto::alternate_endings: alloc::vec::Vec<u8>
+pub mc_project::dto::MasterBarDto::extra: mc_project::dto::Extra
+pub mc_project::dto::MasterBarDto::key: mc_project::dto::KeyDto
+pub mc_project::dto::MasterBarDto::marker: core::option::Option<alloc::string::String>
+pub mc_project::dto::MasterBarDto::pickup: bool
+pub mc_project::dto::MasterBarDto::repeat_end: core::option::Option<u8>
+pub mc_project::dto::MasterBarDto::repeat_start: bool
+pub mc_project::dto::MasterBarDto::time_signature: [u8; 2]
+impl core::clone::Clone for mc_project::dto::MasterBarDto
+pub fn mc_project::dto::MasterBarDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::MasterBarDto
+pub fn mc_project::dto::MasterBarDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::MasterBarDto
+pub fn mc_project::dto::MasterBarDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::MasterBarDto
+impl mc_project::dto::UnknownContent for mc_project::dto::MasterBarDto
+pub fn mc_project::dto::MasterBarDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::MasterBarDto
+pub fn mc_project::dto::MasterBarDto::inline_schema() -> bool
+pub fn mc_project::dto::MasterBarDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::MasterBarDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::MasterBarDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::MasterBarDto
+pub fn mc_project::dto::MasterBarDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::MasterBarDto
+pub fn mc_project::dto::MasterBarDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::MasterBarDto
+impl core::marker::Send for mc_project::dto::MasterBarDto
+impl core::marker::Sync for mc_project::dto::MasterBarDto
+impl core::marker::Unpin for mc_project::dto::MasterBarDto
+impl core::marker::UnsafeUnpin for mc_project::dto::MasterBarDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::MasterBarDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::MasterBarDto
+pub struct mc_project::dto::NoteDto
+pub mc_project::dto::NoteDto::dead: bool
+pub mc_project::dto::NoteDto::extra: mc_project::dto::Extra
+pub mc_project::dto::NoteDto::fret: u8
+pub mc_project::dto::NoteDto::id: u64
+pub mc_project::dto::NoteDto::let_ring: bool
+pub mc_project::dto::NoteDto::string: u8
+pub mc_project::dto::NoteDto::tie: bool
+impl core::clone::Clone for mc_project::dto::NoteDto
+pub fn mc_project::dto::NoteDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::NoteDto
+pub fn mc_project::dto::NoteDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::NoteDto
+pub fn mc_project::dto::NoteDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::NoteDto
+impl mc_project::dto::UnknownContent for mc_project::dto::NoteDto
+pub fn mc_project::dto::NoteDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::NoteDto
+pub fn mc_project::dto::NoteDto::inline_schema() -> bool
+pub fn mc_project::dto::NoteDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::NoteDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::NoteDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::NoteDto
+pub fn mc_project::dto::NoteDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::NoteDto
+pub fn mc_project::dto::NoteDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::NoteDto
+impl core::marker::Send for mc_project::dto::NoteDto
+impl core::marker::Sync for mc_project::dto::NoteDto
+impl core::marker::Unpin for mc_project::dto::NoteDto
+impl core::marker::UnsafeUnpin for mc_project::dto::NoteDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::NoteDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::NoteDto
+pub struct mc_project::dto::ScoreDto
+pub mc_project::dto::ScoreDto::extra: mc_project::dto::Extra
+pub mc_project::dto::ScoreDto::master_bars: alloc::vec::Vec<mc_project::dto::MasterBarDto>
+pub mc_project::dto::ScoreDto::tempo_map: alloc::vec::Vec<mc_project::dto::TempoChangeDto>
+pub mc_project::dto::ScoreDto::tracks: alloc::vec::Vec<mc_project::dto::TrackDto>
+impl core::clone::Clone for mc_project::dto::ScoreDto
+pub fn mc_project::dto::ScoreDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::ScoreDto
+pub fn mc_project::dto::ScoreDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::ScoreDto
+pub fn mc_project::dto::ScoreDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::ScoreDto
+impl mc_project::dto::UnknownContent for mc_project::dto::ScoreDto
+pub fn mc_project::dto::ScoreDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::ScoreDto
+pub fn mc_project::dto::ScoreDto::inline_schema() -> bool
+pub fn mc_project::dto::ScoreDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::ScoreDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::ScoreDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::ScoreDto
+pub fn mc_project::dto::ScoreDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::ScoreDto
+pub fn mc_project::dto::ScoreDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::ScoreDto
+impl core::marker::Send for mc_project::dto::ScoreDto
+impl core::marker::Sync for mc_project::dto::ScoreDto
+impl core::marker::Unpin for mc_project::dto::ScoreDto
+impl core::marker::UnsafeUnpin for mc_project::dto::ScoreDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::ScoreDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::ScoreDto
+pub struct mc_project::dto::TempoChangeDto
+pub mc_project::dto::TempoChangeDto::bar: u32
+pub mc_project::dto::TempoChangeDto::bpm: [i64; 2]
+pub mc_project::dto::TempoChangeDto::extra: mc_project::dto::Extra
+pub mc_project::dto::TempoChangeDto::offset: [i64; 2]
+impl core::clone::Clone for mc_project::dto::TempoChangeDto
+pub fn mc_project::dto::TempoChangeDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::TempoChangeDto
+pub fn mc_project::dto::TempoChangeDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::TempoChangeDto
+pub fn mc_project::dto::TempoChangeDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::TempoChangeDto
+impl mc_project::dto::UnknownContent for mc_project::dto::TempoChangeDto
+pub fn mc_project::dto::TempoChangeDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::TempoChangeDto
+pub fn mc_project::dto::TempoChangeDto::inline_schema() -> bool
+pub fn mc_project::dto::TempoChangeDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::TempoChangeDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::TempoChangeDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::TempoChangeDto
+pub fn mc_project::dto::TempoChangeDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::TempoChangeDto
+pub fn mc_project::dto::TempoChangeDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::TempoChangeDto
+impl core::marker::Send for mc_project::dto::TempoChangeDto
+impl core::marker::Sync for mc_project::dto::TempoChangeDto
+impl core::marker::Unpin for mc_project::dto::TempoChangeDto
+impl core::marker::UnsafeUnpin for mc_project::dto::TempoChangeDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::TempoChangeDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::TempoChangeDto
+pub struct mc_project::dto::TrackDto
+pub mc_project::dto::TrackDto::bars: alloc::vec::Vec<mc_project::dto::BarDto>
+pub mc_project::dto::TrackDto::extra: mc_project::dto::Extra
+pub mc_project::dto::TrackDto::id: u64
+pub mc_project::dto::TrackDto::instrument: mc_project::dto::InstrumentDto
+pub mc_project::dto::TrackDto::name: alloc::string::String
+impl core::clone::Clone for mc_project::dto::TrackDto
+pub fn mc_project::dto::TrackDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::TrackDto
+pub fn mc_project::dto::TrackDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::TrackDto
+pub fn mc_project::dto::TrackDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::TrackDto
+impl mc_project::dto::UnknownContent for mc_project::dto::TrackDto
+pub fn mc_project::dto::TrackDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::TrackDto
+pub fn mc_project::dto::TrackDto::inline_schema() -> bool
+pub fn mc_project::dto::TrackDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::TrackDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::TrackDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::TrackDto
+pub fn mc_project::dto::TrackDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::TrackDto
+pub fn mc_project::dto::TrackDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::TrackDto
+impl core::marker::Send for mc_project::dto::TrackDto
+impl core::marker::Sync for mc_project::dto::TrackDto
+impl core::marker::Unpin for mc_project::dto::TrackDto
+impl core::marker::UnsafeUnpin for mc_project::dto::TrackDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::TrackDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::TrackDto
+pub struct mc_project::dto::ValueDto
+pub mc_project::dto::ValueDto::base: u8
+pub mc_project::dto::ValueDto::dots: u8
+pub mc_project::dto::ValueDto::extra: mc_project::dto::Extra
+pub mc_project::dto::ValueDto::tuplet: core::option::Option<[u8; 2]>
+impl core::clone::Clone for mc_project::dto::ValueDto
+pub fn mc_project::dto::ValueDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::ValueDto
+pub fn mc_project::dto::ValueDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::ValueDto
+pub fn mc_project::dto::ValueDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::ValueDto
+impl mc_project::dto::UnknownContent for mc_project::dto::ValueDto
+pub fn mc_project::dto::ValueDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::ValueDto
+pub fn mc_project::dto::ValueDto::inline_schema() -> bool
+pub fn mc_project::dto::ValueDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::ValueDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::ValueDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::ValueDto
+pub fn mc_project::dto::ValueDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::ValueDto
+pub fn mc_project::dto::ValueDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::ValueDto
+impl core::marker::Send for mc_project::dto::ValueDto
+impl core::marker::Sync for mc_project::dto::ValueDto
+impl core::marker::Unpin for mc_project::dto::ValueDto
+impl core::marker::UnsafeUnpin for mc_project::dto::ValueDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::ValueDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::ValueDto
+pub struct mc_project::dto::VersionDto
+pub mc_project::dto::VersionDto::major: u32
+pub mc_project::dto::VersionDto::minor: u32
+impl core::clone::Clone for mc_project::dto::VersionDto
+pub fn mc_project::dto::VersionDto::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::dto::VersionDto
+impl core::cmp::PartialEq for mc_project::dto::VersionDto
+pub fn mc_project::dto::VersionDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::VersionDto
+pub fn mc_project::dto::VersionDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::dto::VersionDto
+impl core::marker::StructuralPartialEq for mc_project::dto::VersionDto
+impl schemars::JsonSchema for mc_project::dto::VersionDto
+pub fn mc_project::dto::VersionDto::inline_schema() -> bool
+pub fn mc_project::dto::VersionDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::VersionDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::VersionDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::VersionDto
+pub fn mc_project::dto::VersionDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::VersionDto
+pub fn mc_project::dto::VersionDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::VersionDto
+impl core::marker::Send for mc_project::dto::VersionDto
+impl core::marker::Sync for mc_project::dto::VersionDto
+impl core::marker::Unpin for mc_project::dto::VersionDto
+impl core::marker::UnsafeUnpin for mc_project::dto::VersionDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::VersionDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::VersionDto
+pub struct mc_project::dto::VoiceDto
+pub mc_project::dto::VoiceDto::beats: alloc::vec::Vec<mc_project::dto::BeatDto>
+pub mc_project::dto::VoiceDto::extra: mc_project::dto::Extra
+impl core::clone::Clone for mc_project::dto::VoiceDto
+pub fn mc_project::dto::VoiceDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::dto::VoiceDto
+pub fn mc_project::dto::VoiceDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::VoiceDto
+pub fn mc_project::dto::VoiceDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::dto::VoiceDto
+impl mc_project::dto::UnknownContent for mc_project::dto::VoiceDto
+pub fn mc_project::dto::VoiceDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::dto::VoiceDto
+pub fn mc_project::dto::VoiceDto::inline_schema() -> bool
+pub fn mc_project::dto::VoiceDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::VoiceDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::VoiceDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::VoiceDto
+pub fn mc_project::dto::VoiceDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::VoiceDto
+pub fn mc_project::dto::VoiceDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::VoiceDto
+impl core::marker::Send for mc_project::dto::VoiceDto
+impl core::marker::Sync for mc_project::dto::VoiceDto
+impl core::marker::Unpin for mc_project::dto::VoiceDto
+impl core::marker::UnsafeUnpin for mc_project::dto::VoiceDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::VoiceDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::VoiceDto
+pub trait mc_project::dto::UnknownContent
+pub fn mc_project::dto::UnknownContent::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::AppDto
+pub fn mc_project::dto::AppDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::BarDto
+pub fn mc_project::dto::BarDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::BeatDto
+pub fn mc_project::dto::BeatDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::EntryDto
+pub fn mc_project::dto::EntryDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::InstrumentDto
+pub fn mc_project::dto::InstrumentDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::KeyDto
+pub fn mc_project::dto::KeyDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::ManifestDto
+pub fn mc_project::dto::ManifestDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::MasterBarDto
+pub fn mc_project::dto::MasterBarDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::NoteDto
+pub fn mc_project::dto::NoteDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::ScoreDto
+pub fn mc_project::dto::ScoreDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::TempoChangeDto
+pub fn mc_project::dto::TempoChangeDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::TrackDto
+pub fn mc_project::dto::TrackDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::ValueDto
+pub fn mc_project::dto::ValueDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::dto::VoiceDto
+pub fn mc_project::dto::VoiceDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+pub type mc_project::dto::Extra = alloc::collections::btree::map::BTreeMap<alloc::string::String, serde_json::value::Value>
+pub enum mc_project::LoadError
+pub mc_project::LoadError::BadEntryName(alloc::string::String)
+pub mc_project::LoadError::CompressionRatio(alloc::string::String)
+pub mc_project::LoadError::Container(alloc::string::String)
+pub mc_project::LoadError::DuplicateEntry(alloc::string::String)
+pub mc_project::LoadError::EntryTooLarge(alloc::string::String)
+pub mc_project::LoadError::HashMismatch(alloc::string::String)
+pub mc_project::LoadError::Invalid(alloc::vec::Vec<mc_score::error::Violation>)
+pub mc_project::LoadError::Json
+pub mc_project::LoadError::Json::entry: alloc::string::String
+pub mc_project::LoadError::Json::message: alloc::string::String
+pub mc_project::LoadError::MissingEntry(alloc::string::String)
+pub mc_project::LoadError::NewerMajorVersion
+pub mc_project::LoadError::NewerMajorVersion::found: u32
+pub mc_project::LoadError::NewerMajorVersion::supported: u32
+pub mc_project::LoadError::NotAProject(alloc::string::String)
+pub mc_project::LoadError::PackageTooLarge
+pub mc_project::LoadError::TooManyEntries(usize)
+pub mc_project::LoadError::UnknownRequiredFeatures(alloc::vec::Vec<alloc::string::String>)
+pub mc_project::LoadError::UnlistedEntry(alloc::string::String)
+pub mc_project::LoadError::UnsupportedCompression(alloc::string::String)
+pub mc_project::LoadError::UnsupportedVersion
+pub mc_project::LoadError::UnsupportedVersion::major: u32
+pub mc_project::LoadError::UnsupportedVersion::minor: u32
+impl core::clone::Clone for mc_project::LoadError
+pub fn mc_project::LoadError::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::LoadError
+impl core::cmp::PartialEq for mc_project::LoadError
+pub fn mc_project::LoadError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_project::LoadError
+impl core::fmt::Debug for mc_project::LoadError
+pub fn mc_project::LoadError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_project::LoadError
+pub fn mc_project::LoadError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::LoadError
+impl core::marker::Freeze for mc_project::LoadError
+impl core::marker::Send for mc_project::LoadError
+impl core::marker::Sync for mc_project::LoadError
+impl core::marker::Unpin for mc_project::LoadError
+impl core::marker::UnsafeUnpin for mc_project::LoadError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::LoadError
+impl core::panic::unwind_safe::UnwindSafe for mc_project::LoadError
+pub enum mc_project::LoadWarning
+pub mc_project::LoadWarning::NewerMinorVersion
+pub mc_project::LoadWarning::NewerMinorVersion::found: mc_project::FormatVersion
+pub mc_project::LoadWarning::UnknownContent
+pub mc_project::LoadWarning::UnknownContent::paths: alloc::vec::Vec<alloc::string::String>
+impl core::clone::Clone for mc_project::LoadWarning
+pub fn mc_project::LoadWarning::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::LoadWarning
+impl core::cmp::PartialEq for mc_project::LoadWarning
+pub fn mc_project::LoadWarning::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::LoadWarning
+pub fn mc_project::LoadWarning::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::LoadWarning
+impl core::marker::Freeze for mc_project::LoadWarning
+impl core::marker::Send for mc_project::LoadWarning
+impl core::marker::Sync for mc_project::LoadWarning
+impl core::marker::Unpin for mc_project::LoadWarning
+impl core::marker::UnsafeUnpin for mc_project::LoadWarning
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::LoadWarning
+impl core::panic::unwind_safe::UnwindSafe for mc_project::LoadWarning
+pub struct mc_project::AppInfo
+pub mc_project::AppInfo::app: alloc::string::String
+pub mc_project::AppInfo::version: alloc::string::String
+impl core::clone::Clone for mc_project::AppInfo
+pub fn mc_project::AppInfo::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::AppInfo
+impl core::cmp::PartialEq for mc_project::AppInfo
+pub fn mc_project::AppInfo::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::AppInfo
+pub fn mc_project::AppInfo::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::AppInfo
+impl core::marker::Freeze for mc_project::AppInfo
+impl core::marker::Send for mc_project::AppInfo
+impl core::marker::Sync for mc_project::AppInfo
+impl core::marker::Unpin for mc_project::AppInfo
+impl core::marker::UnsafeUnpin for mc_project::AppInfo
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::AppInfo
+impl core::panic::unwind_safe::UnwindSafe for mc_project::AppInfo
+pub struct mc_project::FormatVersion
+pub mc_project::FormatVersion::major: u32
+pub mc_project::FormatVersion::minor: u32
+impl core::clone::Clone for mc_project::FormatVersion
+pub fn mc_project::FormatVersion::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::FormatVersion
+impl core::cmp::Ord for mc_project::FormatVersion
+pub fn mc_project::FormatVersion::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_project::FormatVersion
+pub fn mc_project::FormatVersion::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_project::FormatVersion
+pub fn mc_project::FormatVersion::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_project::FormatVersion
+pub fn mc_project::FormatVersion::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::FormatVersion
+impl core::marker::StructuralPartialEq for mc_project::FormatVersion
+impl core::marker::Freeze for mc_project::FormatVersion
+impl core::marker::Send for mc_project::FormatVersion
+impl core::marker::Sync for mc_project::FormatVersion
+impl core::marker::Unpin for mc_project::FormatVersion
+impl core::marker::UnsafeUnpin for mc_project::FormatVersion
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::FormatVersion
+impl core::panic::unwind_safe::UnwindSafe for mc_project::FormatVersion
+pub struct mc_project::Limits
+pub mc_project::Limits::max_entries: usize
+pub mc_project::Limits::max_entry_bytes: u64
+pub mc_project::Limits::max_ratio: u64
+pub mc_project::Limits::max_total_bytes: u64
+impl core::clone::Clone for mc_project::Limits
+pub fn mc_project::Limits::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::Limits
+impl core::cmp::PartialEq for mc_project::Limits
+pub fn mc_project::Limits::eq(&self, &Self) -> bool
+impl core::default::Default for mc_project::Limits
+pub fn mc_project::Limits::default() -> Self
+impl core::fmt::Debug for mc_project::Limits
+pub fn mc_project::Limits::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::Limits
+impl core::marker::StructuralPartialEq for mc_project::Limits
+impl core::marker::Freeze for mc_project::Limits
+impl core::marker::Send for mc_project::Limits
+impl core::marker::Sync for mc_project::Limits
+impl core::marker::Unpin for mc_project::Limits
+impl core::marker::UnsafeUnpin for mc_project::Limits
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::Limits
+impl core::panic::unwind_safe::UnwindSafe for mc_project::Limits
+pub struct mc_project::LoadedProject
+pub mc_project::LoadedProject::created_by: mc_project::AppInfo
+pub mc_project::LoadedProject::format_version: mc_project::FormatVersion
+pub mc_project::LoadedProject::project_id: alloc::string::String
+pub mc_project::LoadedProject::saved_by: mc_project::AppInfo
+pub mc_project::LoadedProject::saved_revision: u64
+pub mc_project::LoadedProject::score: mc_score::score::Score
+pub mc_project::LoadedProject::warnings: alloc::vec::Vec<mc_project::LoadWarning>
+impl mc_project::LoadedProject
+pub fn mc_project::LoadedProject::unknown_content(&self) -> &[alloc::string::String]
+impl core::clone::Clone for mc_project::LoadedProject
+pub fn mc_project::LoadedProject::clone(&self) -> Self
+impl core::fmt::Debug for mc_project::LoadedProject
+pub fn mc_project::LoadedProject::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for mc_project::LoadedProject
+impl core::marker::Send for mc_project::LoadedProject
+impl core::marker::Sync for mc_project::LoadedProject
+impl core::marker::Unpin for mc_project::LoadedProject
+impl core::marker::UnsafeUnpin for mc_project::LoadedProject
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::LoadedProject
+impl core::panic::unwind_safe::UnwindSafe for mc_project::LoadedProject
+pub struct mc_project::ProjectId(_)
+impl mc_project::ProjectId
+pub fn mc_project::ProjectId::as_str(&self) -> &str
+pub fn mc_project::ProjectId::from_loaded(alloc::string::String) -> Self
+pub fn mc_project::ProjectId::from_parts(u64, u128) -> Self
+impl core::clone::Clone for mc_project::ProjectId
+pub fn mc_project::ProjectId::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::ProjectId
+impl core::cmp::PartialEq for mc_project::ProjectId
+pub fn mc_project::ProjectId::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::ProjectId
+pub fn mc_project::ProjectId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_project::ProjectId
+pub fn mc_project::ProjectId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_project::ProjectId
+pub fn mc_project::ProjectId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::StructuralPartialEq for mc_project::ProjectId
+impl core::marker::Freeze for mc_project::ProjectId
+impl core::marker::Send for mc_project::ProjectId
+impl core::marker::Sync for mc_project::ProjectId
+impl core::marker::Unpin for mc_project::ProjectId
+impl core::marker::UnsafeUnpin for mc_project::ProjectId
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::ProjectId
+impl core::panic::unwind_safe::UnwindSafe for mc_project::ProjectId
+pub struct mc_project::SaveInfo
+pub mc_project::SaveInfo::created_by: mc_project::AppInfo
+pub mc_project::SaveInfo::project_id: mc_project::ProjectId
+pub mc_project::SaveInfo::saved_by: mc_project::AppInfo
+pub mc_project::SaveInfo::saved_revision: u64
+impl core::clone::Clone for mc_project::SaveInfo
+pub fn mc_project::SaveInfo::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::SaveInfo
+impl core::cmp::PartialEq for mc_project::SaveInfo
+pub fn mc_project::SaveInfo::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::SaveInfo
+pub fn mc_project::SaveInfo::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::SaveInfo
+impl core::marker::Freeze for mc_project::SaveInfo
+impl core::marker::Send for mc_project::SaveInfo
+impl core::marker::Sync for mc_project::SaveInfo
+impl core::marker::Unpin for mc_project::SaveInfo
+impl core::marker::UnsafeUnpin for mc_project::SaveInfo
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::SaveInfo
+impl core::panic::unwind_safe::UnwindSafe for mc_project::SaveInfo
+pub const mc_project::FORMAT: &str
+pub const mc_project::FORMAT_VERSION: mc_project::FormatVersion
+pub const mc_project::KNOWN_OPTIONAL_FEATURES: &[&str]
+pub const mc_project::KNOWN_REQUIRED_FEATURES: &[&str]
+pub const mc_project::MANIFEST: &str
+pub const mc_project::RESERVED_PREFIXES: &[&str]
+pub const mc_project::SCORE: &str
+pub fn mc_project::check_name(&str) -> core::result::Result<(), mc_project::LoadError>
+pub fn mc_project::from_dto(&mc_project::dto::ScoreDto) -> core::result::Result<mc_score::score::Score, alloc::vec::Vec<mc_score::error::Violation>>
+pub fn mc_project::load(&[u8]) -> core::result::Result<mc_project::LoadedProject, mc_project::LoadError>
+pub fn mc_project::load_with_limits(&[u8], &mc_project::Limits) -> core::result::Result<mc_project::LoadedProject, mc_project::LoadError>
+pub fn mc_project::read_entries(&[u8], &mc_project::Limits) -> core::result::Result<alloc::vec::Vec<(alloc::string::String, alloc::vec::Vec<u8>)>, mc_project::LoadError>
+pub fn mc_project::save(&mc_score::score::Score, &mc_project::SaveInfo) -> alloc::vec::Vec<u8>
+pub fn mc_project::schemas() -> [(&'static str, alloc::string::String); 2]
+pub fn mc_project::score_json(&mc_score::score::Score) -> alloc::vec::Vec<u8>
+pub fn mc_project::sha256_hex(&[u8]) -> alloc::string::String
+pub fn mc_project::to_dto(&mc_score::score::Score) -> mc_project::dto::ScoreDto
+pub fn mc_project::write_entries(&[(&str, &[u8])]) -> alloc::vec::Vec<u8>

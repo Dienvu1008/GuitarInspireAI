@@ -1,0 +1,15 @@
+[package]
+name = "mc-theory"
+version = "0.1.0"
+description = "Music Theory shared kernel: exact musical value types and pure arithmetic (no I/O, no dependencies)."
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true

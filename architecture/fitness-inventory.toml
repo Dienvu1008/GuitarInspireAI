@@ -6,27 +6,31 @@
 # "Architecture-Change: ADR-NNN" trailer (FF-19 also protects this file).
 
 [meta]
-current_phase = 0
+current_phase = 1
 
 [FF-01]
 name = "Internal crate dependency matrix"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:deps"
 
 [FF-02]
 name = "External crate bans"
 phase = 1
-status = "planned"
+status = "active"
+check = "cargo-deny:bans"
 
 [FF-03]
 name = "Domain purity lints"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:purity"
 
 [FF-04]
 name = "Domain crates compile for wasm32"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:wasm"
 
 [FF-05]
 name = "Dart import boundaries"
@@ -41,7 +45,8 @@ status = "planned"
 [FF-07]
 name = "cfg(target_os) only in adapter crates"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:platform"
 
 [FF-08]
 name = "dart:io only in platform package and app"
@@ -63,7 +68,8 @@ check = "cargo-deny:advisories"
 [FF-11]
 name = "Project format round-trip suite"
 phase = 1
-status = "planned"
+status = "active"
+check = "test:crates/mc-project/tests/roundtrip.rs#rt1_"
 
 [FF-12]
 name = "Generated bindings in sync"
@@ -73,12 +79,14 @@ status = "planned"
 [FF-13]
 name = "Hard invariants under random command sequences"
 phase = 1
-status = "planned"
+status = "active"
+check = "test:crates/mc-app/tests/properties.rs#ff13_"
 
 [FF-14]
 name = "Undo and redo restore identical state"
 phase = 1
-status = "planned"
+status = "active"
+check = "test:crates/mc-app/tests/properties.rs#ff14_"
 
 [FF-15]
 name = "Importer and loader fuzzing"
@@ -115,22 +123,26 @@ check = "xtask:inventory"
 [FF-21]
 name = "Benchmark regression"
 phase = 1
-status = "planned"
+status = "active"
+check = "bench:crates/mc-app/benches/commands.rs"
 
 [FF-22]
 name = "Public API diff"
 phase = 1
-status = "planned"
+status = "active"
+check = "workflow:public-api"
 
 [FF-23]
 name = "Memory baselines"
 phase = 1
-status = "planned"
+status = "active"
+check = "test:crates/mc-app/tests/memory.rs#ff23_"
 
 [FF-24]
 name = "Invariant rule ids without tests"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:rule-coverage"
 
 [FF-25]
 name = "Coupling report"
@@ -145,12 +157,14 @@ status = "planned"
 [FF-27]
 name = "Test coverage report"
 phase = 1
-status = "planned"
+status = "active"
+check = "workflow:coverage"
 
 [FF-28]
 name = "Complexity lints"
 phase = 1
-status = "planned"
+status = "active"
+check = "ci:complexity"
 
 [FF-29]
 name = "Binary and bundle size"
@@ -160,7 +174,8 @@ status = "planned"
 [FF-30]
 name = "Dependency freshness"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:freshness"
 
 [FF-31]
 name = "Candidate acceptance passes domain validation"
@@ -170,7 +185,8 @@ status = "planned"
 [FF-32]
 name = "DTO JSON schema snapshot requires version bump"
 phase = 1
-status = "planned"
+status = "active"
+check = "test:crates/mc-project/tests/roundtrip.rs#rt8_ff32_"
 
 [FF-33]
 name = "Documentation links and Mermaid diagrams valid"

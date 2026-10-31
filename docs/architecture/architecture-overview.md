@@ -65,9 +65,9 @@ From Phase 6, `mc-project` and `mc-app` also depend on `mc-pattern`. There is no
 |---|---|---|---|---|
 | `mc-theory` | Domain (kernel) | Phase 1 | Value objects, pure arithmetic | none |
 | `mc-score` | Domain (core) | Phase 1 | Score aggregate, diagnostics | none |
-| `mc-project` | Domain service (persistence format) | Phase 1 | DTOs, migration, package read and write on byte streams | serde, serde_json, zip, sha2 |
-| `mc-app` | Application | Phase 1 | Sessions, dispatcher, handlers, undo, ports, events; re-exports types needed by `mc-ffi`; file-system `ProjectStore` adapter (atomic save, autosave, recovery) in module `infra::fs_store` behind cargo feature `native-fs` | thiserror, tracing, tempfile (feature `native-fs`) |
-| `mc-cli` | Adapter (harness) | Phase 1 | Command-line harness for tests and debugging without UI | clap, file system |
+| `mc-project` | Domain service (persistence format) | Phase 1 | DTOs, version policy, package read and write on byte streams, schema snapshots | serde, serde_json, zip (deflate only), sha2, schemars |
+| `mc-app` | Application | Phase 1 | Sessions, dispatcher, handlers, undo, ports, events; re-exports types needed by `mc-ffi`; file-system `ProjectStore` and `RecoveryStore` adapters (atomic save, backup, autosave, recovery) in module `infra` behind cargo feature `native-fs` | none (std only; `tempfile` was not needed because saves use `std::fs::rename` per S5) |
+| `mc-cli` | Adapter (harness) | Phase 1 | Command-line harness for tests and debugging without UI; format fixture generator | none (hand-written argument parsing) |
 | `mc-guitar` | Domain (supporting) | Phase 2 | Fretboard, chord finder, voicings | none |
 | `mc-notation` | Projection | Phase 3 | TAB layout display list | none |
 | `mc-ffi` | Adapter (interop, composition root) | Phase 3 | frb API, DTO mapping, streams | flutter_rust_bridge |
