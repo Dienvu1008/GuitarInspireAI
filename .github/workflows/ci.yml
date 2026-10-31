@@ -14,7 +14,7 @@ jobs:
   governance:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -34,7 +34,7 @@ jobs:
           if ($base) { cargo xtask fitness all --base $base } else { cargo xtask fitness all }
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -46,9 +46,10 @@ jobs:
 
   cargo-deny:
     # cargo-deny-action is a container action and needs a Linux runner.
-    runs-on: ubuntu-latest
+    # Pinned image: ubuntu-latest migrates to Ubuntu 26 from 2026-10-19; move deliberately.
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: cargo-deny (FF-09 licenses, FF-10 advisories and sources)
         uses: EmbarkStudios/cargo-deny-action@v2
         with:

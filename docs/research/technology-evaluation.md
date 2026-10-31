@@ -169,8 +169,8 @@ Allowed by default (via cargo-deny allow-list): MIT, Apache-2.0, BSD-1/2/3-Claus
 | Area | MVP choice | Status |
 |---|---|---|
 | Interop | flutter_rust_bridge 2.13.0 (+ Dart `freezed` toolchain for payload enums) | Accepted after S1 |
-| Audio I/O | cpal 0.18.2, without the `realtime` feature (MPL-2.0 dependency); thread promotion via own `windows-sys` MMCSS call | Accepted after S2 (MPL decision pending user) |
-| Synth | rustysynth 1.3.8 (SF2 only) + FluidR3 GM (MIT) proposed | rustysynth Accepted after S2; SoundFont pending user approval (Q-11) |
+| Audio I/O | cpal 0.18.2, without the `realtime` feature (MPL-2.0 dependency); thread promotion via own `windows-sys` MMCSS call in `mc-audio` | Accepted after S2 and user decision |
+| Synth | rustysynth 1.3.8 (SF2 only) + FluidR3 GM (MIT) | Accepted after S2 and user decision (Q-11) |
 | RT queue | rtrb 0.4.1 | Accepted after S2 |
 | Pitch | Own YIN/MPM in `mc-dsp` | Proposed, pending S3 |
 | MIDI | midly | Proposed |

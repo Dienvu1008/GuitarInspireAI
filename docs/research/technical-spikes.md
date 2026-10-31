@@ -41,7 +41,9 @@ Priority order if time is short: S1, S2, S4, S5 (highest architectural risk), th
 
 All measurements are from the reference machine in [benchmarks/reference-machine.md](../../benchmarks/reference-machine.md). Raw output is in each spike's `results/` folder. The summary and recommendation are in [m0-exit-report.md](../roadmap/m0-exit-report.md). Elapsed effort stayed inside every timebox.
 
-### S1 frb interop (Pass, one sub-criterion failed)
+### S1 frb interop (Pass for Phase 1 with an observed timing exception)
+
+Timing exception: in the 10-minute run, one event-stream delivery gap of 56 ms exceeded the 50 ms sub-criterion. This sub-criterion failed and is recorded as failed. Where it was measured: the Dart listener of the 60 Hz `position_stream` in the UI isolate of a Windows profile build on the reference machine. Each arrival was timestamped with a Dart `Stopwatch`; the gap is the time between consecutive arrivals (raw data: `spikes/s1_s4_flutter/results/s1-600s.json`, field `position_stream.gap_us`). The Rust producer used absolute deadlines, so the gap includes FFI delivery and Dart event-loop scheduling. It is not a blocker because this stream carries UI control-plane data, not real-time audio. It stays a monitoring metric: "max delivery gap and count of gaps over 50 ms per 10 minutes at 60 Hz" is part of the interop benchmarks from Phase 3 ([interop-architecture.md](../architecture/interop-architecture.md) section 13).
 
 | Criterion | Measured | Result |
 |---|---|---|
@@ -61,7 +63,7 @@ Findings that affect the design:
 - frb codegen auto-installed `cargo-expand` (unpinned). CI must preinstall pinned versions of both tools.
 - frb's project template ships a stale `Cargo.lock` (yanked `futures-util`, unmaintained `adler`). Run `cargo update` and the S7 policy after scaffolding.
 
-### S2 real-time playback (Pass with conditions; A4 partially met)
+### S2 real-time playback (Accepted with conditions; A4 partially met; residual OS scheduling risk documented)
 
 | Assumption | Measured | Result |
 |---|---|---|
@@ -82,7 +84,7 @@ Findings that affect the design:
 - Swaps currently release sounding notes (`note_off_all(false)`). Carrying held notes across a swap is a Phase 4 design detail.
 - Audible quality was not evaluated by listening. Gap detection is inferred from timing.
 
-### S4 TAB rendering (Pass)
+### S4 TAB rendering (Pass, accepted)
 
 | Criterion | Measured | Result |
 |---|---|---|
@@ -93,7 +95,7 @@ Findings that affect the design:
 
 Frame cost is max(build, raster) from `FrameTiming`. The default runner window was used; the window size was not recorded. Painting is per glyph with cached `TextPainter`s.
 
-### S5 project format (Pass)
+### S5 project format (Pass, accepted)
 
 | Criterion | Measured | Result |
 |---|---|---|
@@ -114,12 +116,12 @@ Windows replace behaviour (target held open by another handle):
 
 No temp files were left in any case. Real OneDrive sync, real antivirus holds, network shares and FAT volumes were not tested. Synthetic fixtures compress better than real scores, so package sizes are lower bounds.
 
-### S7 license audit (Pass with one decision required)
+### S7 license audit (Accepted; both follow-up decisions made on 2026-10-31, see ADR-015)
 
 - cargo-deny 0.20.2 with the ADR-015 allow-list over: root workspace, S2 (cpal, rustysynth, rtrb, windows-sys), S5 (zip deflate-only, serde, serde_json, sha2, tempfile, windows-sys), S1 (flutter_rust_bridge 2.13.0 and its tree).
 - All pass advisories, bans, licenses and sources, except the cpal `realtime` feature (MPL-2.0 via `audio_thread_priority`).
 - License expressions seen: MIT (170 crates), Apache-2.0 (143), Zlib (9), Unlicense (6), BSD-3-Clause (2), BSD-2-Clause, Unicode-3.0, and as `OR` alternatives only: 0BSD (adler2), Apache-2.0 WITH LLVM-exception (rustix, Linux only), LGPL-2.1-or-later (r-efi, resolved to MIT). No copyleft license is selected.
 - `deny.toml` gained `allow-wildcard-paths = true` because internal path dependencies otherwise fail the wildcard ban.
 - NOTICE requirement: Apache-2.0 and BSD dependencies require attribution in distributed binaries. A generated third-party notices file is a Phase 3 packaging task (for example `cargo about`, license to verify).
-- SoundFont: FluidR3 GM is MIT according to the author's release statement as quoted on musescore.org and in redistributions [Verified via secondary sources, 2026-10; read the original COPYING file before bundling]. GeneralUser GS License v2.0 allows commercial use and software bundling, but its author states that some sample origins are uncertain [Verified: official LICENSE.txt, 2026-10]. TimGM6mb remains excluded (GPL). rustysynth documents SF2 only, so compressed SF3 banks need conversion. Recommendation for Q-11: FluidR3 GM (or a smaller MIT-licensed derivative evaluated in Phase 4), with user-supplied SoundFonts supported. User approval needed.
+- SoundFont: FluidR3 GM is MIT according to the author's release statement as quoted on musescore.org and in redistributions [Verified via secondary sources, 2026-10; read the original COPYING file before bundling]. GeneralUser GS License v2.0 allows commercial use and software bundling, but its author states that some sample origins are uncertain [Verified: official LICENSE.txt, 2026-10]. TimGM6mb remains excluded (GPL). rustysynth documents SF2 only, so compressed SF3 banks need conversion. Decision (Q-11): FluidR3 GM is the default bundled SoundFont, with provenance and license recorded when it is bundled in Phase 4 (ADR-015). User-supplied SoundFonts are a future capability.
 - Dart package licenses were not audited (no Dart dependencies outside the throwaway spike). The Dart half of FF-09 activates in Phase 3.

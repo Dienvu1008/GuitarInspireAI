@@ -243,7 +243,7 @@ sequenceDiagram
 | execute round trip (no-op command) | p50, p99 | p99 under 2 ms | Leaves most of a 16 ms frame for layout and paint |
 | execute + tab_layout of 8 visible bars | p99 | under 16 ms on reference score | 60 fps feedback |
 | tab_layout payload | bytes, conversion time | measure, then set | Unknown until S4 |
-| position stream | sustained rate, dropped frames | 60 Hz without UI jank | Smooth cursor |
+| position stream | sustained rate, max delivery gap, gaps over 50 ms per 10 min (measured at the Dart listener) | 60 Hz without UI jank; S1 baseline: 59.99999 Hz, max gap 56 ms, 1 gap over 50 ms | Smooth cursor; monitored, not a real-time audio path |
 | open typical project | wall time | under 500 ms | Perceived instant open |
 
 Targets are provisional until measured ([performance-requirements.md](performance-requirements.md)).

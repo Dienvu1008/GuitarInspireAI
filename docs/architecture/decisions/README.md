@@ -57,7 +57,7 @@ Related documents: links
 | [ADR-012](ADR-012-interchange-formats-as-adapters.md) | Interchange formats are adapters | Accepted |
 | [ADR-013](ADR-013-ai-provenance-candidate-layer.md) | AI provenance and candidate layer | Accepted (principle), Deferred (implementation) |
 | [ADR-014](ADR-014-wasm-compatible-domain-crates.md) | WASM-compatible domain crates | Accepted |
-| [ADR-015](ADR-015-dependency-license-policy.md) | Dependency license policy | Accepted; MPL-2.0 decision for `audio_thread_priority` pending user |
+| [ADR-015](ADR-015-dependency-license-policy.md) | Dependency license policy | Accepted; MPL-2.0 not allowed (own MMCSS call instead); FluidR3 GM default SoundFont (2026-10-31) |
 | [ADR-016](ADR-016-undo-structural-sharing-snapshots.md) | Undo via structural-sharing snapshots | Accepted (budgets provisional) |
 | [ADR-017](ADR-017-plugin-architecture-deferred.md) | Plugin architecture deferred | Deferred |
 | [ADR-018](ADR-018-notation-layout-in-rust.md) | Notation layout in Rust, painting in Flutter | Accepted (S4) |

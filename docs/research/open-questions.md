@@ -16,7 +16,7 @@ Related documents: [guitar-pattern-engine.md](../architecture/guitar-pattern-eng
 | Q-08 | Native file extension (for example `.gia`, `.gisong`) and registered media type | Phase 1 exit | User | project-format |
 | Q-09 | Resolved: underfull and overfull bars are diagnostics and never block saving; playback uses the effective master bar duration across all tracks and voices (domain-invariants section 4a) | Done | User | domain-invariants, audio-dsp-architecture |
 | Q-10 | Project license (permissive open source, copyleft, commercial) | Before first public release; affects ADR-015 allow-list | User | ADR-015 |
-| Q-11 | Default bundled SoundFont (size vs quality vs license) | Phase 0 (S7) | Developer, user approval | audio |
+| Q-11 | Resolved: FluidR3 GM (MIT) is the default bundled SoundFont, with provenance and license recorded when bundled (ADR-015); user-supplied SoundFonts are a future capability | Done | User | audio |
 | Q-12 | State management library (Riverpod or flutter_bloc) | Phase 3 entry | Developer | cross-platform-ui |
 | Q-13 | Minimum supported Windows version (cpal WASAPI requires Windows 10 [Verified: README]) and macOS version (cpal README lists 14.2) | Phase 3 | User | performance, distribution |
 | Q-14 | Web priority: remain Phase 11 or earlier? | Phase 5 exit review | User | ADR-014 |
