@@ -14,7 +14,7 @@
 
 use crate::display::*;
 use crate::{LayoutMetrics, NotationError};
-use mc_score::{BarContent, Beat, MasterBar, Score, Track, TrackId};
+use mc_score::{Beat, MasterBar, Score, Track, TrackId};
 use mc_theory::Rational;
 use std::collections::BTreeSet;
 
@@ -30,10 +30,9 @@ pub fn layout_tab(
         .ok_or(NotationError::UnknownTrack(track))?;
     let count = score.master_bar_count();
     let diagnostic_bars: BTreeSet<usize> = score
-        .diagnostics(0..count)
+        .track_diagnostics(track, 0..count)
         .map_err(|_| NotationError::Overflow)?
         .into_iter()
-        .filter(|d| d.track == track)
         .map(|d| d.bar)
         .collect();
     let plans = (0..count)
@@ -90,8 +89,10 @@ fn to_f32(r: Rational) -> f32 {
 /// Measured bar before justification.
 struct BarPlan {
     bar: usize,
-    /// Distinct beat onsets, ascending.
-    onsets: Vec<Rational>,
+    /// Onset of every beat, per voice.
+    voice_onsets: Vec<Vec<Rational>>,
+    /// Column index of every beat, per voice (columns are distinct onsets, ascending).
+    voice_cols: Vec<Vec<usize>>,
     /// Natural width per column (scaled during justification).
     columns: Vec<f32>,
     /// Width of the time signature, repeat start sign and left padding.
@@ -117,26 +118,47 @@ fn plan_bar(
     let master = &score.master_bars()[b];
     let content = track.bar(b).expect("H-02: bars aligned");
     let nominal = score.nominal_bar_duration(b).expect("bar exists");
-    let mut onsets = BTreeSet::new();
+    // Onsets per voice, computed once (each rational addition reduces by gcd).
     let mut end = nominal;
+    let mut voice_onsets = Vec::with_capacity(content.voices.len());
     for voice in &content.voices {
         let mut t = Rational::ZERO;
+        let mut list = Vec::with_capacity(voice.beats.len());
         for beat in &voice.beats {
-            onsets.insert(t);
+            list.push(t);
             t = t
                 .checked_add(beat.value.length())
                 .ok_or(NotationError::Overflow)?;
         }
         end = end.max(t);
+        voice_onsets.push(list);
     }
-    let onsets: Vec<Rational> = onsets.into_iter().collect();
+    let mut onsets: Vec<Rational> = voice_onsets.iter().flatten().copied().collect();
+    onsets.sort_unstable();
+    onsets.dedup();
+    let voice_cols: Vec<Vec<usize>> = voice_onsets
+        .iter()
+        .map(|list| {
+            list.iter()
+                .map(|t| onsets.binary_search(t).expect("collected above"))
+                .collect()
+        })
+        .collect();
+    let mut widest = vec![0.0f32; onsets.len()];
+    for (voice, cols) in content.voices.iter().zip(&voice_cols) {
+        for (beat, &c) in voice.beats.iter().zip(cols) {
+            for n in &beat.notes {
+                let w = fret_glyph_width(n.position().fret.0, n.tie, n.effects.dead, m);
+                widest[c] = widest[c].max(w);
+            }
+        }
+    }
     let mut columns = Vec::with_capacity(onsets.len());
     for (i, onset) in onsets.iter().enumerate() {
         let next = onsets.get(i + 1).copied().unwrap_or(end);
         let gap = to_f32(next.checked_sub(*onset).ok_or(NotationError::Overflow)?);
         let factor = (1.0 + m.duration_spacing * (gap * 16.0).log2()).max(0.6);
-        let widest = widest_glyph(content, *onset, m)?;
-        columns.push((m.min_column_width * factor).max(widest + 2.0 * m.glyph_padding));
+        columns.push((m.min_column_width * factor).max(widest[i] + 2.0 * m.glyph_padding));
     }
     let previous = b.checked_sub(1).map(|p| &score.master_bars()[p]);
     let show_time_signature = previous.is_none_or(|p| p.time_signature != master.time_signature);
@@ -164,41 +186,14 @@ fn plan_bar(
     };
     Ok(BarPlan {
         bar: b,
-        onsets,
+        voice_onsets,
+        voice_cols,
         columns,
         fixed_left,
         fixed_right,
         show_time_signature,
         flexible,
     })
-}
-
-/// Width of the widest fret glyph sounding at `onset` in any voice.
-fn widest_glyph(
-    content: &BarContent,
-    onset: Rational,
-    m: &LayoutMetrics,
-) -> Result<f32, NotationError> {
-    let mut widest = 0.0f32;
-    for voice in &content.voices {
-        let mut t = Rational::ZERO;
-        for beat in &voice.beats {
-            if t == onset {
-                for n in &beat.notes {
-                    widest = widest.max(fret_glyph_width(
-                        n.position().fret.0,
-                        n.tie,
-                        n.effects.dead,
-                        m,
-                    ));
-                }
-            }
-            t = t
-                .checked_add(beat.value.length())
-                .ok_or(NotationError::Overflow)?;
-        }
-    }
-    Ok(widest)
 }
 
 fn fret_glyph_width(fret: u8, tied: bool, dead: bool, m: &LayoutMetrics) -> f32 {
@@ -484,13 +479,9 @@ impl Ctx<'_> {
         let content = self.track.bar(plan.bar).expect("H-02");
         for (v, voice) in content.voices.iter().enumerate() {
             let mut placed = Vec::with_capacity(voice.beats.len());
-            let mut t = Rational::ZERO;
             for (k, beat) in voice.beats.iter().enumerate() {
-                let c = plan
-                    .onsets
-                    .binary_search(&t)
-                    .expect("every onset has a column");
-                let (bx, bw) = col_x[c];
+                let t = plan.voice_onsets[v][k];
+                let (bx, bw) = col_x[plan.voice_cols[v][k]];
                 let center = bx + bw / 2.0;
                 for note in &beat.notes {
                     let p = note.position();
@@ -519,7 +510,6 @@ impl Ctx<'_> {
                     });
                 }
                 placed.push((center, t, beat));
-                t = t.checked_add(beat.value.length()).unwrap_or(t);
             }
             self.emit_rhythm(out, master, v, &placed);
             // Append slot after the last beat (the whole content area when empty).

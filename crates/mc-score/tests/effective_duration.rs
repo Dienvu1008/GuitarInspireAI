@@ -55,6 +55,9 @@ fn pb03_d01_underfull_voice_does_not_shorten_the_bar() {
     let d = s.diagnostics(0..3).unwrap();
     assert_eq!(d.len(), 1);
     assert!(matches!(d[0].kind, DiagnosticKind::Underfull { .. }));
+    // The per-track variant applies the same rule to one track only.
+    assert_eq!(s.track_diagnostics(t1, 0..3).unwrap(), d);
+    assert!(s.track_diagnostics(track(&s, 1), 0..3).unwrap().is_empty());
 }
 
 #[test]

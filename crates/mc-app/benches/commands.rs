@@ -187,5 +187,46 @@ fn guitar_queries(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, commands, guitar_queries);
+/// Phase 3 edit feedback (performance-requirements): a note edit plus TAB relayout of
+/// the edited track must stay within the frame-scale budget (p99 <= 16 ms typical,
+/// <= 33 ms large). Painting and FFI transfer are measured in the app (Phase 3c/3f).
+fn notation_layout(c: &mut Criterion) {
+    use mc_app::notation::LayoutMetrics;
+    let metrics = LayoutMetrics::default();
+    for (name, shape) in [("typical", TYPICAL), ("large", LARGE)] {
+        let mut s = session(shape);
+        let b = middle_beat(&s);
+        let mut samples = Vec::with_capacity(300);
+        for i in 0..300 {
+            let t = Instant::now();
+            edit(&mut s, b, i);
+            black_box(s.tab_layout(b.track, &metrics).expect("layout"));
+            samples.push(t.elapsed().as_nanos());
+        }
+        percentiles(
+            &format!(
+                "edit_and_relayout/{name} (budget {})",
+                if name == "large" { "33 ms" } else { "16 ms" }
+            ),
+            samples,
+        );
+        let layout = s.tab_layout(b.track, &metrics).expect("layout");
+        let glyphs: usize = layout.systems.iter().map(|x| x.glyphs.len()).sum();
+        let hits: usize = layout.systems.iter().map(|x| x.hits.len()).sum();
+        eprintln!(
+            "tab_layout/{name}: {} systems, {glyphs} glyphs, {hits} hit regions",
+            layout.systems.len()
+        );
+    }
+    let s = session(LARGE);
+    let track = s.score().track_at(0).unwrap().id();
+    let mut group = c.benchmark_group("notation");
+    group.sample_size(20);
+    group.bench_function("tab_layout/large_track", |bench| {
+        bench.iter(|| black_box(s.tab_layout(track, &metrics).expect("layout")))
+    });
+    group.finish();
+}
+
+criterion_group!(benches, commands, guitar_queries, notation_layout);
 criterion_main!(benches);

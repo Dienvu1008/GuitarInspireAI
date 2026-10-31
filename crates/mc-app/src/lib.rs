@@ -10,6 +10,7 @@ mod events;
 pub mod guitar;
 mod handlers;
 mod history;
+pub mod notation;
 pub mod ports;
 mod session;
 

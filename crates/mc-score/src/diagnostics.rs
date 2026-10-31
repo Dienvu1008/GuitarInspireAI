@@ -1,5 +1,6 @@
 //! Well-formedness diagnostics allowed in committed documents (never block saving).
 
+use crate::model::Track;
 use crate::timing::voice_duration;
 use crate::{DomainError, Score, TrackId};
 use mc_theory::Rational;
@@ -29,31 +30,57 @@ impl Score {
         let end = bars.end.min(self.master_bars.len());
         let mut out = Vec::new();
         for m in bars.start..end {
-            let mb = &self.master_bars[m];
-            let nominal = mb.time_signature.length();
             for track in &self.tracks {
-                for (vi, voice) in track.bars[m].voices.iter().enumerate() {
-                    if voice.beats.is_empty() {
-                        continue;
-                    }
-                    let actual = voice_duration(voice)?;
-                    let kind = if actual > nominal {
-                        DiagnosticKind::Overfull { actual, nominal }
-                    } else if actual < nominal && !mb.pickup {
-                        DiagnosticKind::Underfull { actual, nominal }
-                    } else {
-                        continue;
-                    };
-                    out.push(Diagnostic {
-                        rule: "D-01",
-                        track: track.id,
-                        bar: m,
-                        voice: vi,
-                        kind,
-                    });
-                }
+                self.bar_diagnostics(track, m, &mut out)?;
             }
         }
         Ok(out)
+    }
+
+    /// D-01 for one track only (same rule as `diagnostics`); used by projections that
+    /// show a single track, so they do not scan every track.
+    pub fn track_diagnostics(
+        &self,
+        track: TrackId,
+        bars: Range<usize>,
+    ) -> Result<Vec<Diagnostic>, DomainError> {
+        let t = self.track_index(track)?;
+        let end = bars.end.min(self.master_bars.len());
+        let mut out = Vec::new();
+        for m in bars.start..end {
+            self.bar_diagnostics(&self.tracks[t], m, &mut out)?;
+        }
+        Ok(out)
+    }
+
+    fn bar_diagnostics(
+        &self,
+        track: &Track,
+        m: usize,
+        out: &mut Vec<Diagnostic>,
+    ) -> Result<(), DomainError> {
+        let mb = &self.master_bars[m];
+        let nominal = mb.time_signature.length();
+        for (vi, voice) in track.bars[m].voices.iter().enumerate() {
+            if voice.beats.is_empty() {
+                continue;
+            }
+            let actual = voice_duration(voice)?;
+            let kind = if actual > nominal {
+                DiagnosticKind::Overfull { actual, nominal }
+            } else if actual < nominal && !mb.pickup {
+                DiagnosticKind::Underfull { actual, nominal }
+            } else {
+                continue;
+            };
+            out.push(Diagnostic {
+                rule: "D-01",
+                track: track.id,
+                bar: m,
+                voice: vi,
+                kind,
+            });
+        }
+        Ok(())
     }
 }
