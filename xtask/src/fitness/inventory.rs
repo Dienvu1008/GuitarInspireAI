@@ -16,6 +16,9 @@ const DENY: &str = "deny.toml";
 /// Check implementations that exist. An `active` entry must name one of these.
 pub const IMPLEMENTED: &[&str] = &[
     "xtask:deps",
+    "xtask:purity",
+    "xtask:wasm",
+    "xtask:platform",
     "cargo-deny:licenses",
     "cargo-deny:advisories",
     "xtask:trailers",
@@ -232,6 +235,12 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
         } else if check.starts_with("xtask:") && !ci.contains("xtask fitness all") {
             errors.push(format!(
                 "{id}: {CI_WORKFLOW} does not run 'cargo xtask fitness all'"
+            ));
+        }
+        // FF-03 is enforced by clippy with -D warnings; the xtask part only checks configuration.
+        if check == "xtask:purity" && !(ci.contains("cargo clippy") && ci.contains("-D warnings")) {
+            errors.push(format!(
+                "{id}: {CI_WORKFLOW} does not run 'cargo clippy ... -D warnings'"
             ));
         }
     }

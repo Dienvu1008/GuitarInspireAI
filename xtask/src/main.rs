@@ -3,6 +3,9 @@
 //! Usage:
 //!   cargo xtask fitness all        [--base <rev>]
 //!   cargo xtask fitness deps                        (FF-01)
+//!   cargo xtask fitness purity                      (FF-03, config part; clippy enforces)
+//!   cargo xtask fitness wasm                        (FF-04)
+//!   cargo xtask fitness platform                    (FF-07)
 //!   cargo xtask fitness trailers   [--base <rev>]   (FF-19)
 //!   cargo xtask fitness inventory  [--base <rev>]   (FF-20)
 //!   cargo xtask fitness docs-links                  (FF-33, link part)
@@ -47,9 +50,15 @@ fn run(root: &std::path::Path, args: &[String]) -> Result<(), String> {
         "inventory" => fitness::inventory::run(root, base),
         "docs-links" => fitness::docs_links::run(root),
         "deps" => fitness::deps::run(root),
+        "purity" => fitness::purity::run_purity(root),
+        "wasm" => fitness::purity::run_wasm(root),
+        "platform" => fitness::purity::run_platform(root),
         "all" => {
             let results = [
                 ("FF-01 deps", fitness::deps::run(root)),
+                ("FF-03 purity", fitness::purity::run_purity(root)),
+                ("FF-04 wasm32", fitness::purity::run_wasm(root)),
+                ("FF-07 platform", fitness::purity::run_platform(root)),
                 ("FF-19 trailers", fitness::trailers::run(root, base)),
                 ("FF-20 inventory", fitness::inventory::run(root, base)),
                 ("FF-33 docs-links", fitness::docs_links::run(root)),
@@ -77,5 +86,5 @@ fn parse_base(rest: &[String]) -> Result<Option<String>, String> {
 }
 
 fn usage() -> String {
-    "usage: cargo xtask fitness <all|deps|trailers|inventory|docs-links> [--base <rev>]".to_string()
+    "usage: cargo xtask fitness <all|deps|purity|wasm|platform|trailers|inventory|docs-links> [--base <rev>]".to_string()
 }

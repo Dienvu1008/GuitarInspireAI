@@ -4,6 +4,7 @@
 pub mod deps;
 pub mod docs_links;
 pub mod inventory;
+pub mod purity;
 pub mod trailers;
 
 use std::path::Path;

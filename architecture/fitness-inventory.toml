@@ -22,12 +22,14 @@ status = "planned"
 [FF-03]
 name = "Domain purity lints"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:purity"
 
 [FF-04]
 name = "Domain crates compile for wasm32"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:wasm"
 
 [FF-05]
 name = "Dart import boundaries"
@@ -42,7 +44,8 @@ status = "planned"
 [FF-07]
 name = "cfg(target_os) only in adapter crates"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:platform"
 
 [FF-08]
 name = "dart:io only in platform package and app"
