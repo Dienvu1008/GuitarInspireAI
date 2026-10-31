@@ -11,7 +11,8 @@ current_phase = 0
 [FF-01]
 name = "Internal crate dependency matrix"
 phase = 1
-status = "planned"
+status = "active"
+check = "xtask:deps"
 
 [FF-02]
 name = "External crate bans"

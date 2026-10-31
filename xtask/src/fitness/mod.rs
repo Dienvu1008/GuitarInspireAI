@@ -1,6 +1,7 @@
 //! Architecture fitness functions active in Phase 0.
 //! Catalogue: docs/architecture/fitness-functions.md. Inventory: architecture/fitness-inventory.toml.
 
+pub mod deps;
 pub mod docs_links;
 pub mod inventory;
 pub mod trailers;

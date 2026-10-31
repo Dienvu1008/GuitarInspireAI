@@ -15,6 +15,7 @@ const DENY: &str = "deny.toml";
 
 /// Check implementations that exist. An `active` entry must name one of these.
 pub const IMPLEMENTED: &[&str] = &[
+    "xtask:deps",
     "cargo-deny:licenses",
     "cargo-deny:advisories",
     "xtask:trailers",

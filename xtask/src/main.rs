@@ -2,6 +2,7 @@
 //!
 //! Usage:
 //!   cargo xtask fitness all        [--base <rev>]
+//!   cargo xtask fitness deps                        (FF-01)
 //!   cargo xtask fitness trailers   [--base <rev>]   (FF-19)
 //!   cargo xtask fitness inventory  [--base <rev>]   (FF-20)
 //!   cargo xtask fitness docs-links                  (FF-33, link part)
@@ -45,8 +46,10 @@ fn run(root: &std::path::Path, args: &[String]) -> Result<(), String> {
         "trailers" => fitness::trailers::run(root, base),
         "inventory" => fitness::inventory::run(root, base),
         "docs-links" => fitness::docs_links::run(root),
+        "deps" => fitness::deps::run(root),
         "all" => {
             let results = [
+                ("FF-01 deps", fitness::deps::run(root)),
                 ("FF-19 trailers", fitness::trailers::run(root, base)),
                 ("FF-20 inventory", fitness::inventory::run(root, base)),
                 ("FF-33 docs-links", fitness::docs_links::run(root)),
@@ -74,5 +77,5 @@ fn parse_base(rest: &[String]) -> Result<Option<String>, String> {
 }
 
 fn usage() -> String {
-    "usage: cargo xtask fitness <all|trailers|inventory|docs-links> [--base <rev>]".to_string()
+    "usage: cargo xtask fitness <all|deps|trailers|inventory|docs-links> [--base <rev>]".to_string()
 }
