@@ -2,7 +2,7 @@
 //!
 //! Byte-oriented and file-system free (FF-03): `load` takes package bytes, `save`
 //! returns package bytes. Atomic writes, backups and recovery belong to the file store
-//! adapter in `mc-app`. The file extension (Q-08) is not part of this crate.
+//! adapter in `mc-app`. The product extension `.giproj` (Q-08) is not part of this crate: a file is identified by its manifest `format` and `format_version`.
 
 mod convert;
 pub mod dto;

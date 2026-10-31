@@ -1,7 +1,9 @@
 //! `mc-cli`: command-line harness for the Music Core (Phase 1, no UI).
 //!
-//! The file extension of project files is not decided yet (Q-08); this tool accepts
-//! any path and does not add or check an extension.
+//! Project files use the product extension `.giproj` (Q-08). The extension is an
+//! adapter-level convention only: new output paths without an extension get it
+//! appended, but any path is accepted for reading and writing, because a file is
+//! identified by its manifest (`format`, `format_version`), not by its name.
 
 mod script;
 
@@ -15,8 +17,11 @@ use std::process::ExitCode;
 const USAGE: &str = "\
 usage: mc-cli <command> [args]
 
+Project files use the extension .giproj; it is appended to <out> when <out> has none.
+
   new <out> [--bars N]                 create an empty project (one guitar track)
-  fixture <small|typical|large> <out>  write a deterministic reference score
+  fixture <small|typical|large|feature-rich> <out>
+                                       write a deterministic reference score
   run <script> [--in <file>] --out <file>
                                        apply an edit script (see crates/mc-cli/src/script.rs)
   info <file>                          summary, diagnostics, unknown content
@@ -25,6 +30,19 @@ usage: mc-cli <command> [args]
   roundtrip <file>                     load, save to memory, load again, compare
   format-fixtures <mc-project dir>     create missing FF-11 fixtures and FF-32 schema snapshots
                                        for the current format version (never overwrites)";
+
+/// Product-level project file extension (Q-08). Not used by the Music Core.
+const PROJECT_EXTENSION: &str = "giproj";
+
+/// Appends `.giproj` to an output path that has no extension; keeps any other path as given.
+fn output_path(raw: &str) -> PathBuf {
+    let p = PathBuf::from(raw);
+    if p.extension().is_none() {
+        p.with_extension(PROJECT_EXTENSION)
+    } else {
+        p
+    }
+}
 
 fn app() -> AppInfo {
     AppInfo {
@@ -100,7 +118,7 @@ fn run(args: &[String]) -> Result<(), String> {
     let rest = &args[1..];
     match cmd {
         "new" => {
-            let out = PathBuf::from(positional(rest, 0, "output path")?);
+            let out = output_path(&positional(rest, 0, "output path")?);
             let bars = flag(rest, "--bars")
                 .map(|b| b.parse().map_err(|_| "invalid --bars"))
                 .transpose()?
@@ -131,7 +149,7 @@ fn run(args: &[String]) -> Result<(), String> {
                     ));
                 }
             };
-            let out = PathBuf::from(positional(rest, 1, "output path")?);
+            let out = output_path(&positional(rest, 1, "output path")?);
             let start = SystemClock.now_unix_millis();
             let mut s = DocumentSession::new(
                 DocumentId(1),
@@ -152,7 +170,7 @@ fn run(args: &[String]) -> Result<(), String> {
             let script_path = positional(rest, 0, "script path")?;
             let text =
                 std::fs::read_to_string(&script_path).map_err(|e| format!("{script_path}: {e}"))?;
-            let out = PathBuf::from(flag(rest, "--out").ok_or("missing --out <file>")?);
+            let out = output_path(&flag(rest, "--out").ok_or("missing --out <file>")?);
             let mut s = match flag(rest, "--in") {
                 Some(input) => open(Path::new(&input))?,
                 None => DocumentSession::new(
@@ -348,6 +366,23 @@ fn print_diagnostics(s: &DocumentSession) {
         println!(
             "diagnostic {}: track {index}, bar {}, voice {}: {what}",
             d.rule, d.bar, d.voice
+        );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn output_path_appends_the_extension_only_when_missing() {
+        assert_eq!(output_path("song"), PathBuf::from("song.giproj"));
+        assert_eq!(output_path("dir/song"), PathBuf::from("dir/song.giproj"));
+        assert_eq!(output_path("song.giproj"), PathBuf::from("song.giproj"));
+        assert_eq!(
+            output_path("song.zip"),
+            PathBuf::from("song.zip"),
+            "other extensions are kept, not refused"
         );
     }
 }

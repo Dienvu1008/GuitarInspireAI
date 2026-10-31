@@ -33,13 +33,13 @@ impl Drop for TempDir {
 #[test]
 fn write_atomic_replaces_and_keeps_one_backup() {
     let dir = TempDir::new("atomic");
-    let target = dir.0.join("song.project");
+    let target = dir.0.join("song.giproj");
     let store = FsProjectStore::default();
     store.write_atomic(&target, b"one").unwrap();
     store.write_atomic(&target, b"two").unwrap();
     store.write_atomic(&target, b"three").unwrap();
     assert_eq!(fs::read(&target).unwrap(), b"three");
-    assert_eq!(fs::read(dir.0.join("song.project.bak")).unwrap(), b"two");
+    assert_eq!(fs::read(dir.0.join("song.giproj.bak")).unwrap(), b"two");
     let names: Vec<_> = fs::read_dir(&dir.0)
         .unwrap()
         .flatten()
@@ -56,7 +56,7 @@ fn write_atomic_replaces_and_keeps_one_backup() {
 #[test]
 fn failed_write_leaves_the_original_and_no_temp_file() {
     let dir = TempDir::new("fail");
-    let target = dir.0.join("song.project");
+    let target = dir.0.join("song.giproj");
     let store = FsProjectStore {
         keep_backup: false,
         retry: RetryPolicy {
@@ -81,12 +81,12 @@ fn failed_write_leaves_the_original_and_no_temp_file() {
 #[test]
 fn crash_leftover_temp_files_are_cleaned_up() {
     let dir = TempDir::new("cleanup");
-    let target = dir.0.join("song.project");
+    let target = dir.0.join("song.giproj");
     fs::write(&target, b"x").unwrap();
-    fs::write(dir.0.join("song.project.tmp-123-0"), b"partial").unwrap();
-    fs::write(dir.0.join("other.project.tmp-1-0"), b"not ours").unwrap();
+    fs::write(dir.0.join("song.giproj.tmp-123-0"), b"partial").unwrap();
+    fs::write(dir.0.join("other.giproj.tmp-1-0"), b"not ours").unwrap();
     assert_eq!(cleanup_temp_files(&target), 1);
-    assert!(dir.0.join("other.project.tmp-1-0").exists());
+    assert!(dir.0.join("other.giproj.tmp-1-0").exists());
 }
 
 /// S5 lock case on Windows: a handle without FILE_SHARE_DELETE blocks rename until it
@@ -96,7 +96,7 @@ fn crash_leftover_temp_files_are_cleaned_up() {
 fn locked_target_is_retried_until_released() {
     use std::os::windows::fs::OpenOptionsExt;
     let dir = TempDir::new("lock");
-    let target = dir.0.join("song.project");
+    let target = dir.0.join("song.giproj");
     fs::write(&target, b"original").unwrap();
     let holder = fs::OpenOptions::new()
         .read(true)
@@ -121,7 +121,7 @@ fn locked_target_is_retried_until_released() {
 fn lock_that_outlasts_the_retries_is_reported_and_original_kept() {
     use std::os::windows::fs::OpenOptionsExt;
     let dir = TempDir::new("lock2");
-    let target = dir.0.join("song.project");
+    let target = dir.0.join("song.giproj");
     fs::write(&target, b"original").unwrap();
     let _holder = fs::OpenOptions::new()
         .read(true)
@@ -154,7 +154,7 @@ fn lock_that_outlasts_the_retries_is_reported_and_original_kept() {
 fn autosave_rotation_listing_and_discard() {
     let dir = TempDir::new("recovery");
     let rec = FsRecoveryStore::new(dir.0.join("recovery"));
-    let src = dir.0.join("song.project");
+    let src = dir.0.join("song.giproj");
     for t in 1..=5u64 {
         rec.write_autosave("0190-abc", Some(&src), format!("v{t}").as_bytes(), 1000 * t)
             .unwrap();

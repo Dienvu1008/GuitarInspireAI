@@ -1,7 +1,7 @@
 # Phase 1 Exit Report
 
 Purpose: Evidence against the Phase 1 acceptance criteria (theory, score, project format, application layer, CLI), benchmark results, remaining risks, architecture changes supported by implementation evidence, and decisions needed.
-Status: Final for Phase 1, 2026-10-31. Milestone M1 reached locally. CI status in section 7.
+Status: Final. Phase 1 accepted by the user on 2026-10-31 with the decisions in section 9. Milestone M1 reached. CI status in section 7.
 Related documents: [implementation-phases.md](implementation-phases.md), [milestones.md](milestones.md), [m0-exit-report.md](m0-exit-report.md), [risk-register.md](risk-register.md), [fitness-functions.md](../architecture/fitness-functions.md), [domain-invariants.md](../architecture/domain-invariants.md), [benchmarks/reference-machine.md](../../benchmarks/reference-machine.md).
 
 ## 1. Outcome
@@ -20,7 +20,7 @@ Order of work as requested: `architecture/allowed-deps.toml` and FF-01 were comm
 | CLI builds the large reference score and round-trips it | `mc-cli fixture large` wrote 288 000 notes (1.69 MB package) in 440 ms; `mc-cli validate` and `mc-cli roundtrip` passed with identical score and identical score.json bytes | Met |
 | Benchmarks recorded | Section 4 | Met |
 
-Milestone M1 demo ("CLI builds a song, edits, undoes, saves, reloads; large reference score round trip"): `mc-cli run crates/mc-cli/examples/song.script --out song.project` applies 28 steps including `undo` and `redo`, reports one intended D-01 diagnostic, and `info`, `validate` and `roundtrip` pass on the result.
+Milestone M1 demo ("CLI builds a song, edits, undoes, saves, reloads; large reference score round trip"): `mc-cli run crates/mc-cli/examples/song.script --out song` (written as `song.giproj`) applies 28 steps including `undo` and `redo`, reports one intended D-01 diagnostic, and `info`, `validate` and `roundtrip` pass on the result.
 
 ## 3. Round-trip suite detail (project-format section 14)
 
@@ -71,7 +71,7 @@ Memory baselines (FF-23, structural, deterministic): large score 8.8 MB (design 
 | FF-13, FF-14 | Invariants and undo under random command sequences | proptest, 256 cases each, 15 operation kinds including invalid ones | Pass; rejected commands proven side-effect free |
 | FF-21 | Benchmarks | 2 criterion suites; CI compiles them | Section 4 |
 | FF-22 | Public API | weekly; snapshots in `architecture/public-api/` | Generated locally with cargo-public-api 0.52.0 |
-| FF-23 | Memory | `crates/mc-app/tests/memory.rs` | Structural; see decision D2 |
+| FF-23 | Memory | `crates/mc-app/tests/memory.rs` | Structural, not peak memory (decision D2) |
 | FF-24 | Rule coverage | CI report | Section 2 |
 | FF-27 | Coverage | weekly | Local run: 79.5% lines, 77.6% functions |
 | FF-28 | Complexity | CI report | 0 cognitive-complexity warnings; 6 functions over 100 lines (advisory) |
@@ -110,12 +110,12 @@ Local runs of every CI step passed (fmt, clippy `-D warnings`, workspace tests, 
 | Real OneDrive and antivirus locks | Still untested (simulated lock tests pass) |
 | Projection cost | Not measured until Phase 3; command budgets currently cover the domain only |
 
-## 9. Decisions needed
+## 9. Decisions (user, 2026-10-31)
 
-- D1, Q-08 file extension (required before Phase 1 is formally closed). Nothing in the core depends on it: `mc-project` and `mc-app` accept any path, fixtures use `.package`, recovery files use an internal `.recovery` suffix. Choosing it affects only the CLI help text, Phase 3 file dialogs and OS file association.
-- D2, FF-23 exact measurement. Option A: keep structural measurement only (current). Option B: an ADR allowing `unsafe` solely in one test-only counting allocator (for example by moving `unsafe_code` from `forbid` to `deny` with a single `#[allow]` in `crates/mc-app/tests/memory.rs`), adding exact peak measurement of file open. Recommendation: B, because peak memory during open is otherwise unmeasured; the change is test-only and visible in review.
-- D3, `zip` 9.2.0: stay on 9.1.3 until the next license audit, or upgrade now with a cargo-deny re-run.
+- D1, Q-08: the product extension is `.giproj` (GuitarInspire Project). It stays outside the Music Core: `mc-project` reads bytes and `mc-app` accepts any path; `mc-cli` defines it and appends it to output paths that have no extension, without refusing other names. File identity and compatibility come from the manifest `format` and `format_version` and the entry schemas (project-format section 2a). Internal names are unchanged: test fixtures `.package`, recovery files `.recovery`.
+- D2, FF-23: keep the deterministic structural measurement; the workspace-wide `unsafe_code = "forbid"` stays. Documented limitation: it is not a process-level or peak-memory measurement (strings, allocator overhead and transient buffers during file open are not counted). Revisit a test-only exception only if peak memory becomes necessary for a concrete decision and no safe approach is adequate.
+- D3, `zip`: stay on 9.1.3; review 9.2.0 at the next scheduled dependency and license review, earlier only for a security fix or a concrete format issue. An upgrade reruns cargo-deny, the FF-11 round-trip suite and the format benchmarks.
 
-## 10. Recommendation
+## 10. Closure
 
-Phase 1 meets its acceptance criteria. Close it once D1 (file extension) is decided; D2 and D3 do not block Phase 2. Next phase per the roadmap: Phase 2 (Guitar core).
+Phase 1 is accepted and closed when this branch is merged into `main` with CI passing. Known limitations in section 8 are kept as they are; they belong to later phases. Next phase per the roadmap: Phase 2 (Guitar core), on a new branch.

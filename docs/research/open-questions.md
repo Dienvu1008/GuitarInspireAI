@@ -13,7 +13,7 @@ Related documents: [guitar-pattern-engine.md](../architecture/guitar-pattern-eng
 | Q-05 | Pattern DSL: default picking directions and syntax for direction | Phase 6a entry | User | guitar-pattern-engine |
 | Q-06 | Pattern DSL: syntax for rests, ties, accents, simultaneous strikes; plus 5 to 10 real example patterns with expected TAB | Phase 6a entry | User | guitar-pattern-engine |
 | Q-07 | Resolved: string 1 is the highest-pitched string; numbers are stable under retuning and never renumbered by pitch | Done | User | bounded-contexts, mc-theory |
-| Q-08 | Native file extension (for example `.gia`, `.gisong`) and registered media type | Phase 1 exit | User | project-format |
+| Q-08 | Resolved: `.giproj` (GuitarInspire Project) is the product extension, defined in adapters only; file identity comes from the manifest format and version (project-format section 2a). Registered media type: still open, not needed before distribution | Done | User | project-format |
 | Q-09 | Resolved: underfull and overfull bars are diagnostics and never block saving; playback uses the effective master bar duration across all tracks and voices (domain-invariants section 4a) | Done | User | domain-invariants, audio-dsp-architecture |
 | Q-10 | Project license (permissive open source, copyleft, commercial) | Before first public release; affects ADR-015 allow-list | User | ADR-015 |
 | Q-11 | Resolved: FluidR3 GM (MIT) is the default bundled SoundFont, with provenance and license recorded when bundled (ADR-015); user-supplied SoundFonts are a future capability | Done | User | audio |

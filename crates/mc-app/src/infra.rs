@@ -126,7 +126,7 @@ impl ProjectStore for FsProjectStore {
 
 /// Autosaves under `<dir>/<project-id>/autosave-<millis>.recovery`, with a `source`
 /// file holding the original path, and a session marker `session.lock` in `<dir>`.
-/// Recovery file names are internal app data, independent of the project extension (Q-08).
+/// Recovery file names are internal app data, independent of the `.giproj` product extension (Q-08).
 #[derive(Clone, Debug)]
 pub struct FsRecoveryStore {
     pub dir: PathBuf,

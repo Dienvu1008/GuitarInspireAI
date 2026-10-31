@@ -5,9 +5,10 @@
 //! in benchmarks/baselines/memory.toml by more than 10 percent. Baselines are a
 //! protected path: lowering them is free, raising them needs an ADR trailer.
 //!
-//! An exact counting-allocator cross-check needs `unsafe` (GlobalAlloc), which the
-//! workspace forbids; it is proposed as an ADR in the Phase 1 exit report and not
-//! added here.
+//! Limitation: this is not process-level or peak memory. An exact counting allocator
+//! needs `unsafe` (GlobalAlloc), and the workspace keeps `unsafe_code = "forbid"`
+//! (decision 2026-10-31, Phase 1 exit report D2). Revisit only if peak memory becomes
+//! necessary for a concrete decision and no safe approach is adequate.
 
 use mc_app::ports::{Clock, Entropy};
 use mc_app::{

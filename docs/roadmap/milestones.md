@@ -18,4 +18,4 @@ Recommended first implementation milestone: M0, with S1, S2, S4 and S5 first bec
 
 Status: M0 accepted on 2026-10-31. First CI run (`6dcb8bc`) succeeded; the workflow update in the baseline commit is validated on its push. Evidence: [m0-exit-report.md](m0-exit-report.md).
 
-M1 reached on 2026-10-31 (branch `phase-1-core`); Phase 1 closes when Q-08 is decided. Evidence: [phase-1-exit-report.md](phase-1-exit-report.md). Next milestone: M2.
+M1 reached and Phase 1 accepted on 2026-10-31 (Q-08 decided: `.giproj`; merged from `phase-1-core`). Evidence: [phase-1-exit-report.md](phase-1-exit-report.md). Next milestone: M2 (Phase 2, Guitar core).
