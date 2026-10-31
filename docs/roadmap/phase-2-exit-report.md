@@ -118,7 +118,7 @@ No ADR was reversed. No fitness function, lint or dependency rule was weakened.
 
 ## 9. CI status
 
-Local runs of every CI step passed: fmt, clippy `-D warnings`, workspace tests, benchmark build, `xtask fitness all`, FF-24/25/26 reports, Mermaid, cargo-deny. GitHub Actions result: recorded after the push of branch `phase-2-guitar`.
+Local runs of every CI step passed: fmt, clippy `-D warnings`, workspace tests, benchmark build, `xtask fitness all`, FF-24/25/26 reports, Mermaid, cargo-deny. GitHub Actions passed on `4c3780d` (branch `phase-2-guitar`); the follow-up commit with formatting and documentation fixes is verified on its own push.
 
 ## 10. Not done in Phase 2
 
