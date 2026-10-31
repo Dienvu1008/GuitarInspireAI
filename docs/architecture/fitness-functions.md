@@ -1,0 +1,58 @@
+# Architecture Fitness Functions
+
+Purpose: Define the automated checks that keep the architecture rules true over time, with criticality, tool, activation phase and threshold justification.
+Status: Accepted (catalogue). Each function is implemented in its activation phase; none exist yet.
+Related documents: [dependency-rules.md](dependency-rules.md), [domain-invariants.md](domain-invariants.md), [project-format.md](project-format.md), [performance-requirements.md](performance-requirements.md), [decisions/README.md](decisions/README.md), `.kiro/steering/architecture-guardrails.md`.
+
+Criticality: Critical blocks merge. Important needs review when it fails (does not block automatically). Advisory produces reports.
+
+Planned implementation home: a Rust `xtask` crate (`cargo xtask fitness`) plus configuration files under `architecture/` at the repository root, run by CI on every push. Dart checks run as Dart tests in `app/test/architecture/`.
+
+## Catalogue
+
+| Id | Check | Rules | Tool | Criticality | Active from | Threshold and justification |
+|---|---|---|---|---|---|---|
+| FF-01 | Internal crate dependency matrix | GR-01, GR-03, GR-04, GR-05 | xtask reading `cargo metadata` and `architecture/allowed-deps.toml` | Critical | Phase 1 | Binary: any unlisted edge fails |
+| FF-02 | External crate bans (frb only in mc-ffi, cpal and rustysynth only in mc-audio, rusqlite nowhere in MVP) | GR-01, GR-02, GR-03 | cargo-deny `bans` with `wrappers` | Critical | Phase 1 | Binary |
+| FF-03 | Domain purity lints (no fs, net, thread, clock, env in domain crates) | GR-03, GR-11 | clippy `disallowed-methods` and `disallowed-types`, `-D warnings` on domain crates | Critical | Phase 1 | Binary |
+| FF-04 | Domain crates compile for `wasm32-unknown-unknown` | GR-11, ADR-014 | `cargo check --target wasm32-unknown-unknown -p mc-theory -p mc-score ...` | Critical | Phase 1 | Binary; keeps Web option open cheaply |
+| FF-05 | Dart import boundaries (features import only facade, ui_kit, platform; no generated bindings; no feature-to-feature imports) | GR-06 | Dart test parsing imports in `packages/*/lib` | Critical | Phase 3 | Binary |
+| FF-06 | Dart package cycles | GR-07 | Dart test over pubspec dependency graph | Critical | Phase 3 | Binary |
+| FF-07 | `cfg(target_os)` and platform crates only in adapter crates | GR-11 | xtask source scan | Important | Phase 1 | Binary; Important because rare legitimate exceptions need review |
+| FF-08 | `dart:io` and `Platform` only in `platform` package and `app` | GR-11 | Dart import test | Important | Phase 3 | Binary |
+| FF-09 | License policy (Rust and Dart) | ADR-015 | cargo-deny `licenses` allow-list; Dart license check script over `pubspec.lock` [tool To verify] | Critical | Phase 0 | Allow-list from ADR-015 |
+| FF-10 | Security advisories and sources | Security | cargo-deny `advisories`, `sources` | Important | Phase 0 | Any advisory requires triage within the PR |
+| FF-11 | Project format round-trip suite (9 items) | GR-08, P-01 to P-06 | Rust tests with fixture corpus | Critical | Phase 1 | Binary; fixture corpus is append-only |
+| FF-12 | Generated bindings in sync | ADR-005 | Run frb codegen, `git diff --exit-code` | Critical | Phase 3 | Binary |
+| FF-13 | Hard invariants hold under random command sequences | H rules | proptest | Critical | Phase 1 | Fixed case count (for example 256 per run in CI, more nightly); seed failures saved as regressions |
+| FF-14 | Undo and redo restore identical state | ADR-016 | proptest | Critical | Phase 1 | Same as FF-13 |
+| FF-15 | Importer and loader fuzzing | GR-09 | cargo-fuzz (Linux CI, scheduled) | Important | Phase 4 | Any crash creates a regression fixture that then becomes part of FF-11 (Critical) |
+| FF-16 | No allocation in RT callback bodies | GR-10 | assert_no_alloc in test harness | Critical | Phase 4 | Binary |
+| FF-17 | RT module forbidden-construct lint | GR-10 | xtask scan of `mc-audio/src/rt/` | Critical | Phase 4 | Binary; list in [audio-dsp-architecture.md](audio-dsp-architecture.md) |
+| FF-18 | Playback glitch test (10 min, UI load simulated) | GR-10, A4 | Scheduled job on a real Windows machine (not hosted CI; hosted runners lack audio devices [Assumption]) | Important | Phase 4 | Zero gaps |
+| FF-19 | Protected paths require `Architecture-Change: ADR-NNN` trailer referencing an existing ADR file | GR-13, GR-14 | xtask or CI script on the commit range | Critical | Phase 0 | Binary |
+| FF-20 | Fitness inventory cannot shrink | GR-14 | `architecture/fitness-inventory.toml` lists check ids; xtask verifies each exists and runs; removals require FF-19 trailer | Critical | Phase 0 | Binary |
+| FF-21 | Benchmark regression | Performance | criterion with stored baselines | Important | Phase 1 | More than 10 percent regression in 3 consecutive runs on the reference machine; see [performance-requirements.md](performance-requirements.md) |
+| FF-22 | Public API diff of crates | GR-06 | cargo-public-api (needs nightly rustdoc JSON [To verify]) | Important | Phase 1 | Any diff shown for review; Critical with cargo-semver-checks once SDK is published (Phase 11) |
+| FF-23 | Memory baselines (open large score, undo budget) | Performance | Test with counting allocator | Important | Phase 1 | Regression over 10 percent versus baseline |
+| FF-24 | Invariant rule ids without tests | Domain invariants | xtask matching rule ids in [domain-invariants.md](domain-invariants.md) to test names | Advisory | Phase 1 | Report only |
+| FF-25 | Coupling report (fan-in and fan-out per crate and module) | Modularity | xtask over `cargo metadata` and `use` statements | Advisory | Phase 2 | Report trends; no threshold until data exists |
+| FF-26 | Intra-crate module cycles | GR-07 | `cargo-modules` [To verify] or xtask | Advisory | Phase 2 | Report |
+| FF-27 | Test coverage | Testability | cargo-llvm-cov, flutter test coverage | Advisory | Phase 1 | Report; no gate (coverage gates invite low-value tests) |
+| FF-28 | Complexity lints | Maintainability | clippy `cognitive_complexity`, `too_many_lines` warnings | Advisory | Phase 1 | clippy defaults |
+| FF-29 | Binary and bundle size | Distribution | CI artifact size report | Advisory | Phase 3 | Report trends |
+| FF-30 | Dependency freshness | Maintenance | cargo-outdated, `flutter pub outdated` | Advisory | Phase 1 | Monthly report |
+| FF-31 | Candidate acceptance passes domain validation | GR-04, AI-02 | Integration test with invalid candidate | Critical | Phase 8 | Binary |
+| FF-32 | DTO JSON schema snapshot requires version bump | GR-08 | schemars snapshot test | Critical | Phase 1 | Binary |
+| FF-33 | Documentation links and Mermaid diagrams valid | GR-12 | Link check script, mermaid-cli | Important | Phase 0 | Binary |
+
+## Notes on thresholds
+
+- Binary checks need no threshold. Numeric thresholds exist only for performance and memory, and only after baselines exist. Until then those checks report values without failing.
+- Hosted CI performance numbers are noisy; FF-21 and FF-23 compare on the reference machine or with instruction counts (for example iai-callgrind on Linux [To verify]) rather than wall time on shared runners.
+
+## CI cost for a solo developer
+
+- Every push (Windows runner): FF-01 to FF-04, FF-07, FF-09, FF-11 to FF-14, FF-16, FF-17, FF-19, FF-20, FF-32, unit tests. Target under 10 minutes [Assumption].
+- Nightly or weekly: FF-15, FF-21 to FF-30, Linux and macOS builds (macOS runners cost more; weekly is enough until the macOS port).
+- Manual before release: FF-18 on the reference machine.
