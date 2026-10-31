@@ -178,12 +178,29 @@ fn h06_removing_the_preceding_bar_clears_the_tie() {
 }
 
 #[test]
-fn h09_last_voice_last_track_and_last_bar_cannot_be_removed() {
+fn h09_e03_last_voice_last_track_and_last_bar_cannot_be_removed() {
     let mut s = score(1, 1);
     let t = track(&s, 0);
     assert_eq!(rule(s.remove_voice(t, 0, 0).unwrap_err()), "H-09");
     assert_eq!(rule(s.remove_track(t).unwrap_err()), "E-03");
     assert_eq!(rule(s.remove_master_bars(0, 1).unwrap_err()), "E-03");
+}
+
+/// H-08 (note kind matches the track's instrument kind) holds by construction while
+/// only fretted tracks and fretted notes exist: both enums have one variant, so a
+/// mismatch cannot be expressed. This test pins that; it must be replaced by a real
+/// mismatch test when a second instrument kind is added.
+#[test]
+fn h08_note_kind_matches_instrument_kind_by_construction() {
+    let mut s = score(1, 1);
+    let t = track(&s, 0);
+    let b = fill(&mut s, t, 0, 0, &[q()]);
+    note(&mut s, b[0], 2, 2);
+    let tr = s.track(t).unwrap();
+    assert!(matches!(tr.instrument(), InstrumentSpec::Fretted(_)));
+    let n = &tr.bar(0).unwrap().voices[0].beats[0].notes[0];
+    assert!(matches!(n.kind, NoteKind::Fretted(_)));
+    assert!(s.validate().is_empty());
 }
 
 #[test]

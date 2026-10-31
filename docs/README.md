@@ -56,6 +56,7 @@ This package is the accepted pre-implementation baseline (2026-10-31). M0 is com
 - [risk-register.md](roadmap/risk-register.md): risks.
 - [dependency-map.md](roadmap/dependency-map.md): phase and spike dependencies.
 - [m0-exit-report.md](roadmap/m0-exit-report.md): M0 results and Phase 1 recommendation.
+- [phase-1-exit-report.md](roadmap/phase-1-exit-report.md): Phase 1 evidence, benchmarks and decisions.
 
 ### Research
 - [technology-evaluation.md](research/technology-evaluation.md): libraries and tools.

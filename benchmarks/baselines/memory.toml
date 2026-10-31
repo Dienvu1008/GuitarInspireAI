@@ -1,0 +1,9 @@
+# FF-23 memory baselines (structural bytes: element sizes times counts; deterministic
+# for a given toolchain and target). Measured on 2026-10-31 with Rust 1.98.0,
+# x86_64-pc-windows-msvc. The test fails if a value exceeds its baseline by more than
+# 10 percent. Protected path: raising a value needs an ADR trailer; lowering is free.
+
+large_score_structural_bytes = 8_802_600
+typical_score_structural_bytes = 387_992
+large_undo_step_bytes = 3_944
+typical_undo_step_bytes = 1_917

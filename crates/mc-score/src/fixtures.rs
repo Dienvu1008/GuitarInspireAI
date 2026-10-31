@@ -5,9 +5,9 @@ use crate::model::{
     BarContent, Beat, FrettedInstrument, InstrumentSpec, MasterBar, Note, NoteEffects, NoteKind,
     TempoChange, TrackData, Voice,
 };
-use crate::{BeatId, NoteId, Score, ScoreParts, TrackId};
-use mc_theory::fretted::{Fret, FretPosition, StringIndex};
-use mc_theory::{BaseValue, NoteValue, Rational, Tempo};
+use crate::{BeatId, BeatRef, NoteId, Score, ScoreParts, TrackId};
+use mc_theory::fretted::{Capo, Fret, FretPosition, StringIndex};
+use mc_theory::{BaseValue, KeySignature, Mode, NoteValue, Rational, Tempo, TimeSignature, Tuplet};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Shape {
@@ -113,6 +113,192 @@ pub fn reference(shape: Shape) -> Score {
         }],
     };
     Score::from_parts(parts).expect("reference scores are valid")
+}
+
+/// A score that exercises every v1.0 field: pickup, repeats, alternate endings, marker,
+/// key and time changes, tempo changes, tuplets, dots, two voices, ties, effects,
+/// a second track with a drop-D tuning and a capo. Built with aggregate operations,
+/// so ids follow allocation order.
+pub fn feature_rich() -> Score {
+    let mut s = crate::Score::new(
+        "Lead",
+        InstrumentSpec::Fretted(FrettedInstrument::standard_guitar()),
+        MasterBar {
+            pickup: true,
+            ..MasterBar::default()
+        },
+        Tempo::from_bpm(96).unwrap(),
+    )
+    .unwrap();
+    s.insert_master_bars(1, 4, MasterBar::default()).unwrap();
+    s.set_master_bar(
+        1,
+        MasterBar {
+            repeat_start: true,
+            marker: Some("Verse".into()),
+            ..MasterBar::default()
+        },
+    )
+    .unwrap();
+    s.set_master_bar(
+        2,
+        MasterBar {
+            alternate_endings: vec![1],
+            repeat_end: Some(2),
+            ..MasterBar::default()
+        },
+    )
+    .unwrap();
+    s.set_master_bar(
+        3,
+        MasterBar {
+            alternate_endings: vec![2],
+            ..MasterBar::default()
+        },
+    )
+    .unwrap();
+    s.set_master_bar(
+        4,
+        MasterBar::new(
+            TimeSignature::new(6, 8).unwrap(),
+            KeySignature::new(-3, Mode::Minor).unwrap(),
+        ),
+    )
+    .unwrap();
+    s.set_tempo(
+        4,
+        Rational::new(3, 8).unwrap(),
+        Tempo::new(Rational::new(241, 2).unwrap()).unwrap(),
+    )
+    .unwrap();
+
+    let lead = s.track_at(0).unwrap().id();
+    let drop_d = mc_theory::fretted::Tuning::new(
+        ["E4", "B3", "G3", "D3", "A2", "D2"]
+            .map(|p| p.parse().unwrap())
+            .to_vec(),
+    )
+    .unwrap();
+    let (rhythm, _) = s
+        .add_track(
+            "Rhythm",
+            InstrumentSpec::Fretted(FrettedInstrument {
+                tuning: drop_d,
+                fret_count: 22,
+                capo: Capo(2),
+            }),
+        )
+        .unwrap();
+
+    let q = NoteValue::plain(BaseValue::QUARTER);
+    let dotted = NoteValue::new(BaseValue::QUARTER, 1, None).unwrap();
+    let trip = NoteValue::new(BaseValue::EIGHTH, 0, Some(Tuplet::TRIPLET)).unwrap();
+    let pos = |string: u8, fret: u8| FretPosition {
+        string: StringIndex::new(string).unwrap(),
+        fret: Fret(fret),
+    };
+
+    // Pickup: one quarter.
+    let (b, _) = s.insert_beat(lead, 0, 0, 0, q).unwrap();
+    let r0 = BeatRef {
+        track: lead,
+        bar: 0,
+        voice: 0,
+        beat: b,
+    };
+    s.set_note(r0, pos(1, 3)).unwrap();
+    // Bar 1: dotted quarter, eighth triplet x3, rest, tie from the pickup.
+    let (b1, _) = s.insert_beat(lead, 1, 0, 0, dotted).unwrap();
+    let r1 = BeatRef {
+        track: lead,
+        bar: 1,
+        voice: 0,
+        beat: b1,
+    };
+    let (tied, _) = s.set_note(r1, pos(1, 3)).unwrap();
+    s.set_tie(r1, tied, true).unwrap();
+    for i in 0..3 {
+        let (bt, _) = s.insert_beat(lead, 1, 0, 1 + i, trip).unwrap();
+        let (n, _) = s
+            .set_note(
+                BeatRef {
+                    track: lead,
+                    bar: 1,
+                    voice: 0,
+                    beat: bt,
+                },
+                pos(2, 5 + i as u8),
+            )
+            .unwrap();
+        if i == 2 {
+            s.set_note_effects(
+                BeatRef {
+                    track: lead,
+                    bar: 1,
+                    voice: 0,
+                    beat: bt,
+                },
+                n,
+                NoteEffects {
+                    let_ring: true,
+                    dead: false,
+                },
+            )
+            .unwrap();
+        }
+    }
+    s.insert_beat(lead, 1, 0, 4, q).unwrap();
+    // Second voice in bar 1 on the same string as voice 0 (allowed, D-03 later).
+    let (v1, _) = s.add_voice(lead, 1).unwrap();
+    let (bv, _) = s
+        .insert_beat(lead, 1, v1, 0, NoteValue::plain(BaseValue::WHOLE))
+        .unwrap();
+    let (dead, _) = s
+        .set_note(
+            BeatRef {
+                track: lead,
+                bar: 1,
+                voice: v1,
+                beat: bv,
+            },
+            pos(6, 0),
+        )
+        .unwrap();
+    s.set_note_effects(
+        BeatRef {
+            track: lead,
+            bar: 1,
+            voice: v1,
+            beat: bv,
+        },
+        dead,
+        NoteEffects {
+            let_ring: false,
+            dead: true,
+        },
+    )
+    .unwrap();
+    // Rhythm track: a chord in bar 2 and an overfull bar 3 (D-01 is allowed in files).
+    let (rb, _) = s
+        .insert_beat(rhythm, 2, 0, 0, NoteValue::plain(BaseValue::WHOLE))
+        .unwrap();
+    for (st, fr) in [(6, 0), (5, 2), (4, 2), (3, 2)] {
+        s.set_note(
+            BeatRef {
+                track: rhythm,
+                bar: 2,
+                voice: 0,
+                beat: rb,
+            },
+            pos(st, fr),
+        )
+        .unwrap();
+    }
+    for i in 0..5 {
+        s.insert_beat(rhythm, 3, 0, i, q).unwrap();
+    }
+    assert!(s.validate().is_empty());
+    s
 }
 
 #[cfg(test)]

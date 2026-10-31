@@ -21,7 +21,7 @@ fn pb01_full_voices_give_the_nominal_duration() {
 }
 
 #[test]
-fn pb02_overfull_voice_extends_the_bar_for_every_track() {
+fn pb02_d01_overfull_voice_extends_the_bar_for_every_track() {
     let mut s = score(4, 2);
     let t1 = track(&s, 0);
     let t2 = track(&s, 1);
@@ -46,7 +46,7 @@ fn pb02_overfull_voice_extends_the_bar_for_every_track() {
 }
 
 #[test]
-fn pb03_underfull_voice_does_not_shorten_the_bar() {
+fn pb03_d01_underfull_voice_does_not_shorten_the_bar() {
     let mut s = score(3, 2);
     let t1 = track(&s, 0);
     fill(&mut s, t1, 1, 0, &[q(), q()]);

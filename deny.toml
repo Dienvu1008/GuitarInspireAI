@@ -34,6 +34,26 @@ multiple-versions = "warn"
 wildcards = "deny"
 # Internal workspace crates depend on each other by path; allowed for unpublished crates only (S7 finding).
 allow-wildcard-paths = true
+# FF-02 external crate bans (GR-01, GR-02, GR-03, ADR-010). `wrappers` lists the only
+# crates allowed to depend on the banned crate directly. Crates that do not exist yet
+# are listed so the rule is in force before they are added.
+deny = [
+    # GR-01: the bridge only in the FFI adapter.
+    { crate = "flutter_rust_bridge", wrappers = ["mc-ffi"], reason = "GR-01: FFI types stay in mc-ffi" },
+    # GR-02: no SQLite in MVP (ADR-009); a future adapter crate is added here by ADR.
+    { crate = "rusqlite", reason = "GR-02, ADR-009: SQLite is deferred" },
+    { crate = "libsqlite3-sys", reason = "GR-02, ADR-009: SQLite is deferred" },
+    # Audio libraries only in the audio adapter (GR-10, GR-11).
+    { crate = "cpal", wrappers = ["mc-audio"], reason = "audio I/O stays in mc-audio" },
+    { crate = "rustysynth", wrappers = ["mc-audio"], reason = "synthesis stays in mc-audio" },
+    { crate = "rtrb", wrappers = ["mc-audio"], reason = "real-time queues stay in mc-audio" },
+    # ADR-015, ADR-007: MPL-2.0 dependency of cpal's `realtime` feature.
+    { crate = "audio_thread_priority", reason = "ADR-007, ADR-015: own MMCSS call instead (MPL-2.0)" },
+    # ADR-010: no network in MVP.
+    { crate = "reqwest", reason = "ADR-010: local-first, no network in MVP" },
+    { crate = "ureq", reason = "ADR-010: local-first, no network in MVP" },
+    { crate = "hyper", reason = "ADR-010: local-first, no network in MVP" },
+]
 
 [sources]
 unknown-registry = "deny"

@@ -11,3 +11,8 @@ docs/architecture/dependency-rules.md
 docs/architecture/fitness-functions.md
 docs/architecture/decisions/
 .kiro/steering/architecture-guardrails.md
+# Released format fixtures and schema snapshots are append-only (GR-08, FF-11, FF-32).
+crates/mc-project/tests/fixtures/
+crates/mc-project/schema/
+# Raising a memory baseline weakens FF-23.
+benchmarks/baselines/

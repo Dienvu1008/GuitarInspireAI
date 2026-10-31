@@ -1,0 +1,491 @@
+pub mod mc_theory
+pub mod mc_theory::fretted
+pub struct mc_theory::fretted::Capo(pub u8)
+impl core::clone::Clone for mc_theory::fretted::Capo
+pub fn mc_theory::fretted::Capo::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::fretted::Capo
+impl core::cmp::Ord for mc_theory::fretted::Capo
+pub fn mc_theory::fretted::Capo::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::fretted::Capo
+pub fn mc_theory::fretted::Capo::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::fretted::Capo
+pub fn mc_theory::fretted::Capo::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::default::Default for mc_theory::fretted::Capo
+pub fn mc_theory::fretted::Capo::default() -> Self
+impl core::fmt::Debug for mc_theory::fretted::Capo
+pub fn mc_theory::fretted::Capo::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::fretted::Capo
+pub fn mc_theory::fretted::Capo::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::fretted::Capo
+impl core::marker::StructuralPartialEq for mc_theory::fretted::Capo
+impl core::marker::Freeze for mc_theory::fretted::Capo
+impl core::marker::Send for mc_theory::fretted::Capo
+impl core::marker::Sync for mc_theory::fretted::Capo
+impl core::marker::Unpin for mc_theory::fretted::Capo
+impl core::marker::UnsafeUnpin for mc_theory::fretted::Capo
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::fretted::Capo
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::fretted::Capo
+pub struct mc_theory::fretted::Fret(pub u8)
+impl core::clone::Clone for mc_theory::fretted::Fret
+pub fn mc_theory::fretted::Fret::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::fretted::Fret
+impl core::cmp::Ord for mc_theory::fretted::Fret
+pub fn mc_theory::fretted::Fret::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::fretted::Fret
+pub fn mc_theory::fretted::Fret::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::fretted::Fret
+pub fn mc_theory::fretted::Fret::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_theory::fretted::Fret
+pub fn mc_theory::fretted::Fret::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::fretted::Fret
+pub fn mc_theory::fretted::Fret::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::fretted::Fret
+impl core::marker::StructuralPartialEq for mc_theory::fretted::Fret
+impl core::marker::Freeze for mc_theory::fretted::Fret
+impl core::marker::Send for mc_theory::fretted::Fret
+impl core::marker::Sync for mc_theory::fretted::Fret
+impl core::marker::Unpin for mc_theory::fretted::Fret
+impl core::marker::UnsafeUnpin for mc_theory::fretted::Fret
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::fretted::Fret
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::fretted::Fret
+pub struct mc_theory::fretted::FretPosition
+pub mc_theory::fretted::FretPosition::fret: mc_theory::fretted::Fret
+pub mc_theory::fretted::FretPosition::string: mc_theory::fretted::StringIndex
+impl core::clone::Clone for mc_theory::fretted::FretPosition
+pub fn mc_theory::fretted::FretPosition::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::fretted::FretPosition
+impl core::cmp::PartialEq for mc_theory::fretted::FretPosition
+pub fn mc_theory::fretted::FretPosition::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::fretted::FretPosition
+pub fn mc_theory::fretted::FretPosition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::fretted::FretPosition
+pub fn mc_theory::fretted::FretPosition::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::fretted::FretPosition
+impl core::marker::StructuralPartialEq for mc_theory::fretted::FretPosition
+impl core::marker::Freeze for mc_theory::fretted::FretPosition
+impl core::marker::Send for mc_theory::fretted::FretPosition
+impl core::marker::Sync for mc_theory::fretted::FretPosition
+impl core::marker::Unpin for mc_theory::fretted::FretPosition
+impl core::marker::UnsafeUnpin for mc_theory::fretted::FretPosition
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::fretted::FretPosition
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::fretted::FretPosition
+pub struct mc_theory::fretted::StringIndex(_)
+impl mc_theory::fretted::StringIndex
+pub const fn mc_theory::fretted::StringIndex::get(self) -> u8
+pub fn mc_theory::fretted::StringIndex::new(u8) -> core::result::Result<Self, mc_theory::TheoryError>
+impl core::clone::Clone for mc_theory::fretted::StringIndex
+pub fn mc_theory::fretted::StringIndex::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::fretted::StringIndex
+impl core::cmp::Ord for mc_theory::fretted::StringIndex
+pub fn mc_theory::fretted::StringIndex::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::fretted::StringIndex
+pub fn mc_theory::fretted::StringIndex::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::fretted::StringIndex
+pub fn mc_theory::fretted::StringIndex::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_theory::fretted::StringIndex
+pub fn mc_theory::fretted::StringIndex::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::fretted::StringIndex
+pub fn mc_theory::fretted::StringIndex::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::fretted::StringIndex
+impl core::marker::StructuralPartialEq for mc_theory::fretted::StringIndex
+impl core::marker::Freeze for mc_theory::fretted::StringIndex
+impl core::marker::Send for mc_theory::fretted::StringIndex
+impl core::marker::Sync for mc_theory::fretted::StringIndex
+impl core::marker::Unpin for mc_theory::fretted::StringIndex
+impl core::marker::UnsafeUnpin for mc_theory::fretted::StringIndex
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::fretted::StringIndex
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::fretted::StringIndex
+pub struct mc_theory::fretted::Tuning
+impl mc_theory::fretted::Tuning
+pub fn mc_theory::fretted::Tuning::new(alloc::vec::Vec<mc_theory::SpelledPitch>) -> core::result::Result<Self, mc_theory::TheoryError>
+pub fn mc_theory::fretted::Tuning::open_pitch(&self, mc_theory::fretted::StringIndex) -> core::option::Option<mc_theory::SpelledPitch>
+pub fn mc_theory::fretted::Tuning::standard_guitar() -> Self
+pub fn mc_theory::fretted::Tuning::string_count(&self) -> u8
+pub fn mc_theory::fretted::Tuning::strings(&self) -> &[mc_theory::SpelledPitch]
+impl core::clone::Clone for mc_theory::fretted::Tuning
+pub fn mc_theory::fretted::Tuning::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::fretted::Tuning
+impl core::cmp::PartialEq for mc_theory::fretted::Tuning
+pub fn mc_theory::fretted::Tuning::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::fretted::Tuning
+pub fn mc_theory::fretted::Tuning::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::fretted::Tuning
+pub fn mc_theory::fretted::Tuning::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::StructuralPartialEq for mc_theory::fretted::Tuning
+impl core::marker::Freeze for mc_theory::fretted::Tuning
+impl core::marker::Send for mc_theory::fretted::Tuning
+impl core::marker::Sync for mc_theory::fretted::Tuning
+impl core::marker::Unpin for mc_theory::fretted::Tuning
+impl core::marker::UnsafeUnpin for mc_theory::fretted::Tuning
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::fretted::Tuning
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::fretted::Tuning
+pub fn mc_theory::fretted::pitch_at(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_theory::fretted::FretPosition) -> core::option::Option<i32>
+pub enum mc_theory::Letter
+pub mc_theory::Letter::A
+pub mc_theory::Letter::B
+pub mc_theory::Letter::C
+pub mc_theory::Letter::D
+pub mc_theory::Letter::E
+pub mc_theory::Letter::F
+pub mc_theory::Letter::G
+impl mc_theory::Letter
+pub const fn mc_theory::Letter::natural_semitone(self) -> i32
+impl core::clone::Clone for mc_theory::Letter
+pub fn mc_theory::Letter::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::Letter
+impl core::cmp::Ord for mc_theory::Letter
+pub fn mc_theory::Letter::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::Letter
+pub fn mc_theory::Letter::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::Letter
+pub fn mc_theory::Letter::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_theory::Letter
+pub fn mc_theory::Letter::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::Letter
+pub fn mc_theory::Letter::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::Letter
+impl core::marker::StructuralPartialEq for mc_theory::Letter
+impl core::marker::Freeze for mc_theory::Letter
+impl core::marker::Send for mc_theory::Letter
+impl core::marker::Sync for mc_theory::Letter
+impl core::marker::Unpin for mc_theory::Letter
+impl core::marker::UnsafeUnpin for mc_theory::Letter
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::Letter
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::Letter
+pub enum mc_theory::Mode
+pub mc_theory::Mode::Major
+pub mc_theory::Mode::Minor
+impl core::clone::Clone for mc_theory::Mode
+pub fn mc_theory::Mode::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::Mode
+impl core::cmp::PartialEq for mc_theory::Mode
+pub fn mc_theory::Mode::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::Mode
+pub fn mc_theory::Mode::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::Mode
+pub fn mc_theory::Mode::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::Mode
+impl core::marker::StructuralPartialEq for mc_theory::Mode
+impl core::marker::Freeze for mc_theory::Mode
+impl core::marker::Send for mc_theory::Mode
+impl core::marker::Sync for mc_theory::Mode
+impl core::marker::Unpin for mc_theory::Mode
+impl core::marker::UnsafeUnpin for mc_theory::Mode
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::Mode
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::Mode
+pub enum mc_theory::TheoryError
+pub mc_theory::TheoryError::AlterOutOfRange(i8)
+pub mc_theory::TheoryError::EmptyTuning
+pub mc_theory::TheoryError::InvalidBaseValue(u8)
+pub mc_theory::TheoryError::InvalidKey(i8)
+pub mc_theory::TheoryError::InvalidPitch(alloc::string::String)
+pub mc_theory::TheoryError::InvalidStringIndex
+pub mc_theory::TheoryError::InvalidTempo
+pub mc_theory::TheoryError::InvalidTimeSignature
+pub mc_theory::TheoryError::InvalidTimeSignature::denominator: u8
+pub mc_theory::TheoryError::InvalidTimeSignature::numerator: u8
+pub mc_theory::TheoryError::NotPositive
+pub mc_theory::TheoryError::Overflow
+pub mc_theory::TheoryError::TooManyDots(u8)
+pub mc_theory::TheoryError::UnsupportedTuplet
+pub mc_theory::TheoryError::UnsupportedTuplet::actual: u8
+pub mc_theory::TheoryError::UnsupportedTuplet::normal: u8
+pub mc_theory::TheoryError::ZeroDenominator
+impl core::clone::Clone for mc_theory::TheoryError
+pub fn mc_theory::TheoryError::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::TheoryError
+impl core::cmp::PartialEq for mc_theory::TheoryError
+pub fn mc_theory::TheoryError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_theory::TheoryError
+impl core::fmt::Debug for mc_theory::TheoryError
+pub fn mc_theory::TheoryError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_theory::TheoryError
+pub fn mc_theory::TheoryError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_theory::TheoryError
+impl core::marker::Freeze for mc_theory::TheoryError
+impl core::marker::Send for mc_theory::TheoryError
+impl core::marker::Sync for mc_theory::TheoryError
+impl core::marker::Unpin for mc_theory::TheoryError
+impl core::marker::UnsafeUnpin for mc_theory::TheoryError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::TheoryError
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::TheoryError
+pub struct mc_theory::Alter(_)
+impl mc_theory::Alter
+pub const mc_theory::Alter::NATURAL: mc_theory::Alter
+pub fn mc_theory::Alter::new(i8) -> core::result::Result<Self, mc_theory::TheoryError>
+pub const fn mc_theory::Alter::semitones(self) -> i8
+impl core::clone::Clone for mc_theory::Alter
+pub fn mc_theory::Alter::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::Alter
+impl core::cmp::Ord for mc_theory::Alter
+pub fn mc_theory::Alter::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::Alter
+pub fn mc_theory::Alter::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::Alter
+pub fn mc_theory::Alter::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_theory::Alter
+pub fn mc_theory::Alter::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::Alter
+pub fn mc_theory::Alter::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::Alter
+impl core::marker::StructuralPartialEq for mc_theory::Alter
+impl core::marker::Freeze for mc_theory::Alter
+impl core::marker::Send for mc_theory::Alter
+impl core::marker::Sync for mc_theory::Alter
+impl core::marker::Unpin for mc_theory::Alter
+impl core::marker::UnsafeUnpin for mc_theory::Alter
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::Alter
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::Alter
+pub struct mc_theory::BaseValue(_)
+impl mc_theory::BaseValue
+pub const mc_theory::BaseValue::EIGHTH: mc_theory::BaseValue
+pub const mc_theory::BaseValue::HALF: mc_theory::BaseValue
+pub const mc_theory::BaseValue::MAX_EXPONENT: u8
+pub const mc_theory::BaseValue::QUARTER: mc_theory::BaseValue
+pub const mc_theory::BaseValue::SIXTEENTH: mc_theory::BaseValue
+pub const mc_theory::BaseValue::WHOLE: mc_theory::BaseValue
+pub const fn mc_theory::BaseValue::exponent(self) -> u8
+pub fn mc_theory::BaseValue::from_exponent(u8) -> core::result::Result<Self, mc_theory::TheoryError>
+impl core::clone::Clone for mc_theory::BaseValue
+pub fn mc_theory::BaseValue::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::BaseValue
+impl core::cmp::Ord for mc_theory::BaseValue
+pub fn mc_theory::BaseValue::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::BaseValue
+pub fn mc_theory::BaseValue::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::BaseValue
+pub fn mc_theory::BaseValue::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_theory::BaseValue
+pub fn mc_theory::BaseValue::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::BaseValue
+pub fn mc_theory::BaseValue::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::BaseValue
+impl core::marker::StructuralPartialEq for mc_theory::BaseValue
+impl core::marker::Freeze for mc_theory::BaseValue
+impl core::marker::Send for mc_theory::BaseValue
+impl core::marker::Sync for mc_theory::BaseValue
+impl core::marker::Unpin for mc_theory::BaseValue
+impl core::marker::UnsafeUnpin for mc_theory::BaseValue
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::BaseValue
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::BaseValue
+pub struct mc_theory::KeySignature
+impl mc_theory::KeySignature
+pub const mc_theory::KeySignature::C_MAJOR: mc_theory::KeySignature
+pub const fn mc_theory::KeySignature::fifths(self) -> i8
+pub const fn mc_theory::KeySignature::mode(self) -> mc_theory::Mode
+pub fn mc_theory::KeySignature::new(i8, mc_theory::Mode) -> core::result::Result<Self, mc_theory::TheoryError>
+impl core::clone::Clone for mc_theory::KeySignature
+pub fn mc_theory::KeySignature::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::KeySignature
+impl core::cmp::PartialEq for mc_theory::KeySignature
+pub fn mc_theory::KeySignature::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::KeySignature
+pub fn mc_theory::KeySignature::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::KeySignature
+pub fn mc_theory::KeySignature::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::KeySignature
+impl core::marker::StructuralPartialEq for mc_theory::KeySignature
+impl core::marker::Freeze for mc_theory::KeySignature
+impl core::marker::Send for mc_theory::KeySignature
+impl core::marker::Sync for mc_theory::KeySignature
+impl core::marker::Unpin for mc_theory::KeySignature
+impl core::marker::UnsafeUnpin for mc_theory::KeySignature
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::KeySignature
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::KeySignature
+pub struct mc_theory::NoteValue
+impl mc_theory::NoteValue
+pub const mc_theory::NoteValue::MAX_DOTS: u8
+pub const fn mc_theory::NoteValue::base(self) -> mc_theory::BaseValue
+pub const fn mc_theory::NoteValue::dots(self) -> u8
+pub fn mc_theory::NoteValue::length(self) -> mc_theory::Rational
+pub fn mc_theory::NoteValue::new(mc_theory::BaseValue, u8, core::option::Option<mc_theory::Tuplet>) -> core::result::Result<Self, mc_theory::TheoryError>
+pub const fn mc_theory::NoteValue::plain(mc_theory::BaseValue) -> Self
+pub const fn mc_theory::NoteValue::tuplet(self) -> core::option::Option<mc_theory::Tuplet>
+impl core::clone::Clone for mc_theory::NoteValue
+pub fn mc_theory::NoteValue::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::NoteValue
+impl core::cmp::PartialEq for mc_theory::NoteValue
+pub fn mc_theory::NoteValue::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::NoteValue
+pub fn mc_theory::NoteValue::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::NoteValue
+pub fn mc_theory::NoteValue::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::NoteValue
+impl core::marker::StructuralPartialEq for mc_theory::NoteValue
+impl core::marker::Freeze for mc_theory::NoteValue
+impl core::marker::Send for mc_theory::NoteValue
+impl core::marker::Sync for mc_theory::NoteValue
+impl core::marker::Unpin for mc_theory::NoteValue
+impl core::marker::UnsafeUnpin for mc_theory::NoteValue
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::NoteValue
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::NoteValue
+pub struct mc_theory::PitchClass(_)
+impl mc_theory::PitchClass
+pub fn mc_theory::PitchClass::from_semitone(i32) -> Self
+pub const fn mc_theory::PitchClass::value(self) -> u8
+impl core::clone::Clone for mc_theory::PitchClass
+pub fn mc_theory::PitchClass::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::PitchClass
+impl core::cmp::Ord for mc_theory::PitchClass
+pub fn mc_theory::PitchClass::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::PitchClass
+pub fn mc_theory::PitchClass::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::PitchClass
+pub fn mc_theory::PitchClass::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_theory::PitchClass
+pub fn mc_theory::PitchClass::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::PitchClass
+pub fn mc_theory::PitchClass::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::PitchClass
+impl core::marker::StructuralPartialEq for mc_theory::PitchClass
+impl core::marker::Freeze for mc_theory::PitchClass
+impl core::marker::Send for mc_theory::PitchClass
+impl core::marker::Sync for mc_theory::PitchClass
+impl core::marker::Unpin for mc_theory::PitchClass
+impl core::marker::UnsafeUnpin for mc_theory::PitchClass
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::PitchClass
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::PitchClass
+pub struct mc_theory::Rational
+impl mc_theory::Rational
+pub const mc_theory::Rational::ONE: mc_theory::Rational
+pub const mc_theory::Rational::ZERO: mc_theory::Rational
+pub fn mc_theory::Rational::checked_add(self, Self) -> core::option::Option<Self>
+pub fn mc_theory::Rational::checked_div(self, Self) -> core::option::Option<Self>
+pub fn mc_theory::Rational::checked_mul(self, Self) -> core::option::Option<Self>
+pub fn mc_theory::Rational::checked_sub(self, Self) -> core::option::Option<Self>
+pub fn mc_theory::Rational::checked_sum<I: core::iter::traits::collect::IntoIterator<Item = mc_theory::Rational>>(I) -> core::option::Option<Self>
+pub const fn mc_theory::Rational::denominator(self) -> i64
+pub const fn mc_theory::Rational::from_int(i64) -> Self
+pub const fn mc_theory::Rational::is_negative(self) -> bool
+pub const fn mc_theory::Rational::is_positive(self) -> bool
+pub const fn mc_theory::Rational::is_zero(self) -> bool
+pub fn mc_theory::Rational::new(i64, i64) -> core::result::Result<Self, mc_theory::TheoryError>
+pub const fn mc_theory::Rational::numerator(self) -> i64
+impl core::clone::Clone for mc_theory::Rational
+pub fn mc_theory::Rational::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::Rational
+impl core::cmp::Ord for mc_theory::Rational
+pub fn mc_theory::Rational::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_theory::Rational
+pub fn mc_theory::Rational::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_theory::Rational
+pub fn mc_theory::Rational::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_theory::Rational
+pub fn mc_theory::Rational::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_theory::Rational
+pub fn mc_theory::Rational::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::Rational
+pub fn mc_theory::Rational::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::Rational
+impl core::marker::StructuralPartialEq for mc_theory::Rational
+impl core::marker::Freeze for mc_theory::Rational
+impl core::marker::Send for mc_theory::Rational
+impl core::marker::Sync for mc_theory::Rational
+impl core::marker::Unpin for mc_theory::Rational
+impl core::marker::UnsafeUnpin for mc_theory::Rational
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::Rational
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::Rational
+pub struct mc_theory::SpelledPitch
+impl mc_theory::SpelledPitch
+pub const fn mc_theory::SpelledPitch::alter(self) -> mc_theory::Alter
+pub fn mc_theory::SpelledPitch::from_semitone_sharp(i32) -> Self
+pub const fn mc_theory::SpelledPitch::letter(self) -> mc_theory::Letter
+pub const fn mc_theory::SpelledPitch::new(mc_theory::Letter, mc_theory::Alter, i8) -> Self
+pub const fn mc_theory::SpelledPitch::octave(self) -> i8
+pub fn mc_theory::SpelledPitch::pitch_class(self) -> mc_theory::PitchClass
+pub const fn mc_theory::SpelledPitch::semitone(self) -> i32
+impl core::clone::Clone for mc_theory::SpelledPitch
+pub fn mc_theory::SpelledPitch::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::SpelledPitch
+impl core::cmp::PartialEq for mc_theory::SpelledPitch
+pub fn mc_theory::SpelledPitch::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::SpelledPitch
+pub fn mc_theory::SpelledPitch::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_theory::SpelledPitch
+pub fn mc_theory::SpelledPitch::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::SpelledPitch
+pub fn mc_theory::SpelledPitch::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::SpelledPitch
+impl core::marker::StructuralPartialEq for mc_theory::SpelledPitch
+impl core::str::traits::FromStr for mc_theory::SpelledPitch
+pub type mc_theory::SpelledPitch::Err = mc_theory::TheoryError
+pub fn mc_theory::SpelledPitch::from_str(&str) -> core::result::Result<Self, Self::Err>
+impl core::marker::Freeze for mc_theory::SpelledPitch
+impl core::marker::Send for mc_theory::SpelledPitch
+impl core::marker::Sync for mc_theory::SpelledPitch
+impl core::marker::Unpin for mc_theory::SpelledPitch
+impl core::marker::UnsafeUnpin for mc_theory::SpelledPitch
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::SpelledPitch
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::SpelledPitch
+pub struct mc_theory::Tempo
+impl mc_theory::Tempo
+pub const fn mc_theory::Tempo::bpm(self) -> mc_theory::Rational
+pub fn mc_theory::Tempo::from_bpm(u32) -> core::result::Result<Self, mc_theory::TheoryError>
+pub fn mc_theory::Tempo::new(mc_theory::Rational) -> core::result::Result<Self, mc_theory::TheoryError>
+impl core::clone::Clone for mc_theory::Tempo
+pub fn mc_theory::Tempo::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::Tempo
+impl core::cmp::PartialEq for mc_theory::Tempo
+pub fn mc_theory::Tempo::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::Tempo
+pub fn mc_theory::Tempo::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::Tempo
+pub fn mc_theory::Tempo::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::Tempo
+impl core::marker::StructuralPartialEq for mc_theory::Tempo
+impl core::marker::Freeze for mc_theory::Tempo
+impl core::marker::Send for mc_theory::Tempo
+impl core::marker::Sync for mc_theory::Tempo
+impl core::marker::Unpin for mc_theory::Tempo
+impl core::marker::UnsafeUnpin for mc_theory::Tempo
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::Tempo
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::Tempo
+pub struct mc_theory::TimeSignature
+impl mc_theory::TimeSignature
+pub const mc_theory::TimeSignature::COMMON: mc_theory::TimeSignature
+pub const fn mc_theory::TimeSignature::denominator(self) -> u8
+pub fn mc_theory::TimeSignature::length(self) -> mc_theory::Rational
+pub fn mc_theory::TimeSignature::new(u8, u8) -> core::result::Result<Self, mc_theory::TheoryError>
+pub const fn mc_theory::TimeSignature::numerator(self) -> u8
+impl core::clone::Clone for mc_theory::TimeSignature
+pub fn mc_theory::TimeSignature::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::TimeSignature
+impl core::cmp::PartialEq for mc_theory::TimeSignature
+pub fn mc_theory::TimeSignature::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::TimeSignature
+pub fn mc_theory::TimeSignature::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::TimeSignature
+pub fn mc_theory::TimeSignature::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::TimeSignature
+impl core::marker::StructuralPartialEq for mc_theory::TimeSignature
+impl core::marker::Freeze for mc_theory::TimeSignature
+impl core::marker::Send for mc_theory::TimeSignature
+impl core::marker::Sync for mc_theory::TimeSignature
+impl core::marker::Unpin for mc_theory::TimeSignature
+impl core::marker::UnsafeUnpin for mc_theory::TimeSignature
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::TimeSignature
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::TimeSignature
+pub struct mc_theory::Tuplet
+impl mc_theory::Tuplet
+pub const mc_theory::Tuplet::TRIPLET: mc_theory::Tuplet
+pub const fn mc_theory::Tuplet::actual(self) -> u8
+pub fn mc_theory::Tuplet::new(u8, u8) -> core::result::Result<Self, mc_theory::TheoryError>
+pub const fn mc_theory::Tuplet::normal(self) -> u8
+impl core::clone::Clone for mc_theory::Tuplet
+pub fn mc_theory::Tuplet::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::Tuplet
+impl core::cmp::PartialEq for mc_theory::Tuplet
+pub fn mc_theory::Tuplet::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::Tuplet
+pub fn mc_theory::Tuplet::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::Tuplet
+pub fn mc_theory::Tuplet::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::Tuplet
+impl core::marker::StructuralPartialEq for mc_theory::Tuplet
+impl core::marker::Freeze for mc_theory::Tuplet
+impl core::marker::Send for mc_theory::Tuplet
+impl core::marker::Sync for mc_theory::Tuplet
+impl core::marker::Unpin for mc_theory::Tuplet
+impl core::marker::UnsafeUnpin for mc_theory::Tuplet
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::Tuplet
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::Tuplet

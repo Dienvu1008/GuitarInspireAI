@@ -16,6 +16,11 @@ Amendments from S5 evidence:
 2. `zip` is used with `default-features = false` and only `deflate-flate2-zlib-rs`. `ZipFile::name()` in zip 9 returns a `Result`; name errors map to the same typed load error as our own name rules.
 3. Default decompression ratio cap is 100:1, measured against a 17.5:1 ratio for the large reference score. The cap bounds memory before rejection (a 1 GiB bomb was rejected after 104 MB).
 
+Amendments from Phase 1 implementation evidence:
+
+4. Retries are classified by portable `std::io::ErrorKind` (`PermissionDenied`, `ResourceBusy`), not by raw OS error codes. The S5 spike matched Windows codes 5 and 32, but the same numbers mean different errors on Linux (EIO, EPIPE), and FF-07 keeps platform `cfg` out of `mc-app`. On Windows the S5 lock case surfaces as `PermissionDenied`; tests on the reference machine confirm retry until release and a typed error after the last attempt. Cost: a genuine permission error is reported after about 1.5 s instead of immediately.
+5. Measured (Phase 1, reference machine): open typical 24 ms and large 387 ms; save typical 17 ms and large 342 ms, including SHA-256, U1 detection and full validation.
+
 ## Alternatives
 Directory project; SQLite document; binary serialization (CBOR, bincode); MusicXML or GP as canonical.
 

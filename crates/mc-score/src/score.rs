@@ -155,6 +155,76 @@ impl Score {
         count
     }
 
+    /// True if both scores share the same master bar allocation (unchanged between snapshots).
+    pub fn shares_master_bars_with(&self, other: &Score) -> bool {
+        Arc::ptr_eq(&self.master_bars, &other.master_bars)
+    }
+
+    /// True if both scores share the same tempo map allocation.
+    pub fn shares_tempo_map_with(&self, other: &Score) -> bool {
+        Arc::ptr_eq(&self.tempo_map, &other.tempo_map)
+    }
+
+    /// Approximate heap bytes held by `self` but not shared with `other`: copied track
+    /// spines, copied bars with their voices, beats and notes, and copied master bar or
+    /// tempo vectors. Used for the undo byte budget; FF-23 compares it with measured
+    /// allocations.
+    pub fn unshared_heap_bytes(&self, other: &Score) -> usize {
+        use std::mem::size_of;
+        let mut bytes = 0;
+        if !self.shares_master_bars_with(other) {
+            bytes += self.master_bars.len() * size_of::<MasterBar>();
+        }
+        if !self.shares_tempo_map_with(other) {
+            bytes += self.tempo_map.len() * size_of::<TempoChange>();
+        }
+        for t in &self.tracks {
+            let old = other.tracks.iter().find(|o| o.id == t.id);
+            if old.is_some_and(|o| Arc::ptr_eq(t, o)) {
+                continue;
+            }
+            bytes += size_of::<Track>() + t.bars.len() * size_of::<Arc<BarContent>>();
+            for (i, bar) in t.bars.iter().enumerate() {
+                if old.is_some_and(|o| t.shares_bar_with(o, i)) {
+                    continue;
+                }
+                bytes += size_of::<BarContent>() + bar.voices.len() * size_of::<crate::Voice>();
+                for v in &bar.voices {
+                    bytes += v.beats.len() * size_of::<crate::Beat>();
+                    bytes += v
+                        .beats
+                        .iter()
+                        .map(|b| b.notes.len() * size_of::<crate::Note>())
+                        .sum::<usize>();
+                }
+            }
+        }
+        bytes
+    }
+
+    /// Structural estimate of the heap bytes of the whole score (element sizes times
+    /// counts; strings and allocator overhead not included). Deterministic; used by FF-23.
+    pub fn heap_bytes(&self) -> usize {
+        use std::mem::size_of;
+        let mut bytes = self.master_bars.len() * size_of::<MasterBar>()
+            + self.tempo_map.len() * size_of::<TempoChange>();
+        for t in &self.tracks {
+            bytes += size_of::<Track>() + t.bars.len() * size_of::<Arc<BarContent>>();
+            for bar in &t.bars {
+                bytes += size_of::<BarContent>() + bar.voices.len() * size_of::<crate::Voice>();
+                for v in &bar.voices {
+                    bytes += v.beats.len() * size_of::<crate::Beat>();
+                    bytes += v
+                        .beats
+                        .iter()
+                        .map(|b| b.notes.len() * size_of::<crate::Note>())
+                        .sum::<usize>();
+                }
+            }
+        }
+        bytes
+    }
+
     pub(crate) fn allocate_id(&mut self) -> u64 {
         let id = self.next_id;
         self.next_id += 1;
