@@ -8,6 +8,7 @@ pub mod modularity;
 pub mod purity;
 pub mod reports;
 pub mod trailers;
+pub mod unsafe_scope;
 
 use std::path::Path;
 use std::process::Command;

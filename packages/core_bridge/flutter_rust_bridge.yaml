@@ -1,0 +1,5 @@
+# flutter_rust_bridge codegen 2.13.0 (pinned, ADR-005). FF-12 runs the generator and
+# fails if the output differs from the committed files.
+rust_input: crate::api
+rust_root: ../../crates/mc-ffi/
+dart_output: lib/src/generated

@@ -17,6 +17,7 @@ Amendments from S1 evidence:
 3. The Dart side depends on `freezed`, `freezed_annotation` and `build_runner`, because payload enums map to `freezed` sealed classes. These are Dart dev-time and runtime dependencies to include in the FF-09 Dart audit.
 4. CI preinstalls pinned `flutter_rust_bridge_codegen` and `cargo-expand`; frb otherwise installs `cargo-expand` unpinned.
 5. The playback cursor in Dart extrapolates position from tempo between stream updates, so an isolated late update (S1: one 56 ms gap in 10 minutes) does not stall the cursor.
+6. Phase 3 (2026-10-31): the generated Rust module contains `unsafe` blocks, which the workspace-wide `unsafe_code = "forbid"` rejects. Resolved by [ADR-022](ADR-022-unsafe-confined-to-generated-ffi.md): `mc-ffi` alone uses `deny`, with one `allow` on the generated module, checked by FF-34.
 
 ## Alternatives
 Direct typed calls only (polling); Protobuf messages over FFI; Protobuf or gRPC IPC; hand-written C ABI.

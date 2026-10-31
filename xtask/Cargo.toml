@@ -8,3 +8,7 @@ description = "Repository governance tooling: architecture fitness functions (do
 
 # Intentionally no dependencies: keeps the governance tool auditable and outside the license surface.
 [dependencies]
+
+# Workspace lints, including unsafe_code = "forbid" (ADR-022, FF-34).
+[lints]
+workspace = true

@@ -23,6 +23,8 @@ pub const IMPLEMENTED: &[&str] = &[
     "xtask:freshness",
     "xtask:coupling",
     "xtask:module-cycles",
+    "xtask:unsafe-scope",
+    "ci:bindings",
     "ci:complexity",
     "workflow:public-api",
     "workflow:coverage",
@@ -271,6 +273,7 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
             "xtask:rule-coverage" => Some((CI_WORKFLOW, "xtask fitness rule-coverage")),
             "xtask:coupling" => Some((CI_WORKFLOW, "xtask fitness coupling")),
             "xtask:module-cycles" => Some((CI_WORKFLOW, "xtask fitness module-cycles")),
+            "ci:bindings" => Some((CI_WORKFLOW, "flutter_rust_bridge_codegen generate")),
             _ => None,
         };
         if let Some((file, needle)) = required {
@@ -388,7 +391,7 @@ check = "xtask:trailers"
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
         let inv = parse(&read(root, INVENTORY).unwrap()).unwrap();
         let cat = catalogue_phases(&read(root, CATALOGUE).unwrap()).unwrap();
-        assert_eq!(cat.len(), 33);
+        assert_eq!(cat.len(), 34);
         let errs = consistency(&inv, &cat);
         assert!(errs.is_empty(), "{errs:?}");
     }

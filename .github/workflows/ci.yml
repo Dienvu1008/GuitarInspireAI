@@ -65,6 +65,54 @@ jobs:
           npm ci --no-audit --no-fund
           node check.mjs ../../docs
 
+  bridge:
+    # FF-12 (generated bindings in sync, ADR-005) and the Dart contract tests of
+    # packages/core_bridge against the fake and the real core.
+    runs-on: windows-latest
+    env:
+      FLUTTER_VERSION: 3.47.2
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pinned Rust toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+
+      - name: Install Flutter (pinned tag)
+        shell: pwsh
+        run: |
+          git clone --depth 1 --branch $env:FLUTTER_VERSION https://github.com/flutter/flutter.git "$env:RUNNER_TEMP\flutter"
+          "$env:RUNNER_TEMP\flutter\bin" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+          & "$env:RUNNER_TEMP\flutter\bin\flutter.bat" --version
+
+      - name: Install pinned codegen and cargo-expand (ADR-005 amendment 4)
+        run: |
+          cargo install flutter_rust_bridge_codegen --version 2.13.0 --locked
+          cargo install cargo-expand --version 1.0.127 --locked
+
+      - name: Fetch Dart packages
+        working-directory: packages/core_bridge
+        run: flutter pub get
+
+      - name: Generated bindings in sync (FF-12)
+        working-directory: packages/core_bridge
+        shell: pwsh
+        run: |
+          flutter_rust_bridge_codegen generate
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git diff --exit-code -- ../../crates/mc-ffi/src ../../packages/core_bridge/lib/src/generated
+          if ($LASTEXITCODE -ne 0) { Write-Error "FF-12: generated bindings differ from the committed files; run flutter_rust_bridge_codegen generate and commit"; exit 1 }
+
+      - name: Build the native library for the contract tests
+        run: cargo build -p mc-ffi --locked
+
+      - name: Dart analysis
+        working-directory: packages/core_bridge
+        run: dart analyze --fatal-infos
+
+      - name: Contract tests (fake and real core)
+        working-directory: packages/core_bridge
+        run: flutter test
+
   cargo-deny:
     # cargo-deny-action is a container action and needs a Linux runner.
     # Pinned image: ubuntu-latest migrates to Ubuntu 26 from 2026-10-19; move deliberately.

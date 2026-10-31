@@ -13,7 +13,7 @@ Related documents: [project-format.md](project-format.md), [data-architecture.md
 | SoundFont files | Malformed RIFF data in a third-party parser | Size limit, load on control thread, catch errors; fuzz rustysynth loader in Phase 4 [Proposed] |
 | Microphone | Privacy | Capture only while tuner is visible; never stored or transmitted in MVP; clear indicator in UI |
 | Dependencies | Supply chain, vulnerable crates | cargo-deny advisories and sources (FF-10), pinned lockfile, minimal features (for example zip deflate only) |
-| FFI boundary | Memory safety | Generated bindings only; no hand-written `unsafe` outside reviewed modules; panics converted to errors at the API boundary |
+| FFI boundary | Memory safety | `unsafe` only in the generated `mc-ffi` module (ADR-022): every other crate keeps `unsafe_code = "forbid"`, `mc-ffi` uses `deny` with a single `allow` on `mod frb_generated;`, and hand-written API code has no `unsafe` (FF-34). Generated code is never edited by hand (FF-12). Panics are converted to errors at the API boundary |
 | Autosave files | Data exposure on shared machines | Stored in per-user app data |
 
 ## 2. Privacy principles

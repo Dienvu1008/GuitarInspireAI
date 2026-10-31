@@ -74,7 +74,8 @@ check = "test:crates/mc-project/tests/roundtrip.rs#rt1_"
 [FF-12]
 name = "Generated bindings in sync"
 phase = 3
-status = "planned"
+status = "active"
+check = "ci:bindings"
 
 [FF-13]
 name = "Hard invariants under random command sequences"
@@ -195,3 +196,9 @@ name = "Documentation links and Mermaid diagrams valid"
 phase = 0
 status = "active"
 check = "xtask:docs-links"
+
+[FF-34]
+name = "Unsafe code confined to the generated FFI module (ADR-022)"
+phase = 3
+status = "active"
+check = "xtask:unsafe-scope"
