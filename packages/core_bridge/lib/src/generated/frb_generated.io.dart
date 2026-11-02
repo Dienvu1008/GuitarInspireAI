@@ -122,6 +122,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
+@protected List<RecoveryEntryDto> dco_decode_list_recovery_entry_dto(dynamic raw);
+
 @protected List<SystemDto> dco_decode_list_system_dto(dynamic raw);
 
 @protected List<TrackSummaryDto> dco_decode_list_track_summary_dto(dynamic raw);
@@ -141,6 +143,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 @protected int? dco_decode_opt_box_autoadd_u_8(dynamic raw);
 
 @protected OutcomeDto dco_decode_outcome_dto(dynamic raw);
+
+@protected RecoveryEntryDto dco_decode_recovery_entry_dto(dynamic raw);
 
 @protected SystemDto dco_decode_system_dto(dynamic raw);
 
@@ -252,6 +256,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
+@protected List<RecoveryEntryDto> sse_decode_list_recovery_entry_dto(SseDeserializer deserializer);
+
 @protected List<SystemDto> sse_decode_list_system_dto(SseDeserializer deserializer);
 
 @protected List<TrackSummaryDto> sse_decode_list_track_summary_dto(SseDeserializer deserializer);
@@ -271,6 +277,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 @protected int? sse_decode_opt_box_autoadd_u_8(SseDeserializer deserializer);
 
 @protected OutcomeDto sse_decode_outcome_dto(SseDeserializer deserializer);
+
+@protected RecoveryEntryDto sse_decode_recovery_entry_dto(SseDeserializer deserializer);
 
 @protected SystemDto sse_decode_system_dto(SseDeserializer deserializer);
 
@@ -382,6 +390,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
 
+@protected void sse_encode_list_recovery_entry_dto(List<RecoveryEntryDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_track_summary_dto(List<TrackSummaryDto> self, SseSerializer serializer);
@@ -401,6 +411,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 @protected void sse_encode_opt_box_autoadd_u_8(int? self, SseSerializer serializer);
 
 @protected void sse_encode_outcome_dto(OutcomeDto self, SseSerializer serializer);
+
+@protected void sse_encode_recovery_entry_dto(RecoveryEntryDto self, SseSerializer serializer);
 
 @protected void sse_encode_system_dto(SystemDto self, SseSerializer serializer);
 

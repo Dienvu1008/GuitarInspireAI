@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'document_service.dart';
+import 'generated/api/document.dart' show RecoveryEntryDto;
 import 'generated/api/layout.dart';
 import 'generated/api/types.dart';
 
@@ -17,13 +18,21 @@ final class FakeDocumentService implements DocumentService {
   FakeDocumentService({int bars = 4})
     : _state = _State(
         tracks: [
-          _Track(1, 'Guitar', _standard(), List.generate(bars, (_) => [<_Beat>[]])),
+          _Track(
+            1,
+            'Guitar',
+            _standard(),
+            List.generate(bars, (_) => [<_Beat>[]]),
+          ),
         ],
         bars: bars,
       );
 
-  static InstrumentDto _standard() =>
-      const InstrumentDto(tuning: ['E4', 'B3', 'G3', 'D3', 'A2', 'E2'], fretCount: 24, capo: 0);
+  static InstrumentDto _standard() => const InstrumentDto(
+    tuning: ['E4', 'B3', 'G3', 'D3', 'A2', 'E2'],
+    fretCount: 24,
+    capo: 0,
+  );
 
   _State _state;
   final List<_State> _undo = [];
@@ -35,7 +44,8 @@ final class FakeDocumentService implements DocumentService {
   int _nextCommand = 1;
   String? _location;
   _State? _saved;
-  final StreamController<EventDto> _events = StreamController<EventDto>.broadcast();
+  final StreamController<EventDto> _events =
+      StreamController<EventDto>.broadcast();
 
   bool get _dirty => !_state.sameAs(_saved);
 
@@ -71,7 +81,10 @@ final class FakeDocumentService implements DocumentService {
 
   List<_Beat> _voice(int track, int bar, int voice) {
     final t = _track(track);
-    if (bar < 0 || bar >= t.bars.length || voice < 0 || voice >= t.bars[bar].length) {
+    if (bar < 0 ||
+        bar >= t.bars.length ||
+        voice < 0 ||
+        voice >= t.bars[bar].length) {
       throw ApiError(rule: 'not-found', message: 'bar $bar, voice $voice');
     }
     return t.bars[bar][voice];
@@ -83,7 +96,11 @@ final class FakeDocumentService implements DocumentService {
   );
 
   @override
-  Future<OutcomeDto> execute(CommandDto command, {int? coalesceKey, int? expectedRevision}) async {
+  Future<OutcomeDto> execute(
+    CommandDto command, {
+    int? coalesceKey,
+    int? expectedRevision,
+  }) async {
     if (expectedRevision != null && expectedRevision != _revision) {
       throw ApiError(rule: 'E-01', message: 'stale revision');
     }
@@ -98,7 +115,10 @@ final class FakeDocumentService implements DocumentService {
       _state = previous;
       rethrow;
     }
-    final coalesce = coalesceKey != null && coalesceKey == _lastCoalesceKey && _undo.isNotEmpty;
+    final coalesce =
+        coalesceKey != null &&
+        coalesceKey == _lastCoalesceKey &&
+        _undo.isNotEmpty;
     if (!coalesce) _undo.add(before);
     _redo.clear();
     _lastCoalesceKey = coalesceKey;
@@ -119,7 +139,13 @@ final class FakeDocumentService implements DocumentService {
           throw ApiError(rule: 'E-04', message: 'beat index $index');
         }
         v.insert(index, _Beat(_nextId++, duration, []));
-        return [EventKindDto.barContentChanged(track: track, start: bar, end: bar + 1)];
+        return [
+          EventKindDto.barContentChanged(
+            track: track,
+            start: bar,
+            end: bar + 1,
+          ),
+        ];
       case CommandDto_RemoveBeat(:final beat):
         final b = _beat(beat);
         _voice(beat.track, beat.bar, beat.voice).remove(b);
@@ -162,7 +188,12 @@ final class FakeDocumentService implements DocumentService {
       case CommandDto_AddTrack(:final name, :final instrument):
         final id = _nextId++;
         _state.tracks.add(
-          _Track(id, name, instrument, List.generate(_state.bars, (_) => [<_Beat>[]])),
+          _Track(
+            id,
+            name,
+            instrument,
+            List.generate(_state.bars, (_) => [<_Beat>[]]),
+          ),
         );
         return [EventKindDto.trackAdded(track: id)];
       case CommandDto_RenameTrack(:final track, :final name):
@@ -185,14 +216,22 @@ final class FakeDocumentService implements DocumentService {
     }
   }
 
-  EventKindDto _changed(BeatAddressDto a) =>
-      EventKindDto.barContentChanged(track: a.track, start: a.bar, end: a.bar + 1);
+  EventKindDto _changed(BeatAddressDto a) => EventKindDto.barContentChanged(
+    track: a.track,
+    start: a.bar,
+    end: a.bar + 1,
+  );
 
   OutcomeDto _commit(List<EventKindDto> kinds, int? correlation) {
     _revision++;
     final events = [
       for (final k in kinds)
-        EventDto(seq: ++_seq, revision: _revision, correlation: correlation, kind: k),
+        EventDto(
+          seq: ++_seq,
+          revision: _revision,
+          correlation: correlation,
+          kind: k,
+        ),
     ];
     for (final e in events) {
       _events.add(e);
@@ -265,7 +304,12 @@ final class FakeDocumentService implements DocumentService {
         for (final n in beats[k].notes) {
           glyphs.add(
             GlyphDto(
-              kind: GlyphKindDto.fret(fret: n.fret, tied: n.tie, dead: n.dead, letRing: n.letRing),
+              kind: GlyphKindDto.fret(
+                fret: n.fret,
+                tied: n.tie,
+                dead: n.dead,
+                letRing: n.letRing,
+              ),
               x: x + w / 2,
               y: top + (n.string - 1) * metrics.stringSpacing,
               width: metrics.digitWidth,
@@ -274,13 +318,20 @@ final class FakeDocumentService implements DocumentService {
         }
         hitBeats.add(HitBeatDto(id: beats[k].id, bar: bar, voice: 0, index: k));
         for (var s = 1; s <= strings; s++) {
-          rects.addAll([x, top + (s - 1.5) * metrics.stringSpacing, w, metrics.stringSpacing]);
+          rects.addAll([
+            x,
+            top + (s - 1.5) * metrics.stringSpacing,
+            w,
+            metrics.stringSpacing,
+          ]);
           meta.addAll([bar, s, 0, hitBeats.length - 1]);
         }
         x += w;
       }
       x += beats.isEmpty ? metrics.emptyBarWidth : metrics.barPadding;
-      bars.add(BarLayoutDto(bar: bar, x: start, width: x - start, diagnostic: false));
+      bars.add(
+        BarLayoutDto(bar: bar, x: start, width: x - start, diagnostic: false),
+      );
     }
     final lines = <double>[];
     final kinds = <int>[];
@@ -289,7 +340,8 @@ final class FakeDocumentService implements DocumentService {
       lines.addAll([metrics.marginLeft, y, x, y]);
       kinds.add(LineKind.string);
     }
-    final height = top + (strings - 1) * metrics.stringSpacing + metrics.belowStaff;
+    final height =
+        top + (strings - 1) * metrics.stringSpacing + metrics.belowStaff;
     return TabLayoutDto(
       track: track,
       strings: strings,
@@ -317,6 +369,14 @@ final class FakeDocumentService implements DocumentService {
   Stream<EventDto> get events => _events.stream;
 
   @override
+  bool autosaveDue() => _dirty;
+
+  @override
+  Future<void> writeAutosave(String dir) async {
+    // No-op in the fake; just mark the autosave done.
+  }
+
+  @override
   void close() {
     unawaited(_events.close());
   }
@@ -327,7 +387,8 @@ final class FakeDocumentFactory implements DocumentFactory {
   final Map<String, FakeDocumentService> _files = {};
 
   @override
-  DocumentService create({int bars = 4}) => _Tracked(FakeDocumentService(bars: bars), _files);
+  DocumentService create({int bars = 4}) =>
+      _Tracked(FakeDocumentService(bars: bars), _files);
 
   @override
   Future<DocumentService> open(String path) async {
@@ -335,6 +396,15 @@ final class FakeDocumentFactory implements DocumentFactory {
     if (doc == null) throw ApiError(rule: 'open', message: 'no file $path');
     return doc;
   }
+
+  @override
+  List<RecoveryEntryDto> recoveryEntries(String dir) => [];
+
+  @override
+  Future<DocumentService> openFromRecovery(String path) => open(path);
+
+  @override
+  void discardRecovery(String path) {}
 }
 
 /// Remembers documents by save location so [FakeDocumentFactory.open] can return them.
@@ -354,8 +424,15 @@ final class _Tracked implements DocumentService {
   @override
   DocumentSummaryDto summary() => _inner.summary();
   @override
-  Future<OutcomeDto> execute(CommandDto command, {int? coalesceKey, int? expectedRevision}) =>
-      _inner.execute(command, coalesceKey: coalesceKey, expectedRevision: expectedRevision);
+  Future<OutcomeDto> execute(
+    CommandDto command, {
+    int? coalesceKey,
+    int? expectedRevision,
+  }) => _inner.execute(
+    command,
+    coalesceKey: coalesceKey,
+    expectedRevision: expectedRevision,
+  );
   @override
   Future<OutcomeDto> undo() => _inner.undo();
   @override
@@ -363,13 +440,19 @@ final class _Tracked implements DocumentService {
   @override
   Future<OutcomeDto> save() => _inner.save();
   @override
-  List<BeatDto> beats(int track, int bar, int voice) => _inner.beats(track, bar, voice);
+  List<BeatDto> beats(int track, int bar, int voice) =>
+      _inner.beats(track, bar, voice);
   @override
   int voiceCount(int track, int bar) => _inner.voiceCount(track, bar);
   @override
-  TabLayoutDto tabLayout(int track, MetricsDto metrics) => _inner.tabLayout(track, metrics);
+  TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
+      _inner.tabLayout(track, metrics);
   @override
   Stream<EventDto> get events => _inner.events;
+  @override
+  bool autosaveDue() => _inner.autosaveDue();
+  @override
+  Future<void> writeAutosave(String dir) => _inner.writeAutosave(dir);
   @override
   void close() => _inner.close();
 }
@@ -401,10 +484,13 @@ final class _State {
   final List<_Track> tracks;
   int bars;
 
-  _State copy() => _State(tracks: [for (final t in tracks) t.copy()], bars: bars);
+  _State copy() =>
+      _State(tracks: [for (final t in tracks) t.copy()], bars: bars);
 
   bool sameAs(_State? other) {
-    if (other == null || other.bars != bars || other.tracks.length != tracks.length) {
+    if (other == null ||
+        other.bars != bars ||
+        other.tracks.length != tracks.length) {
       return false;
     }
     for (var i = 0; i < tracks.length; i++) {
@@ -417,7 +503,8 @@ final class _State {
           final y = b.bars[bar][v];
           if (x.length != y.length) return false;
           for (var k = 0; k < x.length; k++) {
-            if (x[k].id != y[k].id || x[k].notes.toString() != y[k].notes.toString()) {
+            if (x[k].id != y[k].id ||
+                x[k].notes.toString() != y[k].notes.toString()) {
               return false;
             }
           }

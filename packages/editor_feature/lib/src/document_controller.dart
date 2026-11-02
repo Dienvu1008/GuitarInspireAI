@@ -16,6 +16,9 @@ final fileDialogsProvider = Provider<FileDialogs>(
   (ref) => const SystemFileDialogs(),
 );
 
+/// Per-user app data paths (recovery directory). Overridden in tests.
+final appPathsProvider = Provider<AppPaths>((ref) => const SystemAppPaths());
+
 /// What the editor shows. `summary` is re-read after every document event; the core
 /// remains the only owner of document state (ADR-002).
 final class EditorState {
@@ -122,6 +125,9 @@ final class DocumentController extends Notifier<EditorState> {
 
   void newDocument() =>
       _replace(ref.read(documentFactoryProvider).create(bars: 4));
+
+  /// Replaces the current document (used by recovery). Exposed for the recovery dialog.
+  void replace(DocumentService service) => _replace(service);
 
   Future<bool> open() async {
     final path = await ref.read(fileDialogsProvider).pickProjectToOpen();

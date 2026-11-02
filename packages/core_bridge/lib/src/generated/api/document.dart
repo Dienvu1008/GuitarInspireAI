@@ -11,7 +11,7 @@ import 'types.dart';
 
             // These functions are ignored because they are not marked as `pub`: `app_info`, `event_dto`, `lock`, `master_bar_dto`, `outcome_dto`, `summary_dto`, `to_command`, `with_session`, `wrap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DartEventSink`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `publish`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `publish`
 
 
             
@@ -19,7 +19,13 @@ import 'types.dart';
             
                 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>>
                 abstract class DocumentHandle implements RustOpaqueInterface {
-                    /// Beats of one voice of one bar, in order.
+                    /// Streams every event of this document to Dart. A second call replaces (and
+/// closes) the previous stream.
+/// True when the document is dirty and the autosave interval has passed.
+ bool  autosaveDue();
+
+
+/// Beats of one voice of one bar, in order.
  List<BeatDto>  beats({required PlatformInt64 track , required int bar , required int voice });
 
 
@@ -27,12 +33,26 @@ import 'types.dart';
 static DocumentHandle  create({required int bars })=>RustLib.instance.api.crateApiDocumentDocumentHandleCreate(bars: bars);
 
 
+/// Deletes a recovery file (called after the user dismisses or recovers it).
+static void  discardRecovery({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleDiscardRecovery(path: path);
+
+
 /// Applies one command. On error the document is unchanged.
  Future<OutcomeDto>  execute({required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision });
 
 
+/// Lists recovery files in `dir`. The app shows these on startup; choosing one
+/// opens it with `open_from_recovery`.
+static List<RecoveryEntryDto>  listRecoveryEntries({required String dir })=>RustLib.instance.api.crateApiDocumentDocumentHandleListRecoveryEntries(dir: dir);
+
+
 /// Opens a project file. Unknown content is reported in the summary, not an error.
 static Future<DocumentHandle>  open({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleOpen(path: path);
+
+
+/// Opens a recovery file by its path. The document's `location` is the original
+/// file path stored in the recovery entry.
+static Future<DocumentHandle>  openFromRecovery({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleOpenFromRecovery(path: path);
 
 
  Future<OutcomeDto>  redo();
@@ -45,8 +65,6 @@ static Future<DocumentHandle>  open({required String path })=>RustLib.instance.a
  Future<OutcomeDto>  saveAs({required String path });
 
 
-/// Streams every event of this document to Dart. A second call replaces (and
-/// closes) the previous stream.
  Stream<EventDto>  subscribeEvents();
 
 
@@ -68,8 +86,42 @@ static Future<DocumentHandle>  open({required String path })=>RustLib.instance.a
  int  voiceCount({required PlatformInt64 track , required int bar });
 
 
+/// Writes an autosave snapshot to `dir` (per-user app data). The recovery file
+/// stores the project id and the original file location, so the app can offer
+/// recovery on the next startup.
+ Future<void>  writeAutosave({required String dir });
+
+
 
                     
                 }
                 
+
+/// One recovery file found on startup.
+class RecoveryEntryDto  {
+                final String projectId;
+/// Original file path of the document (may not exist yet).
+final String path;
+/// Unix millis when the autosave was written.
+final PlatformInt64 timestamp;
+
+                const RecoveryEntryDto({required this.projectId ,required this.path ,required this.timestamp ,});
+
+
+
+
+
+        @override
+        int get hashCode => projectId.hashCode^path.hashCode^timestamp.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is RecoveryEntryDto &&
+                runtimeType == other.runtimeType
+                && projectId == other.projectId&& path == other.path&& timestamp == other.timestamp;
+
+            }
             

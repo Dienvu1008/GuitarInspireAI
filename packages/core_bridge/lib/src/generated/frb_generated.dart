@@ -72,7 +72,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
                   String get codegenVersion => '2.13.0';
 
                   @override
-                  int get rustContentHash => 664399570;
+                  int get rustContentHash => 1305172111;
 
                   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
                     stem: 'mc_ffi',
@@ -84,13 +84,21 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
                 
 
                 abstract class RustLibApi extends BaseApi {
-                  List<BeatDto> crateApiDocumentDocumentHandleBeats({required DocumentHandle that , required PlatformInt64 track , required int bar , required int voice });
+                  bool crateApiDocumentDocumentHandleAutosaveDue({required DocumentHandle that });
+
+List<BeatDto> crateApiDocumentDocumentHandleBeats({required DocumentHandle that , required PlatformInt64 track , required int bar , required int voice });
 
 DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars });
 
+void crateApiDocumentDocumentHandleDiscardRecovery({required String path });
+
 Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({required DocumentHandle that , required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision });
 
+List<RecoveryEntryDto> crateApiDocumentDocumentHandleListRecoveryEntries({required String dir });
+
 Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path });
+
+Future<DocumentHandle> crateApiDocumentDocumentHandleOpenFromRecovery({required String path });
 
 Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle that });
 
@@ -109,6 +117,8 @@ Future<OutcomeDto> crateApiDocumentDocumentHandleUndo({required DocumentHandle t
 void crateApiDocumentDocumentHandleUnsubscribeEvents({required DocumentHandle that });
 
 int crateApiDocumentDocumentHandleVoiceCount({required DocumentHandle that , required PlatformInt64 track , required int bar });
+
+Future<void> crateApiDocumentDocumentHandleWriteAutosave({required DocumentHandle that , required String dir });
 
 String crateApiInfoCoreVersion();
 
@@ -134,14 +144,39 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_DocumentHandlePtr;
                     required super.portManager,
                   });
 
-                  @override List<BeatDto> crateApiDocumentDocumentHandleBeats({required DocumentHandle that , required PlatformInt64 track , required int bar , required int voice })  { return handler.executeSync(SyncTask(
+                  @override bool crateApiDocumentDocumentHandleAutosaveDue({required DocumentHandle that })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleAutosaveDueConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleAutosaveDueConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_autosave_due",
+            argNames: ["that"],
+        );
+        
+
+@override List<BeatDto> crateApiDocumentDocumentHandleBeats({required DocumentHandle that , required PlatformInt64 track , required int bar , required int voice })  { return handler.executeSync(SyncTask(
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_u_32(bar, serializer);
 sse_encode_u_32(voice, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
             
             },
             codec: 
@@ -166,7 +201,7 @@ sse_encode_u_32(voice, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(bars, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
             
             },
             codec: 
@@ -187,6 +222,31 @@ sse_encode_u_32(voice, serializer);
         );
         
 
+@override void crateApiDocumentDocumentHandleDiscardRecovery({required String path })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleDiscardRecoveryConstMeta,
+            argValues: [path],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleDiscardRecoveryConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_discard_recovery",
+            argNames: ["path"],
+        );
+        
+
 @override Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({required DocumentHandle that , required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
@@ -194,7 +254,7 @@ sse_encode_u_32(voice, serializer);
 sse_encode_box_autoadd_command_dto(command, serializer);
 sse_encode_opt_box_autoadd_i_64(coalesceKey, serializer);
 sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
             
             },
             codec: 
@@ -215,11 +275,36 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
         );
         
 
+@override List<RecoveryEntryDto> crateApiDocumentDocumentHandleListRecoveryEntries({required String dir })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_list_recovery_entry_dto,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleListRecoveryEntriesConstMeta,
+            argValues: [dir],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleListRecoveryEntriesConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_list_recovery_entries",
+            argNames: ["dir"],
+        );
+        
+
 @override Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
             
             },
             codec: 
@@ -240,11 +325,36 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
         );
         
 
+@override Future<DocumentHandle> crateApiDocumentDocumentHandleOpenFromRecovery({required String path })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleOpenFromRecoveryConstMeta,
+            argValues: [path],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleOpenFromRecoveryConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_open_from_recovery",
+            argNames: ["path"],
+        );
+        
+
 @override Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle that })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
             
             },
             codec: 
@@ -269,7 +379,7 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
             
             },
             codec: 
@@ -295,7 +405,7 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_String(path, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
             
             },
             codec: 
@@ -323,7 +433,7 @@ sse_encode_String(path, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_StreamSink_event_dto_Sse(sink, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
             
             },
             codec: 
@@ -350,7 +460,7 @@ sse_encode_StreamSink_event_dto_Sse(sink, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
             
             },
             codec: 
@@ -377,7 +487,7 @@ sse_encode_StreamSink_event_dto_Sse(sink, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_box_autoadd_metrics_dto(metrics, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
             
             },
             codec: 
@@ -402,7 +512,7 @@ sse_encode_box_autoadd_metrics_dto(metrics, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15, port: port_);
             
             },
             codec: 
@@ -427,7 +537,7 @@ sse_encode_box_autoadd_metrics_dto(metrics, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16)!;
             
             },
             codec: 
@@ -454,7 +564,7 @@ sse_encode_box_autoadd_metrics_dto(metrics, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_u_32(bar, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17)!;
             
             },
             codec: 
@@ -475,11 +585,37 @@ sse_encode_u_32(bar, serializer);
         );
         
 
+@override Future<void> crateApiDocumentDocumentHandleWriteAutosave({required DocumentHandle that , required String dir })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_String(dir, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleWriteAutosaveConstMeta,
+            argValues: [that, dir],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleWriteAutosaveConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_write_autosave",
+            argNames: ["that", "dir"],
+        );
+        
+
 @override String crateApiInfoCoreVersion()  { return handler.executeSync(SyncTask(
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19)!;
             
             },
             codec: 
@@ -504,7 +640,7 @@ sse_encode_u_32(bar, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20)!;
             
             },
             codec: 
@@ -529,7 +665,7 @@ sse_encode_u_32(bar, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
             
             },
             codec: 
@@ -806,6 +942,9 @@ return dcoDecodeInt64List(raw); }
 @protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw as Uint8List; }
 
+@protected List<RecoveryEntryDto> dco_decode_list_recovery_entry_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_recovery_entry_dto).toList(); }
+
 @protected List<SystemDto> dco_decode_list_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_system_dto).toList(); }
 
@@ -871,6 +1010,13 @@ final arr = raw as List<dynamic>;
                 if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
                 return OutcomeDto(revision: dco_decode_i_64(arr[0]),
 events: dco_decode_list_event_dto(arr[1]),); }
+
+@protected RecoveryEntryDto dco_decode_recovery_entry_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return RecoveryEntryDto(projectId: dco_decode_String(arr[0]),
+path: dco_decode_String(arr[1]),
+timestamp: dco_decode_i_64(arr[2]),); }
 
 @protected SystemDto dco_decode_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -1253,6 +1399,14 @@ var len_ = sse_decode_i_32(deserializer);
 var len_ = sse_decode_i_32(deserializer);
                 return deserializer.buffer.getUint8List(len_); }
 
+@protected List<RecoveryEntryDto> sse_decode_list_recovery_entry_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <RecoveryEntryDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_recovery_entry_dto(deserializer)); }
+        return ans_;
+         }
+
 @protected List<SystemDto> sse_decode_list_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
         var len_ = sse_decode_i_32(deserializer);
@@ -1348,6 +1502,12 @@ return NoteDto(id: var_id, string: var_string, fret: var_fret, tie: var_tie, let
 var var_revision = sse_decode_i_64(deserializer);
 var var_events = sse_decode_list_event_dto(deserializer);
 return OutcomeDto(revision: var_revision, events: var_events); }
+
+@protected RecoveryEntryDto sse_decode_recovery_entry_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_projectId = sse_decode_String(deserializer);
+var var_path = sse_decode_String(deserializer);
+var var_timestamp = sse_decode_i_64(deserializer);
+return RecoveryEntryDto(projectId: var_projectId, path: var_path, timestamp: var_timestamp); }
 
 @protected SystemDto sse_decode_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_index = sse_decode_u_32(deserializer);
@@ -1682,6 +1842,10 @@ sse_encode_i_32(self.length, serializer);
 sse_encode_i_32(self.length, serializer);
                     serializer.buffer.putUint8List(self); }
 
+@protected void sse_encode_list_recovery_entry_dto(List<RecoveryEntryDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_recovery_entry_dto(item, serializer); } }
+
 @protected void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_system_dto(item, serializer); } }
@@ -1766,6 +1930,12 @@ sse_encode_i_64(self.revision, serializer);
 sse_encode_list_event_dto(self.events, serializer);
  }
 
+@protected void sse_encode_recovery_entry_dto(RecoveryEntryDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.projectId, serializer);
+sse_encode_String(self.path, serializer);
+sse_encode_i_64(self.timestamp, serializer);
+ }
+
 @protected void sse_encode_system_dto(SystemDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_u_32(self.index, serializer);
 sse_encode_f_32(self.y, serializer);
@@ -1828,7 +1998,13 @@ serializer.buffer.putBigUint64(self); }
                     rustArcDecrementStrongCountPtr: RustLib.instance.api.rust_arc_decrement_strong_count_DocumentHandlePtr,
                 );
 
-                /// Beats of one voice of one bar, in order.
+                /// Streams every event of this document to Dart. A second call replaces (and
+/// closes) the previous stream.
+/// True when the document is dirty and the autosave interval has passed.
+ bool  autosaveDue()=>RustLib.instance.api.crateApiDocumentDocumentHandleAutosaveDue(that: this, );
+
+
+/// Beats of one voice of one bar, in order.
  List<BeatDto>  beats({required PlatformInt64 track , required int bar , required int voice })=>RustLib.instance.api.crateApiDocumentDocumentHandleBeats(that: this, track: track, bar: bar, voice: voice);
 
 
@@ -1846,8 +2022,6 @@ serializer.buffer.putBigUint64(self); }
  Future<OutcomeDto>  saveAs({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleSaveAs(that: this, path: path);
 
 
-/// Streams every event of this document to Dart. A second call replaces (and
-/// closes) the previous stream.
  Stream<EventDto>  subscribeEvents()=>RustLib.instance.api.crateApiDocumentDocumentHandleSubscribeEvents(that: this, );
 
 
@@ -1867,6 +2041,12 @@ serializer.buffer.putBigUint64(self); }
 
 /// Number of voices in a bar of a track.
  int  voiceCount({required PlatformInt64 track , required int bar })=>RustLib.instance.api.crateApiDocumentDocumentHandleVoiceCount(that: this, track: track, bar: bar);
+
+
+/// Writes an autosave snapshot to `dir` (per-user app data). The recovery file
+/// stores the project id and the original file location, so the app can offer
+/// recovery on the next startup.
+ Future<void>  writeAutosave({required String dir })=>RustLib.instance.api.crateApiDocumentDocumentHandleWriteAutosave(that: this, dir: dir);
 
 
             }

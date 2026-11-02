@@ -6,6 +6,7 @@ export 'src/document_controller.dart'
     show
         DocumentController,
         EditorState,
+        appPathsProvider,
         documentFactoryProvider,
         editorProvider,
         fileDialogsProvider;

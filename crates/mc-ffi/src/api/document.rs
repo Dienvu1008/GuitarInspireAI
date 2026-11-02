@@ -8,6 +8,7 @@ use crate::api::types::*;
 use crate::frb_generated::StreamSink;
 use flutter_rust_bridge::frb;
 use mc_app::infra::{FsProjectStore, SystemClock, SystemEntropy, cleanup_temp_files};
+use mc_app::ports::RecoveryStore;
 use mc_app::types::{AppInfo, DiagnosticKind, DomainEvent, MasterBar, TimeSignature};
 use mc_app::{
     AppEvent, Command, CommandEnvelope, CommandOutcome, DocumentId, DocumentSession, EventEnvelope,
@@ -16,6 +17,16 @@ use mc_app::{
 use std::path::Path;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard};
+
+/// One recovery file found on startup.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RecoveryEntryDto {
+    pub project_id: String,
+    /// Original file path of the document (may not exist yet).
+    pub path: String,
+    /// Unix millis when the autosave was written.
+    pub timestamp: i64,
+}
 
 static NEXT_DOCUMENT: AtomicU64 = AtomicU64::new(1);
 
@@ -141,6 +152,80 @@ impl DocumentHandle {
 
     /// Streams every event of this document to Dart. A second call replaces (and
     /// closes) the previous stream.
+    /// True when the document is dirty and the autosave interval has passed.
+    #[frb(sync)]
+    pub fn autosave_due(&self) -> bool {
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_millis() as u64)
+            .unwrap_or(0);
+        self.lock().autosave_due(now)
+    }
+
+    /// Writes an autosave snapshot to `dir` (per-user app data). The recovery file
+    /// stores the project id and the original file location, so the app can offer
+    /// recovery on the next startup.
+    pub fn write_autosave(&self, dir: String) -> Result<(), ApiError> {
+        let mut s = self.lock();
+        let bytes = s.snapshot_bytes(&app_info());
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map(|d| d.as_millis() as u64)
+            .unwrap_or(0);
+        let recovery = mc_app::infra::FsRecoveryStore::new(dir);
+        recovery
+            .write_autosave(s.project_id(), s.location(), &bytes, now)
+            .map_err(|e| ApiError::new("autosave", e.to_string()))?;
+        s.mark_autosaved(now);
+        Ok(())
+    }
+
+    /// Lists recovery files in `dir`. The app shows these on startup; choosing one
+    /// opens it with `open_from_recovery`.
+    #[frb(sync)]
+    pub fn list_recovery_entries(dir: String) -> Vec<RecoveryEntryDto> {
+        let recovery = mc_app::infra::FsRecoveryStore::new(dir);
+        match recovery.list() {
+            Ok(entries) => entries
+                .into_iter()
+                .filter_map(|e| {
+                    let timestamp = std::fs::metadata(&e.path)
+                        .ok()
+                        .and_then(|m| m.modified().ok())
+                        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+                        .map(|d| d.as_millis() as i64)
+                        .unwrap_or(0);
+                    Some(RecoveryEntryDto {
+                        project_id: e.project_id,
+                        path: e.path.to_string_lossy().into_owned(),
+                        timestamp,
+                    })
+                })
+                .collect(),
+            Err(_) => Vec::new(),
+        }
+    }
+
+    /// Opens a recovery file by its path. The document's `location` is the original
+    /// file path stored in the recovery entry.
+    pub fn open_from_recovery(path: String) -> Result<DocumentHandle, ApiError> {
+        let bytes = std::fs::read(&path).map_err(|e| ApiError::new("open", e.to_string()))?;
+        let (session, _) = DocumentSession::from_bytes(
+            DocumentId(NEXT_DOCUMENT.fetch_add(1, Ordering::Relaxed)),
+            &bytes,
+            None,
+            SessionConfig::default(),
+            &SystemClock,
+        )?;
+        Ok(Self::wrap(session))
+    }
+
+    /// Deletes a recovery file (called after the user dismisses or recovers it).
+    #[frb(sync)]
+    pub fn discard_recovery(path: String) {
+        let _ = std::fs::remove_file(path);
+    }
+
     pub fn subscribe_events(&self, sink: StreamSink<EventDto>) {
         self.lock().set_sink(Box::new(DartEventSink(sink)));
     }

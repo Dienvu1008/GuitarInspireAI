@@ -4,6 +4,7 @@
 library;
 
 export 'src/document_service.dart';
+export 'src/generated/api/document.dart' show RecoveryEntryDto;
 export 'src/generated/api/layout.dart' hide defaultMetrics;
 export 'src/generated/api/types.dart';
 export 'src/rust_document_service.dart' show CoreBridge, RustDocumentService;

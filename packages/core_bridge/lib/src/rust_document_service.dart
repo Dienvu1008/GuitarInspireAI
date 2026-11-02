@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart' show ExternalLibrary;
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart'
+    show ExternalLibrary;
 
 import 'document_service.dart';
 import 'generated/api/document.dart';
@@ -17,7 +18,9 @@ abstract final class CoreBridge {
   static Future<void> init({String? libraryPath}) async {
     if (_initialized) return;
     await RustLib.init(
-      externalLibrary: libraryPath == null ? null : ExternalLibrary.open(libraryPath),
+      externalLibrary: libraryPath == null
+          ? null
+          : ExternalLibrary.open(libraryPath),
     );
     _initialized = true;
   }
@@ -35,6 +38,18 @@ final class _RustDocumentFactory implements DocumentFactory {
   @override
   Future<DocumentService> open(String path) async =>
       RustDocumentService._(await DocumentHandle.open(path: path));
+
+  @override
+  List<RecoveryEntryDto> recoveryEntries(String dir) =>
+      DocumentHandle.listRecoveryEntries(dir: dir);
+
+  @override
+  Future<DocumentService> openFromRecovery(String path) async =>
+      RustDocumentService._(await DocumentHandle.openFromRecovery(path: path));
+
+  @override
+  void discardRecovery(String path) =>
+      DocumentHandle.discardRecovery(path: path);
 }
 
 /// [DocumentService] backed by the Rust session in `mc-ffi`.
@@ -49,12 +64,15 @@ final class RustDocumentService implements DocumentService {
   DocumentSummaryDto summary() => _handle.summary();
 
   @override
-  Future<OutcomeDto> execute(CommandDto command, {int? coalesceKey, int? expectedRevision}) =>
-      _handle.execute(
-        command: command,
-        coalesceKey: coalesceKey,
-        expectedRevision: expectedRevision,
-      );
+  Future<OutcomeDto> execute(
+    CommandDto command, {
+    int? coalesceKey,
+    int? expectedRevision,
+  }) => _handle.execute(
+    command: command,
+    coalesceKey: coalesceKey,
+    expectedRevision: expectedRevision,
+  );
 
   @override
   Future<OutcomeDto> undo() => _handle.undo();
@@ -73,7 +91,8 @@ final class RustDocumentService implements DocumentService {
       _handle.beats(track: track, bar: bar, voice: voice);
 
   @override
-  int voiceCount(int track, int bar) => _handle.voiceCount(track: track, bar: bar);
+  int voiceCount(int track, int bar) =>
+      _handle.voiceCount(track: track, bar: bar);
 
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
@@ -91,6 +110,12 @@ final class RustDocumentService implements DocumentService {
     _source = _handle.subscribeEvents().listen(controller.add);
     return controller.stream;
   }
+
+  @override
+  bool autosaveDue() => _handle.autosaveDue();
+
+  @override
+  Future<void> writeAutosave(String dir) => _handle.writeAutosave(dir: dir);
 
   @override
   void close() {

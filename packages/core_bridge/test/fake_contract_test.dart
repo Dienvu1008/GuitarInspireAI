@@ -24,5 +24,9 @@ MetricsDto testMetrics() => const MetricsDto(
 );
 
 void main() {
-  documentServiceContract('fake', () async => FakeDocumentFactory(), testMetrics);
+  documentServiceContract(
+    'fake',
+    () async => FakeDocumentFactory(),
+    testMetrics,
+  );
 }
