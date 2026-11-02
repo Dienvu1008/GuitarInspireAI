@@ -100,6 +100,8 @@ jobs:
           # --no-dart-format: Dart SDK versions differ between machines and CI, which
           # makes `dart format` output non-deterministic for the diff check. The
           # generator output without formatting is deterministic for a given Rust API.
+          # To regenerate after changing the Rust API:
+          #   flutter_rust_bridge_codegen generate --no-dart-format
           flutter_rust_bridge_codegen generate --no-dart-format
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           git diff --exit-code -- ../../crates/mc-ffi/src ../../packages/core_bridge/lib/src/generated

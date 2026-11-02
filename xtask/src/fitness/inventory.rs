@@ -276,6 +276,8 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
             "xtask:module-cycles" => Some((CI_WORKFLOW, "xtask fitness module-cycles")),
             "ci:bindings" => Some((
                 CI_WORKFLOW,
+                // Note: --no-dart-format is required for deterministic output across
+                // Dart SDK versions (see FF-12 in fitness-functions.md).
                 "flutter_rust_bridge_codegen generate --no-dart-format",
             )),
             "ci:dart-fitness" => Some((CI_WORKFLOW, "app analysis and tests")),
