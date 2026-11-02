@@ -274,7 +274,10 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
             "xtask:rule-coverage" => Some((CI_WORKFLOW, "xtask fitness rule-coverage")),
             "xtask:coupling" => Some((CI_WORKFLOW, "xtask fitness coupling")),
             "xtask:module-cycles" => Some((CI_WORKFLOW, "xtask fitness module-cycles")),
-            "ci:bindings" => Some((CI_WORKFLOW, "flutter_rust_bridge_codegen generate")),
+            "ci:bindings" => Some((
+                CI_WORKFLOW,
+                "flutter_rust_bridge_codegen generate --no-dart-format",
+            )),
             "ci:dart-fitness" => Some((CI_WORKFLOW, "app analysis and tests")),
             _ => None,
         };

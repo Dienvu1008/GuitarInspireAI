@@ -5,56 +5,71 @@
 
 import '../frb_generated.dart';
 import 'layout.dart';
-
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-
 import 'types.dart';
 
-// These functions are ignored because they are not marked as `pub`: `app_info`, `event_dto`, `lock`, `master_bar_dto`, `outcome_dto`, `summary_dto`, `to_command`, `with_session`, `wrap`
+
+            // These functions are ignored because they are not marked as `pub`: `app_info`, `event_dto`, `lock`, `master_bar_dto`, `outcome_dto`, `summary_dto`, `to_command`, `with_session`, `wrap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DartEventSink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `fmt`, `publish`
 
-// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>>
-abstract class DocumentHandle implements RustOpaqueInterface {
-  /// Beats of one voice of one bar, in order.
-  List<BeatDto> beats({required PlatformInt64 track, required int bar, required int voice});
 
-  /// A new, unsaved document with one standard-guitar track and `bars` empty 4/4 bars.
-  static DocumentHandle create({required int bars}) =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleCreate(bars: bars);
+            
 
-  /// Applies one command. On error the document is unchanged.
-  Future<OutcomeDto> execute({
-    required CommandDto command,
-    PlatformInt64? coalesceKey,
-    PlatformInt64? expectedRevision,
-  });
+            
+                // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>>
+                abstract class DocumentHandle implements RustOpaqueInterface {
+                    /// Beats of one voice of one bar, in order.
+ List<BeatDto>  beats({required PlatformInt64 track , required int bar , required int voice });
 
-  /// Opens a project file. Unknown content is reported in the summary, not an error.
-  static Future<DocumentHandle> open({required String path}) =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleOpen(path: path);
 
-  Future<OutcomeDto> redo();
+/// A new, unsaved document with one standard-guitar track and `bars` empty 4/4 bars.
+static DocumentHandle  create({required int bars })=>RustLib.instance.api.crateApiDocumentDocumentHandleCreate(bars: bars);
 
-  /// Saves to the current location (refused with rule `U2` for unknown content).
-  Future<OutcomeDto> save();
 
-  Future<OutcomeDto> saveAs({required String path});
+/// Applies one command. On error the document is unchanged.
+ Future<OutcomeDto>  execute({required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision });
 
-  /// Streams every event of this document to Dart. A second call replaces (and
-  /// closes) the previous stream.
-  Stream<EventDto> subscribeEvents();
 
-  DocumentSummaryDto summary();
+/// Opens a project file. Unknown content is reported in the summary, not an error.
+static Future<DocumentHandle>  open({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleOpen(path: path);
 
-  /// TAB layout of a track at the current revision.
-  TabLayoutDto tabLayout({required PlatformInt64 track, required MetricsDto metrics});
 
-  Future<OutcomeDto> undo();
+ Future<OutcomeDto>  redo();
 
-  /// Closes the event stream (explicit unsubscribe, ADR-005 amendment 1).
-  void unsubscribeEvents();
 
-  /// Number of voices in a bar of a track.
-  int voiceCount({required PlatformInt64 track, required int bar});
-}
+/// Saves to the current location (refused with rule `U2` for unknown content).
+ Future<OutcomeDto>  save();
+
+
+ Future<OutcomeDto>  saveAs({required String path });
+
+
+/// Streams every event of this document to Dart. A second call replaces (and
+/// closes) the previous stream.
+ Stream<EventDto>  subscribeEvents();
+
+
+ DocumentSummaryDto  summary();
+
+
+/// TAB layout of a track at the current revision.
+ TabLayoutDto  tabLayout({required PlatformInt64 track , required MetricsDto metrics });
+
+
+ Future<OutcomeDto>  undo();
+
+
+/// Closes the event stream (explicit unsubscribe, ADR-005 amendment 1).
+ void  unsubscribeEvents();
+
+
+/// Number of voices in a bar of a track.
+ int  voiceCount({required PlatformInt64 track , required int bar });
+
+
+
+                    
+                }
+                
+            

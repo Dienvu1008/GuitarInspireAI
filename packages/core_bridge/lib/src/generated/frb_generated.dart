@@ -7,3048 +7,1866 @@ import 'api/document.dart';
 import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/types.dart';
-
 import 'dart:async';
 import 'dart:convert';
-
 import 'frb_generated.dart';
 import 'frb_generated.io.dart' if (dart.library.js_interop) 'frb_generated.web.dart';
-
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-/// Main entrypoint of the Rust API
-class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
-  @internal
-  static final instance = RustLib._();
 
-  RustLib._();
+                /// Main entrypoint of the Rust API
+                class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
+                  @internal
+                  static final instance = RustLib._();
 
-  /// Initialize flutter_rust_bridge
-  static Future<void> init({
-    RustLibApi? api,
-    BaseHandler? handler,
-    ExternalLibrary? externalLibrary,
-    bool forceSameCodegenVersion = true,
-  }) async {
-    await instance.initImpl(
-      api: api,
-      handler: handler,
-      externalLibrary: externalLibrary,
-      forceSameCodegenVersion: forceSameCodegenVersion,
-    );
-  }
+                  RustLib._();
 
-  /// Initialize flutter_rust_bridge in mock mode.
-  /// No libraries for FFI are loaded.
-  static void initMock({required RustLibApi api}) {
-    instance.initMockImpl(api: api);
-  }
+                  /// Initialize flutter_rust_bridge
+                  static Future<void> init({
+                    RustLibApi? api,
+                    BaseHandler? handler,
+                    ExternalLibrary? externalLibrary,
+                    bool forceSameCodegenVersion = true,
+                  }) async {
+                    await instance.initImpl(
+                      api: api,
+                      handler: handler,
+                      externalLibrary: externalLibrary,
+                      forceSameCodegenVersion: forceSameCodegenVersion,
+                    );
+                  }
 
-  /// Dispose flutter_rust_bridge
-  ///
-  /// The call to this function is optional, since flutter_rust_bridge (and everything else)
-  /// is automatically disposed when the app stops.
-  static void dispose() => instance.disposeImpl();
+                  /// Initialize flutter_rust_bridge in mock mode.
+                  /// No libraries for FFI are loaded.
+                  static void initMock({
+                    required RustLibApi api,
+                  }) {
+                    instance.initMockImpl(
+                      api: api,
+                    );
+                  }
 
-  @override
-  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor => RustLibApiImpl.new;
+                  /// Dispose flutter_rust_bridge
+                  ///
+                  /// The call to this function is optional, since flutter_rust_bridge (and everything else)
+                  /// is automatically disposed when the app stops.
+                  static void dispose() => instance.disposeImpl();
 
-  @override
-  WireConstructor<RustLibWire> get wireConstructor => RustLibWire.fromExternalLibrary;
+                  @override
+                  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor => RustLibApiImpl.new;
 
-  @override
-  Future<void> executeRustInitializers() async {
-    await api.crateApiInfoInitApp();
-  }
+                  @override
+                  WireConstructor<RustLibWire> get wireConstructor => RustLibWire.fromExternalLibrary;
 
-  @override
-  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig =>
-      kDefaultExternalLibraryLoaderConfig;
+                  @override
+                  Future<void> executeRustInitializers() async {
+                    await api.crateApiInfoInitApp();
 
-  @override
-  String get codegenVersion => '2.13.0';
+                    
+                  }
 
-  @override
-  int get rustContentHash => 664399570;
+                  @override
+                  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig => kDefaultExternalLibraryLoaderConfig;
 
-  static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
-    stem: 'mc_ffi',
-    ioDirectory: '../../crates/mc-ffi/target/release/',
-    webPrefix: 'pkg/',
-    wasmBindgenName: 'wasm_bindgen',
-  );
-}
+                  @override
+                  String get codegenVersion => '2.13.0';
 
-abstract class RustLibApi extends BaseApi {
-  List<BeatDto> crateApiDocumentDocumentHandleBeats({
-    required DocumentHandle that,
-    required PlatformInt64 track,
-    required int bar,
-    required int voice,
-  });
+                  @override
+                  int get rustContentHash => 664399570;
 
-  DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars});
+                  static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
+                    stem: 'mc_ffi',
+                    ioDirectory: '../../crates/mc-ffi/target/release/',
+                    webPrefix: 'pkg/',
+                    wasmBindgenName: 'wasm_bindgen',
+                  );
+                }
+                
 
-  Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({
-    required DocumentHandle that,
-    required CommandDto command,
-    PlatformInt64? coalesceKey,
-    PlatformInt64? expectedRevision,
-  });
+                abstract class RustLibApi extends BaseApi {
+                  List<BeatDto> crateApiDocumentDocumentHandleBeats({required DocumentHandle that , required PlatformInt64 track , required int bar , required int voice });
 
-  Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path});
+DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars });
 
-  Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle that});
+Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({required DocumentHandle that , required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision });
 
-  Future<OutcomeDto> crateApiDocumentDocumentHandleSave({required DocumentHandle that});
+Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path });
 
-  Future<OutcomeDto> crateApiDocumentDocumentHandleSaveAs({
-    required DocumentHandle that,
-    required String path,
-  });
+Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle that });
 
-  Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({required DocumentHandle that});
+Future<OutcomeDto> crateApiDocumentDocumentHandleSave({required DocumentHandle that });
 
-  DocumentSummaryDto crateApiDocumentDocumentHandleSummary({required DocumentHandle that});
+Future<OutcomeDto> crateApiDocumentDocumentHandleSaveAs({required DocumentHandle that , required String path });
 
-  TabLayoutDto crateApiDocumentDocumentHandleTabLayout({
-    required DocumentHandle that,
-    required PlatformInt64 track,
-    required MetricsDto metrics,
-  });
+Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({required DocumentHandle that });
 
-  Future<OutcomeDto> crateApiDocumentDocumentHandleUndo({required DocumentHandle that});
+DocumentSummaryDto crateApiDocumentDocumentHandleSummary({required DocumentHandle that });
 
-  void crateApiDocumentDocumentHandleUnsubscribeEvents({required DocumentHandle that});
+TabLayoutDto crateApiDocumentDocumentHandleTabLayout({required DocumentHandle that , required PlatformInt64 track , required MetricsDto metrics });
 
-  int crateApiDocumentDocumentHandleVoiceCount({
-    required DocumentHandle that,
-    required PlatformInt64 track,
-    required int bar,
-  });
+Future<OutcomeDto> crateApiDocumentDocumentHandleUndo({required DocumentHandle that });
 
-  String crateApiInfoCoreVersion();
+void crateApiDocumentDocumentHandleUnsubscribeEvents({required DocumentHandle that });
 
-  MetricsDto crateApiLayoutDefaultMetrics();
+int crateApiDocumentDocumentHandleVoiceCount({required DocumentHandle that , required PlatformInt64 track , required int bar });
 
-  Future<void> crateApiInfoInitApp();
+String crateApiInfoCoreVersion();
 
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_DocumentHandle;
+MetricsDto crateApiLayoutDefaultMetrics();
 
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_DocumentHandle;
+Future<void> crateApiInfoInitApp();
 
-  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_DocumentHandlePtr;
-}
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_DocumentHandle;
 
-class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
-  RustLibApiImpl({
-    required super.handler,
-    required super.wire,
-    required super.generalizedFrbRustBinding,
-    required super.portManager,
-  });
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_DocumentHandle;
 
-  @override
-  List<BeatDto> crateApiDocumentDocumentHandleBeats({
-    required DocumentHandle that,
-    required PlatformInt64 track,
-    required int bar,
-    required int voice,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          sse_encode_i_64(track, serializer);
-          sse_encode_u_32(bar, serializer);
-          sse_encode_u_32(voice, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
-        },
-        codec: SseCodec(
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_DocumentHandlePtr;
+
+
+                }
+                
+
+                class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
+                  RustLibApiImpl({
+                    required super.handler,
+                    required super.wire,
+                    required super.generalizedFrbRustBinding,
+                    required super.portManager,
+                  });
+
+                  @override List<BeatDto> crateApiDocumentDocumentHandleBeats({required DocumentHandle that , required PlatformInt64 track , required int bar , required int voice })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_i_64(track, serializer);
+sse_encode_u_32(bar, serializer);
+sse_encode_u_32(voice, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_list_beat_dto,
           decodeErrorData: sse_decode_api_error,
-        ),
-        constMeta: kCrateApiDocumentDocumentHandleBeatsConstMeta,
-        argValues: [that, track, bar, voice],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleBeatsConstMeta,
+            argValues: [that, track, bar, voice],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleBeatsConstMeta => const TaskConstMeta(
-    debugName: "DocumentHandle_beats",
-    argNames: ["that", "track", "bar", "voice"],
-  );
 
-  @override
-  DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_u_32(bars, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
-        },
-        codec: SseCodec(
-          decodeSuccessData:
-              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle,
+        TaskConstMeta get kCrateApiDocumentDocumentHandleBeatsConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_beats",
+            argNames: ["that", "track", "bar", "voice"],
+        );
+        
+
+@override DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(bars, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle,
           decodeErrorData: sse_decode_api_error,
-        ),
-        constMeta: kCrateApiDocumentDocumentHandleCreateConstMeta,
-        argValues: [bars],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleCreateConstMeta,
+            argValues: [bars],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleCreateConstMeta =>
-      const TaskConstMeta(debugName: "DocumentHandle_create", argNames: ["bars"]);
 
-  @override
-  Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({
-    required DocumentHandle that,
-    required CommandDto command,
-    PlatformInt64? coalesceKey,
-    PlatformInt64? expectedRevision,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          sse_encode_box_autoadd_command_dto(command, serializer);
-          sse_encode_opt_box_autoadd_i_64(coalesceKey, serializer);
-          sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiDocumentDocumentHandleCreateConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_create",
+            argNames: ["bars"],
+        );
+        
+
+@override Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({required DocumentHandle that , required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_box_autoadd_command_dto(command, serializer);
+sse_encode_opt_box_autoadd_i_64(coalesceKey, serializer);
+sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
           decodeErrorData: sse_decode_api_error,
-        ),
-        constMeta: kCrateApiDocumentDocumentHandleExecuteConstMeta,
-        argValues: [that, command, coalesceKey, expectedRevision],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleExecuteConstMeta,
+            argValues: [that, command, coalesceKey, expectedRevision],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleExecuteConstMeta => const TaskConstMeta(
-    debugName: "DocumentHandle_execute",
-    argNames: ["that", "command", "coalesceKey", "expectedRevision"],
-  );
 
-  @override
-  Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(path, serializer);
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
-        },
-        codec: SseCodec(
-          decodeSuccessData:
-              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle,
+        TaskConstMeta get kCrateApiDocumentDocumentHandleExecuteConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_execute",
+            argNames: ["that", "command", "coalesceKey", "expectedRevision"],
+        );
+        
+
+@override Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle,
           decodeErrorData: sse_decode_api_error,
-        ),
-        constMeta: kCrateApiDocumentDocumentHandleOpenConstMeta,
-        argValues: [path],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleOpenConstMeta,
+            argValues: [path],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleOpenConstMeta =>
-      const TaskConstMeta(debugName: "DocumentHandle_open", argNames: ["path"]);
 
-  @override
-  Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle that}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiDocumentDocumentHandleOpenConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_open",
+            argNames: ["path"],
+        );
+        
+
+@override Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle that })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
           decodeErrorData: sse_decode_api_error,
-        ),
-        constMeta: kCrateApiDocumentDocumentHandleRedoConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleRedoConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleRedoConstMeta =>
-      const TaskConstMeta(debugName: "DocumentHandle_redo", argNames: ["that"]);
 
-  @override
-  Future<OutcomeDto> crateApiDocumentDocumentHandleSave({required DocumentHandle that}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiDocumentDocumentHandleRedoConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_redo",
+            argNames: ["that"],
+        );
+        
+
+@override Future<OutcomeDto> crateApiDocumentDocumentHandleSave({required DocumentHandle that })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
           decodeErrorData: sse_decode_api_error,
-        ),
-        constMeta: kCrateApiDocumentDocumentHandleSaveConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleSaveConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleSaveConstMeta =>
-      const TaskConstMeta(debugName: "DocumentHandle_save", argNames: ["that"]);
 
-  @override
-  Future<OutcomeDto> crateApiDocumentDocumentHandleSaveAs({
-    required DocumentHandle that,
-    required String path,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          sse_encode_String(path, serializer);
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiDocumentDocumentHandleSaveConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_save",
+            argNames: ["that"],
+        );
+        
+
+@override Future<OutcomeDto> crateApiDocumentDocumentHandleSaveAs({required DocumentHandle that , required String path })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_String(path, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
           decodeErrorData: sse_decode_api_error,
-        ),
-        constMeta: kCrateApiDocumentDocumentHandleSaveAsConstMeta,
-        argValues: [that, path],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleSaveAsConstMeta,
+            argValues: [that, path],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleSaveAsConstMeta =>
-      const TaskConstMeta(debugName: "DocumentHandle_save_as", argNames: ["that", "path"]);
 
-  @override
-  Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({required DocumentHandle that}) {
-    final sink = RustStreamSink<EventDto>();
-    unawaited(
-      handler.executeNormal(
-        NormalTask(
-          callFfi: (port_) {
-            final serializer = SseSerializer(generalizedFrbRustBinding);
-            sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-              that,
-              serializer,
-            );
-            sse_encode_StreamSink_event_dto_Sse(sink, serializer);
+        TaskConstMeta get kCrateApiDocumentDocumentHandleSaveAsConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_save_as",
+            argNames: ["that", "path"],
+        );
+        
+
+@override Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({required DocumentHandle that })  { 
+            final sink = RustStreamSink<EventDto>();
+            unawaited(handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_StreamSink_event_dto_Sse(sink, serializer);
             pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
-          },
-          codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
-          constMeta: kCrateApiDocumentDocumentHandleSubscribeEventsConstMeta,
-          argValues: [that, sink],
-          apiImpl: this,
-        ),
-      ),
-    );
-    return sink.stream;
-  }
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleSubscribeEventsConstMeta,
+            argValues: [that, sink],
+            apiImpl: this,
+        )));
+            return sink.stream;
+             }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleSubscribeEventsConstMeta =>
-      const TaskConstMeta(debugName: "DocumentHandle_subscribe_events", argNames: ["that", "sink"]);
 
-  @override
-  DocumentSummaryDto crateApiDocumentDocumentHandleSummary({required DocumentHandle that}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
-        },
-        codec: SseCodec(decodeSuccessData: sse_decode_document_summary_dto, decodeErrorData: null),
-        constMeta: kCrateApiDocumentDocumentHandleSummaryConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
+        TaskConstMeta get kCrateApiDocumentDocumentHandleSubscribeEventsConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_subscribe_events",
+            argNames: ["that", "sink"],
+        );
+        
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleSummaryConstMeta =>
-      const TaskConstMeta(debugName: "DocumentHandle_summary", argNames: ["that"]);
+@override DocumentSummaryDto crateApiDocumentDocumentHandleSummary({required DocumentHandle that })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_document_summary_dto,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleSummaryConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
 
-  @override
-  TabLayoutDto crateApiDocumentDocumentHandleTabLayout({
-    required DocumentHandle that,
-    required PlatformInt64 track,
-    required MetricsDto metrics,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          sse_encode_i_64(track, serializer);
-          sse_encode_box_autoadd_metrics_dto(metrics, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
-        },
-        codec: SseCodec(
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleSummaryConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_summary",
+            argNames: ["that"],
+        );
+        
+
+@override TabLayoutDto crateApiDocumentDocumentHandleTabLayout({required DocumentHandle that , required PlatformInt64 track , required MetricsDto metrics })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_i_64(track, serializer);
+sse_encode_box_autoadd_metrics_dto(metrics, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_tab_layout_dto,
           decodeErrorData: sse_decode_api_error,
-        ),
-        constMeta: kCrateApiDocumentDocumentHandleTabLayoutConstMeta,
-        argValues: [that, track, metrics],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleTabLayoutConstMeta,
+            argValues: [that, track, metrics],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleTabLayoutConstMeta => const TaskConstMeta(
-    debugName: "DocumentHandle_tab_layout",
-    argNames: ["that", "track", "metrics"],
-  );
 
-  @override
-  Future<OutcomeDto> crateApiDocumentDocumentHandleUndo({required DocumentHandle that}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
-        },
-        codec: SseCodec(
+        TaskConstMeta get kCrateApiDocumentDocumentHandleTabLayoutConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_tab_layout",
+            argNames: ["that", "track", "metrics"],
+        );
+        
+
+@override Future<OutcomeDto> crateApiDocumentDocumentHandleUndo({required DocumentHandle that })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
           decodeErrorData: sse_decode_api_error,
-        ),
-        constMeta: kCrateApiDocumentDocumentHandleUndoConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleUndoConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleUndoConstMeta =>
-      const TaskConstMeta(debugName: "DocumentHandle_undo", argNames: ["that"]);
 
-  @override
-  void crateApiDocumentDocumentHandleUnsubscribeEvents({required DocumentHandle that}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
-        },
-        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
-        constMeta: kCrateApiDocumentDocumentHandleUnsubscribeEventsConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiDocumentDocumentHandleUnsubscribeEventsConstMeta =>
-      const TaskConstMeta(debugName: "DocumentHandle_unsubscribe_events", argNames: ["that"]);
-
-  @override
-  int crateApiDocumentDocumentHandleVoiceCount({
-    required DocumentHandle that,
-    required PlatformInt64 track,
-    required int bar,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-            that,
-            serializer,
-          );
-          sse_encode_i_64(track, serializer);
-          sse_encode_u_32(bar, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
-        },
-        codec: SseCodec(decodeSuccessData: sse_decode_u_32, decodeErrorData: null),
-        constMeta: kCrateApiDocumentDocumentHandleVoiceCountConstMeta,
-        argValues: [that, track, bar],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiDocumentDocumentHandleVoiceCountConstMeta => const TaskConstMeta(
-    debugName: "DocumentHandle_voice_count",
-    argNames: ["that", "track", "bar"],
-  );
-
-  @override
-  String crateApiInfoCoreVersion() {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
-        },
-        codec: SseCodec(decodeSuccessData: sse_decode_String, decodeErrorData: null),
-        constMeta: kCrateApiInfoCoreVersionConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiInfoCoreVersionConstMeta =>
-      const TaskConstMeta(debugName: "core_version", argNames: []);
-
-  @override
-  MetricsDto crateApiLayoutDefaultMetrics() {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
-        },
-        codec: SseCodec(decodeSuccessData: sse_decode_metrics_dto, decodeErrorData: null),
-        constMeta: kCrateApiLayoutDefaultMetricsConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiLayoutDefaultMetricsConstMeta =>
-      const TaskConstMeta(debugName: "default_metrics", argNames: []);
-
-  @override
-  Future<void> crateApiInfoInitApp() {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
-        },
-        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
-        constMeta: kCrateApiInfoInitAppConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiInfoInitAppConstMeta =>
-      const TaskConstMeta(debugName: "init_app", argNames: []);
-
-  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_DocumentHandle => wire
-      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle;
-
-  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_DocumentHandle => wire
-      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle;
-
-  @protected
-  AnyhowException dco_decode_AnyhowException(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return AnyhowException(raw as String);
-  }
-
-  @protected
-  DocumentHandle
-  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return DocumentHandleImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  DocumentHandle
-  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return DocumentHandleImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  DocumentHandle
-  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return DocumentHandleImpl.frbInternalDcoDecode(raw as List<dynamic>);
-  }
-
-  @protected
-  RustStreamSink<EventDto> dco_decode_StreamSink_event_dto_Sse(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    throw UnimplementedError();
-  }
-
-  @protected
-  String dco_decode_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as String;
-  }
-
-  @protected
-  ApiError dco_decode_api_error(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return ApiError(rule: dco_decode_String(arr[0]), message: dco_decode_String(arr[1]));
-  }
-
-  @protected
-  BarLayoutDto dco_decode_bar_layout_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return BarLayoutDto(
-      bar: dco_decode_u_32(arr[0]),
-      x: dco_decode_f_32(arr[1]),
-      width: dco_decode_f_32(arr[2]),
-      diagnostic: dco_decode_bool(arr[3]),
-    );
-  }
-
-  @protected
-  BeatAddressDto dco_decode_beat_address_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return BeatAddressDto(
-      track: dco_decode_i_64(arr[0]),
-      bar: dco_decode_u_32(arr[1]),
-      voice: dco_decode_u_32(arr[2]),
-      beat: dco_decode_i_64(arr[3]),
-    );
-  }
-
-  @protected
-  BeatDto dco_decode_beat_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-    return BeatDto(
-      id: dco_decode_i_64(arr[0]),
-      duration: dco_decode_duration_dto(arr[1]),
-      notes: dco_decode_list_note_dto(arr[2]),
-    );
-  }
-
-  @protected
-  bool dco_decode_bool(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as bool;
-  }
-
-  @protected
-  BeatAddressDto dco_decode_box_autoadd_beat_address_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_beat_address_dto(raw);
-  }
-
-  @protected
-  CommandDto dco_decode_box_autoadd_command_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_command_dto(raw);
-  }
-
-  @protected
-  DurationDto dco_decode_box_autoadd_duration_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_duration_dto(raw);
-  }
-
-  @protected
-  PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_i_64(raw);
-  }
-
-  @protected
-  InstrumentDto dco_decode_box_autoadd_instrument_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_instrument_dto(raw);
-  }
-
-  @protected
-  MasterBarDto dco_decode_box_autoadd_master_bar_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_master_bar_dto(raw);
-  }
-
-  @protected
-  MetricsDto dco_decode_box_autoadd_metrics_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_metrics_dto(raw);
-  }
-
-  @protected
-  TupletDto dco_decode_box_autoadd_tuplet_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_tuplet_dto(raw);
-  }
-
-  @protected
-  int dco_decode_box_autoadd_u_8(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
-
-  @protected
-  CommandDto dco_decode_command_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    switch (raw[0]) {
-      case 0:
-        return CommandDto_InsertMasterBars(
-          at: dco_decode_u_32(raw[1]),
-          count: dco_decode_u_32(raw[2]),
+        TaskConstMeta get kCrateApiDocumentDocumentHandleUndoConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_undo",
+            argNames: ["that"],
         );
-      case 1:
-        return CommandDto_RemoveMasterBars(
-          at: dco_decode_u_32(raw[1]),
-          count: dco_decode_u_32(raw[2]),
+        
+
+@override void crateApiDocumentDocumentHandleUnsubscribeEvents({required DocumentHandle that })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleUnsubscribeEventsConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleUnsubscribeEventsConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_unsubscribe_events",
+            argNames: ["that"],
         );
-      case 2:
-        return CommandDto_SetMasterBar(
-          index: dco_decode_u_32(raw[1]),
-          bar: dco_decode_box_autoadd_master_bar_dto(raw[2]),
+        
+
+@override int crateApiDocumentDocumentHandleVoiceCount({required DocumentHandle that , required PlatformInt64 track , required int bar })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_i_64(track, serializer);
+sse_encode_u_32(bar, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_u_32,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleVoiceCountConstMeta,
+            argValues: [that, track, bar],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleVoiceCountConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_voice_count",
+            argNames: ["that", "track", "bar"],
         );
-      case 3:
-        return CommandDto_SetTempo(
-          bar: dco_decode_u_32(raw[1]),
-          offsetNum: dco_decode_i_64(raw[2]),
-          offsetDen: dco_decode_i_64(raw[3]),
-          bpm: dco_decode_u_32(raw[4]),
+        
+
+@override String crateApiInfoCoreVersion()  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiInfoCoreVersionConstMeta,
+            argValues: [],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiInfoCoreVersionConstMeta => const TaskConstMeta(
+            debugName: "core_version",
+            argNames: [],
         );
-      case 4:
-        return CommandDto_RemoveTempo(
-          bar: dco_decode_u_32(raw[1]),
-          offsetNum: dco_decode_i_64(raw[2]),
-          offsetDen: dco_decode_i_64(raw[3]),
+        
+
+@override MetricsDto crateApiLayoutDefaultMetrics()  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_metrics_dto,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiLayoutDefaultMetricsConstMeta,
+            argValues: [],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiLayoutDefaultMetricsConstMeta => const TaskConstMeta(
+            debugName: "default_metrics",
+            argNames: [],
         );
-      case 5:
-        return CommandDto_InsertBeat(
-          track: dco_decode_i_64(raw[1]),
-          bar: dco_decode_u_32(raw[2]),
-          voice: dco_decode_u_32(raw[3]),
-          index: dco_decode_u_32(raw[4]),
-          duration: dco_decode_box_autoadd_duration_dto(raw[5]),
+        
+
+@override Future<void> crateApiInfoInitApp()  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiInfoInitAppConstMeta,
+            argValues: [],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiInfoInitAppConstMeta => const TaskConstMeta(
+            debugName: "init_app",
+            argNames: [],
         );
-      case 6:
-        return CommandDto_RemoveBeat(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]));
-      case 7:
-        return CommandDto_SetBeatDuration(
-          beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),
-          duration: dco_decode_box_autoadd_duration_dto(raw[2]),
-        );
-      case 8:
-        return CommandDto_SetNote(
-          beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),
-          string: dco_decode_u_8(raw[2]),
-          fret: dco_decode_u_8(raw[3]),
-        );
-      case 9:
-        return CommandDto_RemoveNote(
-          beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),
-          note: dco_decode_i_64(raw[2]),
-        );
-      case 10:
-        return CommandDto_SetTie(
-          beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),
-          note: dco_decode_i_64(raw[2]),
-          tie: dco_decode_bool(raw[3]),
-        );
-      case 11:
-        return CommandDto_SetNoteEffects(
-          beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),
-          note: dco_decode_i_64(raw[2]),
-          letRing: dco_decode_bool(raw[3]),
-          dead: dco_decode_bool(raw[4]),
-        );
-      case 12:
-        return CommandDto_AddVoice(track: dco_decode_i_64(raw[1]), bar: dco_decode_u_32(raw[2]));
-      case 13:
-        return CommandDto_RemoveVoice(
-          track: dco_decode_i_64(raw[1]),
-          bar: dco_decode_u_32(raw[2]),
-          voice: dco_decode_u_32(raw[3]),
-        );
-      case 14:
-        return CommandDto_ShiftFrets(
-          track: dco_decode_i_64(raw[1]),
-          fromBar: dco_decode_u_32(raw[2]),
-          toBar: dco_decode_u_32(raw[3]),
-          delta: dco_decode_i_16(raw[4]),
-        );
-      case 15:
-        return CommandDto_AddTrack(
-          name: dco_decode_String(raw[1]),
-          instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),
-        );
-      case 16:
-        return CommandDto_RemoveTrack(track: dco_decode_i_64(raw[1]));
-      case 17:
-        return CommandDto_RenameTrack(
-          track: dco_decode_i_64(raw[1]),
-          name: dco_decode_String(raw[2]),
-        );
-      case 18:
-        return CommandDto_SetInstrument(
-          track: dco_decode_i_64(raw[1]),
-          instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),
-        );
-      case 19:
-        return CommandDto_MoveTrack(track: dco_decode_i_64(raw[1]), to: dco_decode_u_32(raw[2]));
-      case 20:
-        return CommandDto_Retune(
-          track: dco_decode_i_64(raw[1]),
-          instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),
-          keepPitches: dco_decode_bool(raw[3]),
-        );
-      default:
-        throw Exception("unreachable");
-    }
-  }
-
-  @protected
-  DiagnosticDto dco_decode_diagnostic_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
-    return DiagnosticDto(
-      rule: dco_decode_String(arr[0]),
-      track: dco_decode_i_64(arr[1]),
-      bar: dco_decode_u_32(arr[2]),
-      voice: dco_decode_u_32(arr[3]),
-      kind: dco_decode_String(arr[4]),
-    );
-  }
-
-  @protected
-  DocumentSummaryDto dco_decode_document_summary_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
-    return DocumentSummaryDto(
-      revision: dco_decode_i_64(arr[0]),
-      dirty: dco_decode_bool(arr[1]),
-      canUndo: dco_decode_bool(arr[2]),
-      canRedo: dco_decode_bool(arr[3]),
-      location: dco_decode_opt_String(arr[4]),
-      unknownContent: dco_decode_list_String(arr[5]),
-      tracks: dco_decode_list_track_summary_dto(arr[6]),
-      masterBars: dco_decode_list_master_bar_dto(arr[7]),
-      diagnostics: dco_decode_list_diagnostic_dto(arr[8]),
-    );
-  }
-
-  @protected
-  DurationDto dco_decode_duration_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-    return DurationDto(
-      base: dco_decode_u_8(arr[0]),
-      dots: dco_decode_u_8(arr[1]),
-      tuplet: dco_decode_opt_box_autoadd_tuplet_dto(arr[2]),
-    );
-  }
-
-  @protected
-  EventDto dco_decode_event_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return EventDto(
-      seq: dco_decode_i_64(arr[0]),
-      revision: dco_decode_i_64(arr[1]),
-      correlation: dco_decode_opt_box_autoadd_i_64(arr[2]),
-      kind: dco_decode_event_kind_dto(arr[3]),
-    );
-  }
-
-  @protected
-  EventKindDto dco_decode_event_kind_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    switch (raw[0]) {
-      case 0:
-        return EventKindDto_TrackAdded(track: dco_decode_i_64(raw[1]));
-      case 1:
-        return EventKindDto_TrackRemoved(track: dco_decode_i_64(raw[1]));
-      case 2:
-        return EventKindDto_TrackChanged(track: dco_decode_i_64(raw[1]));
-      case 3:
-        return EventKindDto_TracksReordered();
-      case 4:
-        return EventKindDto_MasterBarsInserted(
-          at: dco_decode_u_32(raw[1]),
-          count: dco_decode_u_32(raw[2]),
-        );
-      case 5:
-        return EventKindDto_MasterBarsRemoved(
-          at: dco_decode_u_32(raw[1]),
-          count: dco_decode_u_32(raw[2]),
-        );
-      case 6:
-        return EventKindDto_MasterBarsChanged(
-          start: dco_decode_u_32(raw[1]),
-          end: dco_decode_u_32(raw[2]),
-        );
-      case 7:
-        return EventKindDto_BarContentChanged(
-          track: dco_decode_i_64(raw[1]),
-          start: dco_decode_u_32(raw[2]),
-          end: dco_decode_u_32(raw[3]),
-        );
-      case 8:
-        return EventKindDto_TempoMapChanged();
-      case 9:
-        return EventKindDto_TiesRemoved(
-          track: dco_decode_i_64(raw[1]),
-          notes: dco_decode_list_prim_i_64_strict(raw[2]),
-        );
-      case 10:
-        return EventKindDto_DocumentSaved();
-      case 11:
-        return EventKindDto_DirtyChanged(dirty: dco_decode_bool(raw[1]));
-      case 12:
-        return EventKindDto_UndoAvailabilityChanged(
-          canUndo: dco_decode_bool(raw[1]),
-          canRedo: dco_decode_bool(raw[2]),
-        );
-      case 13:
-        return EventKindDto_HistoryApplied();
-      default:
-        throw Exception("unreachable");
-    }
-  }
-
-  @protected
-  double dco_decode_f_32(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as double;
-  }
-
-  @protected
-  GlyphDto dco_decode_glyph_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return GlyphDto(
-      kind: dco_decode_glyph_kind_dto(arr[0]),
-      x: dco_decode_f_32(arr[1]),
-      y: dco_decode_f_32(arr[2]),
-      width: dco_decode_f_32(arr[3]),
-    );
-  }
-
-  @protected
-  GlyphKindDto dco_decode_glyph_kind_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    switch (raw[0]) {
-      case 0:
-        return GlyphKindDto_Fret(
-          fret: dco_decode_u_8(raw[1]),
-          tied: dco_decode_bool(raw[2]),
-          dead: dco_decode_bool(raw[3]),
-          letRing: dco_decode_bool(raw[4]),
-        );
-      case 1:
-        return GlyphKindDto_Rest(exponent: dco_decode_u_8(raw[1]), dots: dco_decode_u_8(raw[2]));
-      case 2:
-        return GlyphKindDto_Dot();
-      case 3:
-        return GlyphKindDto_Tuplet(actual: dco_decode_u_8(raw[1]));
-      case 4:
-        return GlyphKindDto_TimeSignature(
-          numerator: dco_decode_u_8(raw[1]),
-          denominator: dco_decode_u_8(raw[2]),
-        );
-      case 5:
-        return GlyphKindDto_RepeatDots();
-      case 6:
-        return GlyphKindDto_RepeatCount(count: dco_decode_u_8(raw[1]));
-      case 7:
-        return GlyphKindDto_Volta(endings: dco_decode_list_prim_u_8_strict(raw[1]));
-      case 8:
-        return GlyphKindDto_Marker(text: dco_decode_String(raw[1]));
-      case 9:
-        return GlyphKindDto_BarNumber(number: dco_decode_u_32(raw[1]));
-      case 10:
-        return GlyphKindDto_TabClef();
-      case 11:
-        return GlyphKindDto_StringName(
-          string: dco_decode_u_8(raw[1]),
-          name: dco_decode_String(raw[2]),
-        );
-      default:
-        throw Exception("unreachable");
-    }
-  }
-
-  @protected
-  HitBeatDto dco_decode_hit_beat_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return HitBeatDto(
-      id: dco_decode_i_64(arr[0]),
-      bar: dco_decode_u_32(arr[1]),
-      voice: dco_decode_u_32(arr[2]),
-      index: dco_decode_u_32(arr[3]),
-    );
-  }
-
-  @protected
-  int dco_decode_i_16(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
-
-  @protected
-  int dco_decode_i_32(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
-
-  @protected
-  PlatformInt64 dco_decode_i_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeI64(raw);
-  }
-
-  @protected
-  InstrumentDto dco_decode_instrument_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-    return InstrumentDto(
-      tuning: dco_decode_list_String(arr[0]),
-      fretCount: dco_decode_u_8(arr[1]),
-      capo: dco_decode_u_8(arr[2]),
-    );
-  }
-
-  @protected
-  List<String> dco_decode_list_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_String).toList();
-  }
-
-  @protected
-  List<BarLayoutDto> dco_decode_list_bar_layout_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_bar_layout_dto).toList();
-  }
-
-  @protected
-  List<BeatDto> dco_decode_list_beat_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_beat_dto).toList();
-  }
-
-  @protected
-  List<DiagnosticDto> dco_decode_list_diagnostic_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_diagnostic_dto).toList();
-  }
-
-  @protected
-  List<EventDto> dco_decode_list_event_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_event_dto).toList();
-  }
-
-  @protected
-  List<GlyphDto> dco_decode_list_glyph_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_glyph_dto).toList();
-  }
-
-  @protected
-  List<HitBeatDto> dco_decode_list_hit_beat_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_hit_beat_dto).toList();
-  }
-
-  @protected
-  List<MasterBarDto> dco_decode_list_master_bar_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_master_bar_dto).toList();
-  }
-
-  @protected
-  List<NoteDto> dco_decode_list_note_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_note_dto).toList();
-  }
-
-  @protected
-  Float32List dco_decode_list_prim_f_32_strict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as Float32List;
-  }
-
-  @protected
-  Int32List dco_decode_list_prim_i_32_strict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as Int32List;
-  }
-
-  @protected
-  Int64List dco_decode_list_prim_i_64_strict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeInt64List(raw);
-  }
-
-  @protected
-  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as Uint8List;
-  }
-
-  @protected
-  List<SystemDto> dco_decode_list_system_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_system_dto).toList();
-  }
-
-  @protected
-  List<TrackSummaryDto> dco_decode_list_track_summary_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return (raw as List<dynamic>).map(dco_decode_track_summary_dto).toList();
-  }
-
-  @protected
-  MasterBarDto dco_decode_master_bar_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 7) throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
-    return MasterBarDto(
-      numerator: dco_decode_u_8(arr[0]),
-      denominator: dco_decode_u_8(arr[1]),
-      pickup: dco_decode_bool(arr[2]),
-      repeatStart: dco_decode_bool(arr[3]),
-      repeatEnd: dco_decode_opt_box_autoadd_u_8(arr[4]),
-      alternateEndings: dco_decode_list_prim_u_8_strict(arr[5]),
-      marker: dco_decode_opt_String(arr[6]),
-    );
-  }
-
-  @protected
-  MetricsDto dco_decode_metrics_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 17) throw Exception('unexpected arr length: expect 17 but see ${arr.length}');
-    return MetricsDto(
-      width: dco_decode_f_32(arr[0]),
-      marginLeft: dco_decode_f_32(arr[1]),
-      marginRight: dco_decode_f_32(arr[2]),
-      stringSpacing: dco_decode_f_32(arr[3]),
-      digitWidth: dco_decode_f_32(arr[4]),
-      glyphPadding: dco_decode_f_32(arr[5]),
-      minColumnWidth: dco_decode_f_32(arr[6]),
-      durationSpacing: dco_decode_f_32(arr[7]),
-      barPadding: dco_decode_f_32(arr[8]),
-      emptyBarWidth: dco_decode_f_32(arr[9]),
-      headerWidth: dco_decode_f_32(arr[10]),
-      timeSignatureWidth: dco_decode_f_32(arr[11]),
-      repeatWidth: dco_decode_f_32(arr[12]),
-      aboveStaff: dco_decode_f_32(arr[13]),
-      belowStaff: dco_decode_f_32(arr[14]),
-      systemGap: dco_decode_f_32(arr[15]),
-      stemLength: dco_decode_f_32(arr[16]),
-    );
-  }
-
-  @protected
-  NoteDto dco_decode_note_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
-    return NoteDto(
-      id: dco_decode_i_64(arr[0]),
-      string: dco_decode_u_8(arr[1]),
-      fret: dco_decode_u_8(arr[2]),
-      tie: dco_decode_bool(arr[3]),
-      letRing: dco_decode_bool(arr[4]),
-      dead: dco_decode_bool(arr[5]),
-    );
-  }
-
-  @protected
-  String? dco_decode_opt_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_String(raw);
-  }
-
-  @protected
-  PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_i_64(raw);
-  }
-
-  @protected
-  TupletDto? dco_decode_opt_box_autoadd_tuplet_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_tuplet_dto(raw);
-  }
-
-  @protected
-  int? dco_decode_opt_box_autoadd_u_8(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_u_8(raw);
-  }
-
-  @protected
-  OutcomeDto dco_decode_outcome_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return OutcomeDto(revision: dco_decode_i_64(arr[0]), events: dco_decode_list_event_dto(arr[1]));
-  }
-
-  @protected
-  SystemDto dco_decode_system_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 11) throw Exception('unexpected arr length: expect 11 but see ${arr.length}');
-    return SystemDto(
-      index: dco_decode_u_32(arr[0]),
-      y: dco_decode_f_32(arr[1]),
-      height: dco_decode_f_32(arr[2]),
-      staffTop: dco_decode_f_32(arr[3]),
-      bars: dco_decode_list_bar_layout_dto(arr[4]),
-      lines: dco_decode_list_prim_f_32_strict(arr[5]),
-      lineKinds: dco_decode_list_prim_u_8_strict(arr[6]),
-      glyphs: dco_decode_list_glyph_dto(arr[7]),
-      hitRects: dco_decode_list_prim_f_32_strict(arr[8]),
-      hitMeta: dco_decode_list_prim_i_32_strict(arr[9]),
-      beats: dco_decode_list_hit_beat_dto(arr[10]),
-    );
-  }
-
-  @protected
-  TabLayoutDto dco_decode_tab_layout_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
-    return TabLayoutDto(
-      track: dco_decode_i_64(arr[0]),
-      strings: dco_decode_u_8(arr[1]),
-      width: dco_decode_f_32(arr[2]),
-      height: dco_decode_f_32(arr[3]),
-      systems: dco_decode_list_system_dto(arr[4]),
-    );
-  }
-
-  @protected
-  TrackSummaryDto dco_decode_track_summary_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-    return TrackSummaryDto(
-      id: dco_decode_i_64(arr[0]),
-      name: dco_decode_String(arr[1]),
-      instrument: dco_decode_instrument_dto(arr[2]),
-    );
-  }
-
-  @protected
-  TupletDto dco_decode_tuplet_dto(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = raw as List<dynamic>;
-    if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return TupletDto(actual: dco_decode_u_8(arr[0]), normal: dco_decode_u_8(arr[1]));
-  }
-
-  @protected
-  int dco_decode_u_32(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
-
-  @protected
-  int dco_decode_u_8(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as int;
-  }
-
-  @protected
-  void dco_decode_unit(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return;
-  }
-
-  @protected
-  BigInt dco_decode_usize(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeU64(raw);
-  }
-
-  @protected
-  AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_String(deserializer);
-    return AnyhowException(inner);
-  }
-
-  @protected
-  DocumentHandle
-  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return DocumentHandleImpl.frbInternalSseDecode(
-      sse_decode_usize(deserializer),
-      sse_decode_i_32(deserializer),
-    );
-  }
-
-  @protected
-  DocumentHandle
-  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return DocumentHandleImpl.frbInternalSseDecode(
-      sse_decode_usize(deserializer),
-      sse_decode_i_32(deserializer),
-    );
-  }
-
-  @protected
-  DocumentHandle
-  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return DocumentHandleImpl.frbInternalSseDecode(
-      sse_decode_usize(deserializer),
-      sse_decode_i_32(deserializer),
-    );
-  }
-
-  @protected
-  RustStreamSink<EventDto> sse_decode_StreamSink_event_dto_Sse(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    throw UnimplementedError('Unreachable ()');
-  }
-
-  @protected
-  String sse_decode_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var inner = sse_decode_list_prim_u_8_strict(deserializer);
-    return utf8.decoder.convert(inner);
-  }
-
-  @protected
-  ApiError sse_decode_api_error(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_rule = sse_decode_String(deserializer);
-    var var_message = sse_decode_String(deserializer);
-    return ApiError(rule: var_rule, message: var_message);
-  }
-
-  @protected
-  BarLayoutDto sse_decode_bar_layout_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_bar = sse_decode_u_32(deserializer);
-    var var_x = sse_decode_f_32(deserializer);
-    var var_width = sse_decode_f_32(deserializer);
-    var var_diagnostic = sse_decode_bool(deserializer);
-    return BarLayoutDto(bar: var_bar, x: var_x, width: var_width, diagnostic: var_diagnostic);
-  }
-
-  @protected
-  BeatAddressDto sse_decode_beat_address_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_track = sse_decode_i_64(deserializer);
-    var var_bar = sse_decode_u_32(deserializer);
-    var var_voice = sse_decode_u_32(deserializer);
-    var var_beat = sse_decode_i_64(deserializer);
-    return BeatAddressDto(track: var_track, bar: var_bar, voice: var_voice, beat: var_beat);
-  }
-
-  @protected
-  BeatDto sse_decode_beat_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_id = sse_decode_i_64(deserializer);
-    var var_duration = sse_decode_duration_dto(deserializer);
-    var var_notes = sse_decode_list_note_dto(deserializer);
-    return BeatDto(id: var_id, duration: var_duration, notes: var_notes);
-  }
-
-  @protected
-  bool sse_decode_bool(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint8() != 0;
-  }
-
-  @protected
-  BeatAddressDto sse_decode_box_autoadd_beat_address_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_beat_address_dto(deserializer));
-  }
-
-  @protected
-  CommandDto sse_decode_box_autoadd_command_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_command_dto(deserializer));
-  }
-
-  @protected
-  DurationDto sse_decode_box_autoadd_duration_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_duration_dto(deserializer));
-  }
-
-  @protected
-  PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_i_64(deserializer));
-  }
-
-  @protected
-  InstrumentDto sse_decode_box_autoadd_instrument_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_instrument_dto(deserializer));
-  }
-
-  @protected
-  MasterBarDto sse_decode_box_autoadd_master_bar_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_master_bar_dto(deserializer));
-  }
-
-  @protected
-  MetricsDto sse_decode_box_autoadd_metrics_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_metrics_dto(deserializer));
-  }
-
-  @protected
-  TupletDto sse_decode_box_autoadd_tuplet_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_tuplet_dto(deserializer));
-  }
-
-  @protected
-  int sse_decode_box_autoadd_u_8(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_u_8(deserializer));
-  }
-
-  @protected
-  CommandDto sse_decode_command_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var tag_ = sse_decode_i_32(deserializer);
-    switch (tag_) {
-      case 0:
-        var var_at = sse_decode_u_32(deserializer);
-        var var_count = sse_decode_u_32(deserializer);
-        return CommandDto_InsertMasterBars(at: var_at, count: var_count);
-      case 1:
-        var var_at = sse_decode_u_32(deserializer);
-        var var_count = sse_decode_u_32(deserializer);
-        return CommandDto_RemoveMasterBars(at: var_at, count: var_count);
-      case 2:
-        var var_index = sse_decode_u_32(deserializer);
-        var var_bar = sse_decode_box_autoadd_master_bar_dto(deserializer);
-        return CommandDto_SetMasterBar(index: var_index, bar: var_bar);
-      case 3:
-        var var_bar = sse_decode_u_32(deserializer);
-        var var_offsetNum = sse_decode_i_64(deserializer);
-        var var_offsetDen = sse_decode_i_64(deserializer);
-        var var_bpm = sse_decode_u_32(deserializer);
-        return CommandDto_SetTempo(
-          bar: var_bar,
-          offsetNum: var_offsetNum,
-          offsetDen: var_offsetDen,
-          bpm: var_bpm,
-        );
-      case 4:
-        var var_bar = sse_decode_u_32(deserializer);
-        var var_offsetNum = sse_decode_i_64(deserializer);
-        var var_offsetDen = sse_decode_i_64(deserializer);
-        return CommandDto_RemoveTempo(
-          bar: var_bar,
-          offsetNum: var_offsetNum,
-          offsetDen: var_offsetDen,
-        );
-      case 5:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_bar = sse_decode_u_32(deserializer);
-        var var_voice = sse_decode_u_32(deserializer);
-        var var_index = sse_decode_u_32(deserializer);
-        var var_duration = sse_decode_box_autoadd_duration_dto(deserializer);
-        return CommandDto_InsertBeat(
-          track: var_track,
-          bar: var_bar,
-          voice: var_voice,
-          index: var_index,
-          duration: var_duration,
-        );
-      case 6:
-        var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
-        return CommandDto_RemoveBeat(beat: var_beat);
-      case 7:
-        var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
-        var var_duration = sse_decode_box_autoadd_duration_dto(deserializer);
-        return CommandDto_SetBeatDuration(beat: var_beat, duration: var_duration);
-      case 8:
-        var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
-        var var_string = sse_decode_u_8(deserializer);
-        var var_fret = sse_decode_u_8(deserializer);
-        return CommandDto_SetNote(beat: var_beat, string: var_string, fret: var_fret);
-      case 9:
-        var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
-        var var_note = sse_decode_i_64(deserializer);
-        return CommandDto_RemoveNote(beat: var_beat, note: var_note);
-      case 10:
-        var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
-        var var_note = sse_decode_i_64(deserializer);
-        var var_tie = sse_decode_bool(deserializer);
-        return CommandDto_SetTie(beat: var_beat, note: var_note, tie: var_tie);
-      case 11:
-        var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
-        var var_note = sse_decode_i_64(deserializer);
-        var var_letRing = sse_decode_bool(deserializer);
-        var var_dead = sse_decode_bool(deserializer);
-        return CommandDto_SetNoteEffects(
-          beat: var_beat,
-          note: var_note,
-          letRing: var_letRing,
-          dead: var_dead,
-        );
-      case 12:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_bar = sse_decode_u_32(deserializer);
-        return CommandDto_AddVoice(track: var_track, bar: var_bar);
-      case 13:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_bar = sse_decode_u_32(deserializer);
-        var var_voice = sse_decode_u_32(deserializer);
-        return CommandDto_RemoveVoice(track: var_track, bar: var_bar, voice: var_voice);
-      case 14:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_fromBar = sse_decode_u_32(deserializer);
-        var var_toBar = sse_decode_u_32(deserializer);
-        var var_delta = sse_decode_i_16(deserializer);
-        return CommandDto_ShiftFrets(
-          track: var_track,
-          fromBar: var_fromBar,
-          toBar: var_toBar,
-          delta: var_delta,
-        );
-      case 15:
-        var var_name = sse_decode_String(deserializer);
-        var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
-        return CommandDto_AddTrack(name: var_name, instrument: var_instrument);
-      case 16:
-        var var_track = sse_decode_i_64(deserializer);
-        return CommandDto_RemoveTrack(track: var_track);
-      case 17:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_name = sse_decode_String(deserializer);
-        return CommandDto_RenameTrack(track: var_track, name: var_name);
-      case 18:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
-        return CommandDto_SetInstrument(track: var_track, instrument: var_instrument);
-      case 19:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_to = sse_decode_u_32(deserializer);
-        return CommandDto_MoveTrack(track: var_track, to: var_to);
-      case 20:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
-        var var_keepPitches = sse_decode_bool(deserializer);
-        return CommandDto_Retune(
-          track: var_track,
-          instrument: var_instrument,
-          keepPitches: var_keepPitches,
-        );
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  DiagnosticDto sse_decode_diagnostic_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_rule = sse_decode_String(deserializer);
-    var var_track = sse_decode_i_64(deserializer);
-    var var_bar = sse_decode_u_32(deserializer);
-    var var_voice = sse_decode_u_32(deserializer);
-    var var_kind = sse_decode_String(deserializer);
-    return DiagnosticDto(
-      rule: var_rule,
-      track: var_track,
-      bar: var_bar,
-      voice: var_voice,
-      kind: var_kind,
-    );
-  }
-
-  @protected
-  DocumentSummaryDto sse_decode_document_summary_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_revision = sse_decode_i_64(deserializer);
-    var var_dirty = sse_decode_bool(deserializer);
-    var var_canUndo = sse_decode_bool(deserializer);
-    var var_canRedo = sse_decode_bool(deserializer);
-    var var_location = sse_decode_opt_String(deserializer);
-    var var_unknownContent = sse_decode_list_String(deserializer);
-    var var_tracks = sse_decode_list_track_summary_dto(deserializer);
-    var var_masterBars = sse_decode_list_master_bar_dto(deserializer);
-    var var_diagnostics = sse_decode_list_diagnostic_dto(deserializer);
-    return DocumentSummaryDto(
-      revision: var_revision,
-      dirty: var_dirty,
-      canUndo: var_canUndo,
-      canRedo: var_canRedo,
-      location: var_location,
-      unknownContent: var_unknownContent,
-      tracks: var_tracks,
-      masterBars: var_masterBars,
-      diagnostics: var_diagnostics,
-    );
-  }
-
-  @protected
-  DurationDto sse_decode_duration_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_base = sse_decode_u_8(deserializer);
-    var var_dots = sse_decode_u_8(deserializer);
-    var var_tuplet = sse_decode_opt_box_autoadd_tuplet_dto(deserializer);
-    return DurationDto(base: var_base, dots: var_dots, tuplet: var_tuplet);
-  }
-
-  @protected
-  EventDto sse_decode_event_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_seq = sse_decode_i_64(deserializer);
-    var var_revision = sse_decode_i_64(deserializer);
-    var var_correlation = sse_decode_opt_box_autoadd_i_64(deserializer);
-    var var_kind = sse_decode_event_kind_dto(deserializer);
-    return EventDto(
-      seq: var_seq,
-      revision: var_revision,
-      correlation: var_correlation,
-      kind: var_kind,
-    );
-  }
-
-  @protected
-  EventKindDto sse_decode_event_kind_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var tag_ = sse_decode_i_32(deserializer);
-    switch (tag_) {
-      case 0:
-        var var_track = sse_decode_i_64(deserializer);
-        return EventKindDto_TrackAdded(track: var_track);
-      case 1:
-        var var_track = sse_decode_i_64(deserializer);
-        return EventKindDto_TrackRemoved(track: var_track);
-      case 2:
-        var var_track = sse_decode_i_64(deserializer);
-        return EventKindDto_TrackChanged(track: var_track);
-      case 3:
-        return EventKindDto_TracksReordered();
-      case 4:
-        var var_at = sse_decode_u_32(deserializer);
-        var var_count = sse_decode_u_32(deserializer);
-        return EventKindDto_MasterBarsInserted(at: var_at, count: var_count);
-      case 5:
-        var var_at = sse_decode_u_32(deserializer);
-        var var_count = sse_decode_u_32(deserializer);
-        return EventKindDto_MasterBarsRemoved(at: var_at, count: var_count);
-      case 6:
-        var var_start = sse_decode_u_32(deserializer);
-        var var_end = sse_decode_u_32(deserializer);
-        return EventKindDto_MasterBarsChanged(start: var_start, end: var_end);
-      case 7:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_start = sse_decode_u_32(deserializer);
-        var var_end = sse_decode_u_32(deserializer);
-        return EventKindDto_BarContentChanged(track: var_track, start: var_start, end: var_end);
-      case 8:
-        return EventKindDto_TempoMapChanged();
-      case 9:
-        var var_track = sse_decode_i_64(deserializer);
-        var var_notes = sse_decode_list_prim_i_64_strict(deserializer);
-        return EventKindDto_TiesRemoved(track: var_track, notes: var_notes);
-      case 10:
-        return EventKindDto_DocumentSaved();
-      case 11:
-        var var_dirty = sse_decode_bool(deserializer);
-        return EventKindDto_DirtyChanged(dirty: var_dirty);
-      case 12:
-        var var_canUndo = sse_decode_bool(deserializer);
-        var var_canRedo = sse_decode_bool(deserializer);
-        return EventKindDto_UndoAvailabilityChanged(canUndo: var_canUndo, canRedo: var_canRedo);
-      case 13:
-        return EventKindDto_HistoryApplied();
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  double sse_decode_f_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getFloat32();
-  }
-
-  @protected
-  GlyphDto sse_decode_glyph_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_kind = sse_decode_glyph_kind_dto(deserializer);
-    var var_x = sse_decode_f_32(deserializer);
-    var var_y = sse_decode_f_32(deserializer);
-    var var_width = sse_decode_f_32(deserializer);
-    return GlyphDto(kind: var_kind, x: var_x, y: var_y, width: var_width);
-  }
-
-  @protected
-  GlyphKindDto sse_decode_glyph_kind_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var tag_ = sse_decode_i_32(deserializer);
-    switch (tag_) {
-      case 0:
-        var var_fret = sse_decode_u_8(deserializer);
-        var var_tied = sse_decode_bool(deserializer);
-        var var_dead = sse_decode_bool(deserializer);
-        var var_letRing = sse_decode_bool(deserializer);
-        return GlyphKindDto_Fret(
-          fret: var_fret,
-          tied: var_tied,
-          dead: var_dead,
-          letRing: var_letRing,
-        );
-      case 1:
-        var var_exponent = sse_decode_u_8(deserializer);
-        var var_dots = sse_decode_u_8(deserializer);
-        return GlyphKindDto_Rest(exponent: var_exponent, dots: var_dots);
-      case 2:
-        return GlyphKindDto_Dot();
-      case 3:
-        var var_actual = sse_decode_u_8(deserializer);
-        return GlyphKindDto_Tuplet(actual: var_actual);
-      case 4:
-        var var_numerator = sse_decode_u_8(deserializer);
-        var var_denominator = sse_decode_u_8(deserializer);
-        return GlyphKindDto_TimeSignature(numerator: var_numerator, denominator: var_denominator);
-      case 5:
-        return GlyphKindDto_RepeatDots();
-      case 6:
-        var var_count = sse_decode_u_8(deserializer);
-        return GlyphKindDto_RepeatCount(count: var_count);
-      case 7:
-        var var_endings = sse_decode_list_prim_u_8_strict(deserializer);
-        return GlyphKindDto_Volta(endings: var_endings);
-      case 8:
-        var var_text = sse_decode_String(deserializer);
-        return GlyphKindDto_Marker(text: var_text);
-      case 9:
-        var var_number = sse_decode_u_32(deserializer);
-        return GlyphKindDto_BarNumber(number: var_number);
-      case 10:
-        return GlyphKindDto_TabClef();
-      case 11:
-        var var_string = sse_decode_u_8(deserializer);
-        var var_name = sse_decode_String(deserializer);
-        return GlyphKindDto_StringName(string: var_string, name: var_name);
-      default:
-        throw UnimplementedError('');
-    }
-  }
-
-  @protected
-  HitBeatDto sse_decode_hit_beat_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_id = sse_decode_i_64(deserializer);
-    var var_bar = sse_decode_u_32(deserializer);
-    var var_voice = sse_decode_u_32(deserializer);
-    var var_index = sse_decode_u_32(deserializer);
-    return HitBeatDto(id: var_id, bar: var_bar, voice: var_voice, index: var_index);
-  }
-
-  @protected
-  int sse_decode_i_16(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getInt16();
-  }
-
-  @protected
-  int sse_decode_i_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getInt32();
-  }
-
-  @protected
-  PlatformInt64 sse_decode_i_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getPlatformInt64();
-  }
-
-  @protected
-  InstrumentDto sse_decode_instrument_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_tuning = sse_decode_list_String(deserializer);
-    var var_fretCount = sse_decode_u_8(deserializer);
-    var var_capo = sse_decode_u_8(deserializer);
-    return InstrumentDto(tuning: var_tuning, fretCount: var_fretCount, capo: var_capo);
-  }
-
-  @protected
-  List<String> sse_decode_list_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <String>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_String(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<BarLayoutDto> sse_decode_list_bar_layout_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <BarLayoutDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_bar_layout_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<BeatDto> sse_decode_list_beat_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <BeatDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_beat_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<DiagnosticDto> sse_decode_list_diagnostic_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <DiagnosticDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_diagnostic_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<EventDto> sse_decode_list_event_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <EventDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_event_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<GlyphDto> sse_decode_list_glyph_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <GlyphDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_glyph_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<HitBeatDto> sse_decode_list_hit_beat_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <HitBeatDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_hit_beat_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<MasterBarDto> sse_decode_list_master_bar_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <MasterBarDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_master_bar_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<NoteDto> sse_decode_list_note_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <NoteDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_note_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  Float32List sse_decode_list_prim_f_32_strict(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var len_ = sse_decode_i_32(deserializer);
-    return deserializer.buffer.getFloat32List(len_);
-  }
-
-  @protected
-  Int32List sse_decode_list_prim_i_32_strict(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var len_ = sse_decode_i_32(deserializer);
-    return deserializer.buffer.getInt32List(len_);
-  }
-
-  @protected
-  Int64List sse_decode_list_prim_i_64_strict(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var len_ = sse_decode_i_32(deserializer);
-    return deserializer.buffer.getInt64List(len_);
-  }
-
-  @protected
-  Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var len_ = sse_decode_i_32(deserializer);
-    return deserializer.buffer.getUint8List(len_);
-  }
-
-  @protected
-  List<SystemDto> sse_decode_list_system_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <SystemDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_system_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  List<TrackSummaryDto> sse_decode_list_track_summary_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <TrackSummaryDto>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_track_summary_dto(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
-  MasterBarDto sse_decode_master_bar_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_numerator = sse_decode_u_8(deserializer);
-    var var_denominator = sse_decode_u_8(deserializer);
-    var var_pickup = sse_decode_bool(deserializer);
-    var var_repeatStart = sse_decode_bool(deserializer);
-    var var_repeatEnd = sse_decode_opt_box_autoadd_u_8(deserializer);
-    var var_alternateEndings = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_marker = sse_decode_opt_String(deserializer);
-    return MasterBarDto(
-      numerator: var_numerator,
-      denominator: var_denominator,
-      pickup: var_pickup,
-      repeatStart: var_repeatStart,
-      repeatEnd: var_repeatEnd,
-      alternateEndings: var_alternateEndings,
-      marker: var_marker,
-    );
-  }
-
-  @protected
-  MetricsDto sse_decode_metrics_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_width = sse_decode_f_32(deserializer);
-    var var_marginLeft = sse_decode_f_32(deserializer);
-    var var_marginRight = sse_decode_f_32(deserializer);
-    var var_stringSpacing = sse_decode_f_32(deserializer);
-    var var_digitWidth = sse_decode_f_32(deserializer);
-    var var_glyphPadding = sse_decode_f_32(deserializer);
-    var var_minColumnWidth = sse_decode_f_32(deserializer);
-    var var_durationSpacing = sse_decode_f_32(deserializer);
-    var var_barPadding = sse_decode_f_32(deserializer);
-    var var_emptyBarWidth = sse_decode_f_32(deserializer);
-    var var_headerWidth = sse_decode_f_32(deserializer);
-    var var_timeSignatureWidth = sse_decode_f_32(deserializer);
-    var var_repeatWidth = sse_decode_f_32(deserializer);
-    var var_aboveStaff = sse_decode_f_32(deserializer);
-    var var_belowStaff = sse_decode_f_32(deserializer);
-    var var_systemGap = sse_decode_f_32(deserializer);
-    var var_stemLength = sse_decode_f_32(deserializer);
-    return MetricsDto(
-      width: var_width,
-      marginLeft: var_marginLeft,
-      marginRight: var_marginRight,
-      stringSpacing: var_stringSpacing,
-      digitWidth: var_digitWidth,
-      glyphPadding: var_glyphPadding,
-      minColumnWidth: var_minColumnWidth,
-      durationSpacing: var_durationSpacing,
-      barPadding: var_barPadding,
-      emptyBarWidth: var_emptyBarWidth,
-      headerWidth: var_headerWidth,
-      timeSignatureWidth: var_timeSignatureWidth,
-      repeatWidth: var_repeatWidth,
-      aboveStaff: var_aboveStaff,
-      belowStaff: var_belowStaff,
-      systemGap: var_systemGap,
-      stemLength: var_stemLength,
-    );
-  }
-
-  @protected
-  NoteDto sse_decode_note_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_id = sse_decode_i_64(deserializer);
-    var var_string = sse_decode_u_8(deserializer);
-    var var_fret = sse_decode_u_8(deserializer);
-    var var_tie = sse_decode_bool(deserializer);
-    var var_letRing = sse_decode_bool(deserializer);
-    var var_dead = sse_decode_bool(deserializer);
-    return NoteDto(
-      id: var_id,
-      string: var_string,
-      fret: var_fret,
-      tie: var_tie,
-      letRing: var_letRing,
-      dead: var_dead,
-    );
-  }
-
-  @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_String(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_i_64(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  TupletDto? sse_decode_opt_box_autoadd_tuplet_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_tuplet_dto(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  int? sse_decode_opt_box_autoadd_u_8(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_u_8(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  OutcomeDto sse_decode_outcome_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_revision = sse_decode_i_64(deserializer);
-    var var_events = sse_decode_list_event_dto(deserializer);
-    return OutcomeDto(revision: var_revision, events: var_events);
-  }
-
-  @protected
-  SystemDto sse_decode_system_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_index = sse_decode_u_32(deserializer);
-    var var_y = sse_decode_f_32(deserializer);
-    var var_height = sse_decode_f_32(deserializer);
-    var var_staffTop = sse_decode_f_32(deserializer);
-    var var_bars = sse_decode_list_bar_layout_dto(deserializer);
-    var var_lines = sse_decode_list_prim_f_32_strict(deserializer);
-    var var_lineKinds = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_glyphs = sse_decode_list_glyph_dto(deserializer);
-    var var_hitRects = sse_decode_list_prim_f_32_strict(deserializer);
-    var var_hitMeta = sse_decode_list_prim_i_32_strict(deserializer);
-    var var_beats = sse_decode_list_hit_beat_dto(deserializer);
-    return SystemDto(
-      index: var_index,
-      y: var_y,
-      height: var_height,
-      staffTop: var_staffTop,
-      bars: var_bars,
-      lines: var_lines,
-      lineKinds: var_lineKinds,
-      glyphs: var_glyphs,
-      hitRects: var_hitRects,
-      hitMeta: var_hitMeta,
-      beats: var_beats,
-    );
-  }
-
-  @protected
-  TabLayoutDto sse_decode_tab_layout_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_track = sse_decode_i_64(deserializer);
-    var var_strings = sse_decode_u_8(deserializer);
-    var var_width = sse_decode_f_32(deserializer);
-    var var_height = sse_decode_f_32(deserializer);
-    var var_systems = sse_decode_list_system_dto(deserializer);
-    return TabLayoutDto(
-      track: var_track,
-      strings: var_strings,
-      width: var_width,
-      height: var_height,
-      systems: var_systems,
-    );
-  }
-
-  @protected
-  TrackSummaryDto sse_decode_track_summary_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_id = sse_decode_i_64(deserializer);
-    var var_name = sse_decode_String(deserializer);
-    var var_instrument = sse_decode_instrument_dto(deserializer);
-    return TrackSummaryDto(id: var_id, name: var_name, instrument: var_instrument);
-  }
-
-  @protected
-  TupletDto sse_decode_tuplet_dto(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_actual = sse_decode_u_8(deserializer);
-    var var_normal = sse_decode_u_8(deserializer);
-    return TupletDto(actual: var_actual, normal: var_normal);
-  }
-
-  @protected
-  int sse_decode_u_32(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint32();
-  }
-
-  @protected
-  int sse_decode_u_8(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getUint8();
-  }
-
-  @protected
-  void sse_decode_unit(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-  }
-
-  @protected
-  BigInt sse_decode_usize(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getBigUint64();
-  }
-
-  @protected
-  void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.message, serializer);
-  }
-
-  @protected
-  void
-  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-    DocumentHandle self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: true), serializer);
-  }
-
-  @protected
-  void
-  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-    DocumentHandle self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: false), serializer);
-  }
-
-  @protected
-  void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
-    DocumentHandle self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: null), serializer);
-  }
-
-  @protected
-  void sse_encode_StreamSink_event_dto_Sse(
-    RustStreamSink<EventDto> self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(
-      self.setupAndSerialize(
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_event_dto,
-          decodeErrorData: sse_decode_AnyhowException,
-        ),
-      ),
-      serializer,
-    );
-  }
-
-  @protected
-  void sse_encode_String(String self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer);
-  }
-
-  @protected
-  void sse_encode_api_error(ApiError self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.rule, serializer);
-    sse_encode_String(self.message, serializer);
-  }
-
-  @protected
-  void sse_encode_bar_layout_dto(BarLayoutDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_u_32(self.bar, serializer);
-    sse_encode_f_32(self.x, serializer);
-    sse_encode_f_32(self.width, serializer);
-    sse_encode_bool(self.diagnostic, serializer);
-  }
-
-  @protected
-  void sse_encode_beat_address_dto(BeatAddressDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self.track, serializer);
-    sse_encode_u_32(self.bar, serializer);
-    sse_encode_u_32(self.voice, serializer);
-    sse_encode_i_64(self.beat, serializer);
-  }
-
-  @protected
-  void sse_encode_beat_dto(BeatDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self.id, serializer);
-    sse_encode_duration_dto(self.duration, serializer);
-    sse_encode_list_note_dto(self.notes, serializer);
-  }
-
-  @protected
-  void sse_encode_bool(bool self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint8(self ? 1 : 0);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_beat_address_dto(BeatAddressDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_beat_address_dto(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_command_dto(CommandDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_command_dto(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_duration_dto(DurationDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_duration_dto(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_i_64(PlatformInt64 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_instrument_dto(InstrumentDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_instrument_dto(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_master_bar_dto(MasterBarDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_master_bar_dto(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_metrics_dto(MetricsDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_metrics_dto(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_tuplet_dto(TupletDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_tuplet_dto(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_u_8(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_u_8(self, serializer);
-  }
-
-  @protected
-  void sse_encode_command_dto(CommandDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    switch (self) {
-      case CommandDto_InsertMasterBars(at: final at, count: final count):
-        sse_encode_i_32(0, serializer);
-        sse_encode_u_32(at, serializer);
-        sse_encode_u_32(count, serializer);
-      case CommandDto_RemoveMasterBars(at: final at, count: final count):
-        sse_encode_i_32(1, serializer);
-        sse_encode_u_32(at, serializer);
-        sse_encode_u_32(count, serializer);
-      case CommandDto_SetMasterBar(index: final index, bar: final bar):
-        sse_encode_i_32(2, serializer);
-        sse_encode_u_32(index, serializer);
-        sse_encode_box_autoadd_master_bar_dto(bar, serializer);
-      case CommandDto_SetTempo(
-        bar: final bar,
-        offsetNum: final offsetNum,
-        offsetDen: final offsetDen,
-        bpm: final bpm,
-      ):
-        sse_encode_i_32(3, serializer);
-        sse_encode_u_32(bar, serializer);
-        sse_encode_i_64(offsetNum, serializer);
-        sse_encode_i_64(offsetDen, serializer);
-        sse_encode_u_32(bpm, serializer);
-      case CommandDto_RemoveTempo(
-        bar: final bar,
-        offsetNum: final offsetNum,
-        offsetDen: final offsetDen,
-      ):
-        sse_encode_i_32(4, serializer);
-        sse_encode_u_32(bar, serializer);
-        sse_encode_i_64(offsetNum, serializer);
-        sse_encode_i_64(offsetDen, serializer);
-      case CommandDto_InsertBeat(
-        track: final track,
-        bar: final bar,
-        voice: final voice,
-        index: final index,
-        duration: final duration,
-      ):
-        sse_encode_i_32(5, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_u_32(bar, serializer);
-        sse_encode_u_32(voice, serializer);
-        sse_encode_u_32(index, serializer);
-        sse_encode_box_autoadd_duration_dto(duration, serializer);
-      case CommandDto_RemoveBeat(beat: final beat):
-        sse_encode_i_32(6, serializer);
-        sse_encode_box_autoadd_beat_address_dto(beat, serializer);
-      case CommandDto_SetBeatDuration(beat: final beat, duration: final duration):
-        sse_encode_i_32(7, serializer);
-        sse_encode_box_autoadd_beat_address_dto(beat, serializer);
-        sse_encode_box_autoadd_duration_dto(duration, serializer);
-      case CommandDto_SetNote(beat: final beat, string: final string, fret: final fret):
-        sse_encode_i_32(8, serializer);
-        sse_encode_box_autoadd_beat_address_dto(beat, serializer);
-        sse_encode_u_8(string, serializer);
-        sse_encode_u_8(fret, serializer);
-      case CommandDto_RemoveNote(beat: final beat, note: final note):
-        sse_encode_i_32(9, serializer);
-        sse_encode_box_autoadd_beat_address_dto(beat, serializer);
-        sse_encode_i_64(note, serializer);
-      case CommandDto_SetTie(beat: final beat, note: final note, tie: final tie):
-        sse_encode_i_32(10, serializer);
-        sse_encode_box_autoadd_beat_address_dto(beat, serializer);
-        sse_encode_i_64(note, serializer);
-        sse_encode_bool(tie, serializer);
-      case CommandDto_SetNoteEffects(
-        beat: final beat,
-        note: final note,
-        letRing: final letRing,
-        dead: final dead,
-      ):
-        sse_encode_i_32(11, serializer);
-        sse_encode_box_autoadd_beat_address_dto(beat, serializer);
-        sse_encode_i_64(note, serializer);
-        sse_encode_bool(letRing, serializer);
-        sse_encode_bool(dead, serializer);
-      case CommandDto_AddVoice(track: final track, bar: final bar):
-        sse_encode_i_32(12, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_u_32(bar, serializer);
-      case CommandDto_RemoveVoice(track: final track, bar: final bar, voice: final voice):
-        sse_encode_i_32(13, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_u_32(bar, serializer);
-        sse_encode_u_32(voice, serializer);
-      case CommandDto_ShiftFrets(
-        track: final track,
-        fromBar: final fromBar,
-        toBar: final toBar,
-        delta: final delta,
-      ):
-        sse_encode_i_32(14, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_u_32(fromBar, serializer);
-        sse_encode_u_32(toBar, serializer);
-        sse_encode_i_16(delta, serializer);
-      case CommandDto_AddTrack(name: final name, instrument: final instrument):
-        sse_encode_i_32(15, serializer);
-        sse_encode_String(name, serializer);
-        sse_encode_box_autoadd_instrument_dto(instrument, serializer);
-      case CommandDto_RemoveTrack(track: final track):
-        sse_encode_i_32(16, serializer);
-        sse_encode_i_64(track, serializer);
-      case CommandDto_RenameTrack(track: final track, name: final name):
-        sse_encode_i_32(17, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_String(name, serializer);
-      case CommandDto_SetInstrument(track: final track, instrument: final instrument):
-        sse_encode_i_32(18, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_box_autoadd_instrument_dto(instrument, serializer);
-      case CommandDto_MoveTrack(track: final track, to: final to):
-        sse_encode_i_32(19, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_u_32(to, serializer);
-      case CommandDto_Retune(
-        track: final track,
-        instrument: final instrument,
-        keepPitches: final keepPitches,
-      ):
-        sse_encode_i_32(20, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_box_autoadd_instrument_dto(instrument, serializer);
-        sse_encode_bool(keepPitches, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_diagnostic_dto(DiagnosticDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_String(self.rule, serializer);
-    sse_encode_i_64(self.track, serializer);
-    sse_encode_u_32(self.bar, serializer);
-    sse_encode_u_32(self.voice, serializer);
-    sse_encode_String(self.kind, serializer);
-  }
-
-  @protected
-  void sse_encode_document_summary_dto(DocumentSummaryDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self.revision, serializer);
-    sse_encode_bool(self.dirty, serializer);
-    sse_encode_bool(self.canUndo, serializer);
-    sse_encode_bool(self.canRedo, serializer);
-    sse_encode_opt_String(self.location, serializer);
-    sse_encode_list_String(self.unknownContent, serializer);
-    sse_encode_list_track_summary_dto(self.tracks, serializer);
-    sse_encode_list_master_bar_dto(self.masterBars, serializer);
-    sse_encode_list_diagnostic_dto(self.diagnostics, serializer);
-  }
-
-  @protected
-  void sse_encode_duration_dto(DurationDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_u_8(self.base, serializer);
-    sse_encode_u_8(self.dots, serializer);
-    sse_encode_opt_box_autoadd_tuplet_dto(self.tuplet, serializer);
-  }
-
-  @protected
-  void sse_encode_event_dto(EventDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self.seq, serializer);
-    sse_encode_i_64(self.revision, serializer);
-    sse_encode_opt_box_autoadd_i_64(self.correlation, serializer);
-    sse_encode_event_kind_dto(self.kind, serializer);
-  }
-
-  @protected
-  void sse_encode_event_kind_dto(EventKindDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    switch (self) {
-      case EventKindDto_TrackAdded(track: final track):
-        sse_encode_i_32(0, serializer);
-        sse_encode_i_64(track, serializer);
-      case EventKindDto_TrackRemoved(track: final track):
-        sse_encode_i_32(1, serializer);
-        sse_encode_i_64(track, serializer);
-      case EventKindDto_TrackChanged(track: final track):
-        sse_encode_i_32(2, serializer);
-        sse_encode_i_64(track, serializer);
-      case EventKindDto_TracksReordered():
-        sse_encode_i_32(3, serializer);
-      case EventKindDto_MasterBarsInserted(at: final at, count: final count):
-        sse_encode_i_32(4, serializer);
-        sse_encode_u_32(at, serializer);
-        sse_encode_u_32(count, serializer);
-      case EventKindDto_MasterBarsRemoved(at: final at, count: final count):
-        sse_encode_i_32(5, serializer);
-        sse_encode_u_32(at, serializer);
-        sse_encode_u_32(count, serializer);
-      case EventKindDto_MasterBarsChanged(start: final start, end: final end):
-        sse_encode_i_32(6, serializer);
-        sse_encode_u_32(start, serializer);
-        sse_encode_u_32(end, serializer);
-      case EventKindDto_BarContentChanged(track: final track, start: final start, end: final end):
-        sse_encode_i_32(7, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_u_32(start, serializer);
-        sse_encode_u_32(end, serializer);
-      case EventKindDto_TempoMapChanged():
-        sse_encode_i_32(8, serializer);
-      case EventKindDto_TiesRemoved(track: final track, notes: final notes):
-        sse_encode_i_32(9, serializer);
-        sse_encode_i_64(track, serializer);
-        sse_encode_list_prim_i_64_strict(notes, serializer);
-      case EventKindDto_DocumentSaved():
-        sse_encode_i_32(10, serializer);
-      case EventKindDto_DirtyChanged(dirty: final dirty):
-        sse_encode_i_32(11, serializer);
-        sse_encode_bool(dirty, serializer);
-      case EventKindDto_UndoAvailabilityChanged(canUndo: final canUndo, canRedo: final canRedo):
-        sse_encode_i_32(12, serializer);
-        sse_encode_bool(canUndo, serializer);
-        sse_encode_bool(canRedo, serializer);
-      case EventKindDto_HistoryApplied():
-        sse_encode_i_32(13, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_f_32(double self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putFloat32(self);
-  }
-
-  @protected
-  void sse_encode_glyph_dto(GlyphDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_glyph_kind_dto(self.kind, serializer);
-    sse_encode_f_32(self.x, serializer);
-    sse_encode_f_32(self.y, serializer);
-    sse_encode_f_32(self.width, serializer);
-  }
-
-  @protected
-  void sse_encode_glyph_kind_dto(GlyphKindDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    switch (self) {
-      case GlyphKindDto_Fret(
-        fret: final fret,
-        tied: final tied,
-        dead: final dead,
-        letRing: final letRing,
-      ):
-        sse_encode_i_32(0, serializer);
-        sse_encode_u_8(fret, serializer);
-        sse_encode_bool(tied, serializer);
-        sse_encode_bool(dead, serializer);
-        sse_encode_bool(letRing, serializer);
-      case GlyphKindDto_Rest(exponent: final exponent, dots: final dots):
-        sse_encode_i_32(1, serializer);
-        sse_encode_u_8(exponent, serializer);
-        sse_encode_u_8(dots, serializer);
-      case GlyphKindDto_Dot():
-        sse_encode_i_32(2, serializer);
-      case GlyphKindDto_Tuplet(actual: final actual):
-        sse_encode_i_32(3, serializer);
-        sse_encode_u_8(actual, serializer);
-      case GlyphKindDto_TimeSignature(numerator: final numerator, denominator: final denominator):
-        sse_encode_i_32(4, serializer);
-        sse_encode_u_8(numerator, serializer);
-        sse_encode_u_8(denominator, serializer);
-      case GlyphKindDto_RepeatDots():
-        sse_encode_i_32(5, serializer);
-      case GlyphKindDto_RepeatCount(count: final count):
-        sse_encode_i_32(6, serializer);
-        sse_encode_u_8(count, serializer);
-      case GlyphKindDto_Volta(endings: final endings):
-        sse_encode_i_32(7, serializer);
-        sse_encode_list_prim_u_8_strict(endings, serializer);
-      case GlyphKindDto_Marker(text: final text):
-        sse_encode_i_32(8, serializer);
-        sse_encode_String(text, serializer);
-      case GlyphKindDto_BarNumber(number: final number):
-        sse_encode_i_32(9, serializer);
-        sse_encode_u_32(number, serializer);
-      case GlyphKindDto_TabClef():
-        sse_encode_i_32(10, serializer);
-      case GlyphKindDto_StringName(string: final string, name: final name):
-        sse_encode_i_32(11, serializer);
-        sse_encode_u_8(string, serializer);
-        sse_encode_String(name, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_hit_beat_dto(HitBeatDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self.id, serializer);
-    sse_encode_u_32(self.bar, serializer);
-    sse_encode_u_32(self.voice, serializer);
-    sse_encode_u_32(self.index, serializer);
-  }
-
-  @protected
-  void sse_encode_i_16(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putInt16(self);
-  }
-
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putInt32(self);
-  }
-
-  @protected
-  void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putPlatformInt64(self);
-  }
-
-  @protected
-  void sse_encode_instrument_dto(InstrumentDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_String(self.tuning, serializer);
-    sse_encode_u_8(self.fretCount, serializer);
-    sse_encode_u_8(self.capo, serializer);
-  }
-
-  @protected
-  void sse_encode_list_String(List<String> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_String(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_bar_layout_dto(List<BarLayoutDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_bar_layout_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_beat_dto(List<BeatDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_beat_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_diagnostic_dto(List<DiagnosticDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_diagnostic_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_event_dto(List<EventDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_event_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_glyph_dto(List<GlyphDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_glyph_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_hit_beat_dto(List<HitBeatDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_hit_beat_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_master_bar_dto(List<MasterBarDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_master_bar_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_note_dto(List<NoteDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_note_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    serializer.buffer.putFloat32List(self);
-  }
-
-  @protected
-  void sse_encode_list_prim_i_32_strict(Int32List self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    serializer.buffer.putInt32List(self);
-  }
-
-  @protected
-  void sse_encode_list_prim_i_64_strict(Int64List self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    serializer.buffer.putInt64List(self);
-  }
-
-  @protected
-  void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    serializer.buffer.putUint8List(self);
-  }
-
-  @protected
-  void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_system_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_list_track_summary_dto(List<TrackSummaryDto> self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_track_summary_dto(item, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_master_bar_dto(MasterBarDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_u_8(self.numerator, serializer);
-    sse_encode_u_8(self.denominator, serializer);
-    sse_encode_bool(self.pickup, serializer);
-    sse_encode_bool(self.repeatStart, serializer);
-    sse_encode_opt_box_autoadd_u_8(self.repeatEnd, serializer);
-    sse_encode_list_prim_u_8_strict(self.alternateEndings, serializer);
-    sse_encode_opt_String(self.marker, serializer);
-  }
-
-  @protected
-  void sse_encode_metrics_dto(MetricsDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_f_32(self.width, serializer);
-    sse_encode_f_32(self.marginLeft, serializer);
-    sse_encode_f_32(self.marginRight, serializer);
-    sse_encode_f_32(self.stringSpacing, serializer);
-    sse_encode_f_32(self.digitWidth, serializer);
-    sse_encode_f_32(self.glyphPadding, serializer);
-    sse_encode_f_32(self.minColumnWidth, serializer);
-    sse_encode_f_32(self.durationSpacing, serializer);
-    sse_encode_f_32(self.barPadding, serializer);
-    sse_encode_f_32(self.emptyBarWidth, serializer);
-    sse_encode_f_32(self.headerWidth, serializer);
-    sse_encode_f_32(self.timeSignatureWidth, serializer);
-    sse_encode_f_32(self.repeatWidth, serializer);
-    sse_encode_f_32(self.aboveStaff, serializer);
-    sse_encode_f_32(self.belowStaff, serializer);
-    sse_encode_f_32(self.systemGap, serializer);
-    sse_encode_f_32(self.stemLength, serializer);
-  }
-
-  @protected
-  void sse_encode_note_dto(NoteDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self.id, serializer);
-    sse_encode_u_8(self.string, serializer);
-    sse_encode_u_8(self.fret, serializer);
-    sse_encode_bool(self.tie, serializer);
-    sse_encode_bool(self.letRing, serializer);
-    sse_encode_bool(self.dead, serializer);
-  }
-
-  @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_String(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_opt_box_autoadd_i_64(PlatformInt64? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_i_64(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_opt_box_autoadd_tuplet_dto(TupletDto? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_tuplet_dto(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_opt_box_autoadd_u_8(int? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_u_8(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_outcome_dto(OutcomeDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self.revision, serializer);
-    sse_encode_list_event_dto(self.events, serializer);
-  }
-
-  @protected
-  void sse_encode_system_dto(SystemDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_u_32(self.index, serializer);
-    sse_encode_f_32(self.y, serializer);
-    sse_encode_f_32(self.height, serializer);
-    sse_encode_f_32(self.staffTop, serializer);
-    sse_encode_list_bar_layout_dto(self.bars, serializer);
-    sse_encode_list_prim_f_32_strict(self.lines, serializer);
-    sse_encode_list_prim_u_8_strict(self.lineKinds, serializer);
-    sse_encode_list_glyph_dto(self.glyphs, serializer);
-    sse_encode_list_prim_f_32_strict(self.hitRects, serializer);
-    sse_encode_list_prim_i_32_strict(self.hitMeta, serializer);
-    sse_encode_list_hit_beat_dto(self.beats, serializer);
-  }
-
-  @protected
-  void sse_encode_tab_layout_dto(TabLayoutDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self.track, serializer);
-    sse_encode_u_8(self.strings, serializer);
-    sse_encode_f_32(self.width, serializer);
-    sse_encode_f_32(self.height, serializer);
-    sse_encode_list_system_dto(self.systems, serializer);
-  }
-
-  @protected
-  void sse_encode_track_summary_dto(TrackSummaryDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_64(self.id, serializer);
-    sse_encode_String(self.name, serializer);
-    sse_encode_instrument_dto(self.instrument, serializer);
-  }
-
-  @protected
-  void sse_encode_tuplet_dto(TupletDto self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_u_8(self.actual, serializer);
-    sse_encode_u_8(self.normal, serializer);
-  }
-
-  @protected
-  void sse_encode_u_32(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint32(self);
-  }
-
-  @protected
-  void sse_encode_u_8(int self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putUint8(self);
-  }
-
-  @protected
-  void sse_encode_unit(void self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-  }
-
-  @protected
-  void sse_encode_usize(BigInt self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putBigUint64(self);
-  }
-}
-
-@sealed
-class DocumentHandleImpl extends RustOpaque implements DocumentHandle {
-  // Not to be used by end users
-  DocumentHandleImpl.frbInternalDcoDecode(List<dynamic> wire)
-    : super.frbInternalDcoDecode(wire, _kStaticData);
-
-  // Not to be used by end users
-  DocumentHandleImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
-    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
-
-  static final _kStaticData = RustArcStaticData(
-    rustArcIncrementStrongCount:
-        RustLib.instance.api.rust_arc_increment_strong_count_DocumentHandle,
-    rustArcDecrementStrongCount:
-        RustLib.instance.api.rust_arc_decrement_strong_count_DocumentHandle,
-    rustArcDecrementStrongCountPtr:
-        RustLib.instance.api.rust_arc_decrement_strong_count_DocumentHandlePtr,
-  );
-
-  /// Beats of one voice of one bar, in order.
-  List<BeatDto> beats({required PlatformInt64 track, required int bar, required int voice}) =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleBeats(
-        that: this,
-        track: track,
-        bar: bar,
-        voice: voice,
-      );
-
-  /// Applies one command. On error the document is unchanged.
-  Future<OutcomeDto> execute({
-    required CommandDto command,
-    PlatformInt64? coalesceKey,
-    PlatformInt64? expectedRevision,
-  }) => RustLib.instance.api.crateApiDocumentDocumentHandleExecute(
-    that: this,
-    command: command,
-    coalesceKey: coalesceKey,
-    expectedRevision: expectedRevision,
-  );
-
-  Future<OutcomeDto> redo() => RustLib.instance.api.crateApiDocumentDocumentHandleRedo(that: this);
-
-  /// Saves to the current location (refused with rule `U2` for unknown content).
-  Future<OutcomeDto> save() => RustLib.instance.api.crateApiDocumentDocumentHandleSave(that: this);
-
-  Future<OutcomeDto> saveAs({required String path}) =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleSaveAs(that: this, path: path);
-
-  /// Streams every event of this document to Dart. A second call replaces (and
-  /// closes) the previous stream.
-  Stream<EventDto> subscribeEvents() =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleSubscribeEvents(that: this);
-
-  DocumentSummaryDto summary() =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleSummary(that: this);
-
-  /// TAB layout of a track at the current revision.
-  TabLayoutDto tabLayout({required PlatformInt64 track, required MetricsDto metrics}) => RustLib
-      .instance
-      .api
-      .crateApiDocumentDocumentHandleTabLayout(that: this, track: track, metrics: metrics);
-
-  Future<OutcomeDto> undo() => RustLib.instance.api.crateApiDocumentDocumentHandleUndo(that: this);
-
-  /// Closes the event stream (explicit unsubscribe, ADR-005 amendment 1).
-  void unsubscribeEvents() =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleUnsubscribeEvents(that: this);
-
-  /// Number of voices in a bar of a track.
-  int voiceCount({required PlatformInt64 track, required int bar}) => RustLib.instance.api
-      .crateApiDocumentDocumentHandleVoiceCount(that: this, track: track, bar: bar);
-}
+        
+
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_DocumentHandle => wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle;
+
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_DocumentHandle => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle;
+
+
+
+                  @protected AnyhowException dco_decode_AnyhowException(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return AnyhowException(raw as String); }
+
+@protected DocumentHandle dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return DocumentHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected DocumentHandle dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return DocumentHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected DocumentHandle dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return DocumentHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected RustStreamSink<EventDto> dco_decode_StreamSink_event_dto_Sse(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+throw UnimplementedError(); }
+
+@protected String dco_decode_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as String; }
+
+@protected ApiError dco_decode_api_error(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return ApiError(rule: dco_decode_String(arr[0]),
+message: dco_decode_String(arr[1]),); }
+
+@protected BarLayoutDto dco_decode_bar_layout_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return BarLayoutDto(bar: dco_decode_u_32(arr[0]),
+x: dco_decode_f_32(arr[1]),
+width: dco_decode_f_32(arr[2]),
+diagnostic: dco_decode_bool(arr[3]),); }
+
+@protected BeatAddressDto dco_decode_beat_address_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return BeatAddressDto(track: dco_decode_i_64(arr[0]),
+bar: dco_decode_u_32(arr[1]),
+voice: dco_decode_u_32(arr[2]),
+beat: dco_decode_i_64(arr[3]),); }
+
+@protected BeatDto dco_decode_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return BeatDto(id: dco_decode_i_64(arr[0]),
+duration: dco_decode_duration_dto(arr[1]),
+notes: dco_decode_list_note_dto(arr[2]),); }
+
+@protected bool dco_decode_bool(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as bool; }
+
+@protected BeatAddressDto dco_decode_box_autoadd_beat_address_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_beat_address_dto(raw); }
+
+@protected CommandDto dco_decode_box_autoadd_command_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_command_dto(raw); }
+
+@protected DurationDto dco_decode_box_autoadd_duration_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_duration_dto(raw); }
+
+@protected PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_i_64(raw); }
+
+@protected InstrumentDto dco_decode_box_autoadd_instrument_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_instrument_dto(raw); }
+
+@protected MasterBarDto dco_decode_box_autoadd_master_bar_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_master_bar_dto(raw); }
+
+@protected MetricsDto dco_decode_box_autoadd_metrics_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_metrics_dto(raw); }
+
+@protected TupletDto dco_decode_box_autoadd_tuplet_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_tuplet_dto(raw); }
+
+@protected int dco_decode_box_autoadd_u_8(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected CommandDto dco_decode_command_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+switch (raw[0]) {
+                case 0: return CommandDto_InsertMasterBars(at: dco_decode_u_32(raw[1]),count: dco_decode_u_32(raw[2]),);
+case 1: return CommandDto_RemoveMasterBars(at: dco_decode_u_32(raw[1]),count: dco_decode_u_32(raw[2]),);
+case 2: return CommandDto_SetMasterBar(index: dco_decode_u_32(raw[1]),bar: dco_decode_box_autoadd_master_bar_dto(raw[2]),);
+case 3: return CommandDto_SetTempo(bar: dco_decode_u_32(raw[1]),offsetNum: dco_decode_i_64(raw[2]),offsetDen: dco_decode_i_64(raw[3]),bpm: dco_decode_u_32(raw[4]),);
+case 4: return CommandDto_RemoveTempo(bar: dco_decode_u_32(raw[1]),offsetNum: dco_decode_i_64(raw[2]),offsetDen: dco_decode_i_64(raw[3]),);
+case 5: return CommandDto_InsertBeat(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),index: dco_decode_u_32(raw[4]),duration: dco_decode_box_autoadd_duration_dto(raw[5]),);
+case 6: return CommandDto_RemoveBeat(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),);
+case 7: return CommandDto_SetBeatDuration(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),duration: dco_decode_box_autoadd_duration_dto(raw[2]),);
+case 8: return CommandDto_SetNote(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),string: dco_decode_u_8(raw[2]),fret: dco_decode_u_8(raw[3]),);
+case 9: return CommandDto_RemoveNote(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),note: dco_decode_i_64(raw[2]),);
+case 10: return CommandDto_SetTie(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),note: dco_decode_i_64(raw[2]),tie: dco_decode_bool(raw[3]),);
+case 11: return CommandDto_SetNoteEffects(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),note: dco_decode_i_64(raw[2]),letRing: dco_decode_bool(raw[3]),dead: dco_decode_bool(raw[4]),);
+case 12: return CommandDto_AddVoice(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),);
+case 13: return CommandDto_RemoveVoice(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),);
+case 14: return CommandDto_ShiftFrets(track: dco_decode_i_64(raw[1]),fromBar: dco_decode_u_32(raw[2]),toBar: dco_decode_u_32(raw[3]),delta: dco_decode_i_16(raw[4]),);
+case 15: return CommandDto_AddTrack(name: dco_decode_String(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),);
+case 16: return CommandDto_RemoveTrack(track: dco_decode_i_64(raw[1]),);
+case 17: return CommandDto_RenameTrack(track: dco_decode_i_64(raw[1]),name: dco_decode_String(raw[2]),);
+case 18: return CommandDto_SetInstrument(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),);
+case 19: return CommandDto_MoveTrack(track: dco_decode_i_64(raw[1]),to: dco_decode_u_32(raw[2]),);
+case 20: return CommandDto_Retune(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),keepPitches: dco_decode_bool(raw[3]),);
+                default: throw Exception("unreachable");
+            } }
+
+@protected DiagnosticDto dco_decode_diagnostic_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+                return DiagnosticDto(rule: dco_decode_String(arr[0]),
+track: dco_decode_i_64(arr[1]),
+bar: dco_decode_u_32(arr[2]),
+voice: dco_decode_u_32(arr[3]),
+kind: dco_decode_String(arr[4]),); }
+
+@protected DocumentSummaryDto dco_decode_document_summary_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
+                return DocumentSummaryDto(revision: dco_decode_i_64(arr[0]),
+dirty: dco_decode_bool(arr[1]),
+canUndo: dco_decode_bool(arr[2]),
+canRedo: dco_decode_bool(arr[3]),
+location: dco_decode_opt_String(arr[4]),
+unknownContent: dco_decode_list_String(arr[5]),
+tracks: dco_decode_list_track_summary_dto(arr[6]),
+masterBars: dco_decode_list_master_bar_dto(arr[7]),
+diagnostics: dco_decode_list_diagnostic_dto(arr[8]),); }
+
+@protected DurationDto dco_decode_duration_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return DurationDto(base: dco_decode_u_8(arr[0]),
+dots: dco_decode_u_8(arr[1]),
+tuplet: dco_decode_opt_box_autoadd_tuplet_dto(arr[2]),); }
+
+@protected EventDto dco_decode_event_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return EventDto(seq: dco_decode_i_64(arr[0]),
+revision: dco_decode_i_64(arr[1]),
+correlation: dco_decode_opt_box_autoadd_i_64(arr[2]),
+kind: dco_decode_event_kind_dto(arr[3]),); }
+
+@protected EventKindDto dco_decode_event_kind_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+switch (raw[0]) {
+                case 0: return EventKindDto_TrackAdded(track: dco_decode_i_64(raw[1]),);
+case 1: return EventKindDto_TrackRemoved(track: dco_decode_i_64(raw[1]),);
+case 2: return EventKindDto_TrackChanged(track: dco_decode_i_64(raw[1]),);
+case 3: return EventKindDto_TracksReordered();
+case 4: return EventKindDto_MasterBarsInserted(at: dco_decode_u_32(raw[1]),count: dco_decode_u_32(raw[2]),);
+case 5: return EventKindDto_MasterBarsRemoved(at: dco_decode_u_32(raw[1]),count: dco_decode_u_32(raw[2]),);
+case 6: return EventKindDto_MasterBarsChanged(start: dco_decode_u_32(raw[1]),end: dco_decode_u_32(raw[2]),);
+case 7: return EventKindDto_BarContentChanged(track: dco_decode_i_64(raw[1]),start: dco_decode_u_32(raw[2]),end: dco_decode_u_32(raw[3]),);
+case 8: return EventKindDto_TempoMapChanged();
+case 9: return EventKindDto_TiesRemoved(track: dco_decode_i_64(raw[1]),notes: dco_decode_list_prim_i_64_strict(raw[2]),);
+case 10: return EventKindDto_DocumentSaved();
+case 11: return EventKindDto_DirtyChanged(dirty: dco_decode_bool(raw[1]),);
+case 12: return EventKindDto_UndoAvailabilityChanged(canUndo: dco_decode_bool(raw[1]),canRedo: dco_decode_bool(raw[2]),);
+case 13: return EventKindDto_HistoryApplied();
+                default: throw Exception("unreachable");
+            } }
+
+@protected double dco_decode_f_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as double; }
+
+@protected GlyphDto dco_decode_glyph_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return GlyphDto(kind: dco_decode_glyph_kind_dto(arr[0]),
+x: dco_decode_f_32(arr[1]),
+y: dco_decode_f_32(arr[2]),
+width: dco_decode_f_32(arr[3]),); }
+
+@protected GlyphKindDto dco_decode_glyph_kind_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+switch (raw[0]) {
+                case 0: return GlyphKindDto_Fret(fret: dco_decode_u_8(raw[1]),tied: dco_decode_bool(raw[2]),dead: dco_decode_bool(raw[3]),letRing: dco_decode_bool(raw[4]),);
+case 1: return GlyphKindDto_Rest(exponent: dco_decode_u_8(raw[1]),dots: dco_decode_u_8(raw[2]),);
+case 2: return GlyphKindDto_Dot();
+case 3: return GlyphKindDto_Tuplet(actual: dco_decode_u_8(raw[1]),);
+case 4: return GlyphKindDto_TimeSignature(numerator: dco_decode_u_8(raw[1]),denominator: dco_decode_u_8(raw[2]),);
+case 5: return GlyphKindDto_RepeatDots();
+case 6: return GlyphKindDto_RepeatCount(count: dco_decode_u_8(raw[1]),);
+case 7: return GlyphKindDto_Volta(endings: dco_decode_list_prim_u_8_strict(raw[1]),);
+case 8: return GlyphKindDto_Marker(text: dco_decode_String(raw[1]),);
+case 9: return GlyphKindDto_BarNumber(number: dco_decode_u_32(raw[1]),);
+case 10: return GlyphKindDto_TabClef();
+case 11: return GlyphKindDto_StringName(string: dco_decode_u_8(raw[1]),name: dco_decode_String(raw[2]),);
+                default: throw Exception("unreachable");
+            } }
+
+@protected HitBeatDto dco_decode_hit_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return HitBeatDto(id: dco_decode_i_64(arr[0]),
+bar: dco_decode_u_32(arr[1]),
+voice: dco_decode_u_32(arr[2]),
+index: dco_decode_u_32(arr[3]),); }
+
+@protected int dco_decode_i_16(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected int dco_decode_i_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected PlatformInt64 dco_decode_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dcoDecodeI64(raw); }
+
+@protected InstrumentDto dco_decode_instrument_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return InstrumentDto(tuning: dco_decode_list_String(arr[0]),
+fretCount: dco_decode_u_8(arr[1]),
+capo: dco_decode_u_8(arr[2]),); }
+
+@protected List<String> dco_decode_list_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_String).toList(); }
+
+@protected List<BarLayoutDto> dco_decode_list_bar_layout_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_bar_layout_dto).toList(); }
+
+@protected List<BeatDto> dco_decode_list_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_beat_dto).toList(); }
+
+@protected List<DiagnosticDto> dco_decode_list_diagnostic_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_diagnostic_dto).toList(); }
+
+@protected List<EventDto> dco_decode_list_event_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_event_dto).toList(); }
+
+@protected List<GlyphDto> dco_decode_list_glyph_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_glyph_dto).toList(); }
+
+@protected List<HitBeatDto> dco_decode_list_hit_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_hit_beat_dto).toList(); }
+
+@protected List<MasterBarDto> dco_decode_list_master_bar_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_master_bar_dto).toList(); }
+
+@protected List<NoteDto> dco_decode_list_note_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_note_dto).toList(); }
+
+@protected Float32List dco_decode_list_prim_f_32_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as Float32List; }
+
+@protected Int32List dco_decode_list_prim_i_32_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as Int32List; }
+
+@protected Int64List dco_decode_list_prim_i_64_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dcoDecodeInt64List(raw); }
+
+@protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as Uint8List; }
+
+@protected List<SystemDto> dco_decode_list_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_system_dto).toList(); }
+
+@protected List<TrackSummaryDto> dco_decode_list_track_summary_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_track_summary_dto).toList(); }
+
+@protected MasterBarDto dco_decode_master_bar_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 7) throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+                return MasterBarDto(numerator: dco_decode_u_8(arr[0]),
+denominator: dco_decode_u_8(arr[1]),
+pickup: dco_decode_bool(arr[2]),
+repeatStart: dco_decode_bool(arr[3]),
+repeatEnd: dco_decode_opt_box_autoadd_u_8(arr[4]),
+alternateEndings: dco_decode_list_prim_u_8_strict(arr[5]),
+marker: dco_decode_opt_String(arr[6]),); }
+
+@protected MetricsDto dco_decode_metrics_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 17) throw Exception('unexpected arr length: expect 17 but see ${arr.length}');
+                return MetricsDto(width: dco_decode_f_32(arr[0]),
+marginLeft: dco_decode_f_32(arr[1]),
+marginRight: dco_decode_f_32(arr[2]),
+stringSpacing: dco_decode_f_32(arr[3]),
+digitWidth: dco_decode_f_32(arr[4]),
+glyphPadding: dco_decode_f_32(arr[5]),
+minColumnWidth: dco_decode_f_32(arr[6]),
+durationSpacing: dco_decode_f_32(arr[7]),
+barPadding: dco_decode_f_32(arr[8]),
+emptyBarWidth: dco_decode_f_32(arr[9]),
+headerWidth: dco_decode_f_32(arr[10]),
+timeSignatureWidth: dco_decode_f_32(arr[11]),
+repeatWidth: dco_decode_f_32(arr[12]),
+aboveStaff: dco_decode_f_32(arr[13]),
+belowStaff: dco_decode_f_32(arr[14]),
+systemGap: dco_decode_f_32(arr[15]),
+stemLength: dco_decode_f_32(arr[16]),); }
+
+@protected NoteDto dco_decode_note_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+                return NoteDto(id: dco_decode_i_64(arr[0]),
+string: dco_decode_u_8(arr[1]),
+fret: dco_decode_u_8(arr[2]),
+tie: dco_decode_bool(arr[3]),
+letRing: dco_decode_bool(arr[4]),
+dead: dco_decode_bool(arr[5]),); }
+
+@protected String? dco_decode_opt_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_String(raw); }
+
+@protected PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_i_64(raw); }
+
+@protected TupletDto? dco_decode_opt_box_autoadd_tuplet_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_tuplet_dto(raw); }
+
+@protected int? dco_decode_opt_box_autoadd_u_8(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_u_8(raw); }
+
+@protected OutcomeDto dco_decode_outcome_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return OutcomeDto(revision: dco_decode_i_64(arr[0]),
+events: dco_decode_list_event_dto(arr[1]),); }
+
+@protected SystemDto dco_decode_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 11) throw Exception('unexpected arr length: expect 11 but see ${arr.length}');
+                return SystemDto(index: dco_decode_u_32(arr[0]),
+y: dco_decode_f_32(arr[1]),
+height: dco_decode_f_32(arr[2]),
+staffTop: dco_decode_f_32(arr[3]),
+bars: dco_decode_list_bar_layout_dto(arr[4]),
+lines: dco_decode_list_prim_f_32_strict(arr[5]),
+lineKinds: dco_decode_list_prim_u_8_strict(arr[6]),
+glyphs: dco_decode_list_glyph_dto(arr[7]),
+hitRects: dco_decode_list_prim_f_32_strict(arr[8]),
+hitMeta: dco_decode_list_prim_i_32_strict(arr[9]),
+beats: dco_decode_list_hit_beat_dto(arr[10]),); }
+
+@protected TabLayoutDto dco_decode_tab_layout_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+                return TabLayoutDto(track: dco_decode_i_64(arr[0]),
+strings: dco_decode_u_8(arr[1]),
+width: dco_decode_f_32(arr[2]),
+height: dco_decode_f_32(arr[3]),
+systems: dco_decode_list_system_dto(arr[4]),); }
+
+@protected TrackSummaryDto dco_decode_track_summary_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return TrackSummaryDto(id: dco_decode_i_64(arr[0]),
+name: dco_decode_String(arr[1]),
+instrument: dco_decode_instrument_dto(arr[2]),); }
+
+@protected TupletDto dco_decode_tuplet_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return TupletDto(actual: dco_decode_u_8(arr[0]),
+normal: dco_decode_u_8(arr[1]),); }
+
+@protected int dco_decode_u_32(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected int dco_decode_u_8(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as int; }
+
+@protected void dco_decode_unit(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return; }
+
+@protected BigInt dco_decode_usize(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dcoDecodeU64(raw); }
+
+@protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_String(deserializer);
+        return AnyhowException(inner); }
+
+@protected DocumentHandle sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return DocumentHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected DocumentHandle sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return DocumentHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected DocumentHandle sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return DocumentHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected RustStreamSink<EventDto> sse_decode_StreamSink_event_dto_Sse(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+throw UnimplementedError('Unreachable ()'); }
+
+@protected String sse_decode_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_list_prim_u_8_strict(deserializer);
+        return utf8.decoder.convert(inner); }
+
+@protected ApiError sse_decode_api_error(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_rule = sse_decode_String(deserializer);
+var var_message = sse_decode_String(deserializer);
+return ApiError(rule: var_rule, message: var_message); }
+
+@protected BarLayoutDto sse_decode_bar_layout_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_bar = sse_decode_u_32(deserializer);
+var var_x = sse_decode_f_32(deserializer);
+var var_width = sse_decode_f_32(deserializer);
+var var_diagnostic = sse_decode_bool(deserializer);
+return BarLayoutDto(bar: var_bar, x: var_x, width: var_width, diagnostic: var_diagnostic); }
+
+@protected BeatAddressDto sse_decode_beat_address_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_track = sse_decode_i_64(deserializer);
+var var_bar = sse_decode_u_32(deserializer);
+var var_voice = sse_decode_u_32(deserializer);
+var var_beat = sse_decode_i_64(deserializer);
+return BeatAddressDto(track: var_track, bar: var_bar, voice: var_voice, beat: var_beat); }
+
+@protected BeatDto sse_decode_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_id = sse_decode_i_64(deserializer);
+var var_duration = sse_decode_duration_dto(deserializer);
+var var_notes = sse_decode_list_note_dto(deserializer);
+return BeatDto(id: var_id, duration: var_duration, notes: var_notes); }
+
+@protected bool sse_decode_bool(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getUint8() != 0; }
+
+@protected BeatAddressDto sse_decode_box_autoadd_beat_address_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_beat_address_dto(deserializer)); }
+
+@protected CommandDto sse_decode_box_autoadd_command_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_command_dto(deserializer)); }
+
+@protected DurationDto sse_decode_box_autoadd_duration_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_duration_dto(deserializer)); }
+
+@protected PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_i_64(deserializer)); }
+
+@protected InstrumentDto sse_decode_box_autoadd_instrument_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_instrument_dto(deserializer)); }
+
+@protected MasterBarDto sse_decode_box_autoadd_master_bar_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_master_bar_dto(deserializer)); }
+
+@protected MetricsDto sse_decode_box_autoadd_metrics_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_metrics_dto(deserializer)); }
+
+@protected TupletDto sse_decode_box_autoadd_tuplet_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_tuplet_dto(deserializer)); }
+
+@protected int sse_decode_box_autoadd_u_8(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_u_8(deserializer)); }
+
+@protected CommandDto sse_decode_command_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            var tag_ = sse_decode_i_32(deserializer);
+            switch (tag_) { case 0: var var_at = sse_decode_u_32(deserializer);
+var var_count = sse_decode_u_32(deserializer);
+return CommandDto_InsertMasterBars(at: var_at, count: var_count);case 1: var var_at = sse_decode_u_32(deserializer);
+var var_count = sse_decode_u_32(deserializer);
+return CommandDto_RemoveMasterBars(at: var_at, count: var_count);case 2: var var_index = sse_decode_u_32(deserializer);
+var var_bar = sse_decode_box_autoadd_master_bar_dto(deserializer);
+return CommandDto_SetMasterBar(index: var_index, bar: var_bar);case 3: var var_bar = sse_decode_u_32(deserializer);
+var var_offsetNum = sse_decode_i_64(deserializer);
+var var_offsetDen = sse_decode_i_64(deserializer);
+var var_bpm = sse_decode_u_32(deserializer);
+return CommandDto_SetTempo(bar: var_bar, offsetNum: var_offsetNum, offsetDen: var_offsetDen, bpm: var_bpm);case 4: var var_bar = sse_decode_u_32(deserializer);
+var var_offsetNum = sse_decode_i_64(deserializer);
+var var_offsetDen = sse_decode_i_64(deserializer);
+return CommandDto_RemoveTempo(bar: var_bar, offsetNum: var_offsetNum, offsetDen: var_offsetDen);case 5: var var_track = sse_decode_i_64(deserializer);
+var var_bar = sse_decode_u_32(deserializer);
+var var_voice = sse_decode_u_32(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+var var_duration = sse_decode_box_autoadd_duration_dto(deserializer);
+return CommandDto_InsertBeat(track: var_track, bar: var_bar, voice: var_voice, index: var_index, duration: var_duration);case 6: var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
+return CommandDto_RemoveBeat(beat: var_beat);case 7: var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
+var var_duration = sse_decode_box_autoadd_duration_dto(deserializer);
+return CommandDto_SetBeatDuration(beat: var_beat, duration: var_duration);case 8: var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
+var var_string = sse_decode_u_8(deserializer);
+var var_fret = sse_decode_u_8(deserializer);
+return CommandDto_SetNote(beat: var_beat, string: var_string, fret: var_fret);case 9: var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
+var var_note = sse_decode_i_64(deserializer);
+return CommandDto_RemoveNote(beat: var_beat, note: var_note);case 10: var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
+var var_note = sse_decode_i_64(deserializer);
+var var_tie = sse_decode_bool(deserializer);
+return CommandDto_SetTie(beat: var_beat, note: var_note, tie: var_tie);case 11: var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
+var var_note = sse_decode_i_64(deserializer);
+var var_letRing = sse_decode_bool(deserializer);
+var var_dead = sse_decode_bool(deserializer);
+return CommandDto_SetNoteEffects(beat: var_beat, note: var_note, letRing: var_letRing, dead: var_dead);case 12: var var_track = sse_decode_i_64(deserializer);
+var var_bar = sse_decode_u_32(deserializer);
+return CommandDto_AddVoice(track: var_track, bar: var_bar);case 13: var var_track = sse_decode_i_64(deserializer);
+var var_bar = sse_decode_u_32(deserializer);
+var var_voice = sse_decode_u_32(deserializer);
+return CommandDto_RemoveVoice(track: var_track, bar: var_bar, voice: var_voice);case 14: var var_track = sse_decode_i_64(deserializer);
+var var_fromBar = sse_decode_u_32(deserializer);
+var var_toBar = sse_decode_u_32(deserializer);
+var var_delta = sse_decode_i_16(deserializer);
+return CommandDto_ShiftFrets(track: var_track, fromBar: var_fromBar, toBar: var_toBar, delta: var_delta);case 15: var var_name = sse_decode_String(deserializer);
+var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
+return CommandDto_AddTrack(name: var_name, instrument: var_instrument);case 16: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_RemoveTrack(track: var_track);case 17: var var_track = sse_decode_i_64(deserializer);
+var var_name = sse_decode_String(deserializer);
+return CommandDto_RenameTrack(track: var_track, name: var_name);case 18: var var_track = sse_decode_i_64(deserializer);
+var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
+return CommandDto_SetInstrument(track: var_track, instrument: var_instrument);case 19: var var_track = sse_decode_i_64(deserializer);
+var var_to = sse_decode_u_32(deserializer);
+return CommandDto_MoveTrack(track: var_track, to: var_to);case 20: var var_track = sse_decode_i_64(deserializer);
+var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
+var var_keepPitches = sse_decode_bool(deserializer);
+return CommandDto_Retune(track: var_track, instrument: var_instrument, keepPitches: var_keepPitches); default: throw UnimplementedError(''); }
+             }
+
+@protected DiagnosticDto sse_decode_diagnostic_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_rule = sse_decode_String(deserializer);
+var var_track = sse_decode_i_64(deserializer);
+var var_bar = sse_decode_u_32(deserializer);
+var var_voice = sse_decode_u_32(deserializer);
+var var_kind = sse_decode_String(deserializer);
+return DiagnosticDto(rule: var_rule, track: var_track, bar: var_bar, voice: var_voice, kind: var_kind); }
+
+@protected DocumentSummaryDto sse_decode_document_summary_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_revision = sse_decode_i_64(deserializer);
+var var_dirty = sse_decode_bool(deserializer);
+var var_canUndo = sse_decode_bool(deserializer);
+var var_canRedo = sse_decode_bool(deserializer);
+var var_location = sse_decode_opt_String(deserializer);
+var var_unknownContent = sse_decode_list_String(deserializer);
+var var_tracks = sse_decode_list_track_summary_dto(deserializer);
+var var_masterBars = sse_decode_list_master_bar_dto(deserializer);
+var var_diagnostics = sse_decode_list_diagnostic_dto(deserializer);
+return DocumentSummaryDto(revision: var_revision, dirty: var_dirty, canUndo: var_canUndo, canRedo: var_canRedo, location: var_location, unknownContent: var_unknownContent, tracks: var_tracks, masterBars: var_masterBars, diagnostics: var_diagnostics); }
+
+@protected DurationDto sse_decode_duration_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_base = sse_decode_u_8(deserializer);
+var var_dots = sse_decode_u_8(deserializer);
+var var_tuplet = sse_decode_opt_box_autoadd_tuplet_dto(deserializer);
+return DurationDto(base: var_base, dots: var_dots, tuplet: var_tuplet); }
+
+@protected EventDto sse_decode_event_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_seq = sse_decode_i_64(deserializer);
+var var_revision = sse_decode_i_64(deserializer);
+var var_correlation = sse_decode_opt_box_autoadd_i_64(deserializer);
+var var_kind = sse_decode_event_kind_dto(deserializer);
+return EventDto(seq: var_seq, revision: var_revision, correlation: var_correlation, kind: var_kind); }
+
+@protected EventKindDto sse_decode_event_kind_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            var tag_ = sse_decode_i_32(deserializer);
+            switch (tag_) { case 0: var var_track = sse_decode_i_64(deserializer);
+return EventKindDto_TrackAdded(track: var_track);case 1: var var_track = sse_decode_i_64(deserializer);
+return EventKindDto_TrackRemoved(track: var_track);case 2: var var_track = sse_decode_i_64(deserializer);
+return EventKindDto_TrackChanged(track: var_track);case 3: return EventKindDto_TracksReordered();case 4: var var_at = sse_decode_u_32(deserializer);
+var var_count = sse_decode_u_32(deserializer);
+return EventKindDto_MasterBarsInserted(at: var_at, count: var_count);case 5: var var_at = sse_decode_u_32(deserializer);
+var var_count = sse_decode_u_32(deserializer);
+return EventKindDto_MasterBarsRemoved(at: var_at, count: var_count);case 6: var var_start = sse_decode_u_32(deserializer);
+var var_end = sse_decode_u_32(deserializer);
+return EventKindDto_MasterBarsChanged(start: var_start, end: var_end);case 7: var var_track = sse_decode_i_64(deserializer);
+var var_start = sse_decode_u_32(deserializer);
+var var_end = sse_decode_u_32(deserializer);
+return EventKindDto_BarContentChanged(track: var_track, start: var_start, end: var_end);case 8: return EventKindDto_TempoMapChanged();case 9: var var_track = sse_decode_i_64(deserializer);
+var var_notes = sse_decode_list_prim_i_64_strict(deserializer);
+return EventKindDto_TiesRemoved(track: var_track, notes: var_notes);case 10: return EventKindDto_DocumentSaved();case 11: var var_dirty = sse_decode_bool(deserializer);
+return EventKindDto_DirtyChanged(dirty: var_dirty);case 12: var var_canUndo = sse_decode_bool(deserializer);
+var var_canRedo = sse_decode_bool(deserializer);
+return EventKindDto_UndoAvailabilityChanged(canUndo: var_canUndo, canRedo: var_canRedo);case 13: return EventKindDto_HistoryApplied(); default: throw UnimplementedError(''); }
+             }
+
+@protected double sse_decode_f_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getFloat32(); }
+
+@protected GlyphDto sse_decode_glyph_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_kind = sse_decode_glyph_kind_dto(deserializer);
+var var_x = sse_decode_f_32(deserializer);
+var var_y = sse_decode_f_32(deserializer);
+var var_width = sse_decode_f_32(deserializer);
+return GlyphDto(kind: var_kind, x: var_x, y: var_y, width: var_width); }
+
+@protected GlyphKindDto sse_decode_glyph_kind_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            var tag_ = sse_decode_i_32(deserializer);
+            switch (tag_) { case 0: var var_fret = sse_decode_u_8(deserializer);
+var var_tied = sse_decode_bool(deserializer);
+var var_dead = sse_decode_bool(deserializer);
+var var_letRing = sse_decode_bool(deserializer);
+return GlyphKindDto_Fret(fret: var_fret, tied: var_tied, dead: var_dead, letRing: var_letRing);case 1: var var_exponent = sse_decode_u_8(deserializer);
+var var_dots = sse_decode_u_8(deserializer);
+return GlyphKindDto_Rest(exponent: var_exponent, dots: var_dots);case 2: return GlyphKindDto_Dot();case 3: var var_actual = sse_decode_u_8(deserializer);
+return GlyphKindDto_Tuplet(actual: var_actual);case 4: var var_numerator = sse_decode_u_8(deserializer);
+var var_denominator = sse_decode_u_8(deserializer);
+return GlyphKindDto_TimeSignature(numerator: var_numerator, denominator: var_denominator);case 5: return GlyphKindDto_RepeatDots();case 6: var var_count = sse_decode_u_8(deserializer);
+return GlyphKindDto_RepeatCount(count: var_count);case 7: var var_endings = sse_decode_list_prim_u_8_strict(deserializer);
+return GlyphKindDto_Volta(endings: var_endings);case 8: var var_text = sse_decode_String(deserializer);
+return GlyphKindDto_Marker(text: var_text);case 9: var var_number = sse_decode_u_32(deserializer);
+return GlyphKindDto_BarNumber(number: var_number);case 10: return GlyphKindDto_TabClef();case 11: var var_string = sse_decode_u_8(deserializer);
+var var_name = sse_decode_String(deserializer);
+return GlyphKindDto_StringName(string: var_string, name: var_name); default: throw UnimplementedError(''); }
+             }
+
+@protected HitBeatDto sse_decode_hit_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_id = sse_decode_i_64(deserializer);
+var var_bar = sse_decode_u_32(deserializer);
+var var_voice = sse_decode_u_32(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+return HitBeatDto(id: var_id, bar: var_bar, voice: var_voice, index: var_index); }
+
+@protected int sse_decode_i_16(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getInt16(); }
+
+@protected int sse_decode_i_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getInt32(); }
+
+@protected PlatformInt64 sse_decode_i_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getPlatformInt64(); }
+
+@protected InstrumentDto sse_decode_instrument_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_tuning = sse_decode_list_String(deserializer);
+var var_fretCount = sse_decode_u_8(deserializer);
+var var_capo = sse_decode_u_8(deserializer);
+return InstrumentDto(tuning: var_tuning, fretCount: var_fretCount, capo: var_capo); }
+
+@protected List<String> sse_decode_list_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <String>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_String(deserializer)); }
+        return ans_;
+         }
+
+@protected List<BarLayoutDto> sse_decode_list_bar_layout_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <BarLayoutDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_bar_layout_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<BeatDto> sse_decode_list_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <BeatDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_beat_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<DiagnosticDto> sse_decode_list_diagnostic_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <DiagnosticDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_diagnostic_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<EventDto> sse_decode_list_event_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <EventDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_event_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<GlyphDto> sse_decode_list_glyph_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <GlyphDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_glyph_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<HitBeatDto> sse_decode_list_hit_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <HitBeatDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_hit_beat_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<MasterBarDto> sse_decode_list_master_bar_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <MasterBarDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_master_bar_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<NoteDto> sse_decode_list_note_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <NoteDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_note_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected Float32List sse_decode_list_prim_f_32_strict(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var len_ = sse_decode_i_32(deserializer);
+                return deserializer.buffer.getFloat32List(len_); }
+
+@protected Int32List sse_decode_list_prim_i_32_strict(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var len_ = sse_decode_i_32(deserializer);
+                return deserializer.buffer.getInt32List(len_); }
+
+@protected Int64List sse_decode_list_prim_i_64_strict(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var len_ = sse_decode_i_32(deserializer);
+                return deserializer.buffer.getInt64List(len_); }
+
+@protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var len_ = sse_decode_i_32(deserializer);
+                return deserializer.buffer.getUint8List(len_); }
+
+@protected List<SystemDto> sse_decode_list_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <SystemDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_system_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<TrackSummaryDto> sse_decode_list_track_summary_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <TrackSummaryDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_track_summary_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected MasterBarDto sse_decode_master_bar_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_numerator = sse_decode_u_8(deserializer);
+var var_denominator = sse_decode_u_8(deserializer);
+var var_pickup = sse_decode_bool(deserializer);
+var var_repeatStart = sse_decode_bool(deserializer);
+var var_repeatEnd = sse_decode_opt_box_autoadd_u_8(deserializer);
+var var_alternateEndings = sse_decode_list_prim_u_8_strict(deserializer);
+var var_marker = sse_decode_opt_String(deserializer);
+return MasterBarDto(numerator: var_numerator, denominator: var_denominator, pickup: var_pickup, repeatStart: var_repeatStart, repeatEnd: var_repeatEnd, alternateEndings: var_alternateEndings, marker: var_marker); }
+
+@protected MetricsDto sse_decode_metrics_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_width = sse_decode_f_32(deserializer);
+var var_marginLeft = sse_decode_f_32(deserializer);
+var var_marginRight = sse_decode_f_32(deserializer);
+var var_stringSpacing = sse_decode_f_32(deserializer);
+var var_digitWidth = sse_decode_f_32(deserializer);
+var var_glyphPadding = sse_decode_f_32(deserializer);
+var var_minColumnWidth = sse_decode_f_32(deserializer);
+var var_durationSpacing = sse_decode_f_32(deserializer);
+var var_barPadding = sse_decode_f_32(deserializer);
+var var_emptyBarWidth = sse_decode_f_32(deserializer);
+var var_headerWidth = sse_decode_f_32(deserializer);
+var var_timeSignatureWidth = sse_decode_f_32(deserializer);
+var var_repeatWidth = sse_decode_f_32(deserializer);
+var var_aboveStaff = sse_decode_f_32(deserializer);
+var var_belowStaff = sse_decode_f_32(deserializer);
+var var_systemGap = sse_decode_f_32(deserializer);
+var var_stemLength = sse_decode_f_32(deserializer);
+return MetricsDto(width: var_width, marginLeft: var_marginLeft, marginRight: var_marginRight, stringSpacing: var_stringSpacing, digitWidth: var_digitWidth, glyphPadding: var_glyphPadding, minColumnWidth: var_minColumnWidth, durationSpacing: var_durationSpacing, barPadding: var_barPadding, emptyBarWidth: var_emptyBarWidth, headerWidth: var_headerWidth, timeSignatureWidth: var_timeSignatureWidth, repeatWidth: var_repeatWidth, aboveStaff: var_aboveStaff, belowStaff: var_belowStaff, systemGap: var_systemGap, stemLength: var_stemLength); }
+
+@protected NoteDto sse_decode_note_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_id = sse_decode_i_64(deserializer);
+var var_string = sse_decode_u_8(deserializer);
+var var_fret = sse_decode_u_8(deserializer);
+var var_tie = sse_decode_bool(deserializer);
+var var_letRing = sse_decode_bool(deserializer);
+var var_dead = sse_decode_bool(deserializer);
+return NoteDto(id: var_id, string: var_string, fret: var_fret, tie: var_tie, letRing: var_letRing, dead: var_dead); }
+
+@protected String? sse_decode_opt_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_String(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_i_64(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected TupletDto? sse_decode_opt_box_autoadd_tuplet_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_tuplet_dto(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected int? sse_decode_opt_box_autoadd_u_8(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_u_8(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected OutcomeDto sse_decode_outcome_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_revision = sse_decode_i_64(deserializer);
+var var_events = sse_decode_list_event_dto(deserializer);
+return OutcomeDto(revision: var_revision, events: var_events); }
+
+@protected SystemDto sse_decode_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_index = sse_decode_u_32(deserializer);
+var var_y = sse_decode_f_32(deserializer);
+var var_height = sse_decode_f_32(deserializer);
+var var_staffTop = sse_decode_f_32(deserializer);
+var var_bars = sse_decode_list_bar_layout_dto(deserializer);
+var var_lines = sse_decode_list_prim_f_32_strict(deserializer);
+var var_lineKinds = sse_decode_list_prim_u_8_strict(deserializer);
+var var_glyphs = sse_decode_list_glyph_dto(deserializer);
+var var_hitRects = sse_decode_list_prim_f_32_strict(deserializer);
+var var_hitMeta = sse_decode_list_prim_i_32_strict(deserializer);
+var var_beats = sse_decode_list_hit_beat_dto(deserializer);
+return SystemDto(index: var_index, y: var_y, height: var_height, staffTop: var_staffTop, bars: var_bars, lines: var_lines, lineKinds: var_lineKinds, glyphs: var_glyphs, hitRects: var_hitRects, hitMeta: var_hitMeta, beats: var_beats); }
+
+@protected TabLayoutDto sse_decode_tab_layout_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_track = sse_decode_i_64(deserializer);
+var var_strings = sse_decode_u_8(deserializer);
+var var_width = sse_decode_f_32(deserializer);
+var var_height = sse_decode_f_32(deserializer);
+var var_systems = sse_decode_list_system_dto(deserializer);
+return TabLayoutDto(track: var_track, strings: var_strings, width: var_width, height: var_height, systems: var_systems); }
+
+@protected TrackSummaryDto sse_decode_track_summary_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_id = sse_decode_i_64(deserializer);
+var var_name = sse_decode_String(deserializer);
+var var_instrument = sse_decode_instrument_dto(deserializer);
+return TrackSummaryDto(id: var_id, name: var_name, instrument: var_instrument); }
+
+@protected TupletDto sse_decode_tuplet_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_actual = sse_decode_u_8(deserializer);
+var var_normal = sse_decode_u_8(deserializer);
+return TupletDto(actual: var_actual, normal: var_normal); }
+
+@protected int sse_decode_u_32(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getUint32(); }
+
+@protected int sse_decode_u_8(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getUint8(); }
+
+@protected void sse_decode_unit(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+ }
+
+@protected BigInt sse_decode_usize(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return deserializer.buffer.getBigUint64(); }
+
+@protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.message, serializer); }
+
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: true), serializer); }
+
+@protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: false), serializer); }
+
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: null), serializer); }
+
+@protected void sse_encode_StreamSink_event_dto_Sse(RustStreamSink<EventDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.setupAndSerialize(codec: SseCodec(
+            decodeSuccessData: sse_decode_event_dto,
+            decodeErrorData: sse_decode_AnyhowException,
+        )), serializer); }
+
+@protected void sse_encode_String(String self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_prim_u_8_strict(utf8.encoder.convert(self), serializer); }
+
+@protected void sse_encode_api_error(ApiError self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.rule, serializer);
+sse_encode_String(self.message, serializer);
+ }
+
+@protected void sse_encode_bar_layout_dto(BarLayoutDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.bar, serializer);
+sse_encode_f_32(self.x, serializer);
+sse_encode_f_32(self.width, serializer);
+sse_encode_bool(self.diagnostic, serializer);
+ }
+
+@protected void sse_encode_beat_address_dto(BeatAddressDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.track, serializer);
+sse_encode_u_32(self.bar, serializer);
+sse_encode_u_32(self.voice, serializer);
+sse_encode_i_64(self.beat, serializer);
+ }
+
+@protected void sse_encode_beat_dto(BeatDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.id, serializer);
+sse_encode_duration_dto(self.duration, serializer);
+sse_encode_list_note_dto(self.notes, serializer);
+ }
+
+@protected void sse_encode_bool(bool self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putUint8(self ? 1 : 0); }
+
+@protected void sse_encode_box_autoadd_beat_address_dto(BeatAddressDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_beat_address_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_command_dto(CommandDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_command_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_duration_dto(DurationDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_duration_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_i_64(PlatformInt64 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self, serializer); }
+
+@protected void sse_encode_box_autoadd_instrument_dto(InstrumentDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_instrument_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_master_bar_dto(MasterBarDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_master_bar_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_metrics_dto(MetricsDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_metrics_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_tuplet_dto(TupletDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_tuplet_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_u_8(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_8(self, serializer); }
+
+@protected void sse_encode_command_dto(CommandDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+switch (self) { case CommandDto_InsertMasterBars(at: final at,count: final count): sse_encode_i_32(0, serializer); sse_encode_u_32(at, serializer);
+sse_encode_u_32(count, serializer);
+case CommandDto_RemoveMasterBars(at: final at,count: final count): sse_encode_i_32(1, serializer); sse_encode_u_32(at, serializer);
+sse_encode_u_32(count, serializer);
+case CommandDto_SetMasterBar(index: final index,bar: final bar): sse_encode_i_32(2, serializer); sse_encode_u_32(index, serializer);
+sse_encode_box_autoadd_master_bar_dto(bar, serializer);
+case CommandDto_SetTempo(bar: final bar,offsetNum: final offsetNum,offsetDen: final offsetDen,bpm: final bpm): sse_encode_i_32(3, serializer); sse_encode_u_32(bar, serializer);
+sse_encode_i_64(offsetNum, serializer);
+sse_encode_i_64(offsetDen, serializer);
+sse_encode_u_32(bpm, serializer);
+case CommandDto_RemoveTempo(bar: final bar,offsetNum: final offsetNum,offsetDen: final offsetDen): sse_encode_i_32(4, serializer); sse_encode_u_32(bar, serializer);
+sse_encode_i_64(offsetNum, serializer);
+sse_encode_i_64(offsetDen, serializer);
+case CommandDto_InsertBeat(track: final track,bar: final bar,voice: final voice,index: final index,duration: final duration): sse_encode_i_32(5, serializer); sse_encode_i_64(track, serializer);
+sse_encode_u_32(bar, serializer);
+sse_encode_u_32(voice, serializer);
+sse_encode_u_32(index, serializer);
+sse_encode_box_autoadd_duration_dto(duration, serializer);
+case CommandDto_RemoveBeat(beat: final beat): sse_encode_i_32(6, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
+case CommandDto_SetBeatDuration(beat: final beat,duration: final duration): sse_encode_i_32(7, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
+sse_encode_box_autoadd_duration_dto(duration, serializer);
+case CommandDto_SetNote(beat: final beat,string: final string,fret: final fret): sse_encode_i_32(8, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
+sse_encode_u_8(string, serializer);
+sse_encode_u_8(fret, serializer);
+case CommandDto_RemoveNote(beat: final beat,note: final note): sse_encode_i_32(9, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
+sse_encode_i_64(note, serializer);
+case CommandDto_SetTie(beat: final beat,note: final note,tie: final tie): sse_encode_i_32(10, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
+sse_encode_i_64(note, serializer);
+sse_encode_bool(tie, serializer);
+case CommandDto_SetNoteEffects(beat: final beat,note: final note,letRing: final letRing,dead: final dead): sse_encode_i_32(11, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
+sse_encode_i_64(note, serializer);
+sse_encode_bool(letRing, serializer);
+sse_encode_bool(dead, serializer);
+case CommandDto_AddVoice(track: final track,bar: final bar): sse_encode_i_32(12, serializer); sse_encode_i_64(track, serializer);
+sse_encode_u_32(bar, serializer);
+case CommandDto_RemoveVoice(track: final track,bar: final bar,voice: final voice): sse_encode_i_32(13, serializer); sse_encode_i_64(track, serializer);
+sse_encode_u_32(bar, serializer);
+sse_encode_u_32(voice, serializer);
+case CommandDto_ShiftFrets(track: final track,fromBar: final fromBar,toBar: final toBar,delta: final delta): sse_encode_i_32(14, serializer); sse_encode_i_64(track, serializer);
+sse_encode_u_32(fromBar, serializer);
+sse_encode_u_32(toBar, serializer);
+sse_encode_i_16(delta, serializer);
+case CommandDto_AddTrack(name: final name,instrument: final instrument): sse_encode_i_32(15, serializer); sse_encode_String(name, serializer);
+sse_encode_box_autoadd_instrument_dto(instrument, serializer);
+case CommandDto_RemoveTrack(track: final track): sse_encode_i_32(16, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_RenameTrack(track: final track,name: final name): sse_encode_i_32(17, serializer); sse_encode_i_64(track, serializer);
+sse_encode_String(name, serializer);
+case CommandDto_SetInstrument(track: final track,instrument: final instrument): sse_encode_i_32(18, serializer); sse_encode_i_64(track, serializer);
+sse_encode_box_autoadd_instrument_dto(instrument, serializer);
+case CommandDto_MoveTrack(track: final track,to: final to): sse_encode_i_32(19, serializer); sse_encode_i_64(track, serializer);
+sse_encode_u_32(to, serializer);
+case CommandDto_Retune(track: final track,instrument: final instrument,keepPitches: final keepPitches): sse_encode_i_32(20, serializer); sse_encode_i_64(track, serializer);
+sse_encode_box_autoadd_instrument_dto(instrument, serializer);
+sse_encode_bool(keepPitches, serializer);
+  } }
+
+@protected void sse_encode_diagnostic_dto(DiagnosticDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.rule, serializer);
+sse_encode_i_64(self.track, serializer);
+sse_encode_u_32(self.bar, serializer);
+sse_encode_u_32(self.voice, serializer);
+sse_encode_String(self.kind, serializer);
+ }
+
+@protected void sse_encode_document_summary_dto(DocumentSummaryDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.revision, serializer);
+sse_encode_bool(self.dirty, serializer);
+sse_encode_bool(self.canUndo, serializer);
+sse_encode_bool(self.canRedo, serializer);
+sse_encode_opt_String(self.location, serializer);
+sse_encode_list_String(self.unknownContent, serializer);
+sse_encode_list_track_summary_dto(self.tracks, serializer);
+sse_encode_list_master_bar_dto(self.masterBars, serializer);
+sse_encode_list_diagnostic_dto(self.diagnostics, serializer);
+ }
+
+@protected void sse_encode_duration_dto(DurationDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_8(self.base, serializer);
+sse_encode_u_8(self.dots, serializer);
+sse_encode_opt_box_autoadd_tuplet_dto(self.tuplet, serializer);
+ }
+
+@protected void sse_encode_event_dto(EventDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.seq, serializer);
+sse_encode_i_64(self.revision, serializer);
+sse_encode_opt_box_autoadd_i_64(self.correlation, serializer);
+sse_encode_event_kind_dto(self.kind, serializer);
+ }
+
+@protected void sse_encode_event_kind_dto(EventKindDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+switch (self) { case EventKindDto_TrackAdded(track: final track): sse_encode_i_32(0, serializer); sse_encode_i_64(track, serializer);
+case EventKindDto_TrackRemoved(track: final track): sse_encode_i_32(1, serializer); sse_encode_i_64(track, serializer);
+case EventKindDto_TrackChanged(track: final track): sse_encode_i_32(2, serializer); sse_encode_i_64(track, serializer);
+case EventKindDto_TracksReordered(): sse_encode_i_32(3, serializer); case EventKindDto_MasterBarsInserted(at: final at,count: final count): sse_encode_i_32(4, serializer); sse_encode_u_32(at, serializer);
+sse_encode_u_32(count, serializer);
+case EventKindDto_MasterBarsRemoved(at: final at,count: final count): sse_encode_i_32(5, serializer); sse_encode_u_32(at, serializer);
+sse_encode_u_32(count, serializer);
+case EventKindDto_MasterBarsChanged(start: final start,end: final end): sse_encode_i_32(6, serializer); sse_encode_u_32(start, serializer);
+sse_encode_u_32(end, serializer);
+case EventKindDto_BarContentChanged(track: final track,start: final start,end: final end): sse_encode_i_32(7, serializer); sse_encode_i_64(track, serializer);
+sse_encode_u_32(start, serializer);
+sse_encode_u_32(end, serializer);
+case EventKindDto_TempoMapChanged(): sse_encode_i_32(8, serializer); case EventKindDto_TiesRemoved(track: final track,notes: final notes): sse_encode_i_32(9, serializer); sse_encode_i_64(track, serializer);
+sse_encode_list_prim_i_64_strict(notes, serializer);
+case EventKindDto_DocumentSaved(): sse_encode_i_32(10, serializer); case EventKindDto_DirtyChanged(dirty: final dirty): sse_encode_i_32(11, serializer); sse_encode_bool(dirty, serializer);
+case EventKindDto_UndoAvailabilityChanged(canUndo: final canUndo,canRedo: final canRedo): sse_encode_i_32(12, serializer); sse_encode_bool(canUndo, serializer);
+sse_encode_bool(canRedo, serializer);
+case EventKindDto_HistoryApplied(): sse_encode_i_32(13, serializer);   } }
+
+@protected void sse_encode_f_32(double self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putFloat32(self); }
+
+@protected void sse_encode_glyph_dto(GlyphDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_glyph_kind_dto(self.kind, serializer);
+sse_encode_f_32(self.x, serializer);
+sse_encode_f_32(self.y, serializer);
+sse_encode_f_32(self.width, serializer);
+ }
+
+@protected void sse_encode_glyph_kind_dto(GlyphKindDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+switch (self) { case GlyphKindDto_Fret(fret: final fret,tied: final tied,dead: final dead,letRing: final letRing): sse_encode_i_32(0, serializer); sse_encode_u_8(fret, serializer);
+sse_encode_bool(tied, serializer);
+sse_encode_bool(dead, serializer);
+sse_encode_bool(letRing, serializer);
+case GlyphKindDto_Rest(exponent: final exponent,dots: final dots): sse_encode_i_32(1, serializer); sse_encode_u_8(exponent, serializer);
+sse_encode_u_8(dots, serializer);
+case GlyphKindDto_Dot(): sse_encode_i_32(2, serializer); case GlyphKindDto_Tuplet(actual: final actual): sse_encode_i_32(3, serializer); sse_encode_u_8(actual, serializer);
+case GlyphKindDto_TimeSignature(numerator: final numerator,denominator: final denominator): sse_encode_i_32(4, serializer); sse_encode_u_8(numerator, serializer);
+sse_encode_u_8(denominator, serializer);
+case GlyphKindDto_RepeatDots(): sse_encode_i_32(5, serializer); case GlyphKindDto_RepeatCount(count: final count): sse_encode_i_32(6, serializer); sse_encode_u_8(count, serializer);
+case GlyphKindDto_Volta(endings: final endings): sse_encode_i_32(7, serializer); sse_encode_list_prim_u_8_strict(endings, serializer);
+case GlyphKindDto_Marker(text: final text): sse_encode_i_32(8, serializer); sse_encode_String(text, serializer);
+case GlyphKindDto_BarNumber(number: final number): sse_encode_i_32(9, serializer); sse_encode_u_32(number, serializer);
+case GlyphKindDto_TabClef(): sse_encode_i_32(10, serializer); case GlyphKindDto_StringName(string: final string,name: final name): sse_encode_i_32(11, serializer); sse_encode_u_8(string, serializer);
+sse_encode_String(name, serializer);
+  } }
+
+@protected void sse_encode_hit_beat_dto(HitBeatDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.id, serializer);
+sse_encode_u_32(self.bar, serializer);
+sse_encode_u_32(self.voice, serializer);
+sse_encode_u_32(self.index, serializer);
+ }
+
+@protected void sse_encode_i_16(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putInt16(self); }
+
+@protected void sse_encode_i_32(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putInt32(self); }
+
+@protected void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putPlatformInt64(self); }
+
+@protected void sse_encode_instrument_dto(InstrumentDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_String(self.tuning, serializer);
+sse_encode_u_8(self.fretCount, serializer);
+sse_encode_u_8(self.capo, serializer);
+ }
+
+@protected void sse_encode_list_String(List<String> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_String(item, serializer); } }
+
+@protected void sse_encode_list_bar_layout_dto(List<BarLayoutDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_bar_layout_dto(item, serializer); } }
+
+@protected void sse_encode_list_beat_dto(List<BeatDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_beat_dto(item, serializer); } }
+
+@protected void sse_encode_list_diagnostic_dto(List<DiagnosticDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_diagnostic_dto(item, serializer); } }
+
+@protected void sse_encode_list_event_dto(List<EventDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_event_dto(item, serializer); } }
+
+@protected void sse_encode_list_glyph_dto(List<GlyphDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_glyph_dto(item, serializer); } }
+
+@protected void sse_encode_list_hit_beat_dto(List<HitBeatDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_hit_beat_dto(item, serializer); } }
+
+@protected void sse_encode_list_master_bar_dto(List<MasterBarDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_master_bar_dto(item, serializer); } }
+
+@protected void sse_encode_list_note_dto(List<NoteDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_note_dto(item, serializer); } }
+
+@protected void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+                    serializer.buffer.putFloat32List(self); }
+
+@protected void sse_encode_list_prim_i_32_strict(Int32List self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+                    serializer.buffer.putInt32List(self); }
+
+@protected void sse_encode_list_prim_i_64_strict(Int64List self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+                    serializer.buffer.putInt64List(self); }
+
+@protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+                    serializer.buffer.putUint8List(self); }
+
+@protected void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_system_dto(item, serializer); } }
+
+@protected void sse_encode_list_track_summary_dto(List<TrackSummaryDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_track_summary_dto(item, serializer); } }
+
+@protected void sse_encode_master_bar_dto(MasterBarDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_8(self.numerator, serializer);
+sse_encode_u_8(self.denominator, serializer);
+sse_encode_bool(self.pickup, serializer);
+sse_encode_bool(self.repeatStart, serializer);
+sse_encode_opt_box_autoadd_u_8(self.repeatEnd, serializer);
+sse_encode_list_prim_u_8_strict(self.alternateEndings, serializer);
+sse_encode_opt_String(self.marker, serializer);
+ }
+
+@protected void sse_encode_metrics_dto(MetricsDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_f_32(self.width, serializer);
+sse_encode_f_32(self.marginLeft, serializer);
+sse_encode_f_32(self.marginRight, serializer);
+sse_encode_f_32(self.stringSpacing, serializer);
+sse_encode_f_32(self.digitWidth, serializer);
+sse_encode_f_32(self.glyphPadding, serializer);
+sse_encode_f_32(self.minColumnWidth, serializer);
+sse_encode_f_32(self.durationSpacing, serializer);
+sse_encode_f_32(self.barPadding, serializer);
+sse_encode_f_32(self.emptyBarWidth, serializer);
+sse_encode_f_32(self.headerWidth, serializer);
+sse_encode_f_32(self.timeSignatureWidth, serializer);
+sse_encode_f_32(self.repeatWidth, serializer);
+sse_encode_f_32(self.aboveStaff, serializer);
+sse_encode_f_32(self.belowStaff, serializer);
+sse_encode_f_32(self.systemGap, serializer);
+sse_encode_f_32(self.stemLength, serializer);
+ }
+
+@protected void sse_encode_note_dto(NoteDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.id, serializer);
+sse_encode_u_8(self.string, serializer);
+sse_encode_u_8(self.fret, serializer);
+sse_encode_bool(self.tie, serializer);
+sse_encode_bool(self.letRing, serializer);
+sse_encode_bool(self.dead, serializer);
+ }
+
+@protected void sse_encode_opt_String(String? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_String(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_opt_box_autoadd_i_64(PlatformInt64? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_i_64(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_opt_box_autoadd_tuplet_dto(TupletDto? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_tuplet_dto(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_opt_box_autoadd_u_8(int? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_u_8(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_outcome_dto(OutcomeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.revision, serializer);
+sse_encode_list_event_dto(self.events, serializer);
+ }
+
+@protected void sse_encode_system_dto(SystemDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.index, serializer);
+sse_encode_f_32(self.y, serializer);
+sse_encode_f_32(self.height, serializer);
+sse_encode_f_32(self.staffTop, serializer);
+sse_encode_list_bar_layout_dto(self.bars, serializer);
+sse_encode_list_prim_f_32_strict(self.lines, serializer);
+sse_encode_list_prim_u_8_strict(self.lineKinds, serializer);
+sse_encode_list_glyph_dto(self.glyphs, serializer);
+sse_encode_list_prim_f_32_strict(self.hitRects, serializer);
+sse_encode_list_prim_i_32_strict(self.hitMeta, serializer);
+sse_encode_list_hit_beat_dto(self.beats, serializer);
+ }
+
+@protected void sse_encode_tab_layout_dto(TabLayoutDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.track, serializer);
+sse_encode_u_8(self.strings, serializer);
+sse_encode_f_32(self.width, serializer);
+sse_encode_f_32(self.height, serializer);
+sse_encode_list_system_dto(self.systems, serializer);
+ }
+
+@protected void sse_encode_track_summary_dto(TrackSummaryDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.id, serializer);
+sse_encode_String(self.name, serializer);
+sse_encode_instrument_dto(self.instrument, serializer);
+ }
+
+@protected void sse_encode_tuplet_dto(TupletDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_8(self.actual, serializer);
+sse_encode_u_8(self.normal, serializer);
+ }
+
+@protected void sse_encode_u_32(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putUint32(self); }
+
+@protected void sse_encode_u_8(int self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putUint8(self); }
+
+@protected void sse_encode_unit(void self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+ }
+
+@protected void sse_encode_usize(BigInt self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+serializer.buffer.putBigUint64(self); }
+                }
+                
+
+            @sealed class DocumentHandleImpl extends RustOpaque implements DocumentHandle {
+                // Not to be used by end users
+                DocumentHandleImpl.frbInternalDcoDecode(List<dynamic> wire):
+                    super.frbInternalDcoDecode(wire, _kStaticData);
+
+                // Not to be used by end users
+                DocumentHandleImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative):
+                    super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+                static final _kStaticData = RustArcStaticData(
+                    rustArcIncrementStrongCount: RustLib.instance.api.rust_arc_increment_strong_count_DocumentHandle,
+                    rustArcDecrementStrongCount: RustLib.instance.api.rust_arc_decrement_strong_count_DocumentHandle,
+                    rustArcDecrementStrongCountPtr: RustLib.instance.api.rust_arc_decrement_strong_count_DocumentHandlePtr,
+                );
+
+                /// Beats of one voice of one bar, in order.
+ List<BeatDto>  beats({required PlatformInt64 track , required int bar , required int voice })=>RustLib.instance.api.crateApiDocumentDocumentHandleBeats(that: this, track: track, bar: bar, voice: voice);
+
+
+/// Applies one command. On error the document is unchanged.
+ Future<OutcomeDto>  execute({required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision })=>RustLib.instance.api.crateApiDocumentDocumentHandleExecute(that: this, command: command, coalesceKey: coalesceKey, expectedRevision: expectedRevision);
+
+
+ Future<OutcomeDto>  redo()=>RustLib.instance.api.crateApiDocumentDocumentHandleRedo(that: this, );
+
+
+/// Saves to the current location (refused with rule `U2` for unknown content).
+ Future<OutcomeDto>  save()=>RustLib.instance.api.crateApiDocumentDocumentHandleSave(that: this, );
+
+
+ Future<OutcomeDto>  saveAs({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleSaveAs(that: this, path: path);
+
+
+/// Streams every event of this document to Dart. A second call replaces (and
+/// closes) the previous stream.
+ Stream<EventDto>  subscribeEvents()=>RustLib.instance.api.crateApiDocumentDocumentHandleSubscribeEvents(that: this, );
+
+
+ DocumentSummaryDto  summary()=>RustLib.instance.api.crateApiDocumentDocumentHandleSummary(that: this, );
+
+
+/// TAB layout of a track at the current revision.
+ TabLayoutDto  tabLayout({required PlatformInt64 track , required MetricsDto metrics })=>RustLib.instance.api.crateApiDocumentDocumentHandleTabLayout(that: this, track: track, metrics: metrics);
+
+
+ Future<OutcomeDto>  undo()=>RustLib.instance.api.crateApiDocumentDocumentHandleUndo(that: this, );
+
+
+/// Closes the event stream (explicit unsubscribe, ADR-005 amendment 1).
+ void  unsubscribeEvents()=>RustLib.instance.api.crateApiDocumentDocumentHandleUnsubscribeEvents(that: this, );
+
+
+/// Number of voices in a bar of a track.
+ int  voiceCount({required PlatformInt64 track , required int bar })=>RustLib.instance.api.crateApiDocumentDocumentHandleVoiceCount(that: this, track: track, bar: bar);
+
+
+            }

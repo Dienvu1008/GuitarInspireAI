@@ -4,497 +4,424 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../frb_generated.dart';
-
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'types.freezed.dart';
 
-// These functions are ignored because they are not marked as `pub`: `new`, `note_id`, `to_app`, `to_app`, `to_app`, `track_id`
+            // These functions are ignored because they are not marked as `pub`: `new`, `note_id`, `to_app`, `to_app`, `to_app`, `track_id`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
 
-/// Error returned to Dart. `rule` is the domain rule id when one applies (for example
+
+            
+
+            /// Error returned to Dart. `rule` is the domain rule id when one applies (for example
 /// `H-04`), otherwise a short category such as `save` or `layout`.
 class ApiError implements FrbException {
-  final String rule;
-  final String message;
+                final String rule;
+final String message;
 
-  const ApiError({required this.rule, required this.message});
+                const ApiError({required this.rule ,required this.message ,});
 
-  @override
-  int get hashCode => rule.hashCode ^ message.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ApiError &&
-          runtimeType == other.runtimeType &&
-          rule == other.rule &&
-          message == other.message;
-}
+
+
+
+        @override
+        int get hashCode => rule.hashCode^message.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ApiError &&
+                runtimeType == other.runtimeType
+                && rule == other.rule&& message == other.message;
+
+            }
 
 /// Address of a beat: written location plus its stable id (checked by the core).
-class BeatAddressDto {
-  final PlatformInt64 track;
-  final int bar;
-  final int voice;
-  final PlatformInt64 beat;
+class BeatAddressDto  {
+                final PlatformInt64 track;
+final int bar;
+final int voice;
+final PlatformInt64 beat;
 
-  const BeatAddressDto({
-    required this.track,
-    required this.bar,
-    required this.voice,
-    required this.beat,
-  });
+                const BeatAddressDto({required this.track ,required this.bar ,required this.voice ,required this.beat ,});
 
-  @override
-  int get hashCode => track.hashCode ^ bar.hashCode ^ voice.hashCode ^ beat.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is BeatAddressDto &&
-          runtimeType == other.runtimeType &&
-          track == other.track &&
-          bar == other.bar &&
-          voice == other.voice &&
-          beat == other.beat;
-}
+
+
+
+        @override
+        int get hashCode => track.hashCode^bar.hashCode^voice.hashCode^beat.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is BeatAddressDto &&
+                runtimeType == other.runtimeType
+                && track == other.track&& bar == other.bar&& voice == other.voice&& beat == other.beat;
+
+            }
 
 /// One beat with its notes (inspector and editor queries).
-class BeatDto {
-  final PlatformInt64 id;
-  final DurationDto duration;
-  final List<NoteDto> notes;
+class BeatDto  {
+                final PlatformInt64 id;
+final DurationDto duration;
+final List<NoteDto> notes;
 
-  const BeatDto({required this.id, required this.duration, required this.notes});
+                const BeatDto({required this.id ,required this.duration ,required this.notes ,});
 
-  @override
-  int get hashCode => id.hashCode ^ duration.hashCode ^ notes.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is BeatDto &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          duration == other.duration &&
-          notes == other.notes;
-}
+
+
+
+        @override
+        int get hashCode => id.hashCode^duration.hashCode^notes.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is BeatDto &&
+                runtimeType == other.runtimeType
+                && id == other.id&& duration == other.duration&& notes == other.notes;
+
+            }
 
 @freezed
-sealed class CommandDto with _$CommandDto {
-  const CommandDto._();
+                sealed class CommandDto with _$CommandDto  {
+                    const CommandDto._();
 
-  const factory CommandDto.insertMasterBars({required int at, required int count}) =
-      CommandDto_InsertMasterBars;
-  const factory CommandDto.removeMasterBars({required int at, required int count}) =
-      CommandDto_RemoveMasterBars;
-  const factory CommandDto.setMasterBar({required int index, required MasterBarDto bar}) =
-      CommandDto_SetMasterBar;
+                     const factory CommandDto.insertMasterBars({   required int at ,  required int count , }) = CommandDto_InsertMasterBars;
+ const factory CommandDto.removeMasterBars({   required int at ,  required int count , }) = CommandDto_RemoveMasterBars;
+ const factory CommandDto.setMasterBar({   required int index ,  required MasterBarDto bar , }) = CommandDto_SetMasterBar;
+ /// Offset is `offset_num / offset_den` of a whole note; bpm in quarter notes per minute.
+const factory CommandDto.setTempo({   required int bar ,  required PlatformInt64 offsetNum ,  required PlatformInt64 offsetDen ,  required int bpm , }) = CommandDto_SetTempo;
+ const factory CommandDto.removeTempo({   required int bar ,  required PlatformInt64 offsetNum ,  required PlatformInt64 offsetDen , }) = CommandDto_RemoveTempo;
+ const factory CommandDto.insertBeat({   required PlatformInt64 track ,  required int bar ,  required int voice ,  required int index ,  required DurationDto duration , }) = CommandDto_InsertBeat;
+ const factory CommandDto.removeBeat({   required BeatAddressDto beat , }) = CommandDto_RemoveBeat;
+ const factory CommandDto.setBeatDuration({   required BeatAddressDto beat ,  required DurationDto duration , }) = CommandDto_SetBeatDuration;
+ const factory CommandDto.setNote({   required BeatAddressDto beat ,  required int string ,  required int fret , }) = CommandDto_SetNote;
+ const factory CommandDto.removeNote({   required BeatAddressDto beat ,  required PlatformInt64 note , }) = CommandDto_RemoveNote;
+ const factory CommandDto.setTie({   required BeatAddressDto beat ,  required PlatformInt64 note ,  required bool tie , }) = CommandDto_SetTie;
+ const factory CommandDto.setNoteEffects({   required BeatAddressDto beat ,  required PlatformInt64 note ,  required bool letRing ,  required bool dead , }) = CommandDto_SetNoteEffects;
+ const factory CommandDto.addVoice({   required PlatformInt64 track ,  required int bar , }) = CommandDto_AddVoice;
+ const factory CommandDto.removeVoice({   required PlatformInt64 track ,  required int bar ,  required int voice , }) = CommandDto_RemoveVoice;
+ /// Moves notes in bars `from_bar..=to_bar` by `delta` frets.
+const factory CommandDto.shiftFrets({   required PlatformInt64 track ,  required int fromBar ,  required int toBar ,  required int delta , }) = CommandDto_ShiftFrets;
+ const factory CommandDto.addTrack({   required String name ,  required InstrumentDto instrument , }) = CommandDto_AddTrack;
+ const factory CommandDto.removeTrack({   required PlatformInt64 track , }) = CommandDto_RemoveTrack;
+ const factory CommandDto.renameTrack({   required PlatformInt64 track ,  required String name , }) = CommandDto_RenameTrack;
+ const factory CommandDto.setInstrument({   required PlatformInt64 track ,  required InstrumentDto instrument , }) = CommandDto_SetInstrument;
+ const factory CommandDto.moveTrack({   required PlatformInt64 track ,  required int to , }) = CommandDto_MoveTrack;
+ /// `keep_pitches`: notes keep their sound (frets move); otherwise frets are kept.
+const factory CommandDto.retune({   required PlatformInt64 track ,  required InstrumentDto instrument ,  required bool keepPitches , }) = CommandDto_Retune;
 
-  /// Offset is `offset_num / offset_den` of a whole note; bpm in quarter notes per minute.
-  const factory CommandDto.setTempo({
-    required int bar,
-    required PlatformInt64 offsetNum,
-    required PlatformInt64 offsetDen,
-    required int bpm,
-  }) = CommandDto_SetTempo;
-  const factory CommandDto.removeTempo({
-    required int bar,
-    required PlatformInt64 offsetNum,
-    required PlatformInt64 offsetDen,
-  }) = CommandDto_RemoveTempo;
-  const factory CommandDto.insertBeat({
-    required PlatformInt64 track,
-    required int bar,
-    required int voice,
-    required int index,
-    required DurationDto duration,
-  }) = CommandDto_InsertBeat;
-  const factory CommandDto.removeBeat({required BeatAddressDto beat}) = CommandDto_RemoveBeat;
-  const factory CommandDto.setBeatDuration({
-    required BeatAddressDto beat,
-    required DurationDto duration,
-  }) = CommandDto_SetBeatDuration;
-  const factory CommandDto.setNote({
-    required BeatAddressDto beat,
-    required int string,
-    required int fret,
-  }) = CommandDto_SetNote;
-  const factory CommandDto.removeNote({required BeatAddressDto beat, required PlatformInt64 note}) =
-      CommandDto_RemoveNote;
-  const factory CommandDto.setTie({
-    required BeatAddressDto beat,
-    required PlatformInt64 note,
-    required bool tie,
-  }) = CommandDto_SetTie;
-  const factory CommandDto.setNoteEffects({
-    required BeatAddressDto beat,
-    required PlatformInt64 note,
-    required bool letRing,
-    required bool dead,
-  }) = CommandDto_SetNoteEffects;
-  const factory CommandDto.addVoice({required PlatformInt64 track, required int bar}) =
-      CommandDto_AddVoice;
-  const factory CommandDto.removeVoice({
-    required PlatformInt64 track,
-    required int bar,
-    required int voice,
-  }) = CommandDto_RemoveVoice;
+                    
 
-  /// Moves notes in bars `from_bar..=to_bar` by `delta` frets.
-  const factory CommandDto.shiftFrets({
-    required PlatformInt64 track,
-    required int fromBar,
-    required int toBar,
-    required int delta,
-  }) = CommandDto_ShiftFrets;
-  const factory CommandDto.addTrack({required String name, required InstrumentDto instrument}) =
-      CommandDto_AddTrack;
-  const factory CommandDto.removeTrack({required PlatformInt64 track}) = CommandDto_RemoveTrack;
-  const factory CommandDto.renameTrack({required PlatformInt64 track, required String name}) =
-      CommandDto_RenameTrack;
-  const factory CommandDto.setInstrument({
-    required PlatformInt64 track,
-    required InstrumentDto instrument,
-  }) = CommandDto_SetInstrument;
-  const factory CommandDto.moveTrack({required PlatformInt64 track, required int to}) =
-      CommandDto_MoveTrack;
+                    
+                }
 
-  /// `keep_pitches`: notes keep their sound (frets move); otherwise frets are kept.
-  const factory CommandDto.retune({
-    required PlatformInt64 track,
-    required InstrumentDto instrument,
-    required bool keepPitches,
-  }) = CommandDto_Retune;
-}
+class DiagnosticDto  {
+                final String rule;
+final PlatformInt64 track;
+final int bar;
+final int voice;
+/// "underfull" or "overfull".
+final String kind;
 
-class DiagnosticDto {
-  final String rule;
-  final PlatformInt64 track;
-  final int bar;
-  final int voice;
+                const DiagnosticDto({required this.rule ,required this.track ,required this.bar ,required this.voice ,required this.kind ,});
 
-  /// "underfull" or "overfull".
-  final String kind;
 
-  const DiagnosticDto({
-    required this.rule,
-    required this.track,
-    required this.bar,
-    required this.voice,
-    required this.kind,
-  });
 
-  @override
-  int get hashCode =>
-      rule.hashCode ^ track.hashCode ^ bar.hashCode ^ voice.hashCode ^ kind.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DiagnosticDto &&
-          runtimeType == other.runtimeType &&
-          rule == other.rule &&
-          track == other.track &&
-          bar == other.bar &&
-          voice == other.voice &&
-          kind == other.kind;
-}
+
+        @override
+        int get hashCode => rule.hashCode^track.hashCode^bar.hashCode^voice.hashCode^kind.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is DiagnosticDto &&
+                runtimeType == other.runtimeType
+                && rule == other.rule&& track == other.track&& bar == other.bar&& voice == other.voice&& kind == other.kind;
+
+            }
 
 /// Document state for the shell: tracks, bars, history and save state.
-class DocumentSummaryDto {
-  final PlatformInt64 revision;
-  final bool dirty;
-  final bool canUndo;
-  final bool canRedo;
+class DocumentSummaryDto  {
+                final PlatformInt64 revision;
+final bool dirty;
+final bool canUndo;
+final bool canRedo;
+/// File path of the document, `None` until saved.
+final String? location;
+/// Unknown content (U1); non-empty means Save over the original is refused (U2).
+final List<String> unknownContent;
+final List<TrackSummaryDto> tracks;
+final List<MasterBarDto> masterBars;
+final List<DiagnosticDto> diagnostics;
 
-  /// File path of the document, `None` until saved.
-  final String? location;
+                const DocumentSummaryDto({required this.revision ,required this.dirty ,required this.canUndo ,required this.canRedo ,this.location ,required this.unknownContent ,required this.tracks ,required this.masterBars ,required this.diagnostics ,});
 
-  /// Unknown content (U1); non-empty means Save over the original is refused (U2).
-  final List<String> unknownContent;
-  final List<TrackSummaryDto> tracks;
-  final List<MasterBarDto> masterBars;
-  final List<DiagnosticDto> diagnostics;
 
-  const DocumentSummaryDto({
-    required this.revision,
-    required this.dirty,
-    required this.canUndo,
-    required this.canRedo,
-    this.location,
-    required this.unknownContent,
-    required this.tracks,
-    required this.masterBars,
-    required this.diagnostics,
-  });
 
-  @override
-  int get hashCode =>
-      revision.hashCode ^
-      dirty.hashCode ^
-      canUndo.hashCode ^
-      canRedo.hashCode ^
-      location.hashCode ^
-      unknownContent.hashCode ^
-      tracks.hashCode ^
-      masterBars.hashCode ^
-      diagnostics.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DocumentSummaryDto &&
-          runtimeType == other.runtimeType &&
-          revision == other.revision &&
-          dirty == other.dirty &&
-          canUndo == other.canUndo &&
-          canRedo == other.canRedo &&
-          location == other.location &&
-          unknownContent == other.unknownContent &&
-          tracks == other.tracks &&
-          masterBars == other.masterBars &&
-          diagnostics == other.diagnostics;
-}
+
+        @override
+        int get hashCode => revision.hashCode^dirty.hashCode^canUndo.hashCode^canRedo.hashCode^location.hashCode^unknownContent.hashCode^tracks.hashCode^masterBars.hashCode^diagnostics.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is DocumentSummaryDto &&
+                runtimeType == other.runtimeType
+                && revision == other.revision&& dirty == other.dirty&& canUndo == other.canUndo&& canRedo == other.canRedo&& location == other.location&& unknownContent == other.unknownContent&& tracks == other.tracks&& masterBars == other.masterBars&& diagnostics == other.diagnostics;
+
+            }
 
 /// Written duration: base exponent (0 whole ... 8), dots, optional tuplet ratio.
-class DurationDto {
-  final int base;
-  final int dots;
+class DurationDto  {
+                final int base;
+final int dots;
+/// `actual:normal`, for example 3:2 for a triplet. `None` for no tuplet.
+final TupletDto? tuplet;
 
-  /// `actual:normal`, for example 3:2 for a triplet. `None` for no tuplet.
-  final TupletDto? tuplet;
+                const DurationDto({required this.base ,required this.dots ,this.tuplet ,});
 
-  const DurationDto({required this.base, required this.dots, this.tuplet});
 
-  @override
-  int get hashCode => base.hashCode ^ dots.hashCode ^ tuplet.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DurationDto &&
-          runtimeType == other.runtimeType &&
-          base == other.base &&
-          dots == other.dots &&
-          tuplet == other.tuplet;
-}
 
-class EventDto {
-  /// Per document, gapless, starting at 1.
-  final PlatformInt64 seq;
-  final PlatformInt64 revision;
 
-  /// Command id that caused the event; `None` for undo, redo and save.
-  final PlatformInt64? correlation;
-  final EventKindDto kind;
+        @override
+        int get hashCode => base.hashCode^dots.hashCode^tuplet.hashCode;
 
-  const EventDto({required this.seq, required this.revision, this.correlation, required this.kind});
 
-  @override
-  int get hashCode => seq.hashCode ^ revision.hashCode ^ correlation.hashCode ^ kind.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is EventDto &&
-          runtimeType == other.runtimeType &&
-          seq == other.seq &&
-          revision == other.revision &&
-          correlation == other.correlation &&
-          kind == other.kind;
-}
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is DurationDto &&
+                runtimeType == other.runtimeType
+                && base == other.base&& dots == other.dots&& tuplet == other.tuplet;
+
+            }
+
+class EventDto  {
+                /// Per document, gapless, starting at 1.
+final PlatformInt64 seq;
+final PlatformInt64 revision;
+/// Command id that caused the event; `None` for undo, redo and save.
+final PlatformInt64? correlation;
+final EventKindDto kind;
+
+                const EventDto({required this.seq ,required this.revision ,this.correlation ,required this.kind ,});
+
+
+
+
+
+        @override
+        int get hashCode => seq.hashCode^revision.hashCode^correlation.hashCode^kind.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is EventDto &&
+                runtimeType == other.runtimeType
+                && seq == other.seq&& revision == other.revision&& correlation == other.correlation&& kind == other.kind;
+
+            }
 
 @freezed
-sealed class EventKindDto with _$EventKindDto {
-  const EventKindDto._();
+                sealed class EventKindDto with _$EventKindDto  {
+                    const EventKindDto._();
 
-  const factory EventKindDto.trackAdded({required PlatformInt64 track}) = EventKindDto_TrackAdded;
-  const factory EventKindDto.trackRemoved({required PlatformInt64 track}) =
-      EventKindDto_TrackRemoved;
-  const factory EventKindDto.trackChanged({required PlatformInt64 track}) =
-      EventKindDto_TrackChanged;
-  const factory EventKindDto.tracksReordered() = EventKindDto_TracksReordered;
-  const factory EventKindDto.masterBarsInserted({required int at, required int count}) =
-      EventKindDto_MasterBarsInserted;
-  const factory EventKindDto.masterBarsRemoved({required int at, required int count}) =
-      EventKindDto_MasterBarsRemoved;
-  const factory EventKindDto.masterBarsChanged({required int start, required int end}) =
-      EventKindDto_MasterBarsChanged;
-  const factory EventKindDto.barContentChanged({
-    required PlatformInt64 track,
-    required int start,
-    required int end,
-  }) = EventKindDto_BarContentChanged;
-  const factory EventKindDto.tempoMapChanged() = EventKindDto_TempoMapChanged;
-  const factory EventKindDto.tiesRemoved({required PlatformInt64 track, required Int64List notes}) =
-      EventKindDto_TiesRemoved;
-  const factory EventKindDto.documentSaved() = EventKindDto_DocumentSaved;
-  const factory EventKindDto.dirtyChanged({required bool dirty}) = EventKindDto_DirtyChanged;
-  const factory EventKindDto.undoAvailabilityChanged({
-    required bool canUndo,
-    required bool canRedo,
-  }) = EventKindDto_UndoAvailabilityChanged;
-  const factory EventKindDto.historyApplied() = EventKindDto_HistoryApplied;
-}
+                     const factory EventKindDto.trackAdded({   required PlatformInt64 track , }) = EventKindDto_TrackAdded;
+ const factory EventKindDto.trackRemoved({   required PlatformInt64 track , }) = EventKindDto_TrackRemoved;
+ const factory EventKindDto.trackChanged({   required PlatformInt64 track , }) = EventKindDto_TrackChanged;
+ const factory EventKindDto.tracksReordered() = EventKindDto_TracksReordered;
+ const factory EventKindDto.masterBarsInserted({   required int at ,  required int count , }) = EventKindDto_MasterBarsInserted;
+ const factory EventKindDto.masterBarsRemoved({   required int at ,  required int count , }) = EventKindDto_MasterBarsRemoved;
+ const factory EventKindDto.masterBarsChanged({   required int start ,  required int end , }) = EventKindDto_MasterBarsChanged;
+ const factory EventKindDto.barContentChanged({   required PlatformInt64 track ,  required int start ,  required int end , }) = EventKindDto_BarContentChanged;
+ const factory EventKindDto.tempoMapChanged() = EventKindDto_TempoMapChanged;
+ const factory EventKindDto.tiesRemoved({   required PlatformInt64 track ,  required Int64List notes , }) = EventKindDto_TiesRemoved;
+ const factory EventKindDto.documentSaved() = EventKindDto_DocumentSaved;
+ const factory EventKindDto.dirtyChanged({   required bool dirty , }) = EventKindDto_DirtyChanged;
+ const factory EventKindDto.undoAvailabilityChanged({   required bool canUndo ,  required bool canRedo , }) = EventKindDto_UndoAvailabilityChanged;
+ const factory EventKindDto.historyApplied() = EventKindDto_HistoryApplied;
+
+                    
+
+                    
+                }
 
 /// Fretted instrument; tuning lists string 1 (highest) first, for example "E4".
-class InstrumentDto {
-  final List<String> tuning;
-  final int fretCount;
-  final int capo;
+class InstrumentDto  {
+                final List<String> tuning;
+final int fretCount;
+final int capo;
 
-  const InstrumentDto({required this.tuning, required this.fretCount, required this.capo});
+                const InstrumentDto({required this.tuning ,required this.fretCount ,required this.capo ,});
 
-  @override
-  int get hashCode => tuning.hashCode ^ fretCount.hashCode ^ capo.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is InstrumentDto &&
-          runtimeType == other.runtimeType &&
-          tuning == other.tuning &&
-          fretCount == other.fretCount &&
-          capo == other.capo;
-}
+
+
+
+        @override
+        int get hashCode => tuning.hashCode^fretCount.hashCode^capo.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is InstrumentDto &&
+                runtimeType == other.runtimeType
+                && tuning == other.tuning&& fretCount == other.fretCount&& capo == other.capo;
+
+            }
 
 /// Master bar properties. The key signature is kept as it is in the document.
-class MasterBarDto {
-  final int numerator;
-  final int denominator;
-  final bool pickup;
-  final bool repeatStart;
-  final int? repeatEnd;
-  final Uint8List alternateEndings;
-  final String? marker;
+class MasterBarDto  {
+                final int numerator;
+final int denominator;
+final bool pickup;
+final bool repeatStart;
+final int? repeatEnd;
+final Uint8List alternateEndings;
+final String? marker;
 
-  const MasterBarDto({
-    required this.numerator,
-    required this.denominator,
-    required this.pickup,
-    required this.repeatStart,
-    this.repeatEnd,
-    required this.alternateEndings,
-    this.marker,
-  });
+                const MasterBarDto({required this.numerator ,required this.denominator ,required this.pickup ,required this.repeatStart ,this.repeatEnd ,required this.alternateEndings ,this.marker ,});
 
-  @override
-  int get hashCode =>
-      numerator.hashCode ^
-      denominator.hashCode ^
-      pickup.hashCode ^
-      repeatStart.hashCode ^
-      repeatEnd.hashCode ^
-      alternateEndings.hashCode ^
-      marker.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MasterBarDto &&
-          runtimeType == other.runtimeType &&
-          numerator == other.numerator &&
-          denominator == other.denominator &&
-          pickup == other.pickup &&
-          repeatStart == other.repeatStart &&
-          repeatEnd == other.repeatEnd &&
-          alternateEndings == other.alternateEndings &&
-          marker == other.marker;
-}
 
-class NoteDto {
-  final PlatformInt64 id;
-  final int string;
-  final int fret;
-  final bool tie;
-  final bool letRing;
-  final bool dead;
 
-  const NoteDto({
-    required this.id,
-    required this.string,
-    required this.fret,
-    required this.tie,
-    required this.letRing,
-    required this.dead,
-  });
 
-  @override
-  int get hashCode =>
-      id.hashCode ^
-      string.hashCode ^
-      fret.hashCode ^
-      tie.hashCode ^
-      letRing.hashCode ^
-      dead.hashCode;
+        @override
+        int get hashCode => numerator.hashCode^denominator.hashCode^pickup.hashCode^repeatStart.hashCode^repeatEnd.hashCode^alternateEndings.hashCode^marker.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is NoteDto &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          string == other.string &&
-          fret == other.fret &&
-          tie == other.tie &&
-          letRing == other.letRing &&
-          dead == other.dead;
-}
 
-class OutcomeDto {
-  final PlatformInt64 revision;
-  final List<EventDto> events;
 
-  const OutcomeDto({required this.revision, required this.events});
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is MasterBarDto &&
+                runtimeType == other.runtimeType
+                && numerator == other.numerator&& denominator == other.denominator&& pickup == other.pickup&& repeatStart == other.repeatStart&& repeatEnd == other.repeatEnd&& alternateEndings == other.alternateEndings&& marker == other.marker;
 
-  @override
-  int get hashCode => revision.hashCode ^ events.hashCode;
+            }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is OutcomeDto &&
-          runtimeType == other.runtimeType &&
-          revision == other.revision &&
-          events == other.events;
-}
+class NoteDto  {
+                final PlatformInt64 id;
+final int string;
+final int fret;
+final bool tie;
+final bool letRing;
+final bool dead;
 
-class TrackSummaryDto {
-  final PlatformInt64 id;
-  final String name;
-  final InstrumentDto instrument;
+                const NoteDto({required this.id ,required this.string ,required this.fret ,required this.tie ,required this.letRing ,required this.dead ,});
 
-  const TrackSummaryDto({required this.id, required this.name, required this.instrument});
 
-  @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ instrument.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TrackSummaryDto &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          name == other.name &&
-          instrument == other.instrument;
-}
 
-class TupletDto {
-  final int actual;
-  final int normal;
 
-  const TupletDto({required this.actual, required this.normal});
+        @override
+        int get hashCode => id.hashCode^string.hashCode^fret.hashCode^tie.hashCode^letRing.hashCode^dead.hashCode;
 
-  @override
-  int get hashCode => actual.hashCode ^ normal.hashCode;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TupletDto &&
-          runtimeType == other.runtimeType &&
-          actual == other.actual &&
-          normal == other.normal;
-}
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is NoteDto &&
+                runtimeType == other.runtimeType
+                && id == other.id&& string == other.string&& fret == other.fret&& tie == other.tie&& letRing == other.letRing&& dead == other.dead;
+
+            }
+
+class OutcomeDto  {
+                final PlatformInt64 revision;
+final List<EventDto> events;
+
+                const OutcomeDto({required this.revision ,required this.events ,});
+
+
+
+
+
+        @override
+        int get hashCode => revision.hashCode^events.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is OutcomeDto &&
+                runtimeType == other.runtimeType
+                && revision == other.revision&& events == other.events;
+
+            }
+
+class TrackSummaryDto  {
+                final PlatformInt64 id;
+final String name;
+final InstrumentDto instrument;
+
+                const TrackSummaryDto({required this.id ,required this.name ,required this.instrument ,});
+
+
+
+
+
+        @override
+        int get hashCode => id.hashCode^name.hashCode^instrument.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is TrackSummaryDto &&
+                runtimeType == other.runtimeType
+                && id == other.id&& name == other.name&& instrument == other.instrument;
+
+            }
+
+class TupletDto  {
+                final int actual;
+final int normal;
+
+                const TupletDto({required this.actual ,required this.normal ,});
+
+
+
+
+
+        @override
+        int get hashCode => actual.hashCode^normal.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is TupletDto &&
+                runtimeType == other.runtimeType
+                && actual == other.actual&& normal == other.normal;
+
+            }
+            

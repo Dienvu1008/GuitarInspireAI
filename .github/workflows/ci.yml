@@ -97,10 +97,16 @@ jobs:
         working-directory: packages/core_bridge
         shell: pwsh
         run: |
-          flutter_rust_bridge_codegen generate
+          # --no-dart-format: Dart SDK versions differ between machines and CI, which
+          # makes `dart format` output non-deterministic for the diff check. The
+          # generator output without formatting is deterministic for a given Rust API.
+          flutter_rust_bridge_codegen generate --no-dart-format
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           git diff --exit-code -- ../../crates/mc-ffi/src ../../packages/core_bridge/lib/src/generated
-          if ($LASTEXITCODE -ne 0) { Write-Error "FF-12: generated bindings differ from the committed files; run flutter_rust_bridge_codegen generate and commit"; exit 1 }
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "FF-12: generated bindings differ; run 'flutter_rust_bridge_codegen generate --no-dart-format' and commit"
+            exit 1
+          }
 
       - name: Build the native library for the contract tests
         run: cargo build -p mc-ffi --locked
