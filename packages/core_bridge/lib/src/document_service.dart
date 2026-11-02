@@ -11,11 +11,7 @@ abstract interface class DocumentService {
 
   /// Applies a command. Throws [ApiError] when the core rejects it; the document is
   /// then unchanged. Commands with the same [coalesceKey] form one undo step.
-  Future<OutcomeDto> execute(
-    CommandDto command, {
-    int? coalesceKey,
-    int? expectedRevision,
-  });
+  Future<OutcomeDto> execute(CommandDto command, {int? coalesceKey, int? expectedRevision});
 
   Future<OutcomeDto> undo();
 

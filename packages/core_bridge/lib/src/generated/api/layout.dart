@@ -14,8 +14,7 @@ part 'layout.freezed.dart';
 
 /// Default metrics in abstract units, for tests and as a starting point before Dart
 /// has measured the font.
-MetricsDto defaultMetrics() =>
-    RustLib.instance.api.crateApiLayoutDefaultMetrics();
+MetricsDto defaultMetrics() => RustLib.instance.api.crateApiLayoutDefaultMetrics();
 
 class BarLayoutDto {
   final int bar;
@@ -31,8 +30,7 @@ class BarLayoutDto {
   });
 
   @override
-  int get hashCode =>
-      bar.hashCode ^ x.hashCode ^ width.hashCode ^ diagnostic.hashCode;
+  int get hashCode => bar.hashCode ^ x.hashCode ^ width.hashCode ^ diagnostic.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -51,12 +49,7 @@ class GlyphDto {
   final double y;
   final double width;
 
-  const GlyphDto({
-    required this.kind,
-    required this.x,
-    required this.y,
-    required this.width,
-  });
+  const GlyphDto({required this.kind, required this.x, required this.y, required this.width});
 
   @override
   int get hashCode => kind.hashCode ^ x.hashCode ^ y.hashCode ^ width.hashCode;
@@ -82,29 +75,19 @@ sealed class GlyphKindDto with _$GlyphKindDto {
     required bool dead,
     required bool letRing,
   }) = GlyphKindDto_Fret;
-  const factory GlyphKindDto.rest({required int exponent, required int dots}) =
-      GlyphKindDto_Rest;
+  const factory GlyphKindDto.rest({required int exponent, required int dots}) = GlyphKindDto_Rest;
   const factory GlyphKindDto.dot() = GlyphKindDto_Dot;
-  const factory GlyphKindDto.tuplet({required int actual}) =
-      GlyphKindDto_Tuplet;
-  const factory GlyphKindDto.timeSignature({
-    required int numerator,
-    required int denominator,
-  }) = GlyphKindDto_TimeSignature;
+  const factory GlyphKindDto.tuplet({required int actual}) = GlyphKindDto_Tuplet;
+  const factory GlyphKindDto.timeSignature({required int numerator, required int denominator}) =
+      GlyphKindDto_TimeSignature;
   const factory GlyphKindDto.repeatDots() = GlyphKindDto_RepeatDots;
-  const factory GlyphKindDto.repeatCount({required int count}) =
-      GlyphKindDto_RepeatCount;
-  const factory GlyphKindDto.volta({required Uint8List endings}) =
-      GlyphKindDto_Volta;
-  const factory GlyphKindDto.marker({required String text}) =
-      GlyphKindDto_Marker;
-  const factory GlyphKindDto.barNumber({required int number}) =
-      GlyphKindDto_BarNumber;
+  const factory GlyphKindDto.repeatCount({required int count}) = GlyphKindDto_RepeatCount;
+  const factory GlyphKindDto.volta({required Uint8List endings}) = GlyphKindDto_Volta;
+  const factory GlyphKindDto.marker({required String text}) = GlyphKindDto_Marker;
+  const factory GlyphKindDto.barNumber({required int number}) = GlyphKindDto_BarNumber;
   const factory GlyphKindDto.tabClef() = GlyphKindDto_TabClef;
-  const factory GlyphKindDto.stringName({
-    required int string,
-    required String name,
-  }) = GlyphKindDto_StringName;
+  const factory GlyphKindDto.stringName({required int string, required String name}) =
+      GlyphKindDto_StringName;
 }
 
 /// A beat that hit regions point to.
@@ -116,16 +99,10 @@ class HitBeatDto {
   /// Index of the beat in its voice.
   final int index;
 
-  const HitBeatDto({
-    required this.id,
-    required this.bar,
-    required this.voice,
-    required this.index,
-  });
+  const HitBeatDto({required this.id, required this.bar, required this.voice, required this.index});
 
   @override
-  int get hashCode =>
-      id.hashCode ^ bar.hashCode ^ voice.hashCode ^ index.hashCode;
+  int get hashCode => id.hashCode ^ bar.hashCode ^ voice.hashCode ^ index.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -310,11 +287,7 @@ class TabLayoutDto {
 
   @override
   int get hashCode =>
-      track.hashCode ^
-      strings.hashCode ^
-      width.hashCode ^
-      height.hashCode ^
-      systems.hashCode;
+      track.hashCode ^ strings.hashCode ^ width.hashCode ^ height.hashCode ^ systems.hashCode;
 
   @override
   bool operator ==(Object other) =>

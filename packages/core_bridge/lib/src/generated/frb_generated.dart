@@ -12,8 +12,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'frb_generated.dart';
-import 'frb_generated.io.dart'
-    if (dart.library.js_interop) 'frb_generated.web.dart';
+import 'frb_generated.io.dart' if (dart.library.js_interop) 'frb_generated.web.dart';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
@@ -52,12 +51,10 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   static void dispose() => instance.disposeImpl();
 
   @override
-  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor =>
-      RustLibApiImpl.new;
+  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor => RustLibApiImpl.new;
 
   @override
-  WireConstructor<RustLibWire> get wireConstructor =>
-      RustLibWire.fromExternalLibrary;
+  WireConstructor<RustLibWire> get wireConstructor => RustLibWire.fromExternalLibrary;
 
   @override
   Future<void> executeRustInitializers() async {
@@ -74,13 +71,12 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   @override
   int get rustContentHash => 664399570;
 
-  static const kDefaultExternalLibraryLoaderConfig =
-      ExternalLibraryLoaderConfig(
-        stem: 'mc_ffi',
-        ioDirectory: '../../crates/mc-ffi/target/release/',
-        webPrefix: 'pkg/',
-        wasmBindgenName: 'wasm_bindgen',
-      );
+  static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
+    stem: 'mc_ffi',
+    ioDirectory: '../../crates/mc-ffi/target/release/',
+    webPrefix: 'pkg/',
+    wasmBindgenName: 'wasm_bindgen',
+  );
 }
 
 abstract class RustLibApi extends BaseApi {
@@ -100,30 +96,20 @@ abstract class RustLibApi extends BaseApi {
     PlatformInt64? expectedRevision,
   });
 
-  Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({
-    required String path,
-  });
+  Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path});
 
-  Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({
-    required DocumentHandle that,
-  });
+  Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle that});
 
-  Future<OutcomeDto> crateApiDocumentDocumentHandleSave({
-    required DocumentHandle that,
-  });
+  Future<OutcomeDto> crateApiDocumentDocumentHandleSave({required DocumentHandle that});
 
   Future<OutcomeDto> crateApiDocumentDocumentHandleSaveAs({
     required DocumentHandle that,
     required String path,
   });
 
-  Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({
-    required DocumentHandle that,
-  });
+  Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({required DocumentHandle that});
 
-  DocumentSummaryDto crateApiDocumentDocumentHandleSummary({
-    required DocumentHandle that,
-  });
+  DocumentSummaryDto crateApiDocumentDocumentHandleSummary({required DocumentHandle that});
 
   TabLayoutDto crateApiDocumentDocumentHandleTabLayout({
     required DocumentHandle that,
@@ -131,13 +117,9 @@ abstract class RustLibApi extends BaseApi {
     required MetricsDto metrics,
   });
 
-  Future<OutcomeDto> crateApiDocumentDocumentHandleUndo({
-    required DocumentHandle that,
-  });
+  Future<OutcomeDto> crateApiDocumentDocumentHandleUndo({required DocumentHandle that});
 
-  void crateApiDocumentDocumentHandleUnsubscribeEvents({
-    required DocumentHandle that,
-  });
+  void crateApiDocumentDocumentHandleUnsubscribeEvents({required DocumentHandle that});
 
   int crateApiDocumentDocumentHandleVoiceCount({
     required DocumentHandle that,
@@ -151,14 +133,11 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiInfoInitApp();
 
-  RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_DocumentHandle;
+  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_DocumentHandle;
 
-  RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_DocumentHandle;
+  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_DocumentHandle;
 
-  CrossPlatformFinalizerArg
-  get rust_arc_decrement_strong_count_DocumentHandlePtr;
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_DocumentHandlePtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -200,11 +179,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleBeatsConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentHandle_beats",
-        argNames: ["that", "track", "bar", "voice"],
-      );
+  TaskConstMeta get kCrateApiDocumentDocumentHandleBeatsConstMeta => const TaskConstMeta(
+    debugName: "DocumentHandle_beats",
+    argNames: ["that", "track", "bar", "voice"],
+  );
 
   @override
   DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars}) {
@@ -228,10 +206,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiDocumentDocumentHandleCreateConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentHandle_create",
-        argNames: ["bars"],
-      );
+      const TaskConstMeta(debugName: "DocumentHandle_create", argNames: ["bars"]);
 
   @override
   Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({
@@ -251,12 +226,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_box_autoadd_command_dto(command, serializer);
           sse_encode_opt_box_autoadd_i_64(coalesceKey, serializer);
           sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 3,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
@@ -269,27 +239,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleExecuteConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentHandle_execute",
-        argNames: ["that", "command", "coalesceKey", "expectedRevision"],
-      );
+  TaskConstMeta get kCrateApiDocumentDocumentHandleExecuteConstMeta => const TaskConstMeta(
+    debugName: "DocumentHandle_execute",
+    argNames: ["that", "command", "coalesceKey", "expectedRevision"],
+  );
 
   @override
-  Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({
-    required String path,
-  }) {
+  Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(path, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 4,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -307,9 +269,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "DocumentHandle_open", argNames: ["path"]);
 
   @override
-  Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({
-    required DocumentHandle that,
-  }) {
+  Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle that}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -318,12 +278,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 5,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
@@ -340,9 +295,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "DocumentHandle_redo", argNames: ["that"]);
 
   @override
-  Future<OutcomeDto> crateApiDocumentDocumentHandleSave({
-    required DocumentHandle that,
-  }) {
+  Future<OutcomeDto> crateApiDocumentDocumentHandleSave({required DocumentHandle that}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -351,12 +304,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 6,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
@@ -386,12 +334,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_String(path, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 7,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
@@ -405,15 +348,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiDocumentDocumentHandleSaveAsConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentHandle_save_as",
-        argNames: ["that", "path"],
-      );
+      const TaskConstMeta(debugName: "DocumentHandle_save_as", argNames: ["that", "path"]);
 
   @override
-  Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({
-    required DocumentHandle that,
-  }) {
+  Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({required DocumentHandle that}) {
     final sink = RustStreamSink<EventDto>();
     unawaited(
       handler.executeNormal(
@@ -425,17 +363,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
               serializer,
             );
             sse_encode_StreamSink_event_dto_Sse(sink, serializer);
-            pdeCallFfi(
-              generalizedFrbRustBinding,
-              serializer,
-              funcId: 8,
-              port: port_,
-            );
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
           },
-          codec: SseCodec(
-            decodeSuccessData: sse_decode_unit,
-            decodeErrorData: null,
-          ),
+          codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
           constMeta: kCrateApiDocumentDocumentHandleSubscribeEventsConstMeta,
           argValues: [that, sink],
           apiImpl: this,
@@ -446,15 +376,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiDocumentDocumentHandleSubscribeEventsConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentHandle_subscribe_events",
-        argNames: ["that", "sink"],
-      );
+      const TaskConstMeta(debugName: "DocumentHandle_subscribe_events", argNames: ["that", "sink"]);
 
   @override
-  DocumentSummaryDto crateApiDocumentDocumentHandleSummary({
-    required DocumentHandle that,
-  }) {
+  DocumentSummaryDto crateApiDocumentDocumentHandleSummary({required DocumentHandle that}) {
     return handler.executeSync(
       SyncTask(
         callFfi: () {
@@ -465,10 +390,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
           return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_document_summary_dto,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_document_summary_dto, decodeErrorData: null),
         constMeta: kCrateApiDocumentDocumentHandleSummaryConstMeta,
         argValues: [that],
         apiImpl: this,
@@ -477,10 +399,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiDocumentDocumentHandleSummaryConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentHandle_summary",
-        argNames: ["that"],
-      );
+      const TaskConstMeta(debugName: "DocumentHandle_summary", argNames: ["that"]);
 
   @override
   TabLayoutDto crateApiDocumentDocumentHandleTabLayout({
@@ -511,16 +430,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleTabLayoutConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentHandle_tab_layout",
-        argNames: ["that", "track", "metrics"],
-      );
+  TaskConstMeta get kCrateApiDocumentDocumentHandleTabLayoutConstMeta => const TaskConstMeta(
+    debugName: "DocumentHandle_tab_layout",
+    argNames: ["that", "track", "metrics"],
+  );
 
   @override
-  Future<OutcomeDto> crateApiDocumentDocumentHandleUndo({
-    required DocumentHandle that,
-  }) {
+  Future<OutcomeDto> crateApiDocumentDocumentHandleUndo({required DocumentHandle that}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -529,12 +445,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 11,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_outcome_dto,
@@ -551,9 +462,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "DocumentHandle_undo", argNames: ["that"]);
 
   @override
-  void crateApiDocumentDocumentHandleUnsubscribeEvents({
-    required DocumentHandle that,
-  }) {
+  void crateApiDocumentDocumentHandleUnsubscribeEvents({required DocumentHandle that}) {
     return handler.executeSync(
       SyncTask(
         callFfi: () {
@@ -564,10 +473,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
           return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
         constMeta: kCrateApiDocumentDocumentHandleUnsubscribeEventsConstMeta,
         argValues: [that],
         apiImpl: this,
@@ -576,10 +482,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiDocumentDocumentHandleUnsubscribeEventsConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentHandle_unsubscribe_events",
-        argNames: ["that"],
-      );
+      const TaskConstMeta(debugName: "DocumentHandle_unsubscribe_events", argNames: ["that"]);
 
   @override
   int crateApiDocumentDocumentHandleVoiceCount({
@@ -599,10 +502,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_u_32(bar, serializer);
           return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_u_32,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_u_32, decodeErrorData: null),
         constMeta: kCrateApiDocumentDocumentHandleVoiceCountConstMeta,
         argValues: [that, track, bar],
         apiImpl: this,
@@ -610,11 +510,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiDocumentDocumentHandleVoiceCountConstMeta =>
-      const TaskConstMeta(
-        debugName: "DocumentHandle_voice_count",
-        argNames: ["that", "track", "bar"],
-      );
+  TaskConstMeta get kCrateApiDocumentDocumentHandleVoiceCountConstMeta => const TaskConstMeta(
+    debugName: "DocumentHandle_voice_count",
+    argNames: ["that", "track", "bar"],
+  );
 
   @override
   String crateApiInfoCoreVersion() {
@@ -624,10 +523,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_String,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_String, decodeErrorData: null),
         constMeta: kCrateApiInfoCoreVersionConstMeta,
         argValues: [],
         apiImpl: this,
@@ -646,10 +542,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_metrics_dto,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_metrics_dto, decodeErrorData: null),
         constMeta: kCrateApiLayoutDefaultMetricsConstMeta,
         argValues: [],
         apiImpl: this,
@@ -666,17 +559,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 16,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
         constMeta: kCrateApiInfoInitAppConstMeta,
         argValues: [],
         apiImpl: this,
@@ -687,12 +572,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiInfoInitAppConstMeta =>
       const TaskConstMeta(debugName: "init_app", argNames: []);
 
-  RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_DocumentHandle => wire
+  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_DocumentHandle => wire
       .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle;
 
-  RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_DocumentHandle => wire
+  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_DocumentHandle => wire
       .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle;
 
   @protected
@@ -744,20 +627,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ApiError dco_decode_api_error(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return ApiError(
-      rule: dco_decode_String(arr[0]),
-      message: dco_decode_String(arr[1]),
-    );
+    if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return ApiError(rule: dco_decode_String(arr[0]), message: dco_decode_String(arr[1]));
   }
 
   @protected
   BarLayoutDto dco_decode_bar_layout_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return BarLayoutDto(
       bar: dco_decode_u_32(arr[0]),
       x: dco_decode_f_32(arr[1]),
@@ -770,8 +648,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BeatAddressDto dco_decode_beat_address_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return BeatAddressDto(
       track: dco_decode_i_64(arr[0]),
       bar: dco_decode_u_32(arr[1]),
@@ -784,8 +661,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BeatDto dco_decode_beat_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return BeatDto(
       id: dco_decode_i_64(arr[0]),
       duration: dco_decode_duration_dto(arr[1]),
@@ -894,9 +770,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           duration: dco_decode_box_autoadd_duration_dto(raw[5]),
         );
       case 6:
-        return CommandDto_RemoveBeat(
-          beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),
-        );
+        return CommandDto_RemoveBeat(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]));
       case 7:
         return CommandDto_SetBeatDuration(
           beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),
@@ -927,10 +801,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           dead: dco_decode_bool(raw[4]),
         );
       case 12:
-        return CommandDto_AddVoice(
-          track: dco_decode_i_64(raw[1]),
-          bar: dco_decode_u_32(raw[2]),
-        );
+        return CommandDto_AddVoice(track: dco_decode_i_64(raw[1]), bar: dco_decode_u_32(raw[2]));
       case 13:
         return CommandDto_RemoveVoice(
           track: dco_decode_i_64(raw[1]),
@@ -962,10 +833,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),
         );
       case 19:
-        return CommandDto_MoveTrack(
-          track: dco_decode_i_64(raw[1]),
-          to: dco_decode_u_32(raw[2]),
-        );
+        return CommandDto_MoveTrack(track: dco_decode_i_64(raw[1]), to: dco_decode_u_32(raw[2]));
       case 20:
         return CommandDto_Retune(
           track: dco_decode_i_64(raw[1]),
@@ -981,8 +849,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DiagnosticDto dco_decode_diagnostic_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return DiagnosticDto(
       rule: dco_decode_String(arr[0]),
       track: dco_decode_i_64(arr[1]),
@@ -996,8 +863,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DocumentSummaryDto dco_decode_document_summary_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 9)
-      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
+    if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return DocumentSummaryDto(
       revision: dco_decode_i_64(arr[0]),
       dirty: dco_decode_bool(arr[1]),
@@ -1015,8 +881,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   DurationDto dco_decode_duration_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return DurationDto(
       base: dco_decode_u_8(arr[0]),
       dots: dco_decode_u_8(arr[1]),
@@ -1028,8 +893,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   EventDto dco_decode_event_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return EventDto(
       seq: dco_decode_i_64(arr[0]),
       revision: dco_decode_i_64(arr[1]),
@@ -1104,8 +968,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   GlyphDto dco_decode_glyph_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return GlyphDto(
       kind: dco_decode_glyph_kind_dto(arr[0]),
       x: dco_decode_f_32(arr[1]),
@@ -1126,10 +989,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           letRing: dco_decode_bool(raw[4]),
         );
       case 1:
-        return GlyphKindDto_Rest(
-          exponent: dco_decode_u_8(raw[1]),
-          dots: dco_decode_u_8(raw[2]),
-        );
+        return GlyphKindDto_Rest(exponent: dco_decode_u_8(raw[1]), dots: dco_decode_u_8(raw[2]));
       case 2:
         return GlyphKindDto_Dot();
       case 3:
@@ -1144,9 +1004,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 6:
         return GlyphKindDto_RepeatCount(count: dco_decode_u_8(raw[1]));
       case 7:
-        return GlyphKindDto_Volta(
-          endings: dco_decode_list_prim_u_8_strict(raw[1]),
-        );
+        return GlyphKindDto_Volta(endings: dco_decode_list_prim_u_8_strict(raw[1]));
       case 8:
         return GlyphKindDto_Marker(text: dco_decode_String(raw[1]));
       case 9:
@@ -1167,8 +1025,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   HitBeatDto dco_decode_hit_beat_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return HitBeatDto(
       id: dco_decode_i_64(arr[0]),
       bar: dco_decode_u_32(arr[1]),
@@ -1199,8 +1056,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   InstrumentDto dco_decode_instrument_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return InstrumentDto(
       tuning: dco_decode_list_String(arr[0]),
       fretCount: dco_decode_u_8(arr[1]),
@@ -1302,8 +1158,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MasterBarDto dco_decode_master_bar_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7)
-      throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 7) throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
     return MasterBarDto(
       numerator: dco_decode_u_8(arr[0]),
       denominator: dco_decode_u_8(arr[1]),
@@ -1319,8 +1174,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MetricsDto dco_decode_metrics_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 17)
-      throw Exception('unexpected arr length: expect 17 but see ${arr.length}');
+    if (arr.length != 17) throw Exception('unexpected arr length: expect 17 but see ${arr.length}');
     return MetricsDto(
       width: dco_decode_f_32(arr[0]),
       marginLeft: dco_decode_f_32(arr[1]),
@@ -1346,8 +1200,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   NoteDto dco_decode_note_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return NoteDto(
       id: dco_decode_i_64(arr[0]),
       string: dco_decode_u_8(arr[1]),
@@ -1386,20 +1239,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   OutcomeDto dco_decode_outcome_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return OutcomeDto(
-      revision: dco_decode_i_64(arr[0]),
-      events: dco_decode_list_event_dto(arr[1]),
-    );
+    if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return OutcomeDto(revision: dco_decode_i_64(arr[0]), events: dco_decode_list_event_dto(arr[1]));
   }
 
   @protected
   SystemDto dco_decode_system_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 11)
-      throw Exception('unexpected arr length: expect 11 but see ${arr.length}');
+    if (arr.length != 11) throw Exception('unexpected arr length: expect 11 but see ${arr.length}');
     return SystemDto(
       index: dco_decode_u_32(arr[0]),
       y: dco_decode_f_32(arr[1]),
@@ -1419,8 +1267,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TabLayoutDto dco_decode_tab_layout_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
     return TabLayoutDto(
       track: dco_decode_i_64(arr[0]),
       strings: dco_decode_u_8(arr[1]),
@@ -1434,8 +1281,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TrackSummaryDto dco_decode_track_summary_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return TrackSummaryDto(
       id: dco_decode_i_64(arr[0]),
       name: dco_decode_String(arr[1]),
@@ -1447,12 +1293,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TupletDto dco_decode_tuplet_dto(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return TupletDto(
-      actual: dco_decode_u_8(arr[0]),
-      normal: dco_decode_u_8(arr[1]),
-    );
+    if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return TupletDto(actual: dco_decode_u_8(arr[0]), normal: dco_decode_u_8(arr[1]));
   }
 
   @protected
@@ -1523,9 +1365,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  RustStreamSink<EventDto> sse_decode_StreamSink_event_dto_Sse(
-    SseDeserializer deserializer,
-  ) {
+  RustStreamSink<EventDto> sse_decode_StreamSink_event_dto_Sse(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     throw UnimplementedError('Unreachable ()');
   }
@@ -1552,12 +1392,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_x = sse_decode_f_32(deserializer);
     var var_width = sse_decode_f_32(deserializer);
     var var_diagnostic = sse_decode_bool(deserializer);
-    return BarLayoutDto(
-      bar: var_bar,
-      x: var_x,
-      width: var_width,
-      diagnostic: var_diagnostic,
-    );
+    return BarLayoutDto(bar: var_bar, x: var_x, width: var_width, diagnostic: var_diagnostic);
   }
 
   @protected
@@ -1567,12 +1402,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_bar = sse_decode_u_32(deserializer);
     var var_voice = sse_decode_u_32(deserializer);
     var var_beat = sse_decode_i_64(deserializer);
-    return BeatAddressDto(
-      track: var_track,
-      bar: var_bar,
-      voice: var_voice,
-      beat: var_beat,
-    );
+    return BeatAddressDto(track: var_track, bar: var_bar, voice: var_voice, beat: var_beat);
   }
 
   @protected
@@ -1591,9 +1421,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  BeatAddressDto sse_decode_box_autoadd_beat_address_dto(
-    SseDeserializer deserializer,
-  ) {
+  BeatAddressDto sse_decode_box_autoadd_beat_address_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_beat_address_dto(deserializer));
   }
@@ -1605,9 +1433,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  DurationDto sse_decode_box_autoadd_duration_dto(
-    SseDeserializer deserializer,
-  ) {
+  DurationDto sse_decode_box_autoadd_duration_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_duration_dto(deserializer));
   }
@@ -1619,17 +1445,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  InstrumentDto sse_decode_box_autoadd_instrument_dto(
-    SseDeserializer deserializer,
-  ) {
+  InstrumentDto sse_decode_box_autoadd_instrument_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_instrument_dto(deserializer));
   }
 
   @protected
-  MasterBarDto sse_decode_box_autoadd_master_bar_dto(
-    SseDeserializer deserializer,
-  ) {
+  MasterBarDto sse_decode_box_autoadd_master_bar_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_master_bar_dto(deserializer));
   }
@@ -1709,19 +1531,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 7:
         var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
         var var_duration = sse_decode_box_autoadd_duration_dto(deserializer);
-        return CommandDto_SetBeatDuration(
-          beat: var_beat,
-          duration: var_duration,
-        );
+        return CommandDto_SetBeatDuration(beat: var_beat, duration: var_duration);
       case 8:
         var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
         var var_string = sse_decode_u_8(deserializer);
         var var_fret = sse_decode_u_8(deserializer);
-        return CommandDto_SetNote(
-          beat: var_beat,
-          string: var_string,
-          fret: var_fret,
-        );
+        return CommandDto_SetNote(beat: var_beat, string: var_string, fret: var_fret);
       case 9:
         var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
         var var_note = sse_decode_i_64(deserializer);
@@ -1750,11 +1565,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_track = sse_decode_i_64(deserializer);
         var var_bar = sse_decode_u_32(deserializer);
         var var_voice = sse_decode_u_32(deserializer);
-        return CommandDto_RemoveVoice(
-          track: var_track,
-          bar: var_bar,
-          voice: var_voice,
-        );
+        return CommandDto_RemoveVoice(track: var_track, bar: var_bar, voice: var_voice);
       case 14:
         var var_track = sse_decode_i_64(deserializer);
         var var_fromBar = sse_decode_u_32(deserializer);
@@ -1768,9 +1579,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         );
       case 15:
         var var_name = sse_decode_String(deserializer);
-        var var_instrument = sse_decode_box_autoadd_instrument_dto(
-          deserializer,
-        );
+        var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
         return CommandDto_AddTrack(name: var_name, instrument: var_instrument);
       case 16:
         var var_track = sse_decode_i_64(deserializer);
@@ -1781,22 +1590,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         return CommandDto_RenameTrack(track: var_track, name: var_name);
       case 18:
         var var_track = sse_decode_i_64(deserializer);
-        var var_instrument = sse_decode_box_autoadd_instrument_dto(
-          deserializer,
-        );
-        return CommandDto_SetInstrument(
-          track: var_track,
-          instrument: var_instrument,
-        );
+        var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
+        return CommandDto_SetInstrument(track: var_track, instrument: var_instrument);
       case 19:
         var var_track = sse_decode_i_64(deserializer);
         var var_to = sse_decode_u_32(deserializer);
         return CommandDto_MoveTrack(track: var_track, to: var_to);
       case 20:
         var var_track = sse_decode_i_64(deserializer);
-        var var_instrument = sse_decode_box_autoadd_instrument_dto(
-          deserializer,
-        );
+        var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
         var var_keepPitches = sse_decode_bool(deserializer);
         return CommandDto_Retune(
           track: var_track,
@@ -1826,9 +1628,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  DocumentSummaryDto sse_decode_document_summary_dto(
-    SseDeserializer deserializer,
-  ) {
+  DocumentSummaryDto sse_decode_document_summary_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_revision = sse_decode_i_64(deserializer);
     var var_dirty = sse_decode_bool(deserializer);
@@ -1909,11 +1709,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         var var_track = sse_decode_i_64(deserializer);
         var var_start = sse_decode_u_32(deserializer);
         var var_end = sse_decode_u_32(deserializer);
-        return EventKindDto_BarContentChanged(
-          track: var_track,
-          start: var_start,
-          end: var_end,
-        );
+        return EventKindDto_BarContentChanged(track: var_track, start: var_start, end: var_end);
       case 8:
         return EventKindDto_TempoMapChanged();
       case 9:
@@ -1928,10 +1724,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 12:
         var var_canUndo = sse_decode_bool(deserializer);
         var var_canRedo = sse_decode_bool(deserializer);
-        return EventKindDto_UndoAvailabilityChanged(
-          canUndo: var_canUndo,
-          canRedo: var_canRedo,
-        );
+        return EventKindDto_UndoAvailabilityChanged(canUndo: var_canUndo, canRedo: var_canRedo);
       case 13:
         return EventKindDto_HistoryApplied();
       default:
@@ -1984,10 +1777,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case 4:
         var var_numerator = sse_decode_u_8(deserializer);
         var var_denominator = sse_decode_u_8(deserializer);
-        return GlyphKindDto_TimeSignature(
-          numerator: var_numerator,
-          denominator: var_denominator,
-        );
+        return GlyphKindDto_TimeSignature(numerator: var_numerator, denominator: var_denominator);
       case 5:
         return GlyphKindDto_RepeatDots();
       case 6:
@@ -2020,12 +1810,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_bar = sse_decode_u_32(deserializer);
     var var_voice = sse_decode_u_32(deserializer);
     var var_index = sse_decode_u_32(deserializer);
-    return HitBeatDto(
-      id: var_id,
-      bar: var_bar,
-      voice: var_voice,
-      index: var_index,
-    );
+    return HitBeatDto(id: var_id, bar: var_bar, voice: var_voice, index: var_index);
   }
 
   @protected
@@ -2052,11 +1837,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_tuning = sse_decode_list_String(deserializer);
     var var_fretCount = sse_decode_u_8(deserializer);
     var var_capo = sse_decode_u_8(deserializer);
-    return InstrumentDto(
-      tuning: var_tuning,
-      fretCount: var_fretCount,
-      capo: var_capo,
-    );
+    return InstrumentDto(tuning: var_tuning, fretCount: var_fretCount, capo: var_capo);
   }
 
   @protected
@@ -2072,9 +1853,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<BarLayoutDto> sse_decode_list_bar_layout_dto(
-    SseDeserializer deserializer,
-  ) {
+  List<BarLayoutDto> sse_decode_list_bar_layout_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     var len_ = sse_decode_i_32(deserializer);
@@ -2098,9 +1877,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<DiagnosticDto> sse_decode_list_diagnostic_dto(
-    SseDeserializer deserializer,
-  ) {
+  List<DiagnosticDto> sse_decode_list_diagnostic_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     var len_ = sse_decode_i_32(deserializer);
@@ -2148,9 +1925,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<MasterBarDto> sse_decode_list_master_bar_dto(
-    SseDeserializer deserializer,
-  ) {
+  List<MasterBarDto> sse_decode_list_master_bar_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     var len_ = sse_decode_i_32(deserializer);
@@ -2214,9 +1989,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<TrackSummaryDto> sse_decode_list_track_summary_dto(
-    SseDeserializer deserializer,
-  ) {
+  List<TrackSummaryDto> sse_decode_list_track_summary_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     var len_ = sse_decode_i_32(deserializer);
@@ -2331,9 +2104,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  TupletDto? sse_decode_opt_box_autoadd_tuplet_dto(
-    SseDeserializer deserializer,
-  ) {
+  TupletDto? sse_decode_opt_box_autoadd_tuplet_dto(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     if (sse_decode_bool(deserializer)) {
@@ -2414,11 +2185,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_id = sse_decode_i_64(deserializer);
     var var_name = sse_decode_String(deserializer);
     var var_instrument = sse_decode_instrument_dto(deserializer);
-    return TrackSummaryDto(
-      id: var_id,
-      name: var_name,
-      instrument: var_instrument,
-    );
+    return TrackSummaryDto(id: var_id, name: var_name, instrument: var_instrument);
   }
 
   @protected
@@ -2453,10 +2220,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_AnyhowException(
-    AnyhowException self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.message, serializer);
   }
@@ -2468,10 +2232,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-      (self as DocumentHandleImpl).frbInternalSseEncode(move: true),
-      serializer,
-    );
+    sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: true), serializer);
   }
 
   @protected
@@ -2481,23 +2242,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-      (self as DocumentHandleImpl).frbInternalSseEncode(move: false),
-      serializer,
-    );
+    sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: false), serializer);
   }
 
   @protected
-  void
-  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
+  void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
     DocumentHandle self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_usize(
-      (self as DocumentHandleImpl).frbInternalSseEncode(move: null),
-      serializer,
-    );
+    sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: null), serializer);
   }
 
   @protected
@@ -2540,10 +2294,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_beat_address_dto(
-    BeatAddressDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_beat_address_dto(BeatAddressDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_64(self.track, serializer);
     sse_encode_u_32(self.bar, serializer);
@@ -2566,73 +2317,49 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_box_autoadd_beat_address_dto(
-    BeatAddressDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_beat_address_dto(BeatAddressDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_beat_address_dto(self, serializer);
   }
 
   @protected
-  void sse_encode_box_autoadd_command_dto(
-    CommandDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_command_dto(CommandDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_command_dto(self, serializer);
   }
 
   @protected
-  void sse_encode_box_autoadd_duration_dto(
-    DurationDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_duration_dto(DurationDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_duration_dto(self, serializer);
   }
 
   @protected
-  void sse_encode_box_autoadd_i_64(
-    PlatformInt64 self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_i_64(PlatformInt64 self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_64(self, serializer);
   }
 
   @protected
-  void sse_encode_box_autoadd_instrument_dto(
-    InstrumentDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_instrument_dto(InstrumentDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_instrument_dto(self, serializer);
   }
 
   @protected
-  void sse_encode_box_autoadd_master_bar_dto(
-    MasterBarDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_master_bar_dto(MasterBarDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_master_bar_dto(self, serializer);
   }
 
   @protected
-  void sse_encode_box_autoadd_metrics_dto(
-    MetricsDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_metrics_dto(MetricsDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_metrics_dto(self, serializer);
   }
 
   @protected
-  void sse_encode_box_autoadd_tuplet_dto(
-    TupletDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_tuplet_dto(TupletDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_tuplet_dto(self, serializer);
   }
@@ -2695,18 +2422,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case CommandDto_RemoveBeat(beat: final beat):
         sse_encode_i_32(6, serializer);
         sse_encode_box_autoadd_beat_address_dto(beat, serializer);
-      case CommandDto_SetBeatDuration(
-        beat: final beat,
-        duration: final duration,
-      ):
+      case CommandDto_SetBeatDuration(beat: final beat, duration: final duration):
         sse_encode_i_32(7, serializer);
         sse_encode_box_autoadd_beat_address_dto(beat, serializer);
         sse_encode_box_autoadd_duration_dto(duration, serializer);
-      case CommandDto_SetNote(
-        beat: final beat,
-        string: final string,
-        fret: final fret,
-      ):
+      case CommandDto_SetNote(beat: final beat, string: final string, fret: final fret):
         sse_encode_i_32(8, serializer);
         sse_encode_box_autoadd_beat_address_dto(beat, serializer);
         sse_encode_u_8(string, serializer);
@@ -2715,11 +2435,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(9, serializer);
         sse_encode_box_autoadd_beat_address_dto(beat, serializer);
         sse_encode_i_64(note, serializer);
-      case CommandDto_SetTie(
-        beat: final beat,
-        note: final note,
-        tie: final tie,
-      ):
+      case CommandDto_SetTie(beat: final beat, note: final note, tie: final tie):
         sse_encode_i_32(10, serializer);
         sse_encode_box_autoadd_beat_address_dto(beat, serializer);
         sse_encode_i_64(note, serializer);
@@ -2739,11 +2455,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(12, serializer);
         sse_encode_i_64(track, serializer);
         sse_encode_u_32(bar, serializer);
-      case CommandDto_RemoveVoice(
-        track: final track,
-        bar: final bar,
-        voice: final voice,
-      ):
+      case CommandDto_RemoveVoice(track: final track, bar: final bar, voice: final voice):
         sse_encode_i_32(13, serializer);
         sse_encode_i_64(track, serializer);
         sse_encode_u_32(bar, serializer);
@@ -2770,10 +2482,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(17, serializer);
         sse_encode_i_64(track, serializer);
         sse_encode_String(name, serializer);
-      case CommandDto_SetInstrument(
-        track: final track,
-        instrument: final instrument,
-      ):
+      case CommandDto_SetInstrument(track: final track, instrument: final instrument):
         sse_encode_i_32(18, serializer);
         sse_encode_i_64(track, serializer);
         sse_encode_box_autoadd_instrument_dto(instrument, serializer);
@@ -2804,10 +2513,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_document_summary_dto(
-    DocumentSummaryDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_document_summary_dto(DocumentSummaryDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_64(self.revision, serializer);
     sse_encode_bool(self.dirty, serializer);
@@ -2864,11 +2570,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_i_32(6, serializer);
         sse_encode_u_32(start, serializer);
         sse_encode_u_32(end, serializer);
-      case EventKindDto_BarContentChanged(
-        track: final track,
-        start: final start,
-        end: final end,
-      ):
+      case EventKindDto_BarContentChanged(track: final track, start: final start, end: final end):
         sse_encode_i_32(7, serializer);
         sse_encode_i_64(track, serializer);
         sse_encode_u_32(start, serializer);
@@ -2884,10 +2586,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case EventKindDto_DirtyChanged(dirty: final dirty):
         sse_encode_i_32(11, serializer);
         sse_encode_bool(dirty, serializer);
-      case EventKindDto_UndoAvailabilityChanged(
-        canUndo: final canUndo,
-        canRedo: final canRedo,
-      ):
+      case EventKindDto_UndoAvailabilityChanged(canUndo: final canUndo, canRedo: final canRedo):
         sse_encode_i_32(12, serializer);
         sse_encode_bool(canUndo, serializer);
         sse_encode_bool(canRedo, serializer);
@@ -2935,10 +2634,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       case GlyphKindDto_Tuplet(actual: final actual):
         sse_encode_i_32(3, serializer);
         sse_encode_u_8(actual, serializer);
-      case GlyphKindDto_TimeSignature(
-        numerator: final numerator,
-        denominator: final denominator,
-      ):
+      case GlyphKindDto_TimeSignature(numerator: final numerator, denominator: final denominator):
         sse_encode_i_32(4, serializer);
         sse_encode_u_8(numerator, serializer);
         sse_encode_u_8(denominator, serializer);
@@ -3010,10 +2706,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_bar_layout_dto(
-    List<BarLayoutDto> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_bar_layout_dto(List<BarLayoutDto> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -3031,10 +2724,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_diagnostic_dto(
-    List<DiagnosticDto> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_diagnostic_dto(List<DiagnosticDto> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -3043,10 +2733,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_event_dto(
-    List<EventDto> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_event_dto(List<EventDto> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -3055,10 +2742,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_glyph_dto(
-    List<GlyphDto> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_glyph_dto(List<GlyphDto> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -3067,10 +2751,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_hit_beat_dto(
-    List<HitBeatDto> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_hit_beat_dto(List<HitBeatDto> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -3079,10 +2760,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_master_bar_dto(
-    List<MasterBarDto> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_master_bar_dto(List<MasterBarDto> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -3100,50 +2778,35 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_prim_f_32_strict(
-    Float32List self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putFloat32List(self);
   }
 
   @protected
-  void sse_encode_list_prim_i_32_strict(
-    Int32List self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_prim_i_32_strict(Int32List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putInt32List(self);
   }
 
   @protected
-  void sse_encode_list_prim_i_64_strict(
-    Int64List self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_prim_i_64_strict(Int64List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putInt64List(self);
   }
 
   @protected
-  void sse_encode_list_prim_u_8_strict(
-    Uint8List self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putUint8List(self);
   }
 
   @protected
-  void sse_encode_list_system_dto(
-    List<SystemDto> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -3152,10 +2815,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_track_summary_dto(
-    List<TrackSummaryDto> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_track_summary_dto(List<TrackSummaryDto> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -3219,10 +2879,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_box_autoadd_i_64(
-    PlatformInt64? self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_opt_box_autoadd_i_64(PlatformInt64? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     sse_encode_bool(self != null, serializer);
@@ -3232,10 +2889,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_box_autoadd_tuplet_dto(
-    TupletDto? self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_opt_box_autoadd_tuplet_dto(TupletDto? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     sse_encode_bool(self != null, serializer);
@@ -3288,10 +2942,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_track_summary_dto(
-    TrackSummaryDto self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_track_summary_dto(TrackSummaryDto self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_64(self.id, serializer);
     sse_encode_String(self.name, serializer);
@@ -3349,16 +3000,13 @@ class DocumentHandleImpl extends RustOpaque implements DocumentHandle {
   );
 
   /// Beats of one voice of one bar, in order.
-  List<BeatDto> beats({
-    required PlatformInt64 track,
-    required int bar,
-    required int voice,
-  }) => RustLib.instance.api.crateApiDocumentDocumentHandleBeats(
-    that: this,
-    track: track,
-    bar: bar,
-    voice: voice,
-  );
+  List<BeatDto> beats({required PlatformInt64 track, required int bar, required int voice}) =>
+      RustLib.instance.api.crateApiDocumentDocumentHandleBeats(
+        that: this,
+        track: track,
+        bar: bar,
+        voice: voice,
+      );
 
   /// Applies one command. On error the document is unchanged.
   Future<OutcomeDto> execute({
@@ -3372,46 +3020,35 @@ class DocumentHandleImpl extends RustOpaque implements DocumentHandle {
     expectedRevision: expectedRevision,
   );
 
-  Future<OutcomeDto> redo() =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleRedo(that: this);
+  Future<OutcomeDto> redo() => RustLib.instance.api.crateApiDocumentDocumentHandleRedo(that: this);
 
   /// Saves to the current location (refused with rule `U2` for unknown content).
-  Future<OutcomeDto> save() =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleSave(that: this);
+  Future<OutcomeDto> save() => RustLib.instance.api.crateApiDocumentDocumentHandleSave(that: this);
 
-  Future<OutcomeDto> saveAs({required String path}) => RustLib.instance.api
-      .crateApiDocumentDocumentHandleSaveAs(that: this, path: path);
+  Future<OutcomeDto> saveAs({required String path}) =>
+      RustLib.instance.api.crateApiDocumentDocumentHandleSaveAs(that: this, path: path);
 
   /// Streams every event of this document to Dart. A second call replaces (and
   /// closes) the previous stream.
-  Stream<EventDto> subscribeEvents() => RustLib.instance.api
-      .crateApiDocumentDocumentHandleSubscribeEvents(that: this);
+  Stream<EventDto> subscribeEvents() =>
+      RustLib.instance.api.crateApiDocumentDocumentHandleSubscribeEvents(that: this);
 
   DocumentSummaryDto summary() =>
       RustLib.instance.api.crateApiDocumentDocumentHandleSummary(that: this);
 
   /// TAB layout of a track at the current revision.
-  TabLayoutDto tabLayout({
-    required PlatformInt64 track,
-    required MetricsDto metrics,
-  }) => RustLib.instance.api.crateApiDocumentDocumentHandleTabLayout(
-    that: this,
-    track: track,
-    metrics: metrics,
-  );
+  TabLayoutDto tabLayout({required PlatformInt64 track, required MetricsDto metrics}) => RustLib
+      .instance
+      .api
+      .crateApiDocumentDocumentHandleTabLayout(that: this, track: track, metrics: metrics);
 
-  Future<OutcomeDto> undo() =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleUndo(that: this);
+  Future<OutcomeDto> undo() => RustLib.instance.api.crateApiDocumentDocumentHandleUndo(that: this);
 
   /// Closes the event stream (explicit unsubscribe, ADR-005 amendment 1).
-  void unsubscribeEvents() => RustLib.instance.api
-      .crateApiDocumentDocumentHandleUnsubscribeEvents(that: this);
+  void unsubscribeEvents() =>
+      RustLib.instance.api.crateApiDocumentDocumentHandleUnsubscribeEvents(that: this);
 
   /// Number of voices in a bar of a track.
-  int voiceCount({required PlatformInt64 track, required int bar}) =>
-      RustLib.instance.api.crateApiDocumentDocumentHandleVoiceCount(
-        that: this,
-        track: track,
-        bar: bar,
-      );
+  int voiceCount({required PlatformInt64 track, required int bar}) => RustLib.instance.api
+      .crateApiDocumentDocumentHandleVoiceCount(that: this, track: track, bar: bar);
 }

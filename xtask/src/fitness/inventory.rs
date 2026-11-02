@@ -25,6 +25,7 @@ pub const IMPLEMENTED: &[&str] = &[
     "xtask:module-cycles",
     "xtask:unsafe-scope",
     "ci:bindings",
+    "ci:dart-fitness",
     "ci:complexity",
     "workflow:public-api",
     "workflow:coverage",
@@ -274,6 +275,7 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
             "xtask:coupling" => Some((CI_WORKFLOW, "xtask fitness coupling")),
             "xtask:module-cycles" => Some((CI_WORKFLOW, "xtask fitness module-cycles")),
             "ci:bindings" => Some((CI_WORKFLOW, "flutter_rust_bridge_codegen generate")),
+            "ci:dart-fitness" => Some((CI_WORKFLOW, "app analysis and tests")),
             _ => None,
         };
         if let Some((file, needle)) = required {

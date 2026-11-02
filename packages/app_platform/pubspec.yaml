@@ -1,0 +1,19 @@
+name: app_platform
+description: "Platform services behind interfaces: file dialogs, per-user app data folders. The only package (besides app) allowed to use dart:io (FF-08)."
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.13.2
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  file_selector: 1.1.0
+  path_provider: 2.1.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 6.0.0

@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart'
-    show ExternalLibrary;
+import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart' show ExternalLibrary;
 
 import 'document_service.dart';
 import 'generated/api/document.dart';
@@ -18,9 +17,7 @@ abstract final class CoreBridge {
   static Future<void> init({String? libraryPath}) async {
     if (_initialized) return;
     await RustLib.init(
-      externalLibrary: libraryPath == null
-          ? null
-          : ExternalLibrary.open(libraryPath),
+      externalLibrary: libraryPath == null ? null : ExternalLibrary.open(libraryPath),
     );
     _initialized = true;
   }
@@ -52,15 +49,12 @@ final class RustDocumentService implements DocumentService {
   DocumentSummaryDto summary() => _handle.summary();
 
   @override
-  Future<OutcomeDto> execute(
-    CommandDto command, {
-    int? coalesceKey,
-    int? expectedRevision,
-  }) => _handle.execute(
-    command: command,
-    coalesceKey: coalesceKey,
-    expectedRevision: expectedRevision,
-  );
+  Future<OutcomeDto> execute(CommandDto command, {int? coalesceKey, int? expectedRevision}) =>
+      _handle.execute(
+        command: command,
+        coalesceKey: coalesceKey,
+        expectedRevision: expectedRevision,
+      );
 
   @override
   Future<OutcomeDto> undo() => _handle.undo();
@@ -79,8 +73,7 @@ final class RustDocumentService implements DocumentService {
       _handle.beats(track: track, bar: bar, voice: voice);
 
   @override
-  int voiceCount(int track, int bar) =>
-      _handle.voiceCount(track: track, bar: bar);
+  int voiceCount(int track, int bar) => _handle.voiceCount(track: track, bar: bar);
 
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>

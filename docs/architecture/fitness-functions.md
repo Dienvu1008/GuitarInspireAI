@@ -16,10 +16,10 @@ Planned implementation home: a Rust `xtask` crate (`cargo xtask fitness`) plus c
 | FF-02 | External crate bans (frb only in mc-ffi, cpal and rustysynth only in mc-audio, rusqlite nowhere in MVP) | GR-01, GR-02, GR-03 | cargo-deny `bans` with `wrappers` | Critical | Phase 1 | Binary |
 | FF-03 | Domain purity lints (no fs, net, thread, clock, env in domain crates) | GR-03, GR-11 | clippy `disallowed-methods` and `disallowed-types`, `-D warnings` on domain crates | Critical | Phase 1 | Binary |
 | FF-04 | Domain crates compile for `wasm32-unknown-unknown` | GR-11, ADR-014 | `cargo check --target wasm32-unknown-unknown -p mc-theory -p mc-score ...` | Critical | Phase 1 | Binary; keeps Web option open cheaply |
-| FF-05 | Dart import boundaries (features import only facade, ui_kit, platform; no generated bindings; no feature-to-feature imports) | GR-06 | Dart test parsing imports in `packages/*/lib` | Critical | Phase 3 | Binary |
-| FF-06 | Dart package cycles | GR-07 | Dart test over pubspec dependency graph | Critical | Phase 3 | Binary |
+| FF-05 | Dart import boundaries (features import only `core_bridge` facade, `ui_kit`, `app_platform`; no generated bindings; no feature-to-feature imports) | GR-06 | `app/test/architecture/dart_fitness_test.dart` (FF-05 test), run in CI `bridge` job `app analysis and tests` | Critical | Phase 3 | Binary |
+| FF-06 | Dart package cycles | GR-07 | Same test file; checks direct pubspec edges in the local workspace | Critical | Phase 3 | Binary |
 | FF-07 | `cfg(target_os)` and platform crates only in adapter crates | GR-11 | xtask source scan | Important | Phase 1 | Binary; Important because rare legitimate exceptions need review |
-| FF-08 | `dart:io` and `Platform` only in `platform` package and `app` | GR-11 | Dart import test | Important | Phase 3 | Binary |
+| FF-08 | `dart:io` and `Platform` only in the `app_platform` package and `app` (generated bindings in `core_bridge/lib/src/generated` excepted) | GR-11 | Same test file (FF-08 test) | Important | Phase 3 | Binary |
 | FF-09 | License policy (Rust and Dart) | ADR-015 | cargo-deny `licenses` allow-list; Dart license check script over `pubspec.lock` [tool To verify] | Critical | Phase 0 | Allow-list from ADR-015 |
 | FF-10 | Security advisories and sources | Security | cargo-deny `advisories`, `sources` | Important | Phase 0 | Any advisory requires triage within the PR |
 | FF-11 | Project format round-trip suite ([project-format.md](project-format.md) section 14). Item 4 covers U1 detection (4a) and U2 Save As protection (4b) from Phase 1; 4c (U3 full preservation) is added with format 1.1 | GR-08, P-01 to P-06 | Rust tests with fixture corpus. Fixtures are embedded with `include_bytes!` (no file I/O in domain test code, FF-03), created by `mc-cli format-fixtures` without overwriting, and FF-20 fails if a fixture file is not referenced by the test | Critical | Phase 1 | Binary; fixture corpus is append-only (protected path) |
@@ -40,7 +40,7 @@ Planned implementation home: a Rust `xtask` crate (`cargo xtask fitness`) plus c
 | FF-26 | Intra-crate module cycles | GR-07 | `cargo xtask fitness module-cycles`: strongly connected components of the FF-25 module graph (no external tool) | Advisory | Phase 2 | Report |
 | FF-27 | Test coverage | Testability | cargo-llvm-cov, flutter test coverage | Advisory | Phase 1 | Report; no gate (coverage gates invite low-value tests) |
 | FF-28 | Complexity lints | Maintainability | clippy `cognitive_complexity`, `too_many_lines` warnings | Advisory | Phase 1 | clippy defaults |
-| FF-29 | Binary and bundle size | Distribution | CI artifact size report | Advisory | Phase 3 | Report trends |
+| FF-29 | Binary and bundle size | Distribution | CI artifact size report; the Windows build produces a measurable artifact from Phase 4 | Advisory | Phase 4 | Report trends |
 | FF-30 | Dependency freshness | Maintenance | cargo-outdated, `flutter pub outdated` | Advisory | Phase 1 | Monthly report |
 | FF-31 | Candidate acceptance passes domain validation | GR-04, AI-02 | Integration test with invalid candidate | Critical | Phase 8 | Binary |
 | FF-32 | DTO JSON schema snapshot requires version bump | GR-08 | schemars snapshot test | Critical | Phase 1 | Binary |
@@ -56,8 +56,8 @@ Fitness functions are implemented when the code they guard first exists. M0 impl
 | 0 | FF-09 (Rust part; Dart part in Phase 3), FF-10, FF-19, FF-20, FF-33 | 5 |
 | 1 | FF-01, FF-02, FF-03, FF-04, FF-07, FF-11, FF-13, FF-14, FF-21, FF-22, FF-23, FF-24, FF-27, FF-28, FF-30, FF-32 | 16 |
 | 2 | FF-25, FF-26 | 2 |
-| 3 | FF-05, FF-06, FF-08, FF-12, FF-29, FF-34 (added by ADR-022) | 6 |
-| 4 | FF-15, FF-16, FF-17, FF-18 | 4 |
+| 3 | FF-05, FF-06, FF-08, FF-12, FF-34 | 5 |
+| 4 | FF-15, FF-16, FF-17, FF-18, FF-29 | 5 |
 | 8 | FF-31 | 1 |
 | Total | | 34 |
 

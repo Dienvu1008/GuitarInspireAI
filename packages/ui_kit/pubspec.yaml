@@ -1,0 +1,25 @@
+name: ui_kit
+description: "Shared theme, bundled fonts and small widgets. No domain types, no platform access."
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.13.2
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 6.0.0
+
+flutter:
+  fonts:
+    # Noto Sans Mono, SIL OFL 1.1, bundled unmodified (ADR-021). Provenance:
+    # fonts/PROVENANCE.md.
+    - family: NotoSansMono
+      fonts:
+        - asset: fonts/NotoSansMono-Variable.ttf

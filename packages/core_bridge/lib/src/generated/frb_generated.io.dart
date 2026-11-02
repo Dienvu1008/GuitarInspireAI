@@ -24,8 +24,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     required super.portManager,
   });
 
-  CrossPlatformFinalizerArg
-  get rust_arc_decrement_strong_count_DocumentHandlePtr => wire
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_DocumentHandlePtr => wire
       ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandlePtr;
 
   @protected
@@ -254,9 +253,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  RustStreamSink<EventDto> sse_decode_StreamSink_event_dto_Sse(
-    SseDeserializer deserializer,
-  );
+  RustStreamSink<EventDto> sse_decode_StreamSink_event_dto_Sse(SseDeserializer deserializer);
 
   @protected
   String sse_decode_String(SseDeserializer deserializer);
@@ -277,9 +274,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
-  BeatAddressDto sse_decode_box_autoadd_beat_address_dto(
-    SseDeserializer deserializer,
-  );
+  BeatAddressDto sse_decode_box_autoadd_beat_address_dto(SseDeserializer deserializer);
 
   @protected
   CommandDto sse_decode_box_autoadd_command_dto(SseDeserializer deserializer);
@@ -291,14 +286,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
-  InstrumentDto sse_decode_box_autoadd_instrument_dto(
-    SseDeserializer deserializer,
-  );
+  InstrumentDto sse_decode_box_autoadd_instrument_dto(SseDeserializer deserializer);
 
   @protected
-  MasterBarDto sse_decode_box_autoadd_master_bar_dto(
-    SseDeserializer deserializer,
-  );
+  MasterBarDto sse_decode_box_autoadd_master_bar_dto(SseDeserializer deserializer);
 
   @protected
   MetricsDto sse_decode_box_autoadd_metrics_dto(SseDeserializer deserializer);
@@ -316,9 +307,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   DiagnosticDto sse_decode_diagnostic_dto(SseDeserializer deserializer);
 
   @protected
-  DocumentSummaryDto sse_decode_document_summary_dto(
-    SseDeserializer deserializer,
-  );
+  DocumentSummaryDto sse_decode_document_summary_dto(SseDeserializer deserializer);
 
   @protected
   DurationDto sse_decode_duration_dto(SseDeserializer deserializer);
@@ -357,17 +346,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<String> sse_decode_list_String(SseDeserializer deserializer);
 
   @protected
-  List<BarLayoutDto> sse_decode_list_bar_layout_dto(
-    SseDeserializer deserializer,
-  );
+  List<BarLayoutDto> sse_decode_list_bar_layout_dto(SseDeserializer deserializer);
 
   @protected
   List<BeatDto> sse_decode_list_beat_dto(SseDeserializer deserializer);
 
   @protected
-  List<DiagnosticDto> sse_decode_list_diagnostic_dto(
-    SseDeserializer deserializer,
-  );
+  List<DiagnosticDto> sse_decode_list_diagnostic_dto(SseDeserializer deserializer);
 
   @protected
   List<EventDto> sse_decode_list_event_dto(SseDeserializer deserializer);
@@ -379,9 +364,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<HitBeatDto> sse_decode_list_hit_beat_dto(SseDeserializer deserializer);
 
   @protected
-  List<MasterBarDto> sse_decode_list_master_bar_dto(
-    SseDeserializer deserializer,
-  );
+  List<MasterBarDto> sse_decode_list_master_bar_dto(SseDeserializer deserializer);
 
   @protected
   List<NoteDto> sse_decode_list_note_dto(SseDeserializer deserializer);
@@ -402,9 +385,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<SystemDto> sse_decode_list_system_dto(SseDeserializer deserializer);
 
   @protected
-  List<TrackSummaryDto> sse_decode_list_track_summary_dto(
-    SseDeserializer deserializer,
-  );
+  List<TrackSummaryDto> sse_decode_list_track_summary_dto(SseDeserializer deserializer);
 
   @protected
   MasterBarDto sse_decode_master_bar_dto(SseDeserializer deserializer);
@@ -422,9 +403,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
 
   @protected
-  TupletDto? sse_decode_opt_box_autoadd_tuplet_dto(
-    SseDeserializer deserializer,
-  );
+  TupletDto? sse_decode_opt_box_autoadd_tuplet_dto(SseDeserializer deserializer);
 
   @protected
   int? sse_decode_opt_box_autoadd_u_8(SseDeserializer deserializer);
@@ -457,10 +436,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
-  void sse_encode_AnyhowException(
-    AnyhowException self,
-    SseSerializer serializer,
-  );
+  void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer);
 
   @protected
   void
@@ -477,17 +453,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void
-  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
+  void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(
     DocumentHandle self,
     SseSerializer serializer,
   );
 
   @protected
-  void sse_encode_StreamSink_event_dto_Sse(
-    RustStreamSink<EventDto> self,
-    SseSerializer serializer,
-  );
+  void sse_encode_StreamSink_event_dto_Sse(RustStreamSink<EventDto> self, SseSerializer serializer);
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);
@@ -499,10 +471,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bar_layout_dto(BarLayoutDto self, SseSerializer serializer);
 
   @protected
-  void sse_encode_beat_address_dto(
-    BeatAddressDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_beat_address_dto(BeatAddressDto self, SseSerializer serializer);
 
   @protected
   void sse_encode_beat_dto(BeatDto self, SseSerializer serializer);
@@ -511,52 +480,28 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_beat_address_dto(
-    BeatAddressDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_beat_address_dto(BeatAddressDto self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_command_dto(
-    CommandDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_command_dto(CommandDto self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_duration_dto(
-    DurationDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_duration_dto(DurationDto self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_i_64(
-    PlatformInt64 self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_i_64(PlatformInt64 self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_instrument_dto(
-    InstrumentDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_instrument_dto(InstrumentDto self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_master_bar_dto(
-    MasterBarDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_master_bar_dto(MasterBarDto self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_metrics_dto(
-    MetricsDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_metrics_dto(MetricsDto self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_tuplet_dto(
-    TupletDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_tuplet_dto(TupletDto self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_u_8(int self, SseSerializer serializer);
@@ -568,10 +513,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_diagnostic_dto(DiagnosticDto self, SseSerializer serializer);
 
   @protected
-  void sse_encode_document_summary_dto(
-    DocumentSummaryDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_document_summary_dto(DocumentSummaryDto self, SseSerializer serializer);
 
   @protected
   void sse_encode_duration_dto(DurationDto self, SseSerializer serializer);
@@ -610,19 +552,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_bar_layout_dto(
-    List<BarLayoutDto> self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_bar_layout_dto(List<BarLayoutDto> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_beat_dto(List<BeatDto> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_diagnostic_dto(
-    List<DiagnosticDto> self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_diagnostic_dto(List<DiagnosticDto> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_event_dto(List<EventDto> self, SseSerializer serializer);
@@ -631,55 +567,31 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_glyph_dto(List<GlyphDto> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_hit_beat_dto(
-    List<HitBeatDto> self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_hit_beat_dto(List<HitBeatDto> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_master_bar_dto(
-    List<MasterBarDto> self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_master_bar_dto(List<MasterBarDto> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_note_dto(List<NoteDto> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_prim_f_32_strict(
-    Float32List self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_prim_i_32_strict(
-    Int32List self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_prim_i_32_strict(Int32List self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_prim_i_64_strict(
-    Int64List self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_prim_i_64_strict(Int64List self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_prim_u_8_strict(
-    Uint8List self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_system_dto(
-    List<SystemDto> self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_track_summary_dto(
-    List<TrackSummaryDto> self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_track_summary_dto(List<TrackSummaryDto> self, SseSerializer serializer);
 
   @protected
   void sse_encode_master_bar_dto(MasterBarDto self, SseSerializer serializer);
@@ -694,16 +606,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
-  void sse_encode_opt_box_autoadd_i_64(
-    PlatformInt64? self,
-    SseSerializer serializer,
-  );
+  void sse_encode_opt_box_autoadd_i_64(PlatformInt64? self, SseSerializer serializer);
 
   @protected
-  void sse_encode_opt_box_autoadd_tuplet_dto(
-    TupletDto? self,
-    SseSerializer serializer,
-  );
+  void sse_encode_opt_box_autoadd_tuplet_dto(TupletDto? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_u_8(int? self, SseSerializer serializer);
@@ -718,10 +624,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_tab_layout_dto(TabLayoutDto self, SseSerializer serializer);
 
   @protected
-  void sse_encode_track_summary_dto(
-    TrackSummaryDto self,
-    SseSerializer serializer,
-  );
+  void sse_encode_track_summary_dto(TrackSummaryDto self, SseSerializer serializer);
 
   @protected
   void sse_encode_tuplet_dto(TupletDto self, SseSerializer serializer);
@@ -746,12 +649,10 @@ class RustLibWire implements BaseWire {
       RustLibWire(lib.ffiDynamicLibrary);
 
   /// Holds the symbol lookup function.
-  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-  _lookup;
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  RustLibWire(ffi.DynamicLibrary dynamicLibrary)
-    : _lookup = dynamicLibrary.lookup;
+  RustLibWire(ffi.DynamicLibrary dynamicLibrary) : _lookup = dynamicLibrary.lookup;
 
   void
   rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(

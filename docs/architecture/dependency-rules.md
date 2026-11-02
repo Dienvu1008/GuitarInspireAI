@@ -72,7 +72,7 @@ Future `mc-analysis` (Phase 8): may depend on `theory` and `dsp` only. `app` may
 - Criticality: Critical (FF-16, FF-17), Important (FF-18). Active: Phase 4.
 
 ### GR-11 Platform-specific code stays behind adapters
-- Mechanism: FF-07 (`cfg(target_os = ...)` only in adapter crates), FF-08 (Dart `dart:io` and `Platform` only in `platform` package and `app`), FF-04 (domain crates compile for wasm32).
+- Mechanism: FF-07 (`cfg(target_os = ...)` only in adapter crates), FF-08 (Dart `dart:io` and `Platform` only in the `app_platform` package and `app`), FF-04 (domain crates compile for wasm32).
 - Criticality: Important (FF-07, FF-08), Critical (FF-04).
 
 ### GR-12 Architecture fitness functions are version-controlled

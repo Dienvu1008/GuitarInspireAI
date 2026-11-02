@@ -70,9 +70,9 @@ All estimates are FTE weeks for one developer. Research items are timeboxed and 
 ## Phase 3: Flutter shell, bridge and desktop TAB editor
 
 - Objective: An editable, saveable TAB document in a Windows desktop app.
-- Scope: `mc-notation` (TAB layout), `mc-ffi` (document API, events), Flutter app and packages (`core_bridge`, `editor_feature`, `platform`, `ui_kit`), desktop layout, keyboard and mouse editing, track list, inspector, file dialogs, autosave and recovery UI.
+- Scope: `mc-notation` (TAB layout), `mc-ffi` (document API, events), Flutter app and packages (`core_bridge`, `editor_feature`, `app_platform`, `ui_kit`), desktop layout, keyboard and mouse editing, track list, inspector, file dialogs, autosave and recovery UI.
 - Dependencies: Phases 1 and 2 (chord insert can come in Phase 5).
-- Architectural prerequisites: ADR-002, ADR-004, ADR-005, ADR-006, ADR-018 accepted; Q-12 decided; FF-05, FF-06, FF-08, FF-12 activated.
+- Architectural prerequisites: ADR-002, ADR-004, ADR-005, ADR-006, ADR-018, ADR-021, ADR-022 accepted; Q-12, Q-13, Q-15 decided; FF-05, FF-06, FF-08, FF-12, FF-34 activated.
 - Deliverables: Windows app build; Dart contract tests against fake and real implementations; layout golden tests.
 - Technical risks: Editor UX effort underestimated (R-04), layout metrics coupling (R-05), frb build complexity (R-01).
 - Acceptance criteria: User can create a 2-track song, switch the active TAB track from the track list, enter notes by keyboard, undo and redo, save, reopen identically, recover after a forced kill; edit feedback within budget on the typical score.

@@ -47,8 +47,7 @@ class BeatAddressDto {
   });
 
   @override
-  int get hashCode =>
-      track.hashCode ^ bar.hashCode ^ voice.hashCode ^ beat.hashCode;
+  int get hashCode => track.hashCode ^ bar.hashCode ^ voice.hashCode ^ beat.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -67,11 +66,7 @@ class BeatDto {
   final DurationDto duration;
   final List<NoteDto> notes;
 
-  const BeatDto({
-    required this.id,
-    required this.duration,
-    required this.notes,
-  });
+  const BeatDto({required this.id, required this.duration, required this.notes});
 
   @override
   int get hashCode => id.hashCode ^ duration.hashCode ^ notes.hashCode;
@@ -90,18 +85,12 @@ class BeatDto {
 sealed class CommandDto with _$CommandDto {
   const CommandDto._();
 
-  const factory CommandDto.insertMasterBars({
-    required int at,
-    required int count,
-  }) = CommandDto_InsertMasterBars;
-  const factory CommandDto.removeMasterBars({
-    required int at,
-    required int count,
-  }) = CommandDto_RemoveMasterBars;
-  const factory CommandDto.setMasterBar({
-    required int index,
-    required MasterBarDto bar,
-  }) = CommandDto_SetMasterBar;
+  const factory CommandDto.insertMasterBars({required int at, required int count}) =
+      CommandDto_InsertMasterBars;
+  const factory CommandDto.removeMasterBars({required int at, required int count}) =
+      CommandDto_RemoveMasterBars;
+  const factory CommandDto.setMasterBar({required int index, required MasterBarDto bar}) =
+      CommandDto_SetMasterBar;
 
   /// Offset is `offset_num / offset_den` of a whole note; bpm in quarter notes per minute.
   const factory CommandDto.setTempo({
@@ -122,8 +111,7 @@ sealed class CommandDto with _$CommandDto {
     required int index,
     required DurationDto duration,
   }) = CommandDto_InsertBeat;
-  const factory CommandDto.removeBeat({required BeatAddressDto beat}) =
-      CommandDto_RemoveBeat;
+  const factory CommandDto.removeBeat({required BeatAddressDto beat}) = CommandDto_RemoveBeat;
   const factory CommandDto.setBeatDuration({
     required BeatAddressDto beat,
     required DurationDto duration,
@@ -133,10 +121,8 @@ sealed class CommandDto with _$CommandDto {
     required int string,
     required int fret,
   }) = CommandDto_SetNote;
-  const factory CommandDto.removeNote({
-    required BeatAddressDto beat,
-    required PlatformInt64 note,
-  }) = CommandDto_RemoveNote;
+  const factory CommandDto.removeNote({required BeatAddressDto beat, required PlatformInt64 note}) =
+      CommandDto_RemoveNote;
   const factory CommandDto.setTie({
     required BeatAddressDto beat,
     required PlatformInt64 note,
@@ -148,10 +134,8 @@ sealed class CommandDto with _$CommandDto {
     required bool letRing,
     required bool dead,
   }) = CommandDto_SetNoteEffects;
-  const factory CommandDto.addVoice({
-    required PlatformInt64 track,
-    required int bar,
-  }) = CommandDto_AddVoice;
+  const factory CommandDto.addVoice({required PlatformInt64 track, required int bar}) =
+      CommandDto_AddVoice;
   const factory CommandDto.removeVoice({
     required PlatformInt64 track,
     required int bar,
@@ -165,24 +149,17 @@ sealed class CommandDto with _$CommandDto {
     required int toBar,
     required int delta,
   }) = CommandDto_ShiftFrets;
-  const factory CommandDto.addTrack({
-    required String name,
-    required InstrumentDto instrument,
-  }) = CommandDto_AddTrack;
-  const factory CommandDto.removeTrack({required PlatformInt64 track}) =
-      CommandDto_RemoveTrack;
-  const factory CommandDto.renameTrack({
-    required PlatformInt64 track,
-    required String name,
-  }) = CommandDto_RenameTrack;
+  const factory CommandDto.addTrack({required String name, required InstrumentDto instrument}) =
+      CommandDto_AddTrack;
+  const factory CommandDto.removeTrack({required PlatformInt64 track}) = CommandDto_RemoveTrack;
+  const factory CommandDto.renameTrack({required PlatformInt64 track, required String name}) =
+      CommandDto_RenameTrack;
   const factory CommandDto.setInstrument({
     required PlatformInt64 track,
     required InstrumentDto instrument,
   }) = CommandDto_SetInstrument;
-  const factory CommandDto.moveTrack({
-    required PlatformInt64 track,
-    required int to,
-  }) = CommandDto_MoveTrack;
+  const factory CommandDto.moveTrack({required PlatformInt64 track, required int to}) =
+      CommandDto_MoveTrack;
 
   /// `keep_pitches`: notes keep their sound (frets move); otherwise frets are kept.
   const factory CommandDto.retune({
@@ -211,11 +188,7 @@ class DiagnosticDto {
 
   @override
   int get hashCode =>
-      rule.hashCode ^
-      track.hashCode ^
-      bar.hashCode ^
-      voice.hashCode ^
-      kind.hashCode;
+      rule.hashCode ^ track.hashCode ^ bar.hashCode ^ voice.hashCode ^ kind.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -317,16 +290,10 @@ class EventDto {
   final PlatformInt64? correlation;
   final EventKindDto kind;
 
-  const EventDto({
-    required this.seq,
-    required this.revision,
-    this.correlation,
-    required this.kind,
-  });
+  const EventDto({required this.seq, required this.revision, this.correlation, required this.kind});
 
   @override
-  int get hashCode =>
-      seq.hashCode ^ revision.hashCode ^ correlation.hashCode ^ kind.hashCode;
+  int get hashCode => seq.hashCode ^ revision.hashCode ^ correlation.hashCode ^ kind.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -343,38 +310,28 @@ class EventDto {
 sealed class EventKindDto with _$EventKindDto {
   const EventKindDto._();
 
-  const factory EventKindDto.trackAdded({required PlatformInt64 track}) =
-      EventKindDto_TrackAdded;
+  const factory EventKindDto.trackAdded({required PlatformInt64 track}) = EventKindDto_TrackAdded;
   const factory EventKindDto.trackRemoved({required PlatformInt64 track}) =
       EventKindDto_TrackRemoved;
   const factory EventKindDto.trackChanged({required PlatformInt64 track}) =
       EventKindDto_TrackChanged;
   const factory EventKindDto.tracksReordered() = EventKindDto_TracksReordered;
-  const factory EventKindDto.masterBarsInserted({
-    required int at,
-    required int count,
-  }) = EventKindDto_MasterBarsInserted;
-  const factory EventKindDto.masterBarsRemoved({
-    required int at,
-    required int count,
-  }) = EventKindDto_MasterBarsRemoved;
-  const factory EventKindDto.masterBarsChanged({
-    required int start,
-    required int end,
-  }) = EventKindDto_MasterBarsChanged;
+  const factory EventKindDto.masterBarsInserted({required int at, required int count}) =
+      EventKindDto_MasterBarsInserted;
+  const factory EventKindDto.masterBarsRemoved({required int at, required int count}) =
+      EventKindDto_MasterBarsRemoved;
+  const factory EventKindDto.masterBarsChanged({required int start, required int end}) =
+      EventKindDto_MasterBarsChanged;
   const factory EventKindDto.barContentChanged({
     required PlatformInt64 track,
     required int start,
     required int end,
   }) = EventKindDto_BarContentChanged;
   const factory EventKindDto.tempoMapChanged() = EventKindDto_TempoMapChanged;
-  const factory EventKindDto.tiesRemoved({
-    required PlatformInt64 track,
-    required Int64List notes,
-  }) = EventKindDto_TiesRemoved;
+  const factory EventKindDto.tiesRemoved({required PlatformInt64 track, required Int64List notes}) =
+      EventKindDto_TiesRemoved;
   const factory EventKindDto.documentSaved() = EventKindDto_DocumentSaved;
-  const factory EventKindDto.dirtyChanged({required bool dirty}) =
-      EventKindDto_DirtyChanged;
+  const factory EventKindDto.dirtyChanged({required bool dirty}) = EventKindDto_DirtyChanged;
   const factory EventKindDto.undoAvailabilityChanged({
     required bool canUndo,
     required bool canRedo,
@@ -388,11 +345,7 @@ class InstrumentDto {
   final int fretCount;
   final int capo;
 
-  const InstrumentDto({
-    required this.tuning,
-    required this.fretCount,
-    required this.capo,
-  });
+  const InstrumentDto({required this.tuning, required this.fretCount, required this.capo});
 
   @override
   int get hashCode => tuning.hashCode ^ fretCount.hashCode ^ capo.hashCode;
@@ -513,11 +466,7 @@ class TrackSummaryDto {
   final String name;
   final InstrumentDto instrument;
 
-  const TrackSummaryDto({
-    required this.id,
-    required this.name,
-    required this.instrument,
-  });
+  const TrackSummaryDto({required this.id, required this.name, required this.instrument});
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode ^ instrument.hashCode;

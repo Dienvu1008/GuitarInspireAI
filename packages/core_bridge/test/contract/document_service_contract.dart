@@ -26,13 +26,7 @@ void documentServiceContract(
     Future<BeatAddressDto> insertBeat(int bar) async {
       final index = d.beats(track, bar, 0).length;
       await d.execute(
-        CommandDto.insertBeat(
-          track: track,
-          bar: bar,
-          voice: 0,
-          index: index,
-          duration: quarter,
-        ),
+        CommandDto.insertBeat(track: track, bar: bar, voice: 0, index: index, duration: quarter),
       );
       final id = d.beats(track, bar, 0)[index].id;
       return BeatAddressDto(track: track, bar: bar, voice: 0, beat: id);
@@ -53,16 +47,12 @@ void documentServiceContract(
       final seen = <EventDto>[];
       final sub = d.events.listen(seen.add);
       final beat = await insertBeat(0);
-      final out = await d.execute(
-        CommandDto.setNote(beat: beat, string: 6, fret: 3),
-      );
+      final out = await d.execute(CommandDto.setNote(beat: beat, string: 6, fret: 3));
       await pumpEventQueue();
       expect(out.revision, 2);
       expect(
         out.events.map((e) => e.kind),
-        contains(
-          EventKindDto.barContentChanged(track: track, start: 0, end: 1),
-        ),
+        contains(EventKindDto.barContentChanged(track: track, start: 0, end: 1)),
       );
       expect(seen, isNotEmpty);
       final seqs = seen.map((e) => e.seq).toList();
@@ -92,14 +82,8 @@ void documentServiceContract(
 
     test('commands with the same coalesce key are one undo step', () async {
       final beat = await insertBeat(0);
-      await d.execute(
-        CommandDto.setNote(beat: beat, string: 1, fret: 1),
-        coalesceKey: 7,
-      );
-      await d.execute(
-        CommandDto.setNote(beat: beat, string: 1, fret: 12),
-        coalesceKey: 7,
-      );
+      await d.execute(CommandDto.setNote(beat: beat, string: 1, fret: 1), coalesceKey: 7);
+      await d.execute(CommandDto.setNote(beat: beat, string: 1, fret: 12), coalesceKey: 7);
       expect(d.beats(track, 0, 0).single.notes.single.fret, 12);
       await d.undo();
       expect(d.beats(track, 0, 0).single.notes, isEmpty);
@@ -108,21 +92,13 @@ void documentServiceContract(
     test('a rejected command throws ApiError and changes nothing', () async {
       final beat = await insertBeat(0);
       final before = d.summary();
-      final missing = BeatAddressDto(
-        track: track,
-        bar: 0,
-        voice: 0,
-        beat: beat.beat + 999,
-      );
+      final missing = BeatAddressDto(track: track, bar: 0, voice: 0, beat: beat.beat + 999);
       await expectLater(
         d.execute(CommandDto.setNote(beat: missing, string: 1, fret: 0)),
         throwsA(isA<ApiError>().having((e) => e.rule, 'rule', isNotEmpty)),
       );
       await expectLater(
-        d.execute(
-          CommandDto.setNote(beat: beat, string: 1, fret: 0),
-          expectedRevision: 0,
-        ),
+        d.execute(CommandDto.setNote(beat: beat, string: 1, fret: 0), expectedRevision: 0),
         throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'E-01')),
       );
       expect(d.summary().revision, before.revision);
@@ -131,47 +107,37 @@ void documentServiceContract(
 
     test('tracks and bars can be added', () async {
       await d.execute(
-        CommandDto.addTrack(
-          name: 'Second',
-          instrument: d.summary().tracks.single.instrument,
-        ),
+        CommandDto.addTrack(name: 'Second', instrument: d.summary().tracks.single.instrument),
       );
       await d.execute(const CommandDto.insertMasterBars(at: 2, count: 1));
       final s = d.summary();
       expect(s.tracks.map((t) => t.name), ['Guitar', 'Second']);
       expect(s.masterBars.length, 3);
-      await d.execute(
-        CommandDto.renameTrack(track: s.tracks[1].id, name: 'Bass'),
-      );
+      await d.execute(CommandDto.renameTrack(track: s.tracks[1].id, name: 'Bass'));
       expect(d.summary().tracks[1].name, 'Bass');
     });
 
-    test(
-      'layout has one fret glyph per note and hit regions on every string',
-      () async {
-        final beat = await insertBeat(1);
-        await d.execute(CommandDto.setNote(beat: beat, string: 2, fret: 10));
-        final l = d.tabLayout(track, metrics());
-        expect(l.strings, 6);
-        final glyphs = l.systems
-            .expand((s) => s.glyphs)
-            .where((g) => g.kind is GlyphKindDto_Fret);
-        expect(glyphs.length, 1);
-        var regions = 0;
-        for (final s in l.systems) {
-          expect(s.lines.length, s.lineKinds.length * 4);
-          expect(s.hitRects.length, s.hitMeta.length);
-          final slot = s.beats.indexWhere((b) => b.id == beat.beat);
-          if (slot < 0) continue;
-          expect((s.beats[slot].bar, s.beats[slot].index), (1, 0));
-          for (var i = 3; i < s.hitMeta.length; i += 4) {
-            if (s.hitMeta[i] == slot) regions++;
-          }
+    test('layout has one fret glyph per note and hit regions on every string', () async {
+      final beat = await insertBeat(1);
+      await d.execute(CommandDto.setNote(beat: beat, string: 2, fret: 10));
+      final l = d.tabLayout(track, metrics());
+      expect(l.strings, 6);
+      final glyphs = l.systems.expand((s) => s.glyphs).where((g) => g.kind is GlyphKindDto_Fret);
+      expect(glyphs.length, 1);
+      var regions = 0;
+      for (final s in l.systems) {
+        expect(s.lines.length, s.lineKinds.length * 4);
+        expect(s.hitRects.length, s.hitMeta.length);
+        final slot = s.beats.indexWhere((b) => b.id == beat.beat);
+        if (slot < 0) continue;
+        expect((s.beats[slot].bar, s.beats[slot].index), (1, 0));
+        for (var i = 3; i < s.hitMeta.length; i += 4) {
+          if (s.hitMeta[i] == slot) regions++;
         }
-        expect(regions, 6);
-        expect(l.systems.expand((s) => s.bars).map((b) => b.bar), [0, 1]);
-      },
-    );
+      }
+      expect(regions, 6);
+      expect(l.systems.expand((s) => s.bars).map((b) => b.bar), [0, 1]);
+    });
 
     test('save requires a location; save as then save succeed', () async {
       await expectLater(

@@ -113,6 +113,20 @@ jobs:
         working-directory: packages/core_bridge
         run: flutter test
 
+      - name: editor_feature analysis and tests
+        working-directory: packages/editor_feature
+        run: |
+          flutter pub get
+          dart analyze --fatal-infos
+          flutter test
+
+      - name: app analysis and tests (FF-05, FF-06, FF-08, FF-09 Dart, shell)
+        working-directory: app
+        run: |
+          flutter pub get
+          dart analyze --fatal-infos
+          flutter test
+
   cargo-deny:
     # cargo-deny-action is a container action and needs a Linux runner.
     # Pinned image: ubuntu-latest migrates to Ubuntu 26 from 2026-10-19; move deliberately.

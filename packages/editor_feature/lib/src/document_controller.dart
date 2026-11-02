@@ -1,0 +1,154 @@
+import 'dart:async';
+
+import 'package:core_bridge/core_bridge.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:app_platform/app_platform.dart';
+
+import 'editor_cursor.dart';
+
+/// Creates and opens documents. The app overrides it with the Rust-backed factory;
+/// widget tests use `FakeDocumentFactory`.
+final documentFactoryProvider = Provider<DocumentFactory>(
+  (ref) => throw UnimplementedError('override documentFactoryProvider'),
+);
+
+final fileDialogsProvider = Provider<FileDialogs>((ref) => const SystemFileDialogs());
+
+/// What the editor shows. `summary` is re-read after every document event; the core
+/// remains the only owner of document state (ADR-002).
+final class EditorState {
+  const EditorState({
+    required this.service,
+    required this.summary,
+    required this.activeTrack,
+    required this.cursor,
+    this.message,
+  });
+
+  final DocumentService service;
+  final DocumentSummaryDto summary;
+
+  /// Id of the track shown in the TAB view (one active TAB track at a time, Q-17).
+  final int activeTrack;
+  final EditorCursor cursor;
+
+  /// Last error or status message for the status bar.
+  final String? message;
+
+  String get title {
+    final location = summary.location;
+    final name = location == null ? 'Untitled' : location.split(RegExp(r'[\\/]')).last;
+    return '${summary.dirty ? '* ' : ''}$name';
+  }
+
+  EditorState copyWith({
+    DocumentSummaryDto? summary,
+    int? activeTrack,
+    EditorCursor? cursor,
+    String? message,
+    bool clearMessage = false,
+  }) => EditorState(
+    service: service,
+    summary: summary ?? this.summary,
+    activeTrack: activeTrack ?? this.activeTrack,
+    cursor: cursor ?? this.cursor,
+    message: clearMessage ? null : (message ?? this.message),
+  );
+}
+
+final editorProvider = NotifierProvider<DocumentController, EditorState>(DocumentController.new);
+
+/// Document lifecycle and commands for the editor. No musical rules here: commands go
+/// to the core, which validates them (GR-05).
+final class DocumentController extends Notifier<EditorState> {
+  StreamSubscription<EventDto>? _events;
+
+  @override
+  EditorState build() {
+    ref.onDispose(() => _detach());
+    return _attach(ref.read(documentFactoryProvider).create(bars: 4));
+  }
+
+  EditorState _attach(DocumentService service) {
+    _events = service.events.listen((_) => _refresh());
+    final summary = service.summary();
+    return EditorState(
+      service: service,
+      summary: summary,
+      activeTrack: summary.tracks.first.id,
+      cursor: EditorCursor.start,
+    );
+  }
+
+  void _detach() {
+    unawaited(_events?.cancel());
+    _events = null;
+  }
+
+  void _replace(DocumentService service) {
+    final old = state.service;
+    _detach();
+    state = _attach(service);
+    old.close();
+  }
+
+  void _refresh() {
+    final summary = state.service.summary();
+    final stillThere = summary.tracks.any((t) => t.id == state.activeTrack);
+    state = state.copyWith(
+      summary: summary,
+      activeTrack: stillThere ? state.activeTrack : summary.tracks.first.id,
+    );
+  }
+
+  /// Runs an action and turns a rejection into a status message instead of a crash.
+  Future<bool> _guard(Future<void> Function() action) async {
+    try {
+      await action();
+      _refresh();
+      state = state.copyWith(clearMessage: true);
+      return true;
+    } on ApiError catch (e) {
+      state = state.copyWith(message: '${e.rule}: ${e.message}');
+      return false;
+    }
+  }
+
+  void newDocument() => _replace(ref.read(documentFactoryProvider).create(bars: 4));
+
+  Future<bool> open() async {
+    final path = await ref.read(fileDialogsProvider).pickProjectToOpen();
+    if (path == null) return false;
+    return openPath(path);
+  }
+
+  Future<bool> openPath(String path) => _guard(() async {
+    _replace(await ref.read(documentFactoryProvider).open(path));
+  });
+
+  /// Saves; asks for a location when the document has none yet.
+  Future<bool> save() async {
+    if (state.summary.location == null) return saveAs();
+    return _guard(() => state.service.save());
+  }
+
+  Future<bool> saveAs() async {
+    final path = await ref
+        .read(fileDialogsProvider)
+        .pickProjectToSave(suggestedName: 'Untitled.$projectExtension');
+    if (path == null) return false;
+    return _guard(() => state.service.saveAs(path));
+  }
+
+  Future<bool> undo() => _guard(() => state.service.undo());
+
+  Future<bool> redo() => _guard(() => state.service.redo());
+
+  Future<bool> execute(CommandDto command, {int? coalesceKey}) =>
+      _guard(() => state.service.execute(command, coalesceKey: coalesceKey));
+
+  void selectTrack(int track) =>
+      state = state.copyWith(activeTrack: track, cursor: EditorCursor.start);
+
+  void moveCursor(EditorCursor cursor) => state = state.copyWith(cursor: cursor);
+}

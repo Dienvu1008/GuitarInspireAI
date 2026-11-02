@@ -6,7 +6,7 @@
 # "Architecture-Change: ADR-NNN" trailer (FF-19 also protects this file).
 
 [meta]
-current_phase = 2
+current_phase = 3
 
 [FF-01]
 name = "Internal crate dependency matrix"
@@ -35,12 +35,14 @@ check = "xtask:wasm"
 [FF-05]
 name = "Dart import boundaries"
 phase = 3
-status = "planned"
+status = "active"
+check = "ci:dart-fitness"
 
 [FF-06]
 name = "Dart package cycles"
 phase = 3
-status = "planned"
+status = "active"
+check = "ci:dart-fitness"
 
 [FF-07]
 name = "cfg(target_os) only in adapter crates"
@@ -49,9 +51,10 @@ status = "active"
 check = "xtask:platform"
 
 [FF-08]
-name = "dart:io only in platform package and app"
+name = "dart:io only in app_platform and app"
 phase = 3
-status = "planned"
+status = "active"
+check = "ci:dart-fitness"
 
 [FF-09]
 name = "License policy (Rust part; Dart part from Phase 3)"
@@ -171,7 +174,7 @@ check = "ci:complexity"
 
 [FF-29]
 name = "Binary and bundle size"
-phase = 3
+phase = 4
 status = "planned"
 
 [FF-30]

@@ -12,14 +12,14 @@ Related documents: [project-format.md](project-format.md), [ai-music-architectur
 | Project audio assets (recordings) | Inside package (stored, uncompressed) or referenced external file (Proposed for large audio) | `mc-project` | No | No |
 | Undo history | Memory only | `mc-app` session | Yes | n/a |
 | Autosave and recovery snapshots | App data `recovery/<project-id>/` | `mc-app` + adapter | Yes | No (until saved) |
-| Preferences, recent files, workspace layout | App data JSON files | Flutter (`platform` package) for UI; Rust for core settings | Yes | Partly |
+| Preferences, recent files, workspace layout | App data JSON files | Flutter (`app_platform` package) for UI; Rust for core settings | Yes | Partly |
 | SoundFonts | App data `soundfonts/` or bundled | `mc-audio` | Yes | Re-download |
 | Project catalogue and library index | SQLite (Deferred) | future `mc-library` adapter | No | Yes (rebuild by scan) |
 | DSP and AI analysis cache | SQLite plus blob files (Deferred) | future analysis adapter | No | Yes |
 | Accepted analysis results | Native project package `analysis/` with provenance | `mc-project` | No | No |
 | Cloud copies | Remote (Deferred) | sync adapter | No | n/a |
 
-App data location: platform standard (`%APPDATA%\GuitarInspireAI` on Windows [Assumption], equivalents on macOS and Linux via a directories crate or Flutter path_provider). Resolved in the `platform` adapters only.
+App data location: platform standard (`%APPDATA%\GuitarInspireAI` on Windows [Assumption], equivalents on macOS and Linux via a directories crate or Flutter path_provider). Resolved in the `app_platform` package only (path_provider `getApplicationSupportDirectory`).
 
 ## 2. Why a native format (and not an interchange format)
 

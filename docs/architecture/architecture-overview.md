@@ -88,11 +88,11 @@ packages/
   editor_feature/          TAB editor UI: canvas painter, cursor, selection, input
   tools_feature/           Tuner, chord finder, fretboard
   playback_feature/        Transport controls
-  platform/                dart:io, file pickers, permissions, window management
+  app_platform/            dart:io, file pickers, app data folders, permissions, window management (the "platform" package; named app_platform because pub.dev `platform` is a transitive dependency of path_provider)
   ui_kit/                  Shared widgets and theme
 ```
 
-Rules: feature packages import only the `core_bridge` public facade, `ui_kit` and `platform`; they never import generated bindings (FF-05). Features do not import each other; cross-feature navigation is done in `app/`. This structure is the plan for Phase 3; packages are created when their first code is written.
+Rules: feature packages import only the `core_bridge` public facade, `ui_kit` and `app_platform`; they never import generated bindings (FF-05). Features do not import each other; cross-feature navigation is done in `app/`. This structure is the plan for Phase 3; packages are created when their first code is written.
 
 ## 4. Runtime view (desktop)
 

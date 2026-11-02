@@ -17,11 +17,7 @@ import 'types.dart';
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>>
 abstract class DocumentHandle implements RustOpaqueInterface {
   /// Beats of one voice of one bar, in order.
-  List<BeatDto> beats({
-    required PlatformInt64 track,
-    required int bar,
-    required int voice,
-  });
+  List<BeatDto> beats({required PlatformInt64 track, required int bar, required int voice});
 
   /// A new, unsaved document with one standard-guitar track and `bars` empty 4/4 bars.
   static DocumentHandle create({required int bars}) =>
@@ -52,10 +48,7 @@ abstract class DocumentHandle implements RustOpaqueInterface {
   DocumentSummaryDto summary();
 
   /// TAB layout of a track at the current revision.
-  TabLayoutDto tabLayout({
-    required PlatformInt64 track,
-    required MetricsDto metrics,
-  });
+  TabLayoutDto tabLayout({required PlatformInt64 track, required MetricsDto metrics});
 
   Future<OutcomeDto> undo();
 
