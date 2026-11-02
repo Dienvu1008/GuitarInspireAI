@@ -1,0 +1,4 @@
+# Generated files (FF-12, ADR-005): frb codegen produces LF-only output. Force LF so
+# `git diff --exit-code` passes on every platform regardless of core.autocrlf.
+crates/mc-ffi/src/frb_generated.rs text eol=lf
+packages/core_bridge/lib/src/generated/** text eol=lf
