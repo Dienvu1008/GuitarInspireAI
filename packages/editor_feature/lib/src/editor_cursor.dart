@@ -5,7 +5,12 @@ import 'package:flutter/foundation.dart';
 /// is done in Phase 3d.
 @immutable
 final class EditorCursor {
-  const EditorCursor({required this.bar, required this.voice, required this.string, this.beat});
+  const EditorCursor({
+    required this.bar,
+    required this.voice,
+    required this.string,
+    this.beat,
+  });
 
   static const start = EditorCursor(bar: 0, voice: 0, string: 1);
 

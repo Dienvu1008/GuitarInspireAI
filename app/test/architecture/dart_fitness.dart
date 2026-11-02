@@ -21,7 +21,8 @@ Iterable<File> dartFiles(Directory dir) sync* {
 }
 
 /// All `import` lines from `file`.
-Iterable<String> imports(File file) => file.readAsLinesSync().where((l) => l.startsWith('import '));
+Iterable<String> imports(File file) =>
+    file.readAsLinesSync().where((l) => l.startsWith('import '));
 
 /// Package name of a pubspec.yaml under `dir`.
 String packageName(Directory dir) {
@@ -39,7 +40,14 @@ String packageName(Directory dir) {
 /// the `core_bridge` facade, `ui_kit` and `app_platform`. They must not import the
 /// generated bindings (`lib/src/generated`) or each other.
 List<String> checkFF05(Directory packagesDir) {
-  const allowed = {'core_bridge', 'app_platform', 'ui_kit', 'flutter', 'dart', 'flutter_riverpod'};
+  const allowed = {
+    'core_bridge',
+    'app_platform',
+    'ui_kit',
+    'flutter',
+    'dart',
+    'flutter_riverpod',
+  };
   final errors = <String>[];
   for (final pkg in packagesDir.listSync().whereType<Directory>()) {
     final name = packageName(pkg);
@@ -57,11 +65,17 @@ List<String> checkFF05(Directory packagesDir) {
         if (allowed.contains(dep)) continue;
         // Features may not import the generated bindings directly.
         if (dep == 'core_bridge' && line.contains('/src/generated')) {
-          errors.add('FF-05: ${_rel(file, packagesDir)} imports generated bindings: $line');
+          errors.add(
+            'FF-05: ${_rel(file, packagesDir)} imports generated bindings: $line',
+          );
         } else if (features.contains(dep)) {
-          errors.add('FF-05: ${_rel(file, packagesDir)} imports another feature package: $line');
+          errors.add(
+            'FF-05: ${_rel(file, packagesDir)} imports another feature package: $line',
+          );
         } else if (!allowed.contains(dep)) {
-          errors.add('FF-05: ${_rel(file, packagesDir)} imports unlisted package "$dep": $line');
+          errors.add(
+            'FF-05: ${_rel(file, packagesDir)} imports unlisted package "$dep": $line',
+          );
         }
       }
     }
@@ -101,7 +115,8 @@ Set<String> _pathDeps(Directory dir) {
   final deps = <String>{};
   var inDeps = false;
   for (final l in ps.readAsLinesSync()) {
-    if (l.trimRight() == 'dependencies:' || l.trimRight() == 'dev_dependencies:') {
+    if (l.trimRight() == 'dependencies:' ||
+        l.trimRight() == 'dev_dependencies:') {
       inDeps = true;
       continue;
     }
@@ -115,7 +130,11 @@ Set<String> _pathDeps(Directory dir) {
   return deps;
 }
 
-List<String> _findCycle(String start, Map<String, Set<String>> edges, List<String> path) {
+List<String> _findCycle(
+  String start,
+  Map<String, Set<String>> edges,
+  List<String> path,
+) {
   final next = [start, ...path];
   for (final dep in edges[start] ?? {}) {
     if (path.contains(dep)) {
@@ -143,7 +162,9 @@ List<String> checkFF08(Directory packagesDir) {
       if (rel.contains('/lib/src/generated')) continue;
       for (final line in imports(file)) {
         if (line.contains("'dart:io'") || line.contains('"dart:io"')) {
-          errors.add("FF-08: ${_rel(file, packagesDir)} imports 'dart:io': $line");
+          errors.add(
+            "FF-08: ${_rel(file, packagesDir)} imports 'dart:io': $line",
+          );
         }
       }
     }
@@ -226,6 +247,8 @@ List<String> checkFF09Dart(Directory packagesDir, Directory appDir) {
 }
 
 String _rel(File file, Directory base) {
-  final rel = file.path.replaceAll('\\', '/').replaceFirst(base.path.replaceAll('\\', '/'), '');
+  final rel = file.path
+      .replaceAll('\\', '/')
+      .replaceFirst(base.path.replaceAll('\\', '/'), '');
   return rel.startsWith('/') ? rel.substring(1) : rel;
 }

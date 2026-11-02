@@ -12,8 +12,12 @@ import 'tab_metrics.dart';
 extension SystemHits on SystemDto {
   int get hitCount => hitMeta.length ~/ 4;
 
-  Rect hitRect(int i) =>
-      Rect.fromLTWH(hitRects[i * 4], hitRects[i * 4 + 1], hitRects[i * 4 + 2], hitRects[i * 4 + 3]);
+  Rect hitRect(int i) => Rect.fromLTWH(
+    hitRects[i * 4],
+    hitRects[i * 4 + 1],
+    hitRects[i * 4 + 2],
+    hitRects[i * 4 + 3],
+  );
 
   EditorCursor hitCursor(int i) {
     final slot = hitMeta[i * 4 + 3];
@@ -104,9 +108,14 @@ class _TabViewState extends ConsumerState<TabView> {
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTapDown: (d) {
-                    final hit = system.hitAt(d.localPosition, voice: s.cursor.voice);
+                    final hit = system.hitAt(
+                      d.localPosition,
+                      voice: s.cursor.voice,
+                    );
                     if (hit != null) {
-                      ref.read(editorProvider.notifier).moveCursor(system.hitCursor(hit));
+                      ref
+                          .read(editorProvider.notifier)
+                          .moveCursor(system.hitCursor(hit));
                     }
                   },
                   child: SizedBox(
@@ -129,7 +138,9 @@ class _TabViewState extends ConsumerState<TabView> {
                         Positioned.fill(
                           child: CustomPaint(
                             painter: CursorPainter(
-                              rect: cursorHit == null ? null : system.hitRect(cursorHit),
+                              rect: cursorHit == null
+                                  ? null
+                                  : system.hitRect(cursorHit),
                               color: colors.cursor,
                             ),
                           ),

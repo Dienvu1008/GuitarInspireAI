@@ -7,13 +7,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:guitar_inspire/src/shell.dart';
 
 void main() {
-  testWidgets('shell shows menus, the track list and an untitled document', (tester) async {
+  testWidgets('shell shows menus, the track list and an untitled document', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1400, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [documentFactoryProvider.overrideWithValue(FakeDocumentFactory())],
+        overrides: [
+          documentFactoryProvider.overrideWithValue(FakeDocumentFactory()),
+        ],
         child: const GuitarInspireApp(),
       ),
     );

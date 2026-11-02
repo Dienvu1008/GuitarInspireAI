@@ -12,7 +12,9 @@ Future<void> main() async {
   await CoreBridge.init();
   runApp(
     ProviderScope(
-      overrides: [documentFactoryProvider.overrideWithValue(CoreBridge.documents)],
+      overrides: [
+        documentFactoryProvider.overrideWithValue(CoreBridge.documents),
+      ],
       child: const GuitarInspireApp(),
     ),
   );

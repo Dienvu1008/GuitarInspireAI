@@ -12,7 +12,9 @@ final documentFactoryProvider = Provider<DocumentFactory>(
   (ref) => throw UnimplementedError('override documentFactoryProvider'),
 );
 
-final fileDialogsProvider = Provider<FileDialogs>((ref) => const SystemFileDialogs());
+final fileDialogsProvider = Provider<FileDialogs>(
+  (ref) => const SystemFileDialogs(),
+);
 
 /// What the editor shows. `summary` is re-read after every document event; the core
 /// remains the only owner of document state (ADR-002).
@@ -37,7 +39,9 @@ final class EditorState {
 
   String get title {
     final location = summary.location;
-    final name = location == null ? 'Untitled' : location.split(RegExp(r'[\\/]')).last;
+    final name = location == null
+        ? 'Untitled'
+        : location.split(RegExp(r'[\\/]')).last;
     return '${summary.dirty ? '* ' : ''}$name';
   }
 
@@ -56,7 +60,9 @@ final class EditorState {
   );
 }
 
-final editorProvider = NotifierProvider<DocumentController, EditorState>(DocumentController.new);
+final editorProvider = NotifierProvider<DocumentController, EditorState>(
+  DocumentController.new,
+);
 
 /// Document lifecycle and commands for the editor. No musical rules here: commands go
 /// to the core, which validates them (GR-05).
@@ -114,7 +120,8 @@ final class DocumentController extends Notifier<EditorState> {
     }
   }
 
-  void newDocument() => _replace(ref.read(documentFactoryProvider).create(bars: 4));
+  void newDocument() =>
+      _replace(ref.read(documentFactoryProvider).create(bars: 4));
 
   Future<bool> open() async {
     final path = await ref.read(fileDialogsProvider).pickProjectToOpen();
@@ -150,5 +157,6 @@ final class DocumentController extends Notifier<EditorState> {
   void selectTrack(int track) =>
       state = state.copyWith(activeTrack: track, cursor: EditorCursor.start);
 
-  void moveCursor(EditorCursor cursor) => state = state.copyWith(cursor: cursor);
+  void moveCursor(EditorCursor cursor) =>
+      state = state.copyWith(cursor: cursor);
 }

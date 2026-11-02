@@ -5,7 +5,11 @@ import 'package:ui_kit/ui_kit.dart';
 /// Paints one system of the Rust display list (ADR-018). Every position comes from
 /// the layout; this painter only chooses symbols and colours.
 final class SystemPainter extends CustomPainter {
-  SystemPainter({required this.system, required this.colors, required this.fontSize});
+  SystemPainter({
+    required this.system,
+    required this.colors,
+    required this.fontSize,
+  });
 
   final SystemDto system;
   final TabColors colors;
@@ -19,7 +23,10 @@ final class SystemPainter extends CustomPainter {
       return TextPainter(
         text: TextSpan(
           text: text,
-          style: tabTextStyle(size: fontSize * scale, color: color ?? colors.ink),
+          style: tabTextStyle(
+            size: fontSize * scale,
+            color: color ?? colors.ink,
+          ),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
@@ -80,19 +87,39 @@ final class SystemPainter extends CustomPainter {
           final p = _label(text);
           // Clear the string line behind the number.
           canvas.drawRect(
-            Rect.fromCenter(center: Offset(g.x, g.y), width: p.width + 2, height: p.height * 0.8),
+            Rect.fromCenter(
+              center: Offset(g.x, g.y),
+              width: p.width + 2,
+              height: p.height * 0.8,
+            ),
             clear,
           );
           p.paint(canvas, Offset(g.x - p.width / 2, g.y - p.height / 2));
         case GlyphKindDto_Rest(:final exponent):
           _paintRest(canvas, g.x, g.y, exponent, ink);
         case GlyphKindDto_Dot():
-          canvas.drawCircle(Offset(g.x, g.y), 1.6, ink..style = PaintingStyle.fill);
+          canvas.drawCircle(
+            Offset(g.x, g.y),
+            1.6,
+            ink..style = PaintingStyle.fill,
+          );
         case GlyphKindDto_Tuplet(:final actual):
           _centered(canvas, '$actual', g.x, g.y, scale: 0.8);
         case GlyphKindDto_TimeSignature(:final numerator, :final denominator):
-          _centered(canvas, '$numerator', g.x, g.y - fontSize * 0.75, scale: 1.4);
-          _centered(canvas, '$denominator', g.x, g.y + fontSize * 0.75, scale: 1.4);
+          _centered(
+            canvas,
+            '$numerator',
+            g.x,
+            g.y - fontSize * 0.75,
+            scale: 1.4,
+          );
+          _centered(
+            canvas,
+            '$denominator',
+            g.x,
+            g.y + fontSize * 0.75,
+            scale: 1.4,
+          );
         case GlyphKindDto_RepeatDots():
           final fill = Paint()..color = colors.ink;
           canvas.drawCircle(Offset(g.x, g.y - fontSize * 0.6), 1.8, fill);
@@ -104,7 +131,14 @@ final class SystemPainter extends CustomPainter {
         case GlyphKindDto_Marker(:final text):
           _centered(canvas, text, g.x, g.y, scale: 0.9);
         case GlyphKindDto_BarNumber(:final number):
-          _centered(canvas, '$number', g.x, g.y, scale: 0.75, color: colors.staff);
+          _centered(
+            canvas,
+            '$number',
+            g.x,
+            g.y,
+            scale: 0.75,
+            color: colors.staff,
+          );
         case GlyphKindDto_TabClef():
           final step = fontSize * 1.05;
           for (final (i, c) in ['T', 'A', 'B'].indexed) {
@@ -127,7 +161,11 @@ final class SystemPainter extends CustomPainter {
     }
     canvas.drawLine(Offset(x + 2, y - 5), Offset(x - 2, y + 5), ink);
     for (var level = 0; level < exponent - 2; level++) {
-      canvas.drawCircle(Offset(x + 1 - level * 1.5, y - 4 + level * 3), 1.4, fill);
+      canvas.drawCircle(
+        Offset(x + 1 - level * 1.5, y - 4 + level * 3),
+        1.4,
+        fill,
+      );
     }
   }
 
@@ -159,5 +197,6 @@ final class CursorPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CursorPainter old) => old.rect != rect || old.color != color;
+  bool shouldRepaint(CursorPainter old) =>
+      old.rect != rect || old.color != color;
 }

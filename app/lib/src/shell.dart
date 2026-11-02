@@ -18,8 +18,7 @@ class GuitarInspireApp extends StatelessWidget {
 }
 
 /// Desktop MVP layout with fixed panels (cross-platform-ui section 3): menu bar,
-/// track list, TAB editor, status bar. The inspector panel arrives with editing
-/// (Phase 3d).
+/// track list, TAB editor, inspector and status bar.
 class Shell extends ConsumerWidget {
   const Shell({super.key});
 
@@ -28,17 +27,27 @@ class Shell extends ConsumerWidget {
     final s = ref.watch(editorProvider);
     final editor = ref.read(editorProvider.notifier);
     final shortcuts = <ShortcutActivator, VoidCallback>{
-      const SingleActivator(LogicalKeyboardKey.keyN, control: true): editor.newDocument,
-      const SingleActivator(LogicalKeyboardKey.keyO, control: true): editor.open,
-      const SingleActivator(LogicalKeyboardKey.keyS, control: true): editor.save,
-      const SingleActivator(LogicalKeyboardKey.keyS, control: true, shift: true): editor.saveAs,
-      const SingleActivator(LogicalKeyboardKey.keyZ, control: true): editor.undo,
-      const SingleActivator(LogicalKeyboardKey.keyY, control: true): editor.redo,
+      const SingleActivator(LogicalKeyboardKey.keyN, control: true):
+          editor.newDocument,
+      const SingleActivator(LogicalKeyboardKey.keyO, control: true):
+          editor.open,
+      const SingleActivator(LogicalKeyboardKey.keyS, control: true):
+          editor.save,
+      const SingleActivator(
+        LogicalKeyboardKey.keyS,
+        control: true,
+        shift: true,
+      ): editor.saveAs,
+      const SingleActivator(LogicalKeyboardKey.keyZ, control: true):
+          editor.undo,
+      const SingleActivator(LogicalKeyboardKey.keyY, control: true):
+          editor.redo,
     };
     return CallbackShortcuts(
       bindings: shortcuts,
       child: Focus(
         autofocus: true,
+        onKeyEvent: (_, event) => KeyboardHandler(ref).handleKey(event),
         child: Scaffold(
           body: Column(
             children: [
@@ -50,6 +59,8 @@ class Shell extends ConsumerWidget {
                     SizedBox(width: 220, child: TrackList()),
                     VerticalDivider(width: 1),
                     Expanded(child: TabView()),
+                    VerticalDivider(width: 1),
+                    SizedBox(width: 220, child: Inspector()),
                   ],
                 ),
               ),
@@ -72,7 +83,11 @@ class _MenuBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(editorProvider);
     final editor = ref.read(editorProvider.notifier);
-    MenuItemButton item(String label, SingleActivator key, VoidCallback? onPressed) =>
+    MenuItemButton item(
+      String label,
+      SingleActivator key,
+      VoidCallback? onPressed,
+    ) =>
         MenuItemButton(shortcut: key, onPressed: onPressed, child: Text(label));
     return Row(
       children: [
@@ -97,7 +112,11 @@ class _MenuBar extends ConsumerWidget {
                 ),
                 item(
                   'Save As...',
-                  const SingleActivator(LogicalKeyboardKey.keyS, control: true, shift: true),
+                  const SingleActivator(
+                    LogicalKeyboardKey.keyS,
+                    control: true,
+                    shift: true,
+                  ),
                   editor.saveAs,
                 ),
               ],
