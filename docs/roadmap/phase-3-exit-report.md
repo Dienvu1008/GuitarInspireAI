@@ -1,7 +1,7 @@
 # Phase 3 Exit Report
 
 Purpose: Evidence against the Phase 3 acceptance criteria (Flutter shell, bridge and desktop TAB editor), edit-feedback measurements, defects found while making the Windows build and acceptance flow work (slice 3f), open points for the user, and the manual exploratory test script.
-Status: Draft for user acceptance. All criteria have local evidence; CI status in section 8.
+Status: Final. Phase 3 accepted by the user on 2026-10-31 with the open points decided as proposed (section 6). CI status in section 8.
 Related documents: [implementation-phases.md](implementation-phases.md), [milestones.md](milestones.md), [phase-2-exit-report.md](phase-2-exit-report.md), [performance-requirements.md](../architecture/performance-requirements.md), [project-format.md](../architecture/project-format.md), [cross-platform-ui.md](../architecture/cross-platform-ui.md), [ADR-022](../architecture/decisions/ADR-022-unsafe-confined-to-generated-ffi.md).
 
 ## 1. Outcome
@@ -136,4 +136,4 @@ Local runs of every CI step passed on the final 3f state: fmt, clippy `-D warnin
 
 ## 9. Closure
 
-Phase 3 closes when the user accepts this report (or decides the open points differently) and `phase-3-editor` is merged into `main` with CI passing. Next phase per the roadmap: Phase 4 (playback and MIDI), on a new branch.
+Decisions (user, 2026-10-31): Phase 3 accepted; open points O-1 to O-8 decided as proposed in section 6 (session marker, "Open original" and autosave on close come together with a close prompt in Phase 4 or 5; new documents stay dirty; the Tie option stays; the latency benchmark runs on the reference machine before Phase 4 planning is final). Phase 3 closes with the merge of `phase-3-editor` into `main` with CI passing. Next phase: Phase 4 (playback and MIDI), on branch `phase-4-playback`.
