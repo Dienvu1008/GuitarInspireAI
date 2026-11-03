@@ -70,7 +70,7 @@ From Phase 6, `mc-project` and `mc-app` also depend on `mc-pattern`. There is no
 | `mc-cli` | Adapter (harness) | Phase 1 | Command-line harness for tests and debugging without UI; format fixture generator | none (hand-written argument parsing) |
 | `mc-guitar` | Domain (supporting) | Phase 2 | Fretboard, chord finder, voicings | none |
 | `mc-notation` | Projection | Phase 3 | TAB layout display list | none |
-| `mc-ffi` | Adapter (interop, composition root) | Phase 3 | frb API, DTO mapping, streams | flutter_rust_bridge |
+| `mc-ffi` | Adapter (interop, composition root) | Phase 3 | frb API, DTO mapping, streams. The only crate with its own lint table: `unsafe_code = "deny"` with one `allow` on the generated module ([ADR-022](decisions/ADR-022-unsafe-confined-to-generated-ffi.md)) | flutter_rust_bridge |
 | `mc-playback` | Domain service (pure) | Phase 4 | Score to PerformanceTimeline, MIDI mapping | midly (in adapter module) |
 | `mc-audio` | Adapter (RT) | Phase 4 | cpal streams, synth, RT queues, tuner thread; small Windows-only module for callback thread priority (MMCSS) | cpal (without `realtime`), rustysynth, rtrb, windows-sys (Windows only) |
 | `mc-dsp` | Generic (pure) | Phase 5 | YIN/MPM, FFT wrappers | realfft or rustfft |
@@ -84,14 +84,15 @@ MVP crate count: 11. Mitigation for solo-developer overhead: one workspace, shar
 app/                       Flutter application (composition, routing, theming)
 packages/
   core_bridge/             Generated frb bindings (lib/src/generated, private) + DocumentService facade + fakes
+  mc_ffi/                  Native build plugin: cargokit (vendored, MIT or Apache-2.0) builds crates/mc-ffi
   editor_feature/          TAB editor UI: canvas painter, cursor, selection, input
   tools_feature/           Tuner, chord finder, fretboard
   playback_feature/        Transport controls
-  platform/                dart:io, file pickers, permissions, window management
+  app_platform/            dart:io, file pickers, app data folders, permissions, window management (the "platform" package; named app_platform because pub.dev `platform` is a transitive dependency of path_provider)
   ui_kit/                  Shared widgets and theme
 ```
 
-Rules: feature packages import only the `core_bridge` public facade, `ui_kit` and `platform`; they never import generated bindings (FF-05). Features do not import each other; cross-feature navigation is done in `app/`. This structure is the plan for Phase 3; packages are created when their first code is written.
+Rules: feature packages import only the `core_bridge` public facade, `ui_kit` and `app_platform`; they never import generated bindings (FF-05). Features do not import each other; cross-feature navigation is done in `app/`. This structure is the plan for Phase 3; packages are created when their first code is written.
 
 ## 4. Runtime view (desktop)
 

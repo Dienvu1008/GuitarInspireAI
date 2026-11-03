@@ -27,8 +27,8 @@ Triggers for D (or Protobuf): out-of-process ML or Python sidecar, a plugin ABI,
 
 | Layer | Location | Responsibility | Must not |
 |---|---|---|---|
-| Generated bindings | `packages/core_bridge/lib/src/generated`, `mc-ffi` generated module | Transport and marshalling | Contain hand-written logic |
-| Rust API surface | `mc-ffi/src/api/` | frb-exposed functions, opaque handles, DTO and error mapping, stream registration, composition root wiring adapters into `mc-app` | Contain musical rules |
+| Generated bindings | `packages/core_bridge/lib/src/generated`, `mc-ffi` generated module | Transport and marshalling; the only place where `unsafe` is allowed ([ADR-022](decisions/ADR-022-unsafe-confined-to-generated-ffi.md)) | Contain hand-written logic or be edited by hand (FF-12) |
+| Rust API surface | `mc-ffi/src/api/` | frb-exposed functions, opaque handles, DTO and error mapping, stream registration, composition root wiring adapters into `mc-app` | Contain musical rules or `unsafe` (FF-34) |
 | Application layer | `mc-app` | Document sessions, dispatcher, command handlers grouped by context module, undo, event publication via `EventSink` port, queries | Depend on frb, Dart or FFI types |
 | Domain | `mc-score`, `mc-guitar`, ... | Aggregate methods returning `Result<Vec<DomainEvent>, DomainError>` | Publish events, know about sessions |
 | Dart facade | `core_bridge` public API | `DocumentService`, `AudioService`, `ToolsService` Dart interfaces wrapping generated calls; fakes for tests | Hold domain state |
@@ -231,8 +231,9 @@ sequenceDiagram
 
 ## 12. Contract tests
 
-- FF-12: CI runs frb codegen and `git diff --exit-code` on generated files.
-- Dart integration tests (`integration_test`) against the real Rust library on Windows: open, execute, undo, events order, resync on gap, stream cancellation.
+- FF-12: CI runs frb codegen and `git diff --exit-code` on generated files (job `bridge`).
+- Contract suite (Phase 3, `packages/core_bridge/test/contract/`): one test suite run against `FakeDocumentService` and against the real core loaded from `target/debug/mc_ffi.dll`: revisions, gapless events from the Rust stream, undo and redo, coalescing, rejected commands unchanged, tracks and bars, layout packing, save location. Rust-side tests of the same calls in `crates/mc-ffi/tests/api.rs`.
+- Dart integration tests (`integration_test`) against the real Rust library on Windows in the app (Phase 3c): open, execute, undo, events order, resync on gap, stream cancellation.
 - Rust tests of `mc-ffi` mapping: DTO round trip for every command variant (property test with generated commands).
 - Widget tests use `FakeDocumentService`; a shared contract test suite runs against both the fake and the real implementation so the fake cannot drift.
 

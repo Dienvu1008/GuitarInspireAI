@@ -119,6 +119,8 @@ Open design point: whether `mc-project` reads bytes only (pure, WASM-friendly) o
 7. Public interface: Layout functions. 8. Dependencies: `mc-score`, `mc-theory`.
 9. Invariants: Layout is deterministic for identical inputs. 10. Relationships: Projection of Composition. See [ADR-018](decisions/ADR-018-notation-layout-in-rust.md).
 
+Phase 3 implementation (slice 3a): `layout_tab(score, track, metrics) -> TabLayout`. One column per distinct beat onset across voices, logarithmic duration spacing with a minimum fitting the widest fret number, greedy system breaking and justification (the last system is not stretched by more than a third). The display list has string and bar lines, repeat signs, voltas, stems, beams (quarter windows, dotted quarter in compound meters), flags, dots, tuplet numbers, rests, fret glyphs (tied, dead, let ring flags), time signatures on change, markers, bar numbers, TAB clef and string names. Voice 0 rhythm is below the staff, other voices above. Hit regions cover every beat on every string plus an append slot per voice. D-01 bars are flagged for painting. Goldens: `crates/mc-notation/tests/golden/`.
+
 ## 8. DSP (`mc-dsp`, generic)
 
 1. Responsibilities: Allocation-free signal algorithms after initialization: YIN/MPM pitch, windowing, FFT wrapper, later onset and tempo.

@@ -455,6 +455,31 @@ fn autosave_is_due_only_when_dirty_after_the_interval() {
 }
 
 #[test]
+fn a_recovered_document_keeps_its_location_and_starts_unsaved() {
+    let c = clock();
+    let mut s = session(2);
+    let store = MemStore::default();
+    s.save_as(&store, Path::new("song"), &app()).unwrap();
+    let bytes = s.snapshot_bytes(&app());
+    let (recovered, _) = DocumentSession::recover(
+        DocumentId(9),
+        &bytes,
+        Some("song".into()),
+        SessionConfig::default(),
+        &c,
+    )
+    .unwrap();
+    assert_eq!(recovered.score(), s.score());
+    assert_eq!(recovered.project_id(), s.project_id());
+    assert_eq!(recovered.location(), Some(Path::new("song")));
+    assert!(recovered.is_dirty(), "recovered content is not on disk yet");
+    assert!(
+        recovered.autosave_due(c.now() + 999_999),
+        "keeps autosaving until saved"
+    );
+}
+
+#[test]
 fn master_bar_commands_are_routed() {
     let mut s = session(2);
     s.execute(cmd(

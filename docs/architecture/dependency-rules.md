@@ -72,7 +72,7 @@ Future `mc-analysis` (Phase 8): may depend on `theory` and `dsp` only. `app` may
 - Criticality: Critical (FF-16, FF-17), Important (FF-18). Active: Phase 4.
 
 ### GR-11 Platform-specific code stays behind adapters
-- Mechanism: FF-07 (`cfg(target_os = ...)` only in adapter crates), FF-08 (Dart `dart:io` and `Platform` only in `platform` package and `app`), FF-04 (domain crates compile for wasm32).
+- Mechanism: FF-07 (`cfg(target_os = ...)` only in adapter crates), FF-08 (Dart `dart:io` and `Platform` only in the `app_platform` package and `app`), FF-04 (domain crates compile for wasm32).
 - Criticality: Important (FF-07, FF-08), Critical (FF-04).
 
 ### GR-12 Architecture fitness functions are version-controlled
@@ -94,10 +94,15 @@ Planned `clippy.toml` `disallowed-methods` and `disallowed-types` for `mc-theory
 
 `mc-project` is allowed `std::io::Read/Write/Seek` traits but not `std::fs`.
 
+### 3a. Unsafe code (ADR-022, FF-34)
+
+All crates use the workspace lint table (`[lints] workspace = true`), which sets `unsafe_code = "forbid"`. The single exception is `mc-ffi`: it restates the workspace lints with `unsafe_code = "deny"` so that the generated module may carry `#[allow(unsafe_code)] mod frb_generated;`. No other `allow(unsafe_code)` exists in the repository, hand-written `mc-ffi` code has no `unsafe`, and generated files are never edited by hand (FF-12). Any other crate that needs `unsafe` requires a new ADR.
+
 ## 4. Review checklist (for changes not fully automatable)
 
 - Does any adapter or Dart code decide a musical rule? (GR-05)
 - Does a new public item expose internal representation? (GR-06)
 - Does a new event carry content instead of ranges? ([ADR-006](decisions/ADR-006-event-model.md))
 - Does RT code lock, allocate, log, or perform I/O? (GR-10)
+- Does a change add `unsafe`, an `allow(unsafe_code)` or a crate-local `[lints]` table? (ADR-022, FF-34)
 - Does a new dependency pass license policy and is it necessary? ([ADR-015](decisions/ADR-015-dependency-license-policy.md))

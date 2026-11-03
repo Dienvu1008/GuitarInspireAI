@@ -62,6 +62,17 @@ pub struct DocumentSession {
     unknown_content: Vec<String>,
     last_autosave_millis: u64,
     sink: Option<Box<dyn EventSink>>,
+    /// D-01 diagnostics of `score`, kept current incrementally on every change (a full
+    /// scan of a large score costs several ms, too much per keystroke).
+    diagnostics: Vec<Diagnostic>,
+}
+
+/// Full D-01 scan; overflow (not reachable with validated durations) reports nothing,
+/// as before.
+fn full_diagnostics(score: &Score) -> Vec<Diagnostic> {
+    score
+        .diagnostics(0..score.master_bar_count())
+        .unwrap_or_default()
 }
 
 impl std::fmt::Debug for DocumentSession {
@@ -87,6 +98,7 @@ impl DocumentSession {
         let now = clock.now_unix_millis();
         DocumentSession {
             id,
+            diagnostics: full_diagnostics(&score),
             score,
             history: History::new(config.history),
             config,
@@ -116,7 +128,25 @@ impl DocumentSession {
         Self::from_bytes(id, &bytes, Some(path.to_path_buf()), config, clock)
     }
 
-    /// Opens package bytes (also used for crash recovery, where `location` is the original file).
+    /// Opens an autosave snapshot after a crash (project-format section 12). The
+    /// document keeps the original `location` (if it had one) so that Save writes back
+    /// to it, but it starts unsaved: its content is not what is on disk there, so it is
+    /// dirty and keeps autosaving until the user saves.
+    pub fn recover(
+        id: DocumentId,
+        bytes: &[u8],
+        location: Option<PathBuf>,
+        config: SessionConfig,
+        clock: &dyn Clock,
+    ) -> Result<(Self, OpenReport), OpenError> {
+        let (mut session, report) = Self::from_bytes(id, bytes, location, config, clock)?;
+        session.saved_score = None;
+        session.saved_revision = None;
+        Ok((session, report))
+    }
+
+    /// Opens package bytes as a saved document at `location` (see [`Self::recover`]
+    /// for crash recovery).
     pub fn from_bytes(
         id: DocumentId,
         bytes: &[u8],
@@ -134,6 +164,7 @@ impl DocumentSession {
         };
         let session = DocumentSession {
             id,
+            diagnostics: full_diagnostics(&loaded.score),
             saved_score: Some(loaded.score.clone()),
             score: loaded.score,
             history: History::new(config.history),
@@ -181,6 +212,7 @@ impl DocumentSession {
             Command::Guitar(c) => guitar_handlers::handle(&mut next, c, &constraints)?,
         };
         let before = std::mem::replace(&mut self.score, next);
+        self.update_diagnostics(&before);
         let could_undo = self.history.can_undo();
         let could_redo = self.history.can_redo();
         self.history.record(before, &self.score, env.coalesce_key);
@@ -194,7 +226,8 @@ impl DocumentSession {
             .undo(self.score.clone())
             .ok_or(CommandError::NothingToUndo)?;
         let events = diff::changes(&self.score, &restored);
-        self.score = restored;
+        let before = std::mem::replace(&mut self.score, restored);
+        self.update_diagnostics(&before);
         Ok(self.commit(
             None,
             events,
@@ -211,7 +244,8 @@ impl DocumentSession {
             .redo(self.score.clone())
             .ok_or(CommandError::NothingToRedo)?;
         let events = diff::changes(&self.score, &restored);
-        self.score = restored;
+        let before = std::mem::replace(&mut self.score, restored);
+        self.update_diagnostics(&before);
         Ok(self.commit(
             None,
             events,
@@ -415,9 +449,16 @@ impl DocumentSession {
         &self.unknown_content
     }
 
+    /// D-01 diagnostics of the whole score (kept current on every change).
     pub fn diagnostics(&self) -> Vec<Diagnostic> {
-        self.score
-            .diagnostics(0..self.score.master_bar_count())
-            .unwrap_or_default()
+        self.diagnostics.clone()
+    }
+
+    /// `self.score` just replaced `before`; recheck only the bars that changed.
+    fn update_diagnostics(&mut self, before: &Score) {
+        self.diagnostics = self
+            .score
+            .diagnostics_since(before, &self.diagnostics)
+            .unwrap_or_else(|_| full_diagnostics(&self.score));
     }
 }

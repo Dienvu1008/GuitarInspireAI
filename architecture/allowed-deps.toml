@@ -35,7 +35,8 @@ dev_external = ["proptest", "criterion"]
 layer = "application"
 phase = 1
 # mc-guitar added in Phase 2 (ADR-003 context map: Application -> Guitar; ADR-019).
-internal = ["mc-theory", "mc-score", "mc-project", "mc-guitar"]
+# mc-notation added in Phase 3 (dependency-rules matrix: app -> notation; ADR-018).
+internal = ["mc-theory", "mc-score", "mc-project", "mc-guitar", "mc-notation"]
 external = []
 dev_external = ["proptest", "criterion"]
 

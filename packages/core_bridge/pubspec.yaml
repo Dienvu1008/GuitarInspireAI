@@ -1,0 +1,23 @@
+name: core_bridge
+description: "Dart facade over the Music Core: DocumentService and related services, generated bindings (private) and fakes for tests."
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.13.2
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_rust_bridge: 2.13.0
+  freezed_annotation: 3.1.0
+  mc_ffi:
+    path: ../mc_ffi
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 6.0.0
+  build_runner: 2.17.1
+  freezed: 4.0.3

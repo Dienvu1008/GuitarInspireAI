@@ -98,4 +98,26 @@ proptest! {
             prop_assert_eq!(e.seq, k as u64 + 1);
         }
     }
+
+    /// The session's incrementally maintained D-01 diagnostics equal a full scan after
+    /// every command, undo and redo (including master bar, track and voice changes).
+    #[test]
+    fn incremental_diagnostics_equal_a_full_scan(ops in proptest::collection::vec(op(), 1..50)) {
+        let mut s = session(4);
+        let full = |s: &mc_app::DocumentSession| {
+            s.score().diagnostics(0..s.score().master_bar_count()).unwrap()
+        };
+        prop_assert_eq!(s.diagnostics(), full(&s));
+        for (i, o) in ops.iter().enumerate() {
+            let command = to_command(&s, o);
+            let _ = s.execute(cmd(i as u64, command));
+            prop_assert_eq!(s.diagnostics(), full(&s), "after {:?}", o);
+            if i % 5 == 4 && s.undo().is_ok() {
+                prop_assert_eq!(s.diagnostics(), full(&s), "after undo");
+                if i % 10 == 9 && s.redo().is_ok() {
+                    prop_assert_eq!(s.diagnostics(), full(&s), "after redo");
+                }
+            }
+        }
+    }
 }

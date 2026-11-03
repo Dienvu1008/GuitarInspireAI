@@ -19,6 +19,7 @@ publish = false
 mc-theory = { path = "crates/mc-theory" }
 mc-score = { path = "crates/mc-score" }
 mc-guitar = { path = "crates/mc-guitar" }
+mc-notation = { path = "crates/mc-notation" }
 mc-project = { path = "crates/mc-project" }
 mc-app = { path = "crates/mc-app" }
 serde = { version = "=1.0.229", features = ["derive"] }
@@ -28,6 +29,8 @@ sha2 = { version = "=0.11.1", default-features = false }
 schemars = "=1.2.3"
 proptest = "=1.12.0"
 criterion = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }
+# mc-ffi only (FF-02 wrapper ban); version pinned with the codegen (ADR-005).
+flutter_rust_bridge = "=2.13.0"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

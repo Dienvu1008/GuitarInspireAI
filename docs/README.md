@@ -58,6 +58,7 @@ This package is the accepted pre-implementation baseline (2026-10-31). M0 is com
 - [m0-exit-report.md](roadmap/m0-exit-report.md): M0 results and Phase 1 recommendation.
 - [phase-1-exit-report.md](roadmap/phase-1-exit-report.md): Phase 1 evidence, benchmarks and decisions.
 - [phase-2-exit-report.md](roadmap/phase-2-exit-report.md): Phase 2 (Guitar core) evidence, golden set, open interpretations and ambiguous cases.
+- [phase-3-exit-report.md](roadmap/phase-3-exit-report.md): Phase 3 (desktop TAB editor) evidence, edit-feedback measurements, defects fixed, open points and the manual test script.
 
 ### Research
 - [technology-evaluation.md](research/technology-evaluation.md): libraries and tools.

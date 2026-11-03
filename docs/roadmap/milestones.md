@@ -21,3 +21,5 @@ Status: M0 accepted on 2026-10-31. First CI run (`6dcb8bc`) succeeded; the workf
 M1 reached and Phase 1 accepted on 2026-10-31 (Q-08 decided: `.giproj`; merged from `phase-1-core`). Evidence: [phase-1-exit-report.md](phase-1-exit-report.md).
 
 M2 reached and Phase 2 accepted on 2026-10-31 after the closure decisions on ranking, display spelling and minimum pitch content (golden set of 235 cases passes; `mc-cli chord` in standard and drop D; merged from `phase-2-guitar`). Evidence: [phase-2-exit-report.md](phase-2-exit-report.md). Next milestone: M3 (Phase 3).
+
+M3 demo runs end to end: the Windows integration tests build the app and, against the real core, create a 2-track song, enter notes by keyboard, undo and redo, save, reopen identically and recover after a lost session; a real process kill is in the manual script. Edit feedback is within budget on the typical score on the development machine. M3 reached and Phase 3 accepted on 2026-10-31 (open points decided as proposed; merged from `phase-3-editor`). Evidence: [phase-3-exit-report.md](phase-3-exit-report.md). Next milestone: M4 (Phase 4).
