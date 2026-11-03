@@ -4,7 +4,9 @@ use crate::model::Track;
 use crate::timing::voice_duration;
 use crate::{DomainError, Score, TrackId};
 use mc_theory::Rational;
+use std::collections::HashMap;
 use std::ops::Range;
+use std::sync::Arc;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum DiagnosticKind {
@@ -32,6 +34,44 @@ impl Score {
         for m in bars.start..end {
             for track in &self.tracks {
                 self.bar_diagnostics(track, m, &mut out)?;
+            }
+        }
+        Ok(out)
+    }
+
+    /// D-01 for every bar, equal to `diagnostics(0..master_bar_count)`, but reusing
+    /// `previous` (the full result for `before`) for bars this score still shares with
+    /// `before` (copy-on-write, ADR-016). An edit then rechecks only the bars it
+    /// touched instead of the whole score. Master bar changes fall back to a full scan.
+    pub fn diagnostics_since(
+        &self,
+        before: &Score,
+        previous: &[Diagnostic],
+    ) -> Result<Vec<Diagnostic>, DomainError> {
+        let all = 0..self.master_bars.len();
+        if !Arc::ptr_eq(&self.master_bars, &before.master_bars) {
+            return self.diagnostics(all);
+        }
+        let old_tracks: HashMap<TrackId, &Track> =
+            before.tracks.iter().map(|t| (t.id, t.as_ref())).collect();
+        let mut old_results: HashMap<(TrackId, usize), Vec<&Diagnostic>> = HashMap::new();
+        for d in previous {
+            old_results.entry((d.track, d.bar)).or_default().push(d);
+        }
+        let mut out = Vec::new();
+        for m in all {
+            for track in &self.tracks {
+                let shared = old_tracks
+                    .get(&track.id)
+                    .and_then(|old| old.bars.get(m))
+                    .is_some_and(|old| Arc::ptr_eq(old, &track.bars[m]));
+                if shared {
+                    if let Some(reused) = old_results.get(&(track.id, m)) {
+                        out.extend(reused.iter().map(|d| (*d).clone()));
+                    }
+                } else {
+                    self.bar_diagnostics(track, m, &mut out)?;
+                }
             }
         }
         Ok(out)

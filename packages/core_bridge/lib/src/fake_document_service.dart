@@ -397,14 +397,28 @@ final class FakeDocumentFactory implements DocumentFactory {
     return doc;
   }
 
-  @override
-  List<RecoveryEntryDto> recoveryEntries(String dir) => [];
+  /// Recovery entries per directory; tests seed it to simulate an earlier crash.
+  final Map<String, List<RecoveryEntryDto>> recovery = {};
 
   @override
-  Future<DocumentService> openFromRecovery(String path) => open(path);
+  List<RecoveryEntryDto> recoveryEntries(String dir) =>
+      List.unmodifiable(recovery[dir] ?? const <RecoveryEntryDto>[]);
+
+  /// Returns a new document; the fake keeps no autosave content.
+  @override
+  Future<DocumentService> openFromRecovery(String dir, String projectId) async {
+    final found = (recovery[dir] ?? const <RecoveryEntryDto>[]).any(
+      (e) => e.projectId == projectId,
+    );
+    if (!found) {
+      throw ApiError(rule: 'not-found', message: 'recovery for $projectId');
+    }
+    return create();
+  }
 
   @override
-  void discardRecovery(String path) {}
+  void discardRecovery(String dir, String projectId) =>
+      recovery[dir]?.removeWhere((e) => e.projectId == projectId);
 }
 
 /// Remembers documents by save location so [FakeDocumentFactory.open] can return them.

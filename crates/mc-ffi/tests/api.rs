@@ -264,3 +264,81 @@ fn save_and_open_round_trip() {
     );
     std::fs::remove_dir_all(&dir).unwrap();
 }
+
+/// Crash recovery (project-format section 12): an autosave survives the session, the
+/// recovered document keeps its location and stays unsaved, and a normal save removes
+/// the recovery files.
+#[test]
+fn autosave_recover_and_discard_on_save() {
+    let root = std::env::temp_dir().join(format!("mc-ffi-recovery-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(&root).unwrap();
+    let rec = root.join("recovery").to_string_lossy().into_owned();
+    let song = root.join("song.giproj").to_string_lossy().into_owned();
+
+    let d = DocumentHandle::create(1).unwrap();
+    let t = first_track(&d);
+    d.save_as(song.clone()).unwrap();
+    let b = insert_beat(&d, t, 0);
+    d.execute(
+        CommandDto::SetNote {
+            beat: b,
+            string: 2,
+            fret: 5,
+        },
+        None,
+        None,
+    )
+    .unwrap();
+    d.write_autosave(rec.clone()).unwrap();
+    drop(d); // the "crash": no save
+
+    let entries = DocumentHandle::list_recovery_entries(rec.clone());
+    assert_eq!(entries.len(), 1);
+    let entry = &entries[0];
+    assert_eq!(entry.source.as_deref(), Some(song.as_str()));
+    assert!(entry.timestamp > 0);
+
+    let r = DocumentHandle::open_from_recovery(rec.clone(), entry.project_id.clone()).unwrap();
+    let s = r.summary();
+    assert!(s.dirty, "recovered content is not on disk yet");
+    assert_eq!(s.location.as_deref(), Some(song.as_str()));
+    assert_eq!(r.beats(s.tracks[0].id, 0, 0).unwrap()[0].notes[0].fret, 5);
+    assert_eq!(
+        DocumentHandle::list_recovery_entries(rec.clone()).len(),
+        1,
+        "opening does not delete the recovery files"
+    );
+
+    r.save().unwrap();
+    assert!(!r.summary().dirty);
+    assert!(
+        DocumentHandle::list_recovery_entries(rec.clone()).is_empty(),
+        "a normal save removes the recovery files"
+    );
+    let reopened = DocumentHandle::open(song.clone()).unwrap();
+    let s = reopened.summary();
+    assert_eq!(
+        reopened.beats(s.tracks[0].id, 0, 0).unwrap()[0].notes[0].fret,
+        5
+    );
+
+    // Discard removes every rotated autosave of a project, not just the newest.
+    let u = DocumentHandle::create(1).unwrap();
+    for _ in 0..3 {
+        u.write_autosave(rec.clone()).unwrap();
+        std::thread::sleep(std::time::Duration::from_millis(2));
+    }
+    let entries = DocumentHandle::list_recovery_entries(rec.clone());
+    assert_eq!(entries.len(), 1);
+    assert_eq!(entries[0].source, None);
+    DocumentHandle::discard_recovery(rec.clone(), entries[0].project_id.clone());
+    assert!(DocumentHandle::list_recovery_entries(rec.clone()).is_empty());
+    assert_eq!(
+        DocumentHandle::open_from_recovery(rec, entries[0].project_id.clone())
+            .unwrap_err()
+            .rule,
+        "not-found"
+    );
+    std::fs::remove_dir_all(&root).unwrap();
+}

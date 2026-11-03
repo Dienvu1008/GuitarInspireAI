@@ -78,8 +78,24 @@ final class DocumentController extends Notifier<EditorState> {
     return _attach(ref.read(documentFactoryProvider).create(bars: 4));
   }
 
+  bool _refreshQueued = false;
+
+  /// One command emits several events; they are folded into one refresh. The summary
+  /// query is the expensive part on large scores, so it runs once per batch.
+  void _queueRefresh() {
+    if (_refreshQueued) return;
+    _refreshQueued = true;
+    scheduleMicrotask(_flushRefresh);
+  }
+
+  void _flushRefresh() {
+    if (!_refreshQueued) return;
+    _refreshQueued = false;
+    if (_events != null) _refresh();
+  }
+
   EditorState _attach(DocumentService service) {
-    _events = service.events.listen((_) => _refresh());
+    _events = service.events.listen((_) => _queueRefresh());
     final summary = service.summary();
     return EditorState(
       service: service,
@@ -103,6 +119,16 @@ final class DocumentController extends Notifier<EditorState> {
 
   void _refresh() {
     final summary = state.service.summary();
+    final old = state.summary;
+    // Summary DTOs hold lists, so == is identity; compare what can change instead.
+    // Every content change bumps the revision; the rest is save and undo state.
+    if (summary.revision == old.revision &&
+        summary.dirty == old.dirty &&
+        summary.canUndo == old.canUndo &&
+        summary.canRedo == old.canRedo &&
+        summary.location == old.location) {
+      return;
+    }
     final stillThere = summary.tracks.any((t) => t.id == state.activeTrack);
     state = state.copyWith(
       summary: summary,
@@ -114,7 +140,9 @@ final class DocumentController extends Notifier<EditorState> {
   Future<bool> _guard(Future<void> Function() action) async {
     try {
       await action();
-      _refresh();
+      // Every change arrives as events; apply a refresh they queued now, so callers
+      // see the new state when this returns, without a second summary query.
+      _flushRefresh();
       state = state.copyWith(clearMessage: true);
       return true;
     } on ApiError catch (e) {

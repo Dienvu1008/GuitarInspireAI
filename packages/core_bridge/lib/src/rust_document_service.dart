@@ -44,12 +44,16 @@ final class _RustDocumentFactory implements DocumentFactory {
       DocumentHandle.listRecoveryEntries(dir: dir);
 
   @override
-  Future<DocumentService> openFromRecovery(String path) async =>
-      RustDocumentService._(await DocumentHandle.openFromRecovery(path: path));
+  Future<DocumentService> openFromRecovery(
+    String dir,
+    String projectId,
+  ) async => RustDocumentService._(
+    await DocumentHandle.openFromRecovery(dir: dir, projectId: projectId),
+  );
 
   @override
-  void discardRecovery(String path) =>
-      DocumentHandle.discardRecovery(path: path);
+  void discardRecovery(String dir, String projectId) =>
+      DocumentHandle.discardRecovery(dir: dir, projectId: projectId);
 }
 
 /// [DocumentService] backed by the Rust session in `mc-ffi`.

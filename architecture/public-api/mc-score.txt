@@ -397,6 +397,7 @@ pub fn mc_score::Score::nominal_bar_duration(&self, usize) -> core::option::Opti
 pub fn mc_score::Score::playback_order(&self) -> mc_score::PlaybackOrder
 impl mc_score::Score
 pub fn mc_score::Score::diagnostics(&self, core::ops::range::Range<usize>) -> core::result::Result<alloc::vec::Vec<mc_score::Diagnostic>, mc_score::DomainError>
+pub fn mc_score::Score::diagnostics_since(&self, &mc_score::Score, &[mc_score::Diagnostic]) -> core::result::Result<alloc::vec::Vec<mc_score::Diagnostic>, mc_score::DomainError>
 pub fn mc_score::Score::track_diagnostics(&self, mc_score::TrackId, core::ops::range::Range<usize>) -> core::result::Result<alloc::vec::Vec<mc_score::Diagnostic>, mc_score::DomainError>
 impl mc_score::Score
 pub fn mc_score::Score::from_parts(mc_score::ScoreParts) -> core::result::Result<Self, alloc::vec::Vec<mc_score::Violation>>

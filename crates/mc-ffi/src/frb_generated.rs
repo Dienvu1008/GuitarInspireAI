@@ -201,11 +201,12 @@ fn wire__crate__api__document__DocumentHandle_discard_recovery_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_path = <String>::sse_decode(&mut deserializer);
+            let api_dir = <String>::sse_decode(&mut deserializer);
+            let api_project_id = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
                 let output_ok = Ok::<_, ()>({
-                    crate::api::document::DocumentHandle::discard_recovery(api_path);
+                    crate::api::document::DocumentHandle::discard_recovery(api_dir, api_project_id);
                 })?;
                 std::result::Result::Ok(output_ok)
             })())
@@ -356,12 +357,15 @@ fn wire__crate__api__document__DocumentHandle_open_from_recovery_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_path = <String>::sse_decode(&mut deserializer);
+            let api_dir = <String>::sse_decode(&mut deserializer);
+            let api_project_id = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, crate::api::types::ApiError>((move || {
-                    let output_ok =
-                        crate::api::document::DocumentHandle::open_from_recovery(api_path)?;
+                    let output_ok = crate::api::document::DocumentHandle::open_from_recovery(
+                        api_dir,
+                        api_project_id,
+                    )?;
                     std::result::Result::Ok(output_ok)
                 })())
             }
@@ -1950,10 +1954,12 @@ impl SseDecode for crate::api::document::RecoveryEntryDto {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_projectId = <String>::sse_decode(deserializer);
         let mut var_path = <String>::sse_decode(deserializer);
+        let mut var_source = <Option<String>>::sse_decode(deserializer);
         let mut var_timestamp = <i64>::sse_decode(deserializer);
         return crate::api::document::RecoveryEntryDto {
             project_id: var_projectId,
             path: var_path,
+            source: var_source,
             timestamp: var_timestamp,
         };
     }
@@ -2849,6 +2855,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::document::RecoveryEntryDto {
         [
             self.project_id.into_into_dart().into_dart(),
             self.path.into_into_dart().into_dart(),
+            self.source.into_into_dart().into_dart(),
             self.timestamp.into_into_dart().into_dart(),
         ]
         .into_dart()
@@ -3702,6 +3709,7 @@ impl SseEncode for crate::api::document::RecoveryEntryDto {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.project_id, serializer);
         <String>::sse_encode(self.path, serializer);
+        <Option<String>>::sse_encode(self.source, serializer);
         <i64>::sse_encode(self.timestamp, serializer);
     }
 }

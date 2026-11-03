@@ -48,4 +48,39 @@ void main() {
     reopened.close();
     await dir.delete(recursive: true);
   });
+
+  test(
+    'autosave, recover after a lost session, save clears recovery',
+    () async {
+      await CoreBridge.init(libraryPath: _library());
+      final factory = CoreBridge.documents;
+      final dir = await Directory.systemTemp.createTemp('core_bridge_recovery');
+      final rec = '${dir.path}${Platform.pathSeparator}recovery';
+      final d = factory.create(bars: 1);
+      await d.execute(
+        CommandDto.insertBeat(
+          track: d.summary().tracks.single.id,
+          bar: 0,
+          voice: 0,
+          index: 0,
+          duration: const DurationDto(base: 3, dots: 0),
+        ),
+      );
+      await d.writeAutosave(rec);
+      d.close(); // lost session: never saved
+
+      final entries = factory.recoveryEntries(rec);
+      expect(entries, hasLength(1));
+      expect(entries.single.source, isNull);
+      final r = await factory.openFromRecovery(rec, entries.single.projectId);
+      final s = r.summary();
+      expect(s.dirty, isTrue);
+      expect(r.beats(s.tracks.single.id, 0, 0).single.duration.base, 3);
+
+      await r.saveAs('${dir.path}${Platform.pathSeparator}recovered.giproj');
+      expect(factory.recoveryEntries(rec), isEmpty);
+      r.close();
+      await dir.delete(recursive: true);
+    },
+  );
 }

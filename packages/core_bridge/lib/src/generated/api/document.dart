@@ -9,7 +9,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
 
-            // These functions are ignored because they are not marked as `pub`: `app_info`, `event_dto`, `lock`, `master_bar_dto`, `outcome_dto`, `summary_dto`, `to_command`, `with_session`, `wrap`
+            // These functions are ignored because they are not marked as `pub`: `app_info`, `discard_own_recovery`, `event_dto`, `lock`, `master_bar_dto`, `outcome_dto`, `recovery_dir`, `summary_dto`, `to_command`, `with_session`, `wrap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DartEventSink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `publish`
 
@@ -33,16 +33,16 @@ import 'types.dart';
 static DocumentHandle  create({required int bars })=>RustLib.instance.api.crateApiDocumentDocumentHandleCreate(bars: bars);
 
 
-/// Deletes a recovery file (called after the user dismisses or recovers it).
-static void  discardRecovery({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleDiscardRecovery(path: path);
+/// Deletes all autosaves of `project_id` in `dir` (the user chose Discard).
+static void  discardRecovery({required String dir , required String projectId })=>RustLib.instance.api.crateApiDocumentDocumentHandleDiscardRecovery(dir: dir, projectId: projectId);
 
 
 /// Applies one command. On error the document is unchanged.
  Future<OutcomeDto>  execute({required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision });
 
 
-/// Lists recovery files in `dir`. The app shows these on startup; choosing one
-/// opens it with `open_from_recovery`.
+/// Lists the newest autosave of every project in `dir`. The app shows these on
+/// startup; choosing one opens it with `open_from_recovery`.
 static List<RecoveryEntryDto>  listRecoveryEntries({required String dir })=>RustLib.instance.api.crateApiDocumentDocumentHandleListRecoveryEntries(dir: dir);
 
 
@@ -50,9 +50,11 @@ static List<RecoveryEntryDto>  listRecoveryEntries({required String dir })=>Rust
 static Future<DocumentHandle>  open({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleOpen(path: path);
 
 
-/// Opens a recovery file by its path. The document's `location` is the original
-/// file path stored in the recovery entry.
-static Future<DocumentHandle>  openFromRecovery({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleOpenFromRecovery(path: path);
+/// Opens the newest autosave of `project_id` in `dir`. The document keeps the
+/// original location (Save writes back there) and starts unsaved, so it keeps
+/// autosaving; its recovery files are removed by the next successful save or by
+/// `discard_recovery`.
+static Future<DocumentHandle>  openFromRecovery({required String dir , required String projectId })=>RustLib.instance.api.crateApiDocumentDocumentHandleOpenFromRecovery(dir: dir, projectId: projectId);
 
 
  Future<OutcomeDto>  redo();
@@ -97,22 +99,24 @@ static Future<DocumentHandle>  openFromRecovery({required String path })=>RustLi
                 }
                 
 
-/// One recovery file found on startup.
+/// The newest autosave of one project, found on startup.
 class RecoveryEntryDto  {
                 final String projectId;
-/// Original file path of the document (may not exist yet).
+/// Path of the recovery file (internal app data).
 final String path;
+/// Original file of the document; `None` for a document that was never saved.
+final String? source;
 /// Unix millis when the autosave was written.
 final PlatformInt64 timestamp;
 
-                const RecoveryEntryDto({required this.projectId ,required this.path ,required this.timestamp ,});
+                const RecoveryEntryDto({required this.projectId ,required this.path ,this.source ,required this.timestamp ,});
 
 
 
 
 
         @override
-        int get hashCode => projectId.hashCode^path.hashCode^timestamp.hashCode;
+        int get hashCode => projectId.hashCode^path.hashCode^source.hashCode^timestamp.hashCode;
 
 
 
@@ -121,7 +125,7 @@ final PlatformInt64 timestamp;
             identical(this, other) ||
             other is RecoveryEntryDto &&
                 runtimeType == other.runtimeType
-                && projectId == other.projectId&& path == other.path&& timestamp == other.timestamp;
+                && projectId == other.projectId&& path == other.path&& source == other.source&& timestamp == other.timestamp;
 
             }
             

@@ -9,23 +9,42 @@ import 'document_controller.dart';
 import 'editor_cursor.dart';
 import 'key_bindings.dart';
 
-/// Handles keyboard input for the TAB editor. No musical rules here — intents
-/// become commands that the core validates (GR-05).
+/// Handles keyboard input for the TAB editor. No musical rules here: intents become
+/// commands that the core validates (GR-05).
+///
+/// Create one handler per editor and keep it for the editor's lifetime (multi-digit
+/// fret entry state lives here); call [dispose] when the editor goes away.
+///
+/// Core commands complete asynchronously, so key actions run one at a time in arrival
+/// order, and each reads the editor state when it runs, not when the key was pressed.
+/// Otherwise a digit typed right after Insert, or two digits typed quickly, would act
+/// on a document that does not contain the previous key's result yet.
 final class KeyboardHandler {
   KeyboardHandler(this._ref);
 
   final WidgetRef _ref;
 
-  // Multi-digit fret entry state (Q-15).
+  Future<void> _queue = Future<void>.value();
+  bool _disposed = false;
+
+  // Multi-digit fret entry (Q-15): digits typed into the same note within
+  // [coalesceWindowMs] ms form one fret and one undo step.
   int? _pendingFret;
-  int? _pendingBeatIndex;
-  int? _pendingBar;
-  int? _pendingVoice;
-  Timer? _coalesceTimer;
+  EditorCursor? _pendingAt;
   int? _coalesceKey;
+  Timer? _coalesceTimer;
+  int _nextCoalesceKey = DateTime.now().microsecondsSinceEpoch;
 
   DocumentController get _editor => _ref.read(editorProvider.notifier);
   EditorState get _state => _ref.read(editorProvider);
+
+  /// Completes when every key action received so far has finished.
+  Future<void> get idle => _queue;
+
+  void dispose() {
+    _disposed = true;
+    _cancelCoalesce();
+  }
 
   KeyEventResult handleKey(KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
@@ -34,93 +53,74 @@ final class KeyboardHandler {
     final pressed = HardwareKeyboard.instance.logicalKeysPressed;
     final intent = intentOf(event.logicalKey, pressed);
     if (intent == null) return KeyEventResult.ignored;
-    _handle(intent);
+    _enqueue(() => _handle(intent));
     return KeyEventResult.handled;
   }
 
-  void _handle(EditorIntent intent) {
+  void _enqueue(Future<void> Function() action) {
+    _queue = _queue.then((_) => _disposed ? null : action()).catchError((
+      Object error,
+      StackTrace stack,
+    ) {
+      // Rejections from the core are already status messages (DocumentController);
+      // anything else is a bug and is reported, without blocking later keys.
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stack,
+          library: 'editor_feature',
+          context: ErrorDescription('while handling a TAB editor key'),
+        ),
+      );
+    });
+  }
+
+  Future<void> _handle(EditorIntent intent) async {
+    final digit = intent.index - EditorIntent.digit0.index;
+    if (digit >= 0 && digit <= 9) {
+      await _enterDigit(digit);
+      return;
+    }
+    // Every other key ends multi-digit entry.
+    _cancelCoalesce();
     final s = _state;
     switch (intent) {
       case EditorIntent.undo:
-        _cancelCoalesce();
-        unawaited(_editor.undo());
-        return;
+        await _editor.undo();
       case EditorIntent.redo:
-        _cancelCoalesce();
-        unawaited(_editor.redo());
-        return;
+        await _editor.redo();
       case EditorIntent.newDocument:
-        _cancelCoalesce();
         _editor.newDocument();
-        return;
       case EditorIntent.open:
-        _cancelCoalesce();
-        unawaited(_editor.open());
-        return;
+        await _editor.open();
       case EditorIntent.save:
-        _cancelCoalesce();
-        unawaited(_editor.save());
-        return;
+        await _editor.save();
       case EditorIntent.saveAs:
-        _cancelCoalesce();
-        unawaited(_editor.saveAs());
-        return;
-      case EditorIntent.digit0:
-      case EditorIntent.digit1:
-      case EditorIntent.digit2:
-      case EditorIntent.digit3:
-      case EditorIntent.digit4:
-      case EditorIntent.digit5:
-      case EditorIntent.digit6:
-      case EditorIntent.digit7:
-      case EditorIntent.digit8:
-      case EditorIntent.digit9:
-        _enterDigit(intent, s);
-        return;
-      default:
-        break;
-    }
-    // All navigation and duration intents cancel fret accumulation.
-    _cancelCoalesce();
-    switch (intent) {
+        await _editor.saveAs();
       case EditorIntent.moveLeft:
-        _moveCursor(_prevBeat(s));
+        _editor.moveCursor(_prevBeat(s));
       case EditorIntent.moveRight:
-        _moveCursor(_nextBeat(s));
+        _editor.moveCursor(_nextBeat(s));
       case EditorIntent.moveUp:
-        _moveCursor(
-          EditorCursor(
-            bar: s.cursor.bar,
-            voice: s.cursor.voice,
-            string: (s.cursor.string - 1).clamp(1, _strings(s)),
-            beat: s.cursor.beat,
-          ),
-        );
+        _editor.moveCursor(_withString(s, s.cursor.string - 1));
       case EditorIntent.moveDown:
-        _moveCursor(
-          EditorCursor(
-            bar: s.cursor.bar,
-            voice: s.cursor.voice,
-            string: (s.cursor.string + 1).clamp(1, _strings(s)),
-            beat: s.cursor.beat,
-          ),
-        );
+        _editor.moveCursor(_withString(s, s.cursor.string + 1));
       case EditorIntent.deleteNote:
-        _deleteNote(s);
+        await _deleteNote(s);
       case EditorIntent.insertBeat:
-        _insertBeat(s);
+        await _insertBeat(s);
       case EditorIntent.durationWhole:
-        _setBeatDuration(s, 0);
+        await _setBeatDuration(s, 0);
       case EditorIntent.durationHalf:
-        _setBeatDuration(s, 1);
+        await _setBeatDuration(s, 1);
       case EditorIntent.durationQuarter:
-        _setBeatDuration(s, 2);
+        await _setBeatDuration(s, 2);
       case EditorIntent.durationEighth:
-        _setBeatDuration(s, 3);
+        await _setBeatDuration(s, 3);
       case EditorIntent.durationSixteenth:
-        _setBeatDuration(s, 4);
+        await _setBeatDuration(s, 4);
       case EditorIntent.dot:
-        _toggleDot(s);
+        await _toggleDot(s);
       default:
         break;
     }
@@ -128,100 +128,87 @@ final class KeyboardHandler {
 
   // ---------------------------------------------------------------- digit entry
 
-  void _enterDigit(EditorIntent digit, EditorState s) {
-    final d = digit.index - EditorIntent.digit0.index; // 0..9
-    // Are we still accumulating digits for the same beat?
-    final samebeat =
-        _pendingBar == s.cursor.bar &&
-        _pendingVoice == s.cursor.voice &&
-        _pendingBeatIndex == s.cursor.beat;
-    if (_pendingFret != null && samebeat) {
-      final candidate = _pendingFret! * 10 + d;
-      if (candidate <= 99) {
-        _pendingFret = candidate;
-        _coalesceTimer?.cancel();
-        _coalesceTimer = Timer(
-          const Duration(milliseconds: coalesceWindowMs),
-          _flushDigit,
-        );
-        _commitFret(s);
+  Future<void> _enterDigit(int digit) async {
+    final s = _state;
+    final continuing =
+        _pendingFret != null &&
+        _pendingAt == s.cursor &&
+        _pendingFret! * 10 + digit <= 99;
+    final int fret;
+    if (continuing) {
+      fret = _pendingFret! * 10 + digit;
+    } else {
+      _cancelCoalesce();
+      fret = digit;
+      _coalesceKey = _nextCoalesceKey++;
+    }
+    final key = _coalesceKey;
+
+    final track = s.activeTrack;
+    final bar = s.cursor.bar;
+    final voice = s.cursor.voice;
+    var beatIndex = s.cursor.beat;
+    if (beatIndex == null) {
+      // Cursor on the append slot: add a quarter beat first, in the same undo step.
+      final index = s.service.beats(track, bar, voice).length;
+      final inserted = await _editor.execute(
+        CommandDto.insertBeat(
+          track: track,
+          bar: bar,
+          voice: voice,
+          index: index,
+          duration: const DurationDto(base: 2, dots: 0),
+        ),
+        coalesceKey: key,
+      );
+      if (!inserted) {
+        _cancelCoalesce();
         return;
       }
-      // Overflow: start fresh with the new digit.
+      beatIndex = index;
+      _editor.moveCursor(
+        EditorCursor(
+          bar: bar,
+          voice: voice,
+          string: s.cursor.string,
+          beat: index,
+        ),
+      );
     }
-    _cancelCoalesce();
-    _pendingFret = d;
-    _pendingBar = s.cursor.bar;
-    _pendingVoice = s.cursor.voice;
-    _pendingBeatIndex = s.cursor.beat;
-    _coalesceKey = DateTime.now().millisecondsSinceEpoch;
+    final beats = _state.service.beats(track, bar, voice);
+    if (beatIndex >= beats.length) {
+      _cancelCoalesce();
+      return;
+    }
+    final ok = await _editor.execute(
+      CommandDto.setNote(
+        beat: BeatAddressDto(
+          track: track,
+          bar: bar,
+          voice: voice,
+          beat: beats[beatIndex].id,
+        ),
+        string: s.cursor.string,
+        fret: fret,
+      ),
+      coalesceKey: key,
+    );
+    if (!ok) {
+      _cancelCoalesce();
+      return;
+    }
+    _pendingFret = fret;
+    _pendingAt = _state.cursor;
+    _coalesceTimer?.cancel();
     _coalesceTimer = Timer(
       const Duration(milliseconds: coalesceWindowMs),
       _flushDigit,
-    );
-    _commitFret(s);
-  }
-
-  void _commitFret(EditorState s) {
-    final fret = _pendingFret!;
-    final bar = s.cursor.bar;
-    final voice = s.cursor.voice;
-    // Ensure there is a beat to write into; insert one if the cursor is at the
-    // append slot.
-    if (s.cursor.beat == null) {
-      // Insert a quarter beat, then set the note on it.
-      final index = s.service.beats(s.activeTrack, bar, voice).length;
-      unawaited(
-        _editor.execute(
-          CommandDto.insertBeat(
-            track: s.activeTrack,
-            bar: bar,
-            voice: voice,
-            index: index,
-            duration: const DurationDto(base: 2, dots: 0),
-          ),
-          coalesceKey: _coalesceKey,
-        ),
-      );
-      // The insert emits an event; the cursor moves to beat `index` after refresh.
-      _pendingBeatIndex = index;
-      _ref
-          .read(editorProvider.notifier)
-          .moveCursor(
-            EditorCursor(
-              bar: bar,
-              voice: voice,
-              string: s.cursor.string,
-              beat: index,
-            ),
-          );
-    }
-    final beats = s.service.beats(s.activeTrack, bar, voice);
-    final beatIndex = s.cursor.beat ?? 0;
-    if (beatIndex >= beats.length) return;
-    final beatId = beats[beatIndex].id;
-    unawaited(
-      _editor.execute(
-        CommandDto.setNote(
-          beat: BeatAddressDto(
-            track: s.activeTrack,
-            bar: bar,
-            voice: voice,
-            beat: beatId,
-          ),
-          string: s.cursor.string,
-          fret: fret,
-        ),
-        coalesceKey: _coalesceKey,
-      ),
     );
   }
 
   void _flushDigit() {
     _pendingFret = null;
-    _pendingBar = null;
-    _pendingVoice = null;
-    _pendingBeatIndex = null;
+    _pendingAt = null;
     _coalesceKey = null;
     _coalesceTimer = null;
   }
@@ -233,31 +220,44 @@ final class KeyboardHandler {
 
   // ---------------------------------------------------------------- navigation
 
+  EditorCursor _withString(EditorState s, int string) => EditorCursor(
+    bar: s.cursor.bar,
+    voice: s.cursor.voice,
+    string: string.clamp(1, _strings(s)),
+    beat: s.cursor.beat,
+  );
+
   EditorCursor _nextBeat(EditorState s) {
     final beats = s.service.beats(s.activeTrack, s.cursor.bar, s.cursor.voice);
-    final cur = s.cursor.beat ?? beats.length;
-    if (cur + 1 < beats.length) {
+    final cur = s.cursor.beat;
+    if (cur != null) {
+      // Next beat, or the append slot after the last one.
       return EditorCursor(
         bar: s.cursor.bar,
         voice: s.cursor.voice,
         string: s.cursor.string,
-        beat: cur + 1,
+        beat: cur + 1 < beats.length ? cur + 1 : null,
       );
     }
-    // Move to the next bar.
-    final bars = s.summary.masterBars.length;
-    if (s.cursor.bar + 1 < bars) {
+    // From the append slot to the first beat of the next bar.
+    if (s.cursor.bar + 1 < s.summary.masterBars.length) {
+      final next = s.service.beats(
+        s.activeTrack,
+        s.cursor.bar + 1,
+        s.cursor.voice,
+      );
       return EditorCursor(
         bar: s.cursor.bar + 1,
         voice: s.cursor.voice,
         string: s.cursor.string,
-        beat: null,
+        beat: next.isEmpty ? null : 0,
       );
     }
     return s.cursor;
   }
 
   EditorCursor _prevBeat(EditorState s) {
+    final beats = s.service.beats(s.activeTrack, s.cursor.bar, s.cursor.voice);
     final cur = s.cursor.beat;
     if (cur != null && cur > 0) {
       return EditorCursor(
@@ -267,31 +267,25 @@ final class KeyboardHandler {
         beat: cur - 1,
       );
     }
-    if (cur == 0) {
+    if (cur == null && beats.isNotEmpty) {
+      // From the append slot to the last beat of the same bar.
       return EditorCursor(
         bar: s.cursor.bar,
         voice: s.cursor.voice,
         string: s.cursor.string,
-        beat: null,
+        beat: beats.length - 1,
       );
     }
     if (s.cursor.bar > 0) {
-      final prevBeats = s.service.beats(
-        s.activeTrack,
-        s.cursor.bar - 1,
-        s.cursor.voice,
-      );
+      // To the append slot of the previous bar.
       return EditorCursor(
         bar: s.cursor.bar - 1,
         voice: s.cursor.voice,
         string: s.cursor.string,
-        beat: prevBeats.isEmpty ? null : prevBeats.length - 1,
       );
     }
     return s.cursor;
   }
-
-  void _moveCursor(EditorCursor c) => _editor.moveCursor(c);
 
   int _strings(EditorState s) => s.summary.tracks
       .firstWhere((t) => t.id == s.activeTrack)
@@ -301,84 +295,77 @@ final class KeyboardHandler {
 
   // ---------------------------------------------------------------- beat commands
 
-  void _insertBeat(EditorState s) {
+  BeatDto? _beatAtCursor(EditorState s) {
+    final index = s.cursor.beat;
+    if (index == null) return null;
     final beats = s.service.beats(s.activeTrack, s.cursor.bar, s.cursor.voice);
-    final index = (s.cursor.beat ?? beats.length);
-    unawaited(
-      _editor.execute(
-        CommandDto.insertBeat(
-          track: s.activeTrack,
+    return index < beats.length ? beats[index] : null;
+  }
+
+  BeatAddressDto _address(EditorState s, BeatDto beat) => BeatAddressDto(
+    track: s.activeTrack,
+    bar: s.cursor.bar,
+    voice: s.cursor.voice,
+    beat: beat.id,
+  );
+
+  Future<void> _insertBeat(EditorState s) async {
+    final beats = s.service.beats(s.activeTrack, s.cursor.bar, s.cursor.voice);
+    final index = s.cursor.beat ?? beats.length;
+    final ok = await _editor.execute(
+      CommandDto.insertBeat(
+        track: s.activeTrack,
+        bar: s.cursor.bar,
+        voice: s.cursor.voice,
+        index: index,
+        duration: const DurationDto(base: 2, dots: 0),
+      ),
+    );
+    if (ok) {
+      _editor.moveCursor(
+        EditorCursor(
           bar: s.cursor.bar,
           voice: s.cursor.voice,
-          index: index,
-          duration: const DurationDto(base: 2, dots: 0),
+          string: s.cursor.string,
+          beat: index,
         ),
+      );
+    }
+  }
+
+  /// Removes the note on the cursor's string; does nothing if there is none.
+  Future<void> _deleteNote(EditorState s) async {
+    final beat = _beatAtCursor(s);
+    if (beat == null) return;
+    final note = beat.notes
+        .where((n) => n.string == s.cursor.string)
+        .firstOrNull;
+    if (note == null) return;
+    await _editor.execute(
+      CommandDto.removeNote(beat: _address(s, beat), note: note.id),
+    );
+  }
+
+  Future<void> _setBeatDuration(EditorState s, int exponent) async {
+    final beat = _beatAtCursor(s);
+    if (beat == null) return;
+    await _editor.execute(
+      CommandDto.setBeatDuration(
+        beat: _address(s, beat),
+        duration: DurationDto(base: exponent, dots: beat.duration.dots),
       ),
     );
   }
 
-  void _deleteNote(EditorState s) {
-    final beats = s.service.beats(s.activeTrack, s.cursor.bar, s.cursor.voice);
-    final beatIndex = s.cursor.beat;
-    if (beatIndex == null || beatIndex >= beats.length) return;
-    final beat = beats[beatIndex];
-    final note = beat.notes.firstWhere(
-      (n) => n.string == s.cursor.string,
-      orElse: () =>
-          beat.notes.isEmpty ? throw Exception('no notes') : beat.notes.first,
-    );
-    if (beat.notes.isEmpty) return;
-    unawaited(
-      _editor.execute(
-        CommandDto.removeNote(
-          beat: BeatAddressDto(
-            track: s.activeTrack,
-            bar: s.cursor.bar,
-            voice: s.cursor.voice,
-            beat: beat.id,
-          ),
-          note: note.id,
-        ),
-      ),
-    );
-  }
-
-  void _setBeatDuration(EditorState s, int exponent) {
-    final beats = s.service.beats(s.activeTrack, s.cursor.bar, s.cursor.voice);
-    final beatIndex = s.cursor.beat;
-    if (beatIndex == null || beatIndex >= beats.length) return;
-    final beat = beats[beatIndex];
-    unawaited(
-      _editor.execute(
-        CommandDto.setBeatDuration(
-          beat: BeatAddressDto(
-            track: s.activeTrack,
-            bar: s.cursor.bar,
-            voice: s.cursor.voice,
-            beat: beat.id,
-          ),
-          duration: DurationDto(base: exponent, dots: beat.duration.dots),
-        ),
-      ),
-    );
-  }
-
-  void _toggleDot(EditorState s) {
-    final beats = s.service.beats(s.activeTrack, s.cursor.bar, s.cursor.voice);
-    final beatIndex = s.cursor.beat;
-    if (beatIndex == null || beatIndex >= beats.length) return;
-    final beat = beats[beatIndex];
-    final dots = beat.duration.dots == 0 ? 1 : 0;
-    unawaited(
-      _editor.execute(
-        CommandDto.setBeatDuration(
-          beat: BeatAddressDto(
-            track: s.activeTrack,
-            bar: s.cursor.bar,
-            voice: s.cursor.voice,
-            beat: beat.id,
-          ),
-          duration: DurationDto(base: beat.duration.base, dots: dots),
+  Future<void> _toggleDot(EditorState s) async {
+    final beat = _beatAtCursor(s);
+    if (beat == null) return;
+    await _editor.execute(
+      CommandDto.setBeatDuration(
+        beat: _address(s, beat),
+        duration: DurationDto(
+          base: beat.duration.base,
+          dots: beat.duration.dots == 0 ? 1 : 0,
         ),
       ),
     );

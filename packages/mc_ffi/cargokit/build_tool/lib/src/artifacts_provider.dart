@@ -69,17 +69,23 @@ class ArtifactProvider {
       builder.prepare(rustup);
       _log.info('Building ${environment.crateInfo.packageName} for $target');
       final targetDir = await builder.build();
+      // GuitarInspireAI patch: cargo names library artifacts after the lib
+      // target, which defaults to the package name with '-' replaced by '_'
+      // (package `mc-ffi` -> `mc_ffi.dll`). Upstream used the raw package
+      // name, so no artifact matched and nothing was copied.
+      final libraryName =
+          environment.crateInfo.packageName.replaceAll('-', '_');
       // For local build accept both static and dynamic libraries.
       final artifactNames = <String>{
         ...getArtifactNames(
           target: target,
-          libraryName: environment.crateInfo.packageName,
+          libraryName: libraryName,
           aritifactType: AritifactType.dylib,
           remote: false,
         ),
         ...getArtifactNames(
           target: target,
-          libraryName: environment.crateInfo.packageName,
+          libraryName: libraryName,
           aritifactType: AritifactType.staticlib,
           remote: false,
         )

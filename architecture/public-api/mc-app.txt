@@ -688,6 +688,7 @@ pub fn mc_app::DocumentSession::mark_autosaved(&mut self, u64)
 pub fn mc_app::DocumentSession::new(mc_app::DocumentId, mc_score::score::Score, mc_app::SessionConfig, &dyn mc_app::ports::Clock, &dyn mc_app::ports::Entropy) -> Self
 pub fn mc_app::DocumentSession::open(mc_app::DocumentId, &dyn mc_app::ports::ProjectStore, &std::path::Path, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
 pub fn mc_app::DocumentSession::project_id(&self) -> &str
+pub fn mc_app::DocumentSession::recover(mc_app::DocumentId, &[u8], core::option::Option<std::path::PathBuf>, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
 pub fn mc_app::DocumentSession::redo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::revision(&self) -> mc_app::Revision
 pub fn mc_app::DocumentSession::save(&mut self, &dyn mc_app::ports::ProjectStore, &mc_project::AppInfo) -> core::result::Result<mc_app::CommandOutcome, mc_app::SaveError>

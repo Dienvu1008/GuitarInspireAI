@@ -90,7 +90,7 @@ List<BeatDto> crateApiDocumentDocumentHandleBeats({required DocumentHandle that 
 
 DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars });
 
-void crateApiDocumentDocumentHandleDiscardRecovery({required String path });
+void crateApiDocumentDocumentHandleDiscardRecovery({required String dir , required String projectId });
 
 Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({required DocumentHandle that , required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision });
 
@@ -98,7 +98,7 @@ List<RecoveryEntryDto> crateApiDocumentDocumentHandleListRecoveryEntries({requir
 
 Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path });
 
-Future<DocumentHandle> crateApiDocumentDocumentHandleOpenFromRecovery({required String path });
+Future<DocumentHandle> crateApiDocumentDocumentHandleOpenFromRecovery({required String dir , required String projectId });
 
 Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle that });
 
@@ -222,10 +222,11 @@ sse_encode_u_32(voice, serializer);
         );
         
 
-@override void crateApiDocumentDocumentHandleDiscardRecovery({required String path })  { return handler.executeSync(SyncTask(
+@override void crateApiDocumentDocumentHandleDiscardRecovery({required String dir , required String projectId })  { return handler.executeSync(SyncTask(
             callFfi: () {
               
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
+sse_encode_String(projectId, serializer);
             return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
             
             },
@@ -236,14 +237,14 @@ sse_encode_u_32(voice, serializer);
         )
         ,
             constMeta: kCrateApiDocumentDocumentHandleDiscardRecoveryConstMeta,
-            argValues: [path],
+            argValues: [dir, projectId],
             apiImpl: this,
         )); }
 
 
         TaskConstMeta get kCrateApiDocumentDocumentHandleDiscardRecoveryConstMeta => const TaskConstMeta(
             debugName: "DocumentHandle_discard_recovery",
-            argNames: ["path"],
+            argNames: ["dir", "projectId"],
         );
         
 
@@ -325,10 +326,11 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
         );
         
 
-@override Future<DocumentHandle> crateApiDocumentDocumentHandleOpenFromRecovery({required String path })  { return handler.executeNormal(NormalTask(
+@override Future<DocumentHandle> crateApiDocumentDocumentHandleOpenFromRecovery({required String dir , required String projectId })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
-            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
+sse_encode_String(projectId, serializer);
             pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
             
             },
@@ -339,14 +341,14 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
         )
         ,
             constMeta: kCrateApiDocumentDocumentHandleOpenFromRecoveryConstMeta,
-            argValues: [path],
+            argValues: [dir, projectId],
             apiImpl: this,
         )); }
 
 
         TaskConstMeta get kCrateApiDocumentDocumentHandleOpenFromRecoveryConstMeta => const TaskConstMeta(
             debugName: "DocumentHandle_open_from_recovery",
-            argNames: ["path"],
+            argNames: ["dir", "projectId"],
         );
         
 
@@ -1013,10 +1015,11 @@ events: dco_decode_list_event_dto(arr[1]),); }
 
 @protected RecoveryEntryDto dco_decode_recovery_entry_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
                 return RecoveryEntryDto(projectId: dco_decode_String(arr[0]),
 path: dco_decode_String(arr[1]),
-timestamp: dco_decode_i_64(arr[2]),); }
+source: dco_decode_opt_String(arr[2]),
+timestamp: dco_decode_i_64(arr[3]),); }
 
 @protected SystemDto dco_decode_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -1506,8 +1509,9 @@ return OutcomeDto(revision: var_revision, events: var_events); }
 @protected RecoveryEntryDto sse_decode_recovery_entry_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_projectId = sse_decode_String(deserializer);
 var var_path = sse_decode_String(deserializer);
+var var_source = sse_decode_opt_String(deserializer);
 var var_timestamp = sse_decode_i_64(deserializer);
-return RecoveryEntryDto(projectId: var_projectId, path: var_path, timestamp: var_timestamp); }
+return RecoveryEntryDto(projectId: var_projectId, path: var_path, source: var_source, timestamp: var_timestamp); }
 
 @protected SystemDto sse_decode_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_index = sse_decode_u_32(deserializer);
@@ -1933,6 +1937,7 @@ sse_encode_list_event_dto(self.events, serializer);
 @protected void sse_encode_recovery_entry_dto(RecoveryEntryDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_String(self.projectId, serializer);
 sse_encode_String(self.path, serializer);
+sse_encode_opt_String(self.source, serializer);
 sse_encode_i_64(self.timestamp, serializer);
  }
 

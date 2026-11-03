@@ -19,11 +19,26 @@ class GuitarInspireApp extends StatelessWidget {
 
 /// Desktop MVP layout with fixed panels (cross-platform-ui section 3): menu bar,
 /// track list, TAB editor, inspector and status bar.
-class Shell extends ConsumerWidget {
+class Shell extends ConsumerStatefulWidget {
   const Shell({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Shell> createState() => _ShellState();
+}
+
+class _ShellState extends ConsumerState<Shell> {
+  // One handler for the shell's lifetime: it holds multi-digit fret entry state and
+  // runs key actions in order (Q-15).
+  late final KeyboardHandler _keys = KeyboardHandler(ref);
+
+  @override
+  void dispose() {
+    _keys.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final s = ref.watch(editorProvider);
     final editor = ref.read(editorProvider.notifier);
     final shortcuts = <ShortcutActivator, VoidCallback>{
@@ -47,7 +62,7 @@ class Shell extends ConsumerWidget {
       bindings: shortcuts,
       child: Focus(
         autofocus: true,
-        onKeyEvent: (_, event) => KeyboardHandler(ref).handleKey(event),
+        onKeyEvent: (_, event) => _keys.handleKey(event),
         child: Scaffold(
           body: Column(
             children: [

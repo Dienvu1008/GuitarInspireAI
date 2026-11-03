@@ -56,15 +56,16 @@ abstract interface class DocumentFactory {
 
   Future<DocumentService> open(String path);
 
-  /// Recovery files in the given directory (checked on startup).
+  /// The newest autosave of every project in [dir] (checked on startup).
   List<RecoveryEntryDto> recoveryEntries(String dir);
 
-  /// Opens a recovery file by its path. The document's location is the original
-  /// file path stored in the recovery entry.
-  Future<DocumentService> openFromRecovery(String path);
+  /// Opens the newest autosave of [projectId] in [dir]. The document keeps its
+  /// original location and starts unsaved; the core removes its recovery files after
+  /// the next successful save.
+  Future<DocumentService> openFromRecovery(String dir, String projectId);
 
-  /// Removes a recovery file after the user dismisses or recovers it.
-  void discardRecovery(String path);
+  /// Removes all autosaves of [projectId] in [dir] (the user chose Discard).
+  void discardRecovery(String dir, String projectId);
 }
 
 /// Line kind codes used in [SystemDto.lineKinds].

@@ -10,8 +10,6 @@ enum EditorIntent {
   moveRight,
   moveUp,
   moveDown,
-  moveToNextBeat,
-  moveToPrevBeat,
   digit0,
   digit1,
   digit2,
@@ -24,7 +22,6 @@ enum EditorIntent {
   digit9,
   deleteNote,
   insertBeat,
-  removeBeat,
   durationWhole,
   durationHalf,
   durationQuarter,
@@ -39,7 +36,8 @@ enum EditorIntent {
   saveAs,
 }
 
-/// Maps a key event to an [EditorIntent], or null for unhandled keys.
+/// Maps a key event to an [EditorIntent], or null for unhandled keys. Tab is
+/// deliberately unmapped so it keeps moving keyboard focus between controls.
 EditorIntent? intentOf(
   LogicalKeyboardKey key,
   Set<LogicalKeyboardKey> pressed,
@@ -68,7 +66,6 @@ EditorIntent? intentOf(
     LogicalKeyboardKey.arrowRight => EditorIntent.moveRight,
     LogicalKeyboardKey.arrowUp => EditorIntent.moveUp,
     LogicalKeyboardKey.arrowDown => EditorIntent.moveDown,
-    LogicalKeyboardKey.tab => EditorIntent.moveToNextBeat,
     LogicalKeyboardKey.delete ||
     LogicalKeyboardKey.backspace => EditorIntent.deleteNote,
     LogicalKeyboardKey.insert => EditorIntent.insertBeat,

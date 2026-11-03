@@ -34,10 +34,29 @@ function(apply_cargokit target manifest_dir lib_name any_symbol_name)
     endif()
     set(CARGOKIT_OHOS_SDK_HOME $ENV{OHOS_SDK_HOME})
 
+    # On Windows, Flutter places plugin packages under a symlink tree in
+    # app/windows/flutter/ephemeral/.plugin_symlinks/. CMake's REALPATH /
+    # ABSOLUTE do not follow Windows directory symlinks, so the naive
+    # CMAKE_CURRENT_SOURCE_DIR/${manifest_dir} join produces an unresolvable
+    # path. cargokit_cmake_root is already fully resolved by the block above,
+    # so build the manifest path from it (3 levels up reaches the repo root):
+    #   packages/mc_ffi/cargokit -> packages/mc_ffi -> packages -> repo root
+    # then append manifest_dir (e.g. crates/mc-ffi).
+    # GetFullPath handles spaces and drive letters correctly on Windows.
+    if(WIN32)
+        execute_process(
+            COMMAND powershell -ExecutionPolicy Bypass -Command
+                "[System.IO.Path]::GetFullPath([System.IO.Path]::Combine('${cargokit_cmake_root}','..','..','..','${manifest_dir}'))"
+            OUTPUT_VARIABLE _CARGOKIT_MANIFEST_DIR
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+    else()
+        set(_CARGOKIT_MANIFEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${manifest_dir}")
+    endif()
+
     set(CARGOKIT_ENV
         "CARGOKIT_CMAKE=${CMAKE_COMMAND}"
         "CARGOKIT_CONFIGURATION=$<CONFIG>"
-        "CARGOKIT_MANIFEST_DIR=${CMAKE_CURRENT_SOURCE_DIR}/${manifest_dir}"
+        "CARGOKIT_MANIFEST_DIR=${_CARGOKIT_MANIFEST_DIR}"
         "CARGOKIT_TARGET_TEMP_DIR=${CARGOKIT_TEMP_DIR}"
         "CARGOKIT_OUTPUT_DIR=${CARGOKIT_OUTPUT_DIR}"
         "CARGOKIT_TARGET_PLATFORM=${CARGOKIT_TARGET_PLATFORM}"

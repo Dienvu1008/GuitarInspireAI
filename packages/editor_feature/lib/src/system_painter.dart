@@ -1,4 +1,5 @@
 import 'package:core_bridge/core_bridge.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/rendering.dart';
 import 'package:ui_kit/ui_kit.dart';
 
@@ -15,22 +16,30 @@ final class SystemPainter extends CustomPainter {
   final TabColors colors;
   final double fontSize;
 
-  final Map<String, TextPainter> _text = {};
+  // Laid-out labels shared by all painters: every edit creates new painters, and
+  // re-laying out each fret number on every frame dominated paint time. The set of
+  // distinct labels is small (frets, bar numbers, a few symbols per size and colour);
+  // the cap only guards against unbounded growth, for example many marker texts.
+  static final Map<String, TextPainter> _text = {};
+  static const _maxCachedLabels = 4096;
 
   TextPainter _label(String text, {double scale = 1.0, Color? color}) {
-    final key = '$text|$scale|${color?.toARGB32()}';
-    return _text.putIfAbsent(key, () {
-      return TextPainter(
-        text: TextSpan(
-          text: text,
-          style: tabTextStyle(
-            size: fontSize * scale,
-            color: color ?? colors.ink,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-    });
+    final ink = color ?? colors.ink;
+    final size = fontSize * scale;
+    final key = '$text|$size|${ink.toARGB32()}';
+    final cached = _text[key];
+    if (cached != null) return cached;
+    if (_text.length >= _maxCachedLabels) {
+      // Not disposed: recorded pictures may still reference their paragraphs.
+      _text.clear();
+    }
+    return _text[key] = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: tabTextStyle(size: size, color: ink),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
   }
 
   void _centered(
@@ -169,10 +178,24 @@ final class SystemPainter extends CustomPainter {
     }
   }
 
+  /// Every relayout returns new DTOs, and their == compares lists by identity, so the
+  /// painted content is compared instead: an edit then repaints only the system it
+  /// changed, not every visible one.
   @override
   bool shouldRepaint(SystemPainter old) =>
-      old.system != system || old.colors != colors || old.fontSize != fontSize;
+      old.colors != colors ||
+      old.fontSize != fontSize ||
+      !_samePaint(old.system, system);
 }
+
+/// True when [a] and [b] paint the same thing (hit regions are not painted).
+bool _samePaint(SystemDto a, SystemDto b) =>
+    identical(a, b) ||
+    (a.height == b.height &&
+        listEquals(a.lineKinds, b.lineKinds) &&
+        listEquals(a.lines, b.lines) &&
+        listEquals(a.bars, b.bars) &&
+        listEquals(a.glyphs, b.glyphs));
 
 /// The cursor, painted on its own layer so moving it does not repaint the TAB
 /// (cross-platform-ui section 8).

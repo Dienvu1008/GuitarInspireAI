@@ -14,16 +14,18 @@ use mc_app::{
     AppEvent, Command, CommandEnvelope, CommandOutcome, DocumentId, DocumentSession, EventEnvelope,
     EventPayload, EventSink, GuitarCommand, Revision, ScoreCommand, SessionConfig, TrackCommand,
 };
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard};
 
-/// One recovery file found on startup.
+/// The newest autosave of one project, found on startup.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct RecoveryEntryDto {
     pub project_id: String,
-    /// Original file path of the document (may not exist yet).
+    /// Path of the recovery file (internal app data).
     pub path: String,
+    /// Original file of the document; `None` for a document that was never saved.
+    pub source: Option<String>,
     /// Unix millis when the autosave was written.
     pub timestamp: i64,
 }
@@ -43,6 +45,10 @@ fn app_info() -> AppInfo {
 pub struct DocumentHandle {
     session: Arc<Mutex<DocumentSession>>,
     next_command: Arc<AtomicU64>,
+    /// Recovery directory this document autosaves to (set by `write_autosave` and
+    /// `open_from_recovery`). A successful save discards the document's recovery files
+    /// there (project-format section 12). Lock order: `session` before this.
+    recovery_dir: Arc<Mutex<Option<PathBuf>>>,
 }
 
 impl std::fmt::Debug for DocumentHandle {
@@ -69,6 +75,7 @@ impl DocumentHandle {
         DocumentHandle {
             session: Arc::new(Mutex::new(session)),
             next_command: Arc::new(AtomicU64::new(1)),
+            recovery_dir: Arc::new(Mutex::new(None)),
         }
     }
 
@@ -76,6 +83,19 @@ impl DocumentHandle {
         // A panic while holding the lock leaves the session as it was before the
         // failed call (commands check before mutating), so recovering it is safe.
         self.session.lock().unwrap_or_else(|p| p.into_inner())
+    }
+
+    fn recovery_dir(&self) -> MutexGuard<'_, Option<PathBuf>> {
+        self.recovery_dir.lock().unwrap_or_else(|p| p.into_inner())
+    }
+
+    /// After a successful save the recovery files of this project are obsolete. A
+    /// failure to delete them is not a save failure: the next startup offers them
+    /// again, which is safe.
+    fn discard_own_recovery(&self, s: &DocumentSession) {
+        if let Some(dir) = self.recovery_dir().as_ref() {
+            let _ = mc_app::infra::FsRecoveryStore::new(dir.clone()).discard(s.project_id());
+        }
     }
 
     /// A new, unsaved document with one standard-guitar track and `bars` empty 4/4 bars.
@@ -135,19 +155,18 @@ impl DocumentHandle {
         if let Some(path) = s.location().map(Path::to_path_buf) {
             cleanup_temp_files(&path);
         }
-        Ok(outcome_dto(
-            &s.save(&FsProjectStore::default(), &app_info())?,
-        ))
+        let outcome = s.save(&FsProjectStore::default(), &app_info())?;
+        self.discard_own_recovery(&s);
+        Ok(outcome_dto(&outcome))
     }
 
     pub fn save_as(&self, path: String) -> Result<OutcomeDto, ApiError> {
         let path = Path::new(&path);
         cleanup_temp_files(path);
-        Ok(outcome_dto(&self.lock().save_as(
-            &FsProjectStore::default(),
-            path,
-            &app_info(),
-        )?))
+        let mut s = self.lock();
+        let outcome = s.save_as(&FsProjectStore::default(), path, &app_info())?;
+        self.discard_own_recovery(&s);
+        Ok(outcome_dto(&outcome))
     }
 
     /// Streams every event of this document to Dart. A second call replaces (and
@@ -172,58 +191,65 @@ impl DocumentHandle {
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_millis() as u64)
             .unwrap_or(0);
-        let recovery = mc_app::infra::FsRecoveryStore::new(dir);
+        let recovery = mc_app::infra::FsRecoveryStore::new(&dir);
         recovery
             .write_autosave(s.project_id(), s.location(), &bytes, now)
             .map_err(|e| ApiError::new("autosave", e.to_string()))?;
         s.mark_autosaved(now);
+        *self.recovery_dir() = Some(PathBuf::from(dir));
         Ok(())
     }
 
-    /// Lists recovery files in `dir`. The app shows these on startup; choosing one
-    /// opens it with `open_from_recovery`.
+    /// Lists the newest autosave of every project in `dir`. The app shows these on
+    /// startup; choosing one opens it with `open_from_recovery`.
     #[frb(sync)]
     pub fn list_recovery_entries(dir: String) -> Vec<RecoveryEntryDto> {
         let recovery = mc_app::infra::FsRecoveryStore::new(dir);
         match recovery.list() {
             Ok(entries) => entries
                 .into_iter()
-                .filter_map(|e| {
-                    let timestamp = std::fs::metadata(&e.path)
-                        .ok()
-                        .and_then(|m| m.modified().ok())
-                        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
-                        .map(|d| d.as_millis() as i64)
-                        .unwrap_or(0);
-                    Some(RecoveryEntryDto {
-                        project_id: e.project_id,
-                        path: e.path.to_string_lossy().into_owned(),
-                        timestamp,
-                    })
+                .map(|e| RecoveryEntryDto {
+                    project_id: e.project_id,
+                    path: e.path.to_string_lossy().into_owned(),
+                    source: e.source.map(|p| p.to_string_lossy().into_owned()),
+                    timestamp: e.written_unix_millis as i64,
                 })
                 .collect(),
             Err(_) => Vec::new(),
         }
     }
 
-    /// Opens a recovery file by its path. The document's `location` is the original
-    /// file path stored in the recovery entry.
-    pub fn open_from_recovery(path: String) -> Result<DocumentHandle, ApiError> {
-        let bytes = std::fs::read(&path).map_err(|e| ApiError::new("open", e.to_string()))?;
-        let (session, _) = DocumentSession::from_bytes(
+    /// Opens the newest autosave of `project_id` in `dir`. The document keeps the
+    /// original location (Save writes back there) and starts unsaved, so it keeps
+    /// autosaving; its recovery files are removed by the next successful save or by
+    /// `discard_recovery`.
+    pub fn open_from_recovery(dir: String, project_id: String) -> Result<DocumentHandle, ApiError> {
+        let recovery = mc_app::infra::FsRecoveryStore::new(&dir);
+        let entry = recovery
+            .list()
+            .map_err(|e| ApiError::new("recovery", e.to_string()))?
+            .into_iter()
+            .find(|e| e.project_id == project_id)
+            .ok_or_else(|| ApiError::new("not-found", format!("recovery for {project_id}")))?;
+        let bytes = recovery
+            .read(&entry)
+            .map_err(|e| ApiError::new("recovery", e.to_string()))?;
+        let (session, _) = DocumentSession::recover(
             DocumentId(NEXT_DOCUMENT.fetch_add(1, Ordering::Relaxed)),
             &bytes,
-            None,
+            entry.source,
             SessionConfig::default(),
             &SystemClock,
         )?;
-        Ok(Self::wrap(session))
+        let handle = Self::wrap(session);
+        *handle.recovery_dir() = Some(PathBuf::from(dir));
+        Ok(handle)
     }
 
-    /// Deletes a recovery file (called after the user dismisses or recovers it).
+    /// Deletes all autosaves of `project_id` in `dir` (the user chose Discard).
     #[frb(sync)]
-    pub fn discard_recovery(path: String) {
-        let _ = std::fs::remove_file(path);
+    pub fn discard_recovery(dir: String, project_id: String) {
+        let _ = mc_app::infra::FsRecoveryStore::new(dir).discard(&project_id);
     }
 
     pub fn subscribe_events(&self, sink: StreamSink<EventDto>) {

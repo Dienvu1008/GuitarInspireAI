@@ -135,6 +135,16 @@ jobs:
           dart analyze --fatal-infos
           flutter test
 
+      - name: Windows app build and M3 acceptance tests (real core)
+        # Builds the desktop app (cargokit compiles crates/mc-ffi into the bundle) and
+        # runs app/integration_test against it: two tracks, keyboard entry, undo/redo,
+        # save, reopen, recovery. The edit latency benchmark (app/tool) is run on the
+        # reference machine, not here: CI runner timings are not comparable.
+        working-directory: app
+        run: |
+          flutter build windows --debug
+          flutter test integration_test -d windows
+
   cargo-deny:
     # cargo-deny-action is a container action and needs a Linux runner.
     # Pinned image: ubuntu-latest migrates to Ubuntu 26 from 2026-10-19; move deliberately.

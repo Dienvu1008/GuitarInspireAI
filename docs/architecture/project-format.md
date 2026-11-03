@@ -154,6 +154,9 @@ Failure modes and handling:
 - On start after unclean shutdown: list recovery files newer than their source project and offer Restore, Open original, or Discard.
 - Untitled documents autosave to recovery as well.
 - Recovery files are deleted after a successful normal save of the source.
+- A restored document keeps the original location but starts unsaved (dirty), so it keeps autosaving and its recovery files stay until the next successful save (`DocumentSession::recover`).
+
+Phase 3 status: autosave every 2 minutes when dirty (polled every 30 s), restore, discard of all rotated files of a project, deletion after a successful save, and untitled documents are implemented. The session marker, "Open original", the "newer than the source" filter and autosave on window close are not wired yet; recovery is offered whenever autosaves exist (open points O-1 to O-3 in [phase-3-exit-report.md](../roadmap/phase-3-exit-report.md)).
 
 ## 13. Import and export boundaries
 
