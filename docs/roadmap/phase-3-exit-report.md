@@ -132,7 +132,7 @@ Run after deleting `%APPDATA%\dev.guitarinspire\guitar_inspire\recovery` (per-us
 
 ## 8. CI status
 
-Local runs of every CI step passed on the final 3f state: fmt, clippy `-D warnings`, workspace tests (184), benchmark build and command benchmarks, `xtask fitness all --base d9fd26d`, cargo-deny, FF-12 regeneration, Dart analysis and tests in every package, `flutter build windows --debug`, and the integration tests. Slices 3a to 3e passed GitHub Actions (last: `d9fd26d`). The 3f commit is verified on its push.
+Local runs of every CI step passed on the final 3f state: fmt, clippy `-D warnings`, workspace tests (184), benchmark build and command benchmarks, `xtask fitness all --base d9fd26d`, cargo-deny, FF-12 regeneration, Dart analysis and tests in every package, `flutter build windows --debug`, and the integration tests. Slices 3a to 3e passed GitHub Actions (last: `d9fd26d`). The 3f commit `e5a785c` passed all three jobs, including the new Windows app build and integration tests on the GitHub runner.
 
 ## 9. Closure
 
