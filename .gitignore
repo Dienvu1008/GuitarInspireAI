@@ -31,3 +31,6 @@ spikes/s1_s4_flutter/web/
 # OS
 Thumbs.db
 .DS_Store
+
+# Python bytecode cache from the sf2-trim tooling
+tools/sf2-trim/__pycache__/

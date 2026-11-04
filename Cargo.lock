@@ -825,6 +825,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mc-playback"
+version = "0.1.0"
+dependencies = [
+ "mc-score",
+ "mc-theory",
+ "proptest",
+]
+
+[[package]]
 name = "mc-project"
 version = "0.1.0"
 dependencies = [
