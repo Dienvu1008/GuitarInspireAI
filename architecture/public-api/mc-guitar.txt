@@ -1,4 +1,26 @@
 pub mod mc_guitar
+pub enum mc_guitar::Assigned
+pub mc_guitar::Assigned::At(mc_theory::fretted::FretPosition)
+pub mc_guitar::Assigned::NoFreeString
+pub mc_guitar::Assigned::NoFreeString::midi: i32
+pub mc_guitar::Assigned::OutOfRange
+pub mc_guitar::Assigned::OutOfRange::midi: i32
+impl core::clone::Clone for mc_guitar::Assigned
+pub fn mc_guitar::Assigned::clone(&self) -> Self
+impl core::cmp::Eq for mc_guitar::Assigned
+impl core::cmp::PartialEq for mc_guitar::Assigned
+pub fn mc_guitar::Assigned::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::Assigned
+pub fn mc_guitar::Assigned::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_guitar::Assigned
+impl core::marker::StructuralPartialEq for mc_guitar::Assigned
+impl core::marker::Freeze for mc_guitar::Assigned
+impl core::marker::Send for mc_guitar::Assigned
+impl core::marker::Sync for mc_guitar::Assigned
+impl core::marker::Unpin for mc_guitar::Assigned
+impl core::marker::UnsafeUnpin for mc_guitar::Assigned
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::Assigned
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::Assigned
 pub enum mc_guitar::BassRule
 pub mc_guitar::BassRule::AnyChordTone
 pub mc_guitar::BassRule::ChordBass
@@ -412,6 +434,8 @@ impl core::marker::UnsafeUnpin for mc_guitar::VoicingConstraints
 impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::VoicingConstraints
 impl core::panic::unwind_safe::UnwindSafe for mc_guitar::VoicingConstraints
 pub const mc_guitar::MIN_DISTINCT_PITCH_CLASSES: usize
+pub fn mc_guitar::assign_group(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, u8, core::option::Option<u8>, &[i32]) -> alloc::vec::Vec<mc_guitar::Assigned>
+pub fn mc_guitar::assign_sequence(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, u8, impl core::iter::traits::collect::IntoIterator<Item = i32>) -> alloc::vec::Vec<mc_guitar::Assigned>
 pub fn mc_guitar::candidates_for(&[i32], mc_guitar::IdentifyOptions) -> alloc::vec::Vec<mc_guitar::ChordCandidate>
 pub fn mc_guitar::find_voicings(&mc_theory::chord::Chord, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, &mc_guitar::SearchOptions) -> alloc::vec::Vec<mc_guitar::Voicing>
 pub fn mc_guitar::identify(&mc_guitar::Voicing, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_guitar::IdentifyOptions) -> core::result::Result<mc_guitar::Identification, mc_guitar::GuitarError>

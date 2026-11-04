@@ -47,6 +47,8 @@ deny = [
     { crate = "cpal", wrappers = ["mc-audio"], reason = "audio I/O stays in mc-audio" },
     { crate = "rustysynth", wrappers = ["mc-audio"], reason = "synthesis stays in mc-audio" },
     { crate = "rtrb", wrappers = ["mc-audio"], reason = "real-time queues stay in mc-audio" },
+    # ADR-023: Standard MIDI File parsing only in the MIDI interchange adapter.
+    { crate = "midly", wrappers = ["mc-midi"], reason = "ADR-023: SMF interchange stays in mc-midi" },
     # ADR-015, ADR-007: MPL-2.0 dependency of cpal's `realtime` feature.
     { crate = "audio_thread_priority", reason = "ADR-007, ADR-015: own MMCSS call instead (MPL-2.0)" },
     # ADR-010: no network in MVP.

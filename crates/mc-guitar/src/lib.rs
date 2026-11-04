@@ -16,6 +16,7 @@ mod presets;
 mod retune;
 mod scales;
 mod search;
+mod string_assignment;
 mod voicing;
 
 pub use constraints::{BassRule, ConstraintViolation, VoicingConstraints};
@@ -29,4 +30,5 @@ pub use presets::TuningPreset;
 pub use retune::{RetuneMode, RetunePlan, plan_retune};
 pub use scales::{ScaleNote, scale_positions};
 pub use search::{SearchOptions, find_voicings};
+pub use string_assignment::{Assigned, assign_group, assign_sequence};
 pub use voicing::{SoundingNote, Voicing};

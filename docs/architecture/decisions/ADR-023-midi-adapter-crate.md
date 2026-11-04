@@ -31,3 +31,10 @@ FF-01 (dependency matrix), FF-02 (wrapper ban), FF-11 (round trip fixtures), FF-
 
 ## Reconsideration conditions
 More interchange formats (MusicXML, Guitar Pro) share enough code that one `mc-interchange` crate with modules is simpler than one crate per format.
+
+## Clarifications from implementation (slice 4e, 2026-10-31)
+- Documents say imports build scores "through `ScoreBuilder`". No such type exists; the validated construction path (GR-09, IM-01) is `Score::from_parts(ScoreParts)`, which checks every hard invariant and returns all violations. `mc-midi` uses it and allocates ids itself (one counter for tracks, beats and notes, H-01).
+- String assignment is `mc_guitar::assign_group` (distinct strings per chord, closest to the previous fret, then lowest fret, then the thinner string). Pitches no string can sound are dropped and reported (`NotPlayable`), which is the R-10 mitigation for this phase.
+- The quantization grid is chosen per bar (1/16 or, for bars whose length is a multiple of 1/12, 1/12) by the smaller total deviation. Notes crossing a bar line are split and tied. Notes whose onset snaps onto the end of the last bar are dropped and reported (`DroppedAtEnd`); the property test found that case as a hang before it was handled.
+- Tempo is stored in the SMF as whole microseconds per quarter note, so an exported tempo that is not an exact divisor (for example 90 BPM) comes back within 0.001 BPM, not exactly. Time signatures round trip through the conductor track; a pickup bar returns as a full-length bar with a trailing rest.
+- Export needs the `Score` besides the timeline, to write time signatures per played bar; the timeline has no time signature data.
