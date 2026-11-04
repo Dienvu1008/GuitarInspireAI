@@ -68,3 +68,4 @@ Related documents: links
 | [ADR-023](ADR-023-midi-adapter-crate.md) | MIDI interchange in its own adapter crate `mc-midi` | Accepted (2026-10-31) |
 | [ADR-024](ADR-024-playback-rendering-conventions-and-rt-failures.md) | Playback rendering conventions and real-time failure handling | Accepted (2026-10-31) |
 | [ADR-025](ADR-025-single-machine-evidence-accepted.md) | Single-machine performance and glitch evidence accepted (R-21 deferred) | Accepted (2026-10-31) |
+| [ADR-026](ADR-026-bundled-soundfont-trimmed-fluidr3.md) | Bundled SoundFont: trimmed FluidR3 GM (guitar preset only) | Accepted (2026-10-31) |
