@@ -196,7 +196,15 @@ pub fn import_smf(bytes: &[u8]) -> Result<(Score, ImportReport), ImportError> {
     if bytes.len() > MAX_FILE_BYTES {
         return Err(ImportError::TooLarge { bytes: bytes.len() });
     }
-    let smf = Smf::parse(bytes).map_err(|e| ImportError::Malformed(e.to_string()))?;
+    // midly 0.5.3 panics on some malformed SMPTE timing headers (negating i8::MIN) rather
+    // than returning an error. mc-midi reads untrusted files (IM-01), so a parser bug
+    // must become a typed error here, not a crash of the whole process.
+    let parsed = std::panic::catch_unwind(|| Smf::parse(bytes).map_err(|e| e.to_string()));
+    let smf = match parsed {
+        Ok(Ok(smf)) => smf,
+        Ok(Err(e)) => return Err(ImportError::Malformed(e)),
+        Err(_) => return Err(ImportError::Malformed("the MIDI parser panicked".into())),
+    };
     if smf.tracks.len() > MAX_TRACKS {
         return Err(ImportError::TooManyTracks {
             tracks: smf.tracks.len(),

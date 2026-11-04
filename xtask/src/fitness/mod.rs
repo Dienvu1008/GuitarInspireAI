@@ -7,6 +7,7 @@ pub mod inventory;
 pub mod modularity;
 pub mod purity;
 pub mod reports;
+pub mod rt_scan;
 pub mod trailers;
 pub mod unsafe_scope;
 

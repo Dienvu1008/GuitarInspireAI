@@ -504,6 +504,26 @@ fn smpte_timing_is_rejected() {
 
 // ---------------------------------------------------------------- regressions
 
+/// Found by the corruption property: midly 0.5.3 panics ("attempt to negate with
+/// overflow") on a header whose division is 0x8000 (SMPTE, frames byte 0x80). The
+/// importer must return a typed error instead of crashing (IM-01, FF-15).
+#[test]
+fn a_header_that_panics_the_midly_parser_is_a_typed_error() {
+    let mut bytes: Vec<u8> = Vec::new();
+    bytes.extend_from_slice(b"MThd");
+    bytes.extend_from_slice(&[0, 0, 0, 6, 0, 1, 0, 1, 0x80, 0x00]);
+    bytes.extend_from_slice(b"MTrk");
+    bytes.extend_from_slice(&[0, 0, 0, 4, 0x00, 0xFF, 0x2F, 0x00]);
+    let result = import_smf(&bytes);
+    assert!(
+        matches!(
+            result,
+            Err(ImportError::Malformed(_)) | Err(ImportError::UnsupportedTiming)
+        ),
+        "{result:?}"
+    );
+}
+
 /// Found by the property test (it hung): a very short note whose onset snaps onto the
 /// end of the last bar used to start outside every bar and loop forever. It must finish
 /// quickly, drop that note and report it.

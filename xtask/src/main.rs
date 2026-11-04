@@ -11,6 +11,7 @@
 //!   cargo xtask fitness coupling                    (FF-25, advisory report)
 //!   cargo xtask fitness module-cycles               (FF-26, advisory report)
 //!   cargo xtask fitness unsafe-scope                (FF-34)
+//!   cargo xtask fitness rt-scan                     (FF-17)
 //!   cargo xtask fitness trailers   [--base <rev>]   (FF-19)
 //!   cargo xtask fitness inventory  [--base <rev>]   (FF-20)
 //!   cargo xtask fitness docs-links                  (FF-33, link part)
@@ -63,6 +64,7 @@ fn run(root: &std::path::Path, args: &[String]) -> Result<(), String> {
         "coupling" => fitness::modularity::run_coupling(root),
         "module-cycles" => fitness::modularity::run_module_cycles(root),
         "unsafe-scope" => fitness::unsafe_scope::run(root),
+        "rt-scan" => fitness::rt_scan::run(root),
         "all" => {
             let results = [
                 ("FF-01 deps", fitness::deps::run(root)),
@@ -73,6 +75,7 @@ fn run(root: &std::path::Path, args: &[String]) -> Result<(), String> {
                 ("FF-20 inventory", fitness::inventory::run(root, base)),
                 ("FF-33 docs-links", fitness::docs_links::run(root)),
                 ("FF-34 unsafe-scope", fitness::unsafe_scope::run(root)),
+                ("FF-17 rt-scan", fitness::rt_scan::run(root)),
             ];
             let failed: Vec<String> = results
                 .into_iter()

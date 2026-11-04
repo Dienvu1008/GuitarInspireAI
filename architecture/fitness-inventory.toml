@@ -100,12 +100,14 @@ status = "planned"
 [FF-16]
 name = "No allocation in RT callback bodies"
 phase = 4
-status = "planned"
+status = "active"
+check = "test:crates/mc-audio/tests/no_alloc.rs#the_callback_does_not_allocate"
 
 [FF-17]
 name = "RT module forbidden-construct lint"
 phase = 4
-status = "planned"
+status = "active"
+check = "xtask:rt-scan"
 
 [FF-18]
 name = "Playback glitch test"

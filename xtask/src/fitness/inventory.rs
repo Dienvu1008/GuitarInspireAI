@@ -24,6 +24,7 @@ pub const IMPLEMENTED: &[&str] = &[
     "xtask:coupling",
     "xtask:module-cycles",
     "xtask:unsafe-scope",
+    "xtask:rt-scan",
     "ci:bindings",
     "ci:dart-fitness",
     "ci:complexity",

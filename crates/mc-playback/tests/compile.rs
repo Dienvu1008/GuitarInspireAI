@@ -519,6 +519,89 @@ fn tick_to_sample_is_floor_and_factor_scales_inversely() {
     }
 }
 
+/// Two 4/4 bars; the second starts at 240 BPM (twice as fast as the 120 BPM first bar).
+fn two_tempo_score() -> Score {
+    let bar_of = |id: u64| {
+        bar(vec![vec![beat(
+            id,
+            plain(BaseValue::WHOLE),
+            vec![note(id + 1, 6, 0, false, eff(false, false))],
+        )]])
+    };
+    Score::from_parts(ScoreParts {
+        master_bars: vec![MasterBar::default(); 2],
+        tracks: vec![TrackData {
+            id: TrackId::from_raw(TRACK),
+            name: "Guitar".into(),
+            instrument: InstrumentSpec::Fretted(FrettedInstrument::standard_guitar()),
+            bars: vec![bar_of(1), bar_of(3)],
+        }],
+        tempo_map: vec![
+            TempoChange {
+                bar: 0,
+                offset: Rational::ZERO,
+                tempo: Tempo::from_bpm(120).unwrap(),
+            },
+            TempoChange {
+                bar: 1,
+                offset: Rational::ZERO,
+                tempo: Tempo::from_bpm(240).unwrap(),
+            },
+        ],
+    })
+    .unwrap()
+}
+
+#[test]
+fn tempo_changes_are_integrated_piecewise() {
+    let tl = compile(&two_tempo_score(), &CompileOptions::new())
+        .unwrap()
+        .timeline;
+    let tpw = tl.ticks_per_whole().get() as i64;
+    let f = TempoFactor::NORMAL;
+    for sr in [44100u32, 48000, 96000] {
+        // Bar 1 at 120 BPM lasts 2 s; bar 2 at 240 BPM lasts 1 s.
+        assert_eq!(tl.tick_to_sample(Tick(tpw), sr, f), 2 * sr as u64);
+        assert_eq!(tl.tick_to_sample(Tick(2 * tpw), sr, f), 3 * sr as u64);
+        // Halfway into bar 2 is 0.5 s after the tempo change.
+        assert_eq!(
+            tl.tick_to_sample(Tick(tpw + tpw / 2), sr, f),
+            2 * sr as u64 + sr as u64 / 2
+        );
+        // The inverse follows the same segments.
+        assert_eq!(tl.sample_to_tick(2 * sr as u64, sr, f), Tick(tpw));
+        assert_eq!(tl.sample_to_tick(3 * sr as u64, sr, f), Tick(2 * tpw));
+        assert_eq!(
+            tl.sample_to_tick(2 * sr as u64 + sr as u64 / 2, sr, f),
+            Tick(tpw + tpw / 2)
+        );
+    }
+    // The user factor scales every segment: 0.5x doubles the whole duration.
+    let slow = TempoFactor::new(50).unwrap();
+    assert_eq!(tl.tick_to_sample(Tick(2 * tpw), 48000, slow), 6 * 48000);
+}
+
+#[test]
+fn piecewise_conversion_is_monotone_and_floor_consistent() {
+    let tl = compile(&two_tempo_score(), &CompileOptions::new())
+        .unwrap()
+        .timeline;
+    let end = tl.end().0;
+    for sr in [44100u32, 48000] {
+        for fh in [25u16, 75, 100, 200] {
+            let f = TempoFactor::new(fh).unwrap();
+            let mut prev = 0u64;
+            for t in (0..=end).step_by(7) {
+                let s = tl.tick_to_sample(Tick(t), sr, f);
+                assert!(s >= prev, "monotone at tick {t}");
+                prev = s;
+                let back = tl.sample_to_tick(s, sr, f);
+                assert!(back.0 <= t, "round trip {t} -> {s} -> {}", back.0);
+            }
+        }
+    }
+}
+
 #[test]
 fn event_index_at_boundaries() {
     let tl = compile(

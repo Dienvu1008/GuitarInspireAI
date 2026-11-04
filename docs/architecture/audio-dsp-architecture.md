@@ -80,6 +80,21 @@ Score edits during playback: recompile and swap; continuity is checked by A6.
 
 Tests: PB-09 (determinism), timeline variants of PB-02, PB-04 and PB-07, a golden timeline for the reference scores, and a property test that every note on has exactly one later or equal note off on the same channel and key. All are Phase 4 `mc-playback` tests; the bar timing rules they depend on are tested in Phase 1 (PB-01 to PB-08).
 
+## 3b. Implementation status of the playback engine (slice 4b)
+
+`mc-audio` implements sections 1 to 3 and 6. Where it is and how it is checked:
+
+| Part | Where | Check |
+|---|---|---|
+| Callback core (events applied sample-accurately by splitting blocks, seek, stop, tempo factor re-anchored at the same tick, timeline and synth swap, silence on panic) | `crates/mc-audio/src/rt/` | unit tests (buffer-size independence, determinism, swap, panic path); FF-16 `tests/no_alloc.rs` with a negative control; FF-17 `cargo xtask fitness rt-scan` |
+| Control thread (SoundFont loaded lazily at the first Play, warm-up before install, rings, freeing retired objects, stream rebuild after a device error) | `control.rs`, `device.rs`, `soundfont.rs` | `tests/device.rs` (ignored without a device; run on the reference machine) |
+| Offline engine (same core, no device) | `offline.rs` | used by the tests above |
+| Tick to sample conversion integrates every tempo segment | `mc-playback` `PerformanceTimeline::tick_to_sample` | `tempo_changes_are_integrated_piecewise` |
+
+Measured on the reference machine (evidence for that machine only, ADR-025): 48 kHz shared mode, 0 late callbacks in 2 s, longest callback 3.45 ms, reported output latency 32.9 ms.
+
+Open: Windows MMCSS promotion of the callback thread (ADR-007 amendment 1) needs one `unsafe` call, which ADR-022 and FF-34 forbid outside the generated bridge module. Until that exception is decided, `Promotion::Unavailable` is reported and the callback runs at normal priority (S2 saw late callbacks of up to 37 ms in that case).
+
 ## 4. Tuner design
 
 - Input callback copies frames (mono mix) into a preallocated SPSC ring. Nothing else.

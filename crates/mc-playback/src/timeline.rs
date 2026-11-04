@@ -124,24 +124,99 @@ impl PerformanceTimeline {
     }
 
     /// Samples at the device rate for `tick`, under `factor` (audio-dsp section 3a rule
-    /// 6). This MVP uses a single tempo: the first tempo point (compile always emits one
-    /// at tick 0). Formula, floor rounding, `u128` intermediates:
+    /// 6). Time is integrated piecewise over the tempo points: for each tempo segment
+    /// the samples are, with floor rounding and `u128` intermediates,
     ///
     /// ```text
-    /// seconds = tick / ticks_per_whole * (4 / bpm) * 60 * (100 / factor)
-    /// samples = seconds * sample_rate
-    ///         = tick * 4 * 60 * 100 * sample_rate * bpm_den
+    /// seconds = ticks / ticks_per_whole * (4 / bpm) * 60 * (100 / factor)
+    /// samples = ticks * 4 * 60 * 100 * sample_rate * bpm_den
     ///           / (ticks_per_whole * bpm_num * factor)
     /// ```
     ///
-    /// `bpm` is quarter-note BPM as a reduced rational. Saturates to `u64::MAX` on
-    /// overflow instead of panicking. RT-safe: no allocation, no locks.
+    /// and the per-segment values are summed. `bpm` is the quarter-note tempo as a
+    /// reduced rational. If the timeline has no tempo point, 120 BPM is used; ticks before
+    /// the first tempo point use the first tempo. Saturates to `u64::MAX` on overflow
+    /// instead of panicking. RT-safe: no allocation, no locks, a loop over the (few)
+    /// tempo points.
     pub fn tick_to_sample(&self, tick: Tick, sample_rate: u32, factor: TempoFactor) -> u64 {
-        if tick.0 <= 0 {
+        if tick.0 <= 0 || sample_rate == 0 {
             return 0;
         }
-        let bpm = self.base_bpm();
-        let num = (tick.0 as u128)
+        let mut total: u128 = 0;
+        for i in 0..self.segment_count() {
+            let (start, end, bpm) = self.segment(i);
+            if tick.0 <= start {
+                break;
+            }
+            let upto = end.map_or(tick.0, |e| e.min(tick.0));
+            let ticks = (upto - start) as u128;
+            total = total.saturating_add(self.segment_samples(ticks, bpm, sample_rate, factor));
+        }
+        u64::try_from(total).unwrap_or(u64::MAX)
+    }
+
+    /// Inverse of [`Self::tick_to_sample`], floor rounding, with the same segments.
+    /// Saturates at [`Self::end`]: a sample at or past the end maps to `end`.
+    pub fn sample_to_tick(&self, sample: u64, sample_rate: u32, factor: TempoFactor) -> Tick {
+        if sample == 0 || sample_rate == 0 {
+            return Tick(0);
+        }
+        let mut acc: u128 = 0;
+        for i in 0..self.segment_count() {
+            let (start, end, bpm) = self.segment(i);
+            let remaining = sample as u128 - acc.min(sample as u128);
+            if let Some(end) = end {
+                let seg_total =
+                    self.segment_samples((end - start) as u128, bpm, sample_rate, factor);
+                if (sample as u128) >= acc + seg_total {
+                    acc += seg_total;
+                    continue;
+                }
+            }
+            // The sample lies in this segment: invert the per-segment formula.
+            // ticks = remaining * tpw * bpm_num * factor / (240 * 100 * sr * bpm_den)
+            let num = remaining
+                .saturating_mul(self.ticks_per_whole.get() as u128)
+                .saturating_mul(bpm.numerator().max(1) as u128)
+                .saturating_mul(factor.hundredths() as u128);
+            let den = 240u128
+                .saturating_mul(100)
+                .saturating_mul(sample_rate as u128)
+                .saturating_mul(bpm.denominator() as u128);
+            let ticks = i64::try_from(num / den.max(1)).unwrap_or(i64::MAX);
+            return Tick(start.saturating_add(ticks).min(self.end.0));
+        }
+        self.end
+    }
+
+    /// Number of tempo segments: one per tempo point, or one default segment.
+    fn segment_count(&self) -> usize {
+        self.tempo.len().max(1)
+    }
+
+    /// Segment `i` as (start tick, end tick if bounded, quarter-note bpm). The first
+    /// segment always starts at tick 0, even if the first tempo point sits later.
+    fn segment(&self, i: usize) -> (i64, Option<i64>, mc_theory::Rational) {
+        let bpm_of = |p: &TempoPoint| p.bpm.bpm();
+        let default = Tempo::from_bpm(120).expect("120 is valid").bpm();
+        let start = if i == 0 {
+            0
+        } else {
+            self.tempo.get(i).map_or(0, |p| p.tick.0)
+        };
+        let end = self.tempo.get(i + 1).map(|p| p.tick.0);
+        let bpm = self.tempo.get(i).map_or(default, bpm_of);
+        (start, end, bpm)
+    }
+
+    fn segment_samples(
+        &self,
+        ticks: u128,
+        bpm: mc_theory::Rational,
+        sample_rate: u32,
+        factor: TempoFactor,
+    ) -> u128 {
+        let num = ticks
             .saturating_mul(240)
             .saturating_mul(100)
             .saturating_mul(sample_rate as u128)
@@ -149,41 +224,7 @@ impl PerformanceTimeline {
         let den = (self.ticks_per_whole.get() as u128)
             .saturating_mul(bpm.numerator().max(1) as u128)
             .saturating_mul(factor.hundredths() as u128);
-        if den == 0 {
-            return 0;
-        }
-        u64::try_from(num / den).unwrap_or(u64::MAX)
-    }
-
-    /// Inverse of [`Self::tick_to_sample`], floor rounding. Saturates at [`Self::end`]:
-    /// a sample at or past the end maps to `end`.
-    pub fn sample_to_tick(&self, sample: u64, sample_rate: u32, factor: TempoFactor) -> Tick {
-        if sample == 0 || sample_rate == 0 {
-            return Tick(0);
-        }
-        let bpm = self.base_bpm();
-        // tick = sample * ticks_per_whole * bpm_num * factor
-        //        / (240 * 100 * sample_rate * bpm_den)
-        let num = (sample as u128)
-            .saturating_mul(self.ticks_per_whole.get() as u128)
-            .saturating_mul(bpm.numerator().max(1) as u128)
-            .saturating_mul(factor.hundredths() as u128);
-        let den = 240u128
-            .saturating_mul(100)
-            .saturating_mul(sample_rate as u128)
-            .saturating_mul(bpm.denominator() as u128);
-        if den == 0 {
-            return self.end;
-        }
-        let t = i64::try_from(num / den).unwrap_or(i64::MAX);
-        Tick(t.min(self.end.0))
-    }
-
-    fn base_bpm(&self) -> mc_theory::Rational {
-        self.tempo
-            .first()
-            .map(|p| p.bpm.bpm())
-            .unwrap_or(Tempo::from_bpm(120).expect("120 is valid").bpm())
+        num.checked_div(den).unwrap_or(0)
     }
 
     /// Canonical text form (slice 4a golden-test and PB-09 contract). One event per line
