@@ -10,7 +10,7 @@ Related documents: [implementation-phases.md](implementation-phases.md), [roadma
 | M1 Core domain via CLI | Phase 1 | CLI builds a song, edits, undoes, saves, reloads; large reference score round trip | FF-11, FF-13, FF-14, FF-32 green; benchmark baselines |
 | M2 Guitar core | Phase 2 | CLI lists voicings for chords in standard and drop D | Golden set passes |
 | M3 Editable TAB desktop app | Phase 3 | Create a 2-track song in the app, save, kill the process, recover, reopen | Integration tests; acceptance checklist |
-| M4 Playback | Phase 4 | Play the song with tempo change and mute; import a MIDI file with report; export MIDI | A1 to A7 in product build; MIDI fixtures |
+| M4 Playback | Phase 4 | Play the song with tempo change and mute; import a MIDI file with report; export MIDI | A1 to A7 in product build and FF-18, measured on the reference machine only (R-21 open, [ADR-025](../architecture/decisions/ADR-025-single-machine-evidence-accepted.md)); MIDI fixtures |
 | M5 MVP | Phase 5 | Tune a guitar, find a chord, insert it, play it back, save | MVP checklist; known limitations list |
 | M6 and later | Phases 6 to 11 | Defined at each phase entry | Per phase |
 
