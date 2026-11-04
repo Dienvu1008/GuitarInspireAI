@@ -93,7 +93,7 @@ Tests: PB-09 (determinism), timeline variants of PB-02, PB-04 and PB-07, a golde
 
 Measured on the reference machine (evidence for that machine only, ADR-025): 48 kHz shared mode, 0 late callbacks in 2 s, longest callback 3.45 ms, reported output latency 32.9 ms.
 
-Open: Windows MMCSS promotion of the callback thread (ADR-007 amendment 1) needs one `unsafe` call, which ADR-022 and FF-34 forbid outside the generated bridge module. Until that exception is decided, `Promotion::Unavailable` is reported and the callback runs at normal priority (S2 saw late callbacks of up to 37 ms in that case).
+Windows MMCSS promotion of the callback thread (ADR-007 amendment 1) is implemented in `crates/mc-audio/src/mmcss.rs` under the reviewed `unsafe` exception of [ADR-027](decisions/ADR-027-unsafe-exception-mmcss-module.md). The status reports `Promotion::Promoted`, or `Promotion::Unavailable` if the OS call fails (the callback then runs at normal priority; S2 saw late callbacks of up to 37 ms in that case). Other platforms report `NotNeeded`.
 
 ## 4. Tuner design
 

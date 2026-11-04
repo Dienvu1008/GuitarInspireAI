@@ -85,9 +85,12 @@ fn plays_on_the_default_device() {
     assert!(wait_until(Duration::from_secs(2), || !engine
         .status()
         .playing));
-    match engine.status().promotion {
-        Promotion::Promoted | Promotion::NotNeeded | Promotion::Unavailable => {}
-        Promotion::Pending => panic!("the first callback must have run"),
+    let promotion = engine.status().promotion;
+    println!("promotion: {promotion:?}");
+    if cfg!(windows) {
+        assert_eq!(promotion, Promotion::Promoted, "MMCSS promotion on Windows");
+    } else {
+        assert_eq!(promotion, Promotion::NotNeeded);
     }
 }
 

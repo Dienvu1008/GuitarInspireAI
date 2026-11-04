@@ -99,7 +99,12 @@ Planned `clippy.toml` `disallowed-methods` and `disallowed-types` for `mc-theory
 
 ### 3a. Unsafe code (ADR-022, FF-34)
 
-All crates use the workspace lint table (`[lints] workspace = true`), which sets `unsafe_code = "forbid"`. The single exception is `mc-ffi`: it restates the workspace lints with `unsafe_code = "deny"` so that the generated module may carry `#[allow(unsafe_code)] mod frb_generated;`. No other `allow(unsafe_code)` exists in the repository, hand-written `mc-ffi` code has no `unsafe`, and generated files are never edited by hand (FF-12). Any other crate that needs `unsafe` requires a new ADR.
+All crates use the workspace lint table (`[lints] workspace = true`), which sets `unsafe_code = "forbid"`. There are exactly two exceptions (ADR-022, extended by [ADR-027](decisions/ADR-027-unsafe-exception-mmcss-module.md)):
+
+1. `mc-ffi` restates the workspace lints with `unsafe_code = "deny"` so that the generated module may carry `#[allow(unsafe_code)] mod frb_generated;`. Hand-written `mc-ffi` code has no `unsafe`, and generated files are never edited by hand (FF-12).
+2. `mc-audio` restates the workspace lints with `unsafe_code = "deny"` so that `#[cfg(windows)] #[allow(unsafe_code)] mod mmcss;` may make the one MMCSS thread-promotion call. `mmcss.rs` contains exactly one `unsafe` token with a `// SAFETY:` comment directly above it; nothing else in `mc-audio` may use `unsafe`.
+
+No other `allow(unsafe_code)` exists in the repository. Any other crate or module that needs `unsafe` requires a new ADR.
 
 ## 4. Review checklist (for changes not fully automatable)
 
@@ -107,5 +112,5 @@ All crates use the workspace lint table (`[lints] workspace = true`), which sets
 - Does a new public item expose internal representation? (GR-06)
 - Does a new event carry content instead of ranges? ([ADR-006](decisions/ADR-006-event-model.md))
 - Does RT code lock, allocate, log, or perform I/O? (GR-10)
-- Does a change add `unsafe`, an `allow(unsafe_code)` or a crate-local `[lints]` table? (ADR-022, FF-34)
+- Does a change add `unsafe`, an `allow(unsafe_code)` or a crate-local `[lints]` table? (ADR-022, ADR-027, FF-34)
 - Does a new dependency pass license policy and is it necessary? ([ADR-015](decisions/ADR-015-dependency-license-policy.md))

@@ -12,6 +12,11 @@ mod device;
 mod engine;
 mod error;
 mod offline;
+// ADR-027: the single reviewed `unsafe` of this crate (the Windows MMCSS call) lives in
+// this module; the lint table in Cargo.toml is `deny`, so nothing else may use `unsafe`.
+#[cfg(windows)]
+#[allow(unsafe_code)]
+mod mmcss;
 mod platform;
 pub mod rt;
 mod soundfont;

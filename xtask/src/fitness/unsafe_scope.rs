@@ -1,22 +1,58 @@
-//! FF-34 (ADR-022): unsafe code is confined to the generated FFI module.
+//! FF-34 (ADR-022, ADR-027): unsafe code is confined to two reviewed places.
 //!
-//! - Every crate under `crates/` except `mc-ffi`, and `xtask`, uses
+//! - Every crate under `crates/` except the two exception crates, and `xtask`, uses
 //!   `[lints] workspace = true`, so the workspace `unsafe_code = "forbid"` applies, and
 //!   has no crate-local lint table.
-//! - `mc-ffi` has its own lint table equal to `[workspace.lints]` except
-//!   `unsafe_code = "deny"`; the only extra key allowed is `unexpected_cfgs` (needed for
-//!   `cfg(frb_expand)` by the generator).
-//! - The only lint attribute naming `unsafe_code` in hand-written sources is
-//!   `#[allow(unsafe_code)]` directly on `mod frb_generated;` in `crates/mc-ffi/src/lib.rs`.
-//!   The generated file itself is checked by FF-12, not here.
+//! - An exception crate has its own lint table equal to `[workspace.lints]` except
+//!   `unsafe_code = "deny"`; the only extra key allowed is listed per exception
+//!   (`unexpected_cfgs` for `mc-ffi`, needed for `cfg(frb_expand)` by the generator;
+//!   none for `mc-audio`).
+//! - The only lint attributes naming `unsafe_code` in hand-written sources are
+//!   `#[allow(unsafe_code)]` directly on `mod frb_generated;` in
+//!   `crates/mc-ffi/src/lib.rs` (ADR-022) and directly on `mod mmcss;` in
+//!   `crates/mc-audio/src/lib.rs` (ADR-027). The generated file is checked by FF-12.
+//! - ADR-027 scope: `crates/mc-audio/src/mmcss.rs` has exactly one `unsafe` token outside
+//!   comments, and a `// SAFETY:` comment sits directly above it.
 
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub const FFI_CRATE: &str = "mc-ffi";
-const FFI_LIB: &str = "crates/mc-ffi/src/lib.rs";
+/// One reviewed place where `allow(unsafe_code)` is permitted.
+struct Exception {
+    krate: &'static str,
+    lib: &'static str,
+    /// The declaration the attribute must sit directly on.
+    module_decl: &'static str,
+    /// Lint keys allowed in the crate's table besides the workspace keys.
+    extra_lints: &'static [&'static str],
+    adr: &'static str,
+}
+
+const EXCEPTIONS: &[Exception] = &[
+    Exception {
+        krate: "mc-ffi",
+        lib: "crates/mc-ffi/src/lib.rs",
+        module_decl: "mod frb_generated;",
+        extra_lints: &["rust.unexpected_cfgs"],
+        adr: "ADR-022",
+    },
+    Exception {
+        krate: "mc-audio",
+        lib: "crates/mc-audio/src/lib.rs",
+        module_decl: "mod mmcss;",
+        extra_lints: &[],
+        adr: "ADR-027",
+    },
+];
+
 const GENERATED: &str = "frb_generated.rs";
+/// The one hand-written file allowed to contain `unsafe` (ADR-027).
+const MMCSS_FILE: &str = "crates/mc-audio/src/mmcss.rs";
+
+fn exception_for(krate: &str) -> Option<&'static Exception> {
+    EXCEPTIONS.iter().find(|e| e.krate == krate)
+}
 
 pub fn run(root: &Path) -> Result<(), String> {
     let workspace = fs::read_to_string(root.join("Cargo.toml")).map_err(|e| e.to_string())?;
@@ -52,6 +88,7 @@ pub fn run(root: &Path) -> Result<(), String> {
         .collect();
     let mut errors = check_manifests(&workspace, &manifests);
     errors.extend(check_sources(&sources));
+    errors.extend(check_mmcss(&sources));
     if errors.is_empty() {
         println!(
             "FF-34 unsafe scope: ok ({} crates, {} source files)",
@@ -122,18 +159,19 @@ pub fn check_manifests(workspace: &str, crates: &[(String, String)]) -> Vec<Stri
     }
     for (name, manifest) in crates {
         let lints = lint_table(manifest, "lints");
-        if name != FFI_CRATE {
+        let Some(exception) = exception_for(name) else {
             let uses_workspace = lints.get("workspace").map(String::as_str) == Some("true");
             if !uses_workspace || lints.len() != 1 {
                 errors.push(format!(
-                    "{name}/Cargo.toml: must use `[lints] workspace = true` and no crate-local lint table (ADR-022)"
+                    "{name}/Cargo.toml: must use `[lints] workspace = true` and no crate-local lint table (ADR-022, ADR-027)"
                 ));
             }
             continue;
-        }
+        };
+        let adr = exception.adr;
         if lints.contains_key("workspace") {
             errors.push(format!(
-                "crates/{name}/Cargo.toml: must restate the workspace lints, not inherit them (ADR-022)"
+                "crates/{name}/Cargo.toml: must restate the workspace lints, not inherit them ({adr})"
             ));
         }
         for (key, value) in &ws {
@@ -144,14 +182,14 @@ pub fn check_manifests(workspace: &str, crates: &[(String, String)]) -> Vec<Stri
             };
             if lints.get(key).map(String::as_str) != Some(expected) {
                 errors.push(format!(
-                    "crates/{name}/Cargo.toml: lint {key} must be {expected} (workspace table, ADR-022)"
+                    "crates/{name}/Cargo.toml: lint {key} must be {expected} (workspace table, {adr})"
                 ));
             }
         }
         for key in lints.keys() {
-            if !ws.contains_key(key) && key != "rust.unexpected_cfgs" {
+            if !ws.contains_key(key) && !exception.extra_lints.contains(&key.as_str()) {
                 errors.push(format!(
-                    "crates/{name}/Cargo.toml: lint {key} is not in the workspace table (ADR-022)"
+                    "crates/{name}/Cargo.toml: lint {key} is not in the workspace table ({adr})"
                 ));
             }
         }
@@ -171,7 +209,7 @@ fn mentions_unsafe_lint(code: &str) -> bool {
 
 pub fn check_sources(files: &[(String, String)]) -> Vec<String> {
     let mut errors = Vec::new();
-    let mut permitted = 0;
+    let mut permitted: BTreeMap<&str, usize> = BTreeMap::new();
     for (path, text) in files {
         let lines: Vec<&str> = text.lines().collect();
         for (i, line) in lines.iter().enumerate() {
@@ -182,21 +220,82 @@ pub fn check_sources(files: &[(String, String)]) -> Vec<String> {
                 .iter()
                 .map(|l| l.trim())
                 .find(|l| !l.is_empty() && !l.starts_with("//"));
-            let is_permitted = path == FFI_LIB
-                && line.trim() == "#[allow(unsafe_code)]"
-                && next_code == Some("mod frb_generated;");
-            if is_permitted {
-                permitted += 1;
-            } else {
-                errors.push(format!(
-                    "{path}:{}: lint attribute on unsafe_code is only allowed on `mod frb_generated;` in {FFI_LIB} (ADR-022)",
+            let exception = EXCEPTIONS.iter().find(|e| {
+                path == e.lib
+                    && line.trim() == "#[allow(unsafe_code)]"
+                    && next_code == Some(e.module_decl)
+            });
+            match exception {
+                Some(e) => *permitted.entry(e.krate).or_insert(0) += 1,
+                None => errors.push(format!(
+                    "{path}:{}: lint attribute on unsafe_code is only allowed on `mod frb_generated;` in crates/mc-ffi/src/lib.rs (ADR-022) and on `mod mmcss;` in crates/mc-audio/src/lib.rs (ADR-027)",
                     i + 1
-                ));
+                )),
             }
         }
     }
-    if permitted > 1 {
-        errors.push(format!("{FFI_LIB}: more than one allow(unsafe_code)"));
+    for e in EXCEPTIONS {
+        if permitted.get(e.krate).copied().unwrap_or(0) > 1 {
+            errors.push(format!("{}: more than one allow(unsafe_code)", e.lib));
+        }
+    }
+    errors
+}
+
+/// A source line without its `//` comment (doc comments included).
+fn code_part(line: &str) -> &str {
+    line.split("//").next().unwrap_or("")
+}
+
+/// Number of `unsafe` word tokens outside comments.
+fn count_unsafe_tokens(text: &str) -> usize {
+    let mut n = 0;
+    for line in text.lines() {
+        let code = code_part(line);
+        let mut start = 0;
+        while let Some(rel) = code[start..].find("unsafe") {
+            let idx = start + rel;
+            let before = code[..idx].chars().last();
+            let after = code[idx + 6..].chars().next();
+            let boundary = |c: Option<char>| c.is_none_or(|c| !(c.is_alphanumeric() || c == '_'));
+            if boundary(before) && boundary(after) {
+                n += 1;
+            }
+            start = idx + 6;
+        }
+    }
+    n
+}
+
+/// ADR-027: the MMCSS module has exactly one `unsafe` and a `// SAFETY:` comment
+/// directly above the line that holds it.
+pub fn check_mmcss(files: &[(String, String)]) -> Vec<String> {
+    let Some((_, text)) = files.iter().find(|(p, _)| p == MMCSS_FILE) else {
+        return Vec::new();
+    };
+    let mut errors = Vec::new();
+    let count = count_unsafe_tokens(text);
+    if count != 1 {
+        errors.push(format!(
+            "{MMCSS_FILE}: must contain exactly one `unsafe` outside comments, found {count} (ADR-027)"
+        ));
+    }
+    let lines: Vec<&str> = text.lines().collect();
+    if let Some(at) = lines.iter().position(|l| count_unsafe_tokens(l) > 0) {
+        let mut has_safety = false;
+        for l in lines[..at].iter().rev() {
+            let t = l.trim();
+            if !t.starts_with("//") {
+                break;
+            }
+            has_safety |= t.contains("SAFETY:");
+        }
+        if !has_safety {
+            errors.push(format!(
+                "{MMCSS_FILE}:{}: the `unsafe` needs a `// SAFETY:` comment directly above it (ADR-027)",
+                at + 1
+            ));
+        }
     }
     errors
 }
@@ -207,7 +306,10 @@ mod tests {
 
     const WS: &str = "[workspace.lints.rust]\nunsafe_code = \"forbid\"\nmissing_debug_implementations = \"warn\"\n\n[workspace.lints.clippy]\ndbg_macro = \"warn\"\n";
     const FFI: &str = "[package]\nname = \"mc-ffi\"\n\n[lints.rust]\nunsafe_code = \"deny\"\nmissing_debug_implementations = \"warn\"\nunexpected_cfgs = { level = \"warn\" }\n\n[lints.clippy]\ndbg_macro = \"warn\"\n";
+    const AUDIO: &str = "[package]\nname = \"mc-audio\"\n\n[lints.rust]\nunsafe_code = \"deny\"\nmissing_debug_implementations = \"warn\"\n\n[lints.clippy]\ndbg_macro = \"warn\"\n";
     const DOMAIN: &str = "[package]\nname = \"mc-score\"\n\n[lints]\nworkspace = true\n";
+    const FFI_LIB: &str = "crates/mc-ffi/src/lib.rs";
+    const AUDIO_LIB: &str = "crates/mc-audio/src/lib.rs";
 
     fn c(name: &str, text: &str) -> (String, String) {
         (name.to_string(), text.to_string())
@@ -235,7 +337,31 @@ mod tests {
     }
 
     #[test]
-    fn only_the_generated_module_may_allow_unsafe() {
+    fn mc_audio_follows_adr_027() {
+        let errs = check_manifests(WS, &[c("mc-audio", AUDIO)]);
+        assert!(errs.is_empty(), "{errs:?}");
+        // Inheriting the workspace lints would keep forbid, which cannot compile mmcss.
+        let inherits = "[lints]\nworkspace = true\n";
+        let errs = check_manifests(WS, &[c("mc-audio", inherits)]);
+        assert!(
+            errs.iter()
+                .any(|e| e.contains("must restate the workspace lints")),
+            "{errs:?}"
+        );
+        // No extra keys, not even the one mc-ffi may have.
+        let with_cfgs = AUDIO.replace(
+            "missing_debug_implementations = \"warn\"",
+            "missing_debug_implementations = \"warn\"\nunexpected_cfgs = { level = \"warn\" }",
+        );
+        assert_eq!(check_manifests(WS, &[c("mc-audio", &with_cfgs)]).len(), 1);
+        let drift = AUDIO.replace("dbg_macro = \"warn\"", "dbg_macro = \"allow\"");
+        assert_eq!(check_manifests(WS, &[c("mc-audio", &drift)]).len(), 1);
+        let allow_all = AUDIO.replace("\"deny\"", "\"allow\"");
+        assert_eq!(check_manifests(WS, &[c("mc-audio", &allow_all)]).len(), 1);
+    }
+
+    #[test]
+    fn only_the_reviewed_modules_may_allow_unsafe() {
         let ok = "pub mod api;\n\n// ADR-022\n#[allow(unsafe_code)]\nmod frb_generated;\n";
         assert!(check_sources(&[c(FFI_LIB, ok)]).is_empty());
         for bad in [
@@ -258,6 +384,49 @@ mod tests {
             )])
             .is_empty()
         );
+    }
+
+    #[test]
+    fn the_mmcss_allow_is_valid_only_in_mc_audio_on_that_module() {
+        let ok = "mod error;\n\n// ADR-027\n#[cfg(windows)]\n#[allow(unsafe_code)]\nmod mmcss;\n";
+        assert!(check_sources(&[c(AUDIO_LIB, ok)]).is_empty());
+        // The same attribute on another module of mc-audio, or in another crate, fails.
+        let other = "#[allow(unsafe_code)]\nmod platform;\n";
+        assert_eq!(check_sources(&[c(AUDIO_LIB, other)]).len(), 1);
+        assert_eq!(check_sources(&[c(FFI_LIB, ok)]).len(), 1);
+        assert_eq!(
+            check_sources(&[c("crates/mc-audio/src/rt/mod.rs", ok)]).len(),
+            1
+        );
+        // mc-ffi may not use the mc-audio module name and vice versa.
+        let ffi_style = "#[allow(unsafe_code)]\nmod frb_generated;\n";
+        assert_eq!(check_sources(&[c(AUDIO_LIB, ffi_style)]).len(), 1);
+        // Two allows in one exception crate are one too many.
+        let twice = format!("{ok}{ok}");
+        assert_eq!(check_sources(&[c(AUDIO_LIB, &twice)]).len(), 1);
+    }
+
+    #[test]
+    fn the_mmcss_file_has_one_unsafe_with_a_safety_comment() {
+        let good = "// notes\n// SAFETY: the pointer is valid.\nlet h = unsafe { call() };\n";
+        assert!(check_mmcss(&[c(MMCSS_FILE, good)]).is_empty());
+        // The word in comments does not count.
+        let commented = format!("// this is not unsafe code\n{good}");
+        assert!(check_mmcss(&[c(MMCSS_FILE, &commented)]).is_empty());
+        // No SAFETY comment, a blank line between, two blocks, or none at all fail.
+        let no_safety = "let h = unsafe { call() };\n";
+        assert_eq!(check_mmcss(&[c(MMCSS_FILE, no_safety)]).len(), 1);
+        let gap = "// SAFETY: ok\n\nlet h = unsafe { call() };\n";
+        assert_eq!(check_mmcss(&[c(MMCSS_FILE, gap)]).len(), 1);
+        let two = format!("{good}{good}");
+        assert_eq!(check_mmcss(&[c(MMCSS_FILE, &two)]).len(), 1);
+        assert_eq!(check_mmcss(&[c(MMCSS_FILE, "fn f() {}\n")]).len(), 1);
+        // Identifiers that merely contain the word are not counted.
+        assert!(
+            check_mmcss(&[c(MMCSS_FILE, &format!("let unsafe_count = 1;\n{good}"))]).is_empty()
+        );
+        // Other files are not this check's concern.
+        assert!(check_mmcss(&[c("crates/mc-audio/src/other.rs", "unsafe {}")]).is_empty());
     }
 
     #[test]

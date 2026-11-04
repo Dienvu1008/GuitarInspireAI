@@ -1,6 +1,6 @@
 # ADR-022 Unsafe code confined to the generated FFI module
 
-Status: Accepted (user, 2026-10-31)
+Status: Accepted (user, 2026-10-31). Extended by [ADR-027](ADR-027-unsafe-exception-mmcss-module.md) with one more exception: the Windows MMCSS call in `mc-audio`.
 Date: 2026-10-31
 Related documents: [ADR-005](ADR-005-dart-rust-interop-frb.md), [security-and-privacy.md](../security-and-privacy.md), [dependency-rules.md](../dependency-rules.md), [fitness-functions.md](../fitness-functions.md), [interop-architecture.md](../interop-architecture.md)
 

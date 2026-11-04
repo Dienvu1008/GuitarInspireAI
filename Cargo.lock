@@ -973,6 +973,7 @@ dependencies = [
  "mc-playback",
  "rtrb",
  "rustysynth",
+ "windows-sys",
 ]
 
 [[package]]
