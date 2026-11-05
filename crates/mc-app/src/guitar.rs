@@ -99,6 +99,36 @@ pub fn chord_voicings(
     Ok((chord, found))
 }
 
+/// A chord-finder result for an adapter (ADR-029 T6): the canonical symbol, the spelled
+/// tones, and the voicings for one instrument. Plain data; the UI renders it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ChordLookup {
+    pub symbol: String,
+    pub tones: Vec<String>,
+    pub voicings: Vec<Voicing>,
+}
+
+/// Voicings of `symbol` for a track's `instrument`, using its tuning and capo, with the
+/// default constraints and at most `max` results (ADR-029 T6/T8). Advanced constraints
+/// are deferred; the default `SearchOptions` are used.
+pub fn track_chord_voicings(
+    instrument: &mc_score::FrettedInstrument,
+    symbol: &str,
+    max: usize,
+) -> Result<ChordLookup, QueryError> {
+    let options = SearchOptions {
+        max_results: max,
+        ..SearchOptions::default()
+    };
+    let (chord, voicings) =
+        chord_voicings(symbol, &instrument.tuning, instrument.capo.0, &options)?;
+    Ok(ChordLookup {
+        symbol: format_chord(&chord),
+        tones: chord_tones(&chord),
+        voicings,
+    })
+}
+
 /// Ranked chord names for a shape such as `x32010`.
 pub fn identify_shape(
     shape: &str,

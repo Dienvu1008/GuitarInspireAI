@@ -587,6 +587,21 @@ impl DocumentSession {
         &self.transport
     }
 
+    /// Chord voicings for `track`, using that track's tuning and capo (ADR-029 T6/T8).
+    /// Default constraints, limited to `max` results. The musical search is `mc-guitar`
+    /// (GR-05); this reads the track and delegates. Returns the canonical symbol, the
+    /// spelled tones, and the voicings. `None` for an unknown track; errors for a bad
+    /// chord symbol are returned as `Err`.
+    pub fn chord_voicings(
+        &self,
+        track: TrackId,
+        symbol: &str,
+        max: usize,
+    ) -> Option<Result<crate::guitar::ChordLookup, crate::guitar::QueryError>> {
+        let fretted = self.score.track(track)?.fretted().clone();
+        Some(crate::guitar::track_chord_voicings(&fretted, symbol, max))
+    }
+
     /// Maps a measured frequency to the nearest open string of `track` and the cents off,
     /// using that track's tuning and capo (ADR-029 T8). The reference-pitch rule lives in
     /// the Guitar context (`mc_guitar`, GR-05); this reads the track and delegates. When

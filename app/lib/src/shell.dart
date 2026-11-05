@@ -101,6 +101,10 @@ class _ShellState extends ConsumerState<Shell> {
                       const SizedBox(width: 240, child: TunerView()),
                       const VerticalDivider(width: 1),
                     ],
+                    if (ref.watch(chordVisibleProvider)) ...[
+                      const SizedBox(width: 280, child: ChordFinderView()),
+                      const VerticalDivider(width: 1),
+                    ],
                     const SizedBox(width: 220, child: Inspector()),
                   ],
                 ),
@@ -190,6 +194,15 @@ class _MenuBar extends ConsumerWidget {
                   onPressed: () =>
                       ref.read(tunerVisibleProvider.notifier).toggle(),
                   child: const Text('Tuner'),
+                ),
+                MenuItemButton(
+                  key: const ValueKey('tools-chord'),
+                  trailingIcon: ref.watch(chordVisibleProvider)
+                      ? const Icon(Icons.check)
+                      : null,
+                  onPressed: () =>
+                      ref.read(chordVisibleProvider.notifier).toggle(),
+                  child: const Text('Chord finder'),
                 ),
               ],
               child: const Text('Tools'),

@@ -120,6 +120,10 @@ final class RustDocumentService implements DocumentService {
   List<PlayedBarDto> playedBars() => _handle.playedBars();
 
   @override
+  ChordResultDto chordVoicings(int track, String symbol, {int max = 5}) =>
+      _handle.chordVoicings(track: track, symbol: symbol, max: max);
+
+  @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _handle.tabLayout(track: track, metrics: metrics);
 

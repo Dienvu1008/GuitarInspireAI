@@ -101,6 +101,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected int dco_decode_box_autoadd_u_8(dynamic raw);
 
+@protected ChordResultDto dco_decode_chord_result_dto(dynamic raw);
+
 @protected CommandDto dco_decode_command_dto(dynamic raw);
 
 @protected DiagnosticDto dco_decode_diagnostic_dto(dynamic raw);
@@ -173,6 +175,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<TrackSummaryDto> dco_decode_list_track_summary_dto(dynamic raw);
 
+@protected List<VoicingDto> dco_decode_list_voicing_dto(dynamic raw);
+
 @protected MasterBarDto dco_decode_master_bar_dto(dynamic raw);
 
 @protected MetricsDto dco_decode_metrics_dto(dynamic raw);
@@ -218,6 +222,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void dco_decode_unit(dynamic raw);
 
 @protected BigInt dco_decode_usize(dynamic raw);
+
+@protected VoicingDto dco_decode_voicing_dto(dynamic raw);
 
 @protected AnyhowException sse_decode_AnyhowException(SseDeserializer deserializer);
 
@@ -282,6 +288,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
 
 @protected int sse_decode_box_autoadd_u_8(SseDeserializer deserializer);
+
+@protected ChordResultDto sse_decode_chord_result_dto(SseDeserializer deserializer);
 
 @protected CommandDto sse_decode_command_dto(SseDeserializer deserializer);
 
@@ -355,6 +363,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<TrackSummaryDto> sse_decode_list_track_summary_dto(SseDeserializer deserializer);
 
+@protected List<VoicingDto> sse_decode_list_voicing_dto(SseDeserializer deserializer);
+
 @protected MasterBarDto sse_decode_master_bar_dto(SseDeserializer deserializer);
 
 @protected MetricsDto sse_decode_metrics_dto(SseDeserializer deserializer);
@@ -400,6 +410,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_decode_unit(SseDeserializer deserializer);
 
 @protected BigInt sse_decode_usize(SseDeserializer deserializer);
+
+@protected VoicingDto sse_decode_voicing_dto(SseDeserializer deserializer);
 
 @protected void sse_encode_AnyhowException(AnyhowException self, SseSerializer serializer);
 
@@ -464,6 +476,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
 
 @protected void sse_encode_box_autoadd_u_8(int self, SseSerializer serializer);
+
+@protected void sse_encode_chord_result_dto(ChordResultDto self, SseSerializer serializer);
 
 @protected void sse_encode_command_dto(CommandDto self, SseSerializer serializer);
 
@@ -537,6 +551,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_list_track_summary_dto(List<TrackSummaryDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_voicing_dto(List<VoicingDto> self, SseSerializer serializer);
+
 @protected void sse_encode_master_bar_dto(MasterBarDto self, SseSerializer serializer);
 
 @protected void sse_encode_metrics_dto(MetricsDto self, SseSerializer serializer);
@@ -582,6 +598,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_unit(void self, SseSerializer serializer);
 
 @protected void sse_encode_usize(BigInt self, SseSerializer serializer);
+
+@protected void sse_encode_voicing_dto(VoicingDto self, SseSerializer serializer);
                 }
                 
 

@@ -22,6 +22,18 @@ final class TunerVisible extends Notifier<bool> {
   void toggle() => state = !state;
 }
 
+/// Whether the chord finder panel is shown (Tools menu toggle).
+final chordVisibleProvider = NotifierProvider<ChordVisible, bool>(
+  ChordVisible.new,
+);
+
+final class ChordVisible extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void toggle() => state = !state;
+}
+
 /// Binds the playback feature to the editor's active document (ADR-028). This lives in
 /// the composition root because it joins two feature packages, which may not import each
 /// other (FF-05).

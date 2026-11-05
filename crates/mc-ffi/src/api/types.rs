@@ -335,6 +335,30 @@ pub struct TunerReadingDto {
     pub updates: i64,
 }
 
+/// One voicing of a chord for the chord finder (ADR-029 T6). `frets` is per string,
+/// string 1 first; `-1` is a muted string, `0` an open string, `>0` a fretted fret.
+/// `chartText` is the chord-chart shape (string 6 first), e.g. "x32010".
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct VoicingDto {
+    pub frets: Vec<i32>,
+    pub chart_text: String,
+    pub fingers: i32,
+    /// Lowest and highest fretted fret, or -1 when the voicing is all open/muted.
+    pub lowest_fret: i32,
+    pub highest_fret: i32,
+}
+
+/// Result of a chord-finder query (ADR-029 T6): the canonical symbol, the spelled chord
+/// tones, and up to the requested number of voicings for the track's tuning and capo.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ChordResultDto {
+    /// Canonical chord symbol (e.g. "Cmaj7").
+    pub symbol: String,
+    /// Spelled chord tones, e.g. ["C","E","G"].
+    pub tones: Vec<String>,
+    pub voicings: Vec<VoicingDto>,
+}
+
 /// One played bar for the cursor's tick-to-x mapping (ADR-028). Ticks are `i64`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct PlayedBarDto {

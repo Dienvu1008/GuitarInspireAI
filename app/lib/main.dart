@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'src/playback_wiring.dart';
 import 'src/soundfont.dart';
 import 'src/startup.dart';
+import 'src/tools_wiring.dart';
 
 /// Composition root (ADR-004): loads the native core, starts the audio engine, and
 /// wires the real services into the feature packages through provider overrides.
@@ -30,6 +31,7 @@ Future<void> main() async {
         documentFactoryProvider.overrideWithValue(CoreBridge.documents),
         ...playbackOverrides(playback, CoreBridge.midi),
         ...tunerOverrides(),
+        ...toolsOverrides(),
       ],
       child: const StartupGate(),
     ),
