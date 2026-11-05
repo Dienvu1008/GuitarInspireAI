@@ -51,6 +51,8 @@ S3 must be measured on **both**:
 
 Constraint recorded honestly: the coding agent cannot record from a physical instrument. The spike provides the capture harness and the analysis script; the **developer records the real-guitar set and runs the analysis on the reference machine**, then the measured numbers are filled into section 5. Until the real-guitar numbers exist, section 5 states "synthetic only, real-guitar pending" and the ADR stays Draft. No real-guitar number is invented.
 
+A web virtual-guitar (for example musicca.com/guitar) was considered as a stand-in and rejected: the agent cannot drive a browser or capture its Web Audio output, and even a captured clip would be a clean synthesized tone over no microphone path — equivalent to the synthetic set already measured, not evidence of real microphone capture (room noise, pick dynamics, mic/interface colouration). Using it and calling it "real guitar" would be the dishonesty this section guards against. The real-guitar set therefore remains pending until a physical instrument is recorded.
+
 ### 5. S3 results
 
 Status: **synthetic and latency measured; real-guitar pending**; this ADR stays Draft until the real-guitar numbers (§4) are filled in. Reference machine (ADR-025). Window 2048 @ 48 kHz, hop 512, clarity gate 0.5 (provisional). Raw output in `spikes/s3-tuner/results/`.

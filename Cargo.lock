@@ -971,6 +971,7 @@ dependencies = [
  "assert_no_alloc",
  "cpal",
  "mc-app",
+ "mc-dsp",
  "mc-playback",
  "rtrb",
  "rustysynth",

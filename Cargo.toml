@@ -24,6 +24,7 @@ mc-score = { path = "crates/mc-score" }
 mc-guitar = { path = "crates/mc-guitar" }
 mc-notation = { path = "crates/mc-notation" }
 mc-playback = { path = "crates/mc-playback" }
+mc-dsp = { path = "crates/mc-dsp" }
 mc-midi = { path = "crates/mc-midi" }
 mc-audio = { path = "crates/mc-audio" }
 mc-project = { path = "crates/mc-project" }

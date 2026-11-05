@@ -8,6 +8,8 @@ publish.workspace = true
 
 [dependencies]
 mc-playback.workspace = true
+# Tuner pitch detection (ADR-029); allocation-free, run on the tuner thread.
+mc-dsp.workspace = true
 cpal.workspace = true
 rustysynth.workspace = true
 rtrb.workspace = true
