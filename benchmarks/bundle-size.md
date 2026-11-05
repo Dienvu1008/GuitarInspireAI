@@ -24,6 +24,20 @@ For comparison, bundling the untrimmed `FluidR3_GM.sf2` (148 398 306 bytes) woul
 added ~141 MiB, taking the bundle to ~172 MiB. The trim keeps the bundle near its
 no-SoundFont size (ADR-026).
 
+## Phase 5 (M5) bundle (2026-10-31)
+
+After Phase 5 (tuner, chord finder, fretboard; `mc-dsp` with `realfft`/`rustfft` compiled
+into the `mc_ffi` DLL):
+
+| Item | MiB |
+|---|---|
+| Release bundle without the SoundFont | 32.37 |
+| Release bundle with the SoundFont | 34.38 |
+| Delta vs the Phase 4 bundle (32.51 with SoundFont) | +1.87 |
+
+The +1.87 MiB is the tuner/chord code and the FFT dependency in the native library; the
+SoundFont delta is unchanged. Still far below the untrimmed-SoundFont alternative.
+
 ## Method (reproducible)
 
 ```

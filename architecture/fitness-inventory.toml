@@ -6,7 +6,7 @@
 # "Architecture-Change: ADR-NNN" trailer (FF-19 also protects this file).
 
 [meta]
-current_phase = 4
+current_phase = 5
 
 [FF-01]
 name = "Internal crate dependency matrix"
