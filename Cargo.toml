@@ -44,6 +44,10 @@ rtrb = "=0.4.1"
 windows-sys = { version = "=0.61.2", default-features = false, features = ["Win32_Foundation", "Win32_System_Threading"] }
 # FF-16 callback tests (BSD-1-Clause, dev-dependency of mc-audio only).
 assert_no_alloc = "=1.1.2"
+# mc-dsp only (tuner pitch detection, ADR-029). MIT OR Apache-2.0. realfft re-exports
+# rustfft; mc-dsp uses realfft for the MPM autocorrelation.
+realfft = "=3.5.0"
+rustfft = "=6.4.1"
 # mc-midi only (FF-02 wrapper ban, ADR-023). Unlicense.
 midly = { version = "=0.5.3", default-features = false, features = ["std"] }
 criterion = { version = "=0.8.2", default-features = false, features = ["cargo_bench_support"] }

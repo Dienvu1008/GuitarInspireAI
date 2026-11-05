@@ -1,0 +1,56 @@
+pub mod mc_dsp
+pub struct mc_dsp::DetectorConfig
+pub mc_dsp::DetectorConfig::clarity_gate: f32
+pub mc_dsp::DetectorConfig::max_hz: f32
+pub mc_dsp::DetectorConfig::min_hz: f32
+pub mc_dsp::DetectorConfig::sample_rate: f32
+pub mc_dsp::DetectorConfig::silence_floor: f32
+pub mc_dsp::DetectorConfig::window: usize
+impl mc_dsp::DetectorConfig
+pub fn mc_dsp::DetectorConfig::guitar(f32) -> Self
+impl core::clone::Clone for mc_dsp::DetectorConfig
+pub fn mc_dsp::DetectorConfig::clone(&self) -> Self
+impl core::fmt::Debug for mc_dsp::DetectorConfig
+pub fn mc_dsp::DetectorConfig::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_dsp::DetectorConfig
+impl core::marker::Freeze for mc_dsp::DetectorConfig
+impl core::marker::Send for mc_dsp::DetectorConfig
+impl core::marker::Sync for mc_dsp::DetectorConfig
+impl core::marker::Unpin for mc_dsp::DetectorConfig
+impl core::marker::UnsafeUnpin for mc_dsp::DetectorConfig
+impl core::panic::unwind_safe::RefUnwindSafe for mc_dsp::DetectorConfig
+impl core::panic::unwind_safe::UnwindSafe for mc_dsp::DetectorConfig
+pub struct mc_dsp::Estimate
+pub mc_dsp::Estimate::clarity: f32
+pub mc_dsp::Estimate::hz: core::option::Option<f32>
+impl core::clone::Clone for mc_dsp::Estimate
+pub fn mc_dsp::Estimate::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_dsp::Estimate
+pub fn mc_dsp::Estimate::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_dsp::Estimate
+pub fn mc_dsp::Estimate::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_dsp::Estimate
+impl core::marker::StructuralPartialEq for mc_dsp::Estimate
+impl core::marker::Freeze for mc_dsp::Estimate
+impl core::marker::Send for mc_dsp::Estimate
+impl core::marker::Sync for mc_dsp::Estimate
+impl core::marker::Unpin for mc_dsp::Estimate
+impl core::marker::UnsafeUnpin for mc_dsp::Estimate
+impl core::panic::unwind_safe::RefUnwindSafe for mc_dsp::Estimate
+impl core::panic::unwind_safe::UnwindSafe for mc_dsp::Estimate
+pub struct mc_dsp::PitchDetector
+impl mc_dsp::PitchDetector
+pub fn mc_dsp::PitchDetector::config(&self) -> &mc_dsp::DetectorConfig
+pub fn mc_dsp::PitchDetector::new(mc_dsp::DetectorConfig) -> Self
+pub fn mc_dsp::PitchDetector::process(&mut self, &[f32]) -> mc_dsp::Estimate
+pub fn mc_dsp::PitchDetector::rms(&[f32]) -> f32
+impl core::fmt::Debug for mc_dsp::PitchDetector
+pub fn mc_dsp::PitchDetector::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for mc_dsp::PitchDetector
+impl core::marker::Send for mc_dsp::PitchDetector
+impl core::marker::Sync for mc_dsp::PitchDetector
+impl core::marker::Unpin for mc_dsp::PitchDetector
+impl core::marker::UnsafeUnpin for mc_dsp::PitchDetector
+impl !core::panic::unwind_safe::RefUnwindSafe for mc_dsp::PitchDetector
+impl !core::panic::unwind_safe::UnwindSafe for mc_dsp::PitchDetector
+pub fn mc_dsp::cents(f32, f32) -> f32
