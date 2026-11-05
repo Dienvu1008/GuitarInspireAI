@@ -1,0 +1,9 @@
+S3 A8 latency (hops to first stable reading)
+
+string         MPM ms       YIN ms
+E2               34.7         56.0
+A2               34.7         56.0
+D3               24.0         56.0
+G3               24.0         45.3
+B3               24.0         34.7
+E4               24.0         34.7
