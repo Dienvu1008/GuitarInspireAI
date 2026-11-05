@@ -933,6 +933,7 @@ pub fn mc_app::DocumentSession::snapshot_bytes(&self, &mc_project::AppInfo) -> a
 pub fn mc_app::DocumentSession::take_sink(&mut self) -> core::option::Option<alloc::boxed::Box<dyn mc_app::EventSink>>
 pub fn mc_app::DocumentSession::transport(&mut self, mc_app::transport::TransportCommand, &mut dyn mc_app::transport::AudioPort) -> core::result::Result<mc_app::CommandOutcome, mc_app::transport::TransportError>
 pub fn mc_app::DocumentSession::transport_state(&self) -> &mc_app::transport::TransportState
+pub fn mc_app::DocumentSession::tuner_match(&self, mc_score::ids::TrackId, f32) -> core::option::Option<mc_app::TunerReference>
 pub fn mc_app::DocumentSession::undo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::undo_depth(&self) -> usize
 pub fn mc_app::DocumentSession::unknown_content(&self) -> &[alloc::string::String]
@@ -1164,6 +1165,25 @@ impl core::marker::Unpin for mc_app::transport::TransportState
 impl core::marker::UnsafeUnpin for mc_app::transport::TransportState
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportState
 impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportState
+pub struct mc_app::TunerReference
+pub mc_app::TunerReference::cents: f32
+pub mc_app::TunerReference::string: u8
+pub mc_app::TunerReference::target_hz: f32
+impl core::clone::Clone for mc_app::TunerReference
+pub fn mc_app::TunerReference::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_app::TunerReference
+pub fn mc_app::TunerReference::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::TunerReference
+pub fn mc_app::TunerReference::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::TunerReference
+impl core::marker::StructuralPartialEq for mc_app::TunerReference
+impl core::marker::Freeze for mc_app::TunerReference
+impl core::marker::Send for mc_app::TunerReference
+impl core::marker::Sync for mc_app::TunerReference
+impl core::marker::Unpin for mc_app::TunerReference
+impl core::marker::UnsafeUnpin for mc_app::TunerReference
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::TunerReference
+impl core::panic::unwind_safe::UnwindSafe for mc_app::TunerReference
 pub trait mc_app::AudioPort: core::marker::Send
 pub fn mc_app::AudioPort::last_error(&self) -> core::option::Option<alloc::string::String>
 pub fn mc_app::AudioPort::load_timeline(&mut self, mc_playback::timeline::PerformanceTimeline) -> core::result::Result<(), mc_app::transport::TransportError>

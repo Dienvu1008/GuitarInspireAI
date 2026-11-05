@@ -6,4 +6,5 @@ pub mod engine;
 pub mod info;
 pub mod layout;
 pub mod midi;
+pub mod tuner;
 pub mod types;

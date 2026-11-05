@@ -31,4 +31,4 @@ pub use error::AudioError;
 pub use offline::OfflineEngine;
 pub use soundfont::{build_synth, parse_soundfont};
 pub use status::{EngineStatus, LastError, Promotion, Status};
-pub use tuner::{Tuner, TunerReading};
+pub use tuner::{TunerHandle, TunerReading};

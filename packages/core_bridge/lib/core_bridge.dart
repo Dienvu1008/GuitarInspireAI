@@ -11,3 +11,4 @@ export 'src/generated/api/midi.dart'
 export 'src/generated/api/types.dart';
 export 'src/playback_service.dart';
 export 'src/rust_document_service.dart' show CoreBridge, RustDocumentService;
+export 'src/tuner_service.dart';

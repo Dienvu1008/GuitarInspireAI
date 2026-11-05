@@ -365,6 +365,44 @@ impl core::marker::Unpin for mc_guitar::SoundingNote
 impl core::marker::UnsafeUnpin for mc_guitar::SoundingNote
 impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::SoundingNote
 impl core::panic::unwind_safe::UnwindSafe for mc_guitar::SoundingNote
+pub struct mc_guitar::TunerMatch
+pub mc_guitar::TunerMatch::cents: f32
+pub mc_guitar::TunerMatch::string: mc_theory::fretted::StringIndex
+pub mc_guitar::TunerMatch::target_hz: f32
+impl core::clone::Clone for mc_guitar::TunerMatch
+pub fn mc_guitar::TunerMatch::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_guitar::TunerMatch
+pub fn mc_guitar::TunerMatch::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::TunerMatch
+pub fn mc_guitar::TunerMatch::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_guitar::TunerMatch
+impl core::marker::StructuralPartialEq for mc_guitar::TunerMatch
+impl core::marker::Freeze for mc_guitar::TunerMatch
+impl core::marker::Send for mc_guitar::TunerMatch
+impl core::marker::Sync for mc_guitar::TunerMatch
+impl core::marker::Unpin for mc_guitar::TunerMatch
+impl core::marker::UnsafeUnpin for mc_guitar::TunerMatch
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::TunerMatch
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::TunerMatch
+pub struct mc_guitar::TunerTarget
+pub mc_guitar::TunerTarget::hz: f32
+pub mc_guitar::TunerTarget::semitone: i32
+pub mc_guitar::TunerTarget::string: mc_theory::fretted::StringIndex
+impl core::clone::Clone for mc_guitar::TunerTarget
+pub fn mc_guitar::TunerTarget::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_guitar::TunerTarget
+pub fn mc_guitar::TunerTarget::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_guitar::TunerTarget
+pub fn mc_guitar::TunerTarget::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_guitar::TunerTarget
+impl core::marker::StructuralPartialEq for mc_guitar::TunerTarget
+impl core::marker::Freeze for mc_guitar::TunerTarget
+impl core::marker::Send for mc_guitar::TunerTarget
+impl core::marker::Sync for mc_guitar::TunerTarget
+impl core::marker::Unpin for mc_guitar::TunerTarget
+impl core::marker::UnsafeUnpin for mc_guitar::TunerTarget
+impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::TunerTarget
+impl core::panic::unwind_safe::UnwindSafe for mc_guitar::TunerTarget
 pub struct mc_guitar::Voicing
 impl mc_guitar::Voicing
 pub fn mc_guitar::Voicing::fingers(&self) -> u8
@@ -433,6 +471,7 @@ impl core::marker::Unpin for mc_guitar::VoicingConstraints
 impl core::marker::UnsafeUnpin for mc_guitar::VoicingConstraints
 impl core::panic::unwind_safe::RefUnwindSafe for mc_guitar::VoicingConstraints
 impl core::panic::unwind_safe::UnwindSafe for mc_guitar::VoicingConstraints
+pub const mc_guitar::A4_HZ: f32
 pub const mc_guitar::MIN_DISTINCT_PITCH_CLASSES: usize
 pub fn mc_guitar::assign_group(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, u8, core::option::Option<u8>, &[i32]) -> alloc::vec::Vec<mc_guitar::Assigned>
 pub fn mc_guitar::assign_sequence(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, u8, impl core::iter::traits::collect::IntoIterator<Item = i32>) -> alloc::vec::Vec<mc_guitar::Assigned>
@@ -440,6 +479,9 @@ pub fn mc_guitar::candidates_for(&[i32], mc_guitar::IdentifyOptions) -> alloc::v
 pub fn mc_guitar::find_voicings(&mc_theory::chord::Chord, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, &mc_guitar::SearchOptions) -> alloc::vec::Vec<mc_guitar::Voicing>
 pub fn mc_guitar::identify(&mc_guitar::Voicing, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_guitar::IdentifyOptions) -> core::result::Result<mc_guitar::Identification, mc_guitar::GuitarError>
 pub fn mc_guitar::interval_name(&mc_theory::chord::ChordInterval) -> &'static str
+pub fn mc_guitar::nearest(&[mc_guitar::TunerTarget], f32) -> core::option::Option<mc_guitar::TunerMatch>
 pub fn mc_guitar::plan_retune(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, &mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_guitar::RetuneMode) -> core::result::Result<mc_guitar::RetunePlan, mc_guitar::GuitarError>
 pub fn mc_guitar::positions_of(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_theory::pitch::PitchClass, core::ops::range::RangeInclusive<u8>) -> alloc::vec::Vec<mc_theory::fretted::FretPosition>
 pub fn mc_guitar::scale_positions(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_theory::pitch::PitchClass, mc_theory::scale::ScaleFormula, core::ops::range::RangeInclusive<u8>) -> alloc::vec::Vec<mc_guitar::ScaleNote>
+pub fn mc_guitar::semitone_hz(i32) -> f32
+pub fn mc_guitar::tuner_targets(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo) -> alloc::vec::Vec<mc_guitar::TunerTarget>

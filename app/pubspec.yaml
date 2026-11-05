@@ -17,6 +17,8 @@ dependencies:
     path: ../packages/editor_feature
   playback_feature:
     path: ../packages/playback_feature
+  tools_feature:
+    path: ../packages/tools_feature
   app_platform:
     path: ../packages/app_platform
   ui_kit:

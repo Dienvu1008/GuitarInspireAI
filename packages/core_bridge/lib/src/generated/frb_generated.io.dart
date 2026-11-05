@@ -8,6 +8,7 @@ import 'api/engine.dart';
 import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/midi.dart';
+import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -32,6 +33,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_EngineHandlePtr =>
 
 CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr => wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResultPtr;
 
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandlePtr;
+
 
 
                   @protected AnyhowException dco_decode_AnyhowException(dynamic raw);
@@ -42,6 +45,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected ImportResult dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
 
+@protected TunerHandle dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(dynamic raw);
+
 @protected ImportResult dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
 
 @protected DocumentHandle dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw);
@@ -50,11 +55,15 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected ImportResult dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
 
+@protected TunerHandle dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(dynamic raw);
+
 @protected DocumentHandle dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw);
 
 @protected EngineHandle dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw);
 
 @protected ImportResult dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
+
+@protected TunerHandle dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(dynamic raw);
 
 @protected RustStreamSink<EventDto> dco_decode_StreamSink_event_dto_Sse(dynamic raw);
 
@@ -109,6 +118,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 @protected ExportResult dco_decode_export_result(dynamic raw);
 
 @protected double dco_decode_f_32(dynamic raw);
+
+@protected double dco_decode_f_64(dynamic raw);
 
 @protected GlyphDto dco_decode_glyph_dto(dynamic raw);
 
@@ -194,6 +205,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected TrackSummaryDto dco_decode_track_summary_dto(dynamic raw);
 
+@protected TunerReadingDto dco_decode_tuner_reading_dto(dynamic raw);
+
 @protected TupletDto dco_decode_tuplet_dto(dynamic raw);
 
 @protected int dco_decode_u_16(dynamic raw);
@@ -214,6 +227,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected ImportResult sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
 
+@protected TunerHandle sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(SseDeserializer deserializer);
+
 @protected ImportResult sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
 
 @protected DocumentHandle sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer);
@@ -222,11 +237,15 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected ImportResult sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
 
+@protected TunerHandle sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(SseDeserializer deserializer);
+
 @protected DocumentHandle sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer);
 
 @protected EngineHandle sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer);
 
 @protected ImportResult sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
+
+@protected TunerHandle sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(SseDeserializer deserializer);
 
 @protected RustStreamSink<EventDto> sse_decode_StreamSink_event_dto_Sse(SseDeserializer deserializer);
 
@@ -281,6 +300,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 @protected ExportResult sse_decode_export_result(SseDeserializer deserializer);
 
 @protected double sse_decode_f_32(SseDeserializer deserializer);
+
+@protected double sse_decode_f_64(SseDeserializer deserializer);
 
 @protected GlyphDto sse_decode_glyph_dto(SseDeserializer deserializer);
 
@@ -366,6 +387,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected TrackSummaryDto sse_decode_track_summary_dto(SseDeserializer deserializer);
 
+@protected TunerReadingDto sse_decode_tuner_reading_dto(SseDeserializer deserializer);
+
 @protected TupletDto sse_decode_tuplet_dto(SseDeserializer deserializer);
 
 @protected int sse_decode_u_16(SseDeserializer deserializer);
@@ -386,6 +409,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
 
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(TunerHandle self, SseSerializer serializer);
+
 @protected void sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
 
 @protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer);
@@ -394,11 +419,15 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
 
+@protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(TunerHandle self, SseSerializer serializer);
+
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer);
 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer);
 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
+
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(TunerHandle self, SseSerializer serializer);
 
 @protected void sse_encode_StreamSink_event_dto_Sse(RustStreamSink<EventDto> self, SseSerializer serializer);
 
@@ -453,6 +482,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 @protected void sse_encode_export_result(ExportResult self, SseSerializer serializer);
 
 @protected void sse_encode_f_32(double self, SseSerializer serializer);
+
+@protected void sse_encode_f_64(double self, SseSerializer serializer);
 
 @protected void sse_encode_glyph_dto(GlyphDto self, SseSerializer serializer);
 
@@ -537,6 +568,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 @protected void sse_encode_tab_layout_dto(TabLayoutDto self, SseSerializer serializer);
 
 @protected void sse_encode_track_summary_dto(TrackSummaryDto self, SseSerializer serializer);
+
+@protected void sse_encode_tuner_reading_dto(TunerReadingDto self, SseSerializer serializer);
 
 @protected void sse_encode_tuplet_dto(TupletDto self, SseSerializer serializer);
 
@@ -635,6 +668,28 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
             late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResultPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult');
             late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult = _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResultPtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+            
+            void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(
+              ffi.Pointer<ffi.Void> ptr,
+            ) {
+              return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(
+                ptr,
+              );
+            }
+
+            late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandlePtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle');
+            late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle = _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandlePtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+            
+            void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(
+              ffi.Pointer<ffi.Void> ptr,
+            ) {
+              return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(
+                ptr,
+              );
+            }
+
+            late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandlePtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle');
+            late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle = _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandlePtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
             
         }
         

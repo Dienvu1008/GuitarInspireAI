@@ -26,7 +26,7 @@ pub use constraints::Constraints;
 pub use error::{CommandError, OpenError, SaveError};
 pub use events::{AppEvent, CollectingSink, DocumentId, EventEnvelope, EventPayload, EventSink};
 pub use history::HistoryLimits;
-pub use session::{CommandOutcome, DocumentSession, OpenReport, SessionConfig};
+pub use session::{CommandOutcome, DocumentSession, OpenReport, SessionConfig, TunerReference};
 pub use transport::{
     AudioPort, PlaybackState, PlayedBarInfo, PositionUpdate, TransportCommand, TransportError,
     TransportState,

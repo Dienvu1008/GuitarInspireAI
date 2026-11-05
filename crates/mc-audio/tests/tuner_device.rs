@@ -4,13 +4,13 @@
 //! The A10 cases that need OS state (privacy denied, device busy) are in the MVP manual
 //! script; this checks the start outcome and that readings advance when a device exists.
 
-use mc_audio::{AudioError, Tuner};
+use mc_audio::{AudioError, TunerHandle};
 use std::time::{Duration, Instant};
 
 #[test]
 #[ignore = "needs a microphone; run on the reference machine"]
 fn tuner_starts_and_produces_readings_or_a_typed_error() {
-    match Tuner::start() {
+    match TunerHandle::start() {
         Ok(tuner) => {
             println!("tuner started on a {} Hz input device", tuner.sample_rate());
             // Let the thread run; readings should advance even in a quiet room (clarity

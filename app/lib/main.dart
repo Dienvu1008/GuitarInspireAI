@@ -29,6 +29,7 @@ Future<void> main() async {
       overrides: [
         documentFactoryProvider.overrideWithValue(CoreBridge.documents),
         ...playbackOverrides(playback, CoreBridge.midi),
+        ...tunerOverrides(),
       ],
       child: const StartupGate(),
     ),
