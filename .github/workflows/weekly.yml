@@ -52,6 +52,21 @@ jobs:
       - uses: actions/checkout@v7
       - run: cargo xtask fitness freshness
 
+  fuzz:
+    # FF-15 (Important, ADR-023): fuzz the MIDI importer for a bounded time. A crash is
+    # minimized and committed as an mc-midi regression fixture (then part of FF-11).
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Toolchain
+        run: rustup toolchain install nightly --profile minimal
+      - name: Install cargo-fuzz
+        run: cargo install cargo-fuzz --version 0.13.1 --locked
+      - name: Fuzz the MIDI importer
+        working-directory: fuzz
+        # A fixed budget so the scheduled run finishes; -max_total_time is seconds.
+        run: cargo +nightly fuzz run import_smf -- -max_total_time=300 -rss_limit_mb=4096
+
   portability:
     # ADR-004: macOS and Linux keep building and passing tests before their port phase.
     strategy:

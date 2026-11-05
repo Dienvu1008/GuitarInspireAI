@@ -6,7 +6,10 @@
 [workspace]
 resolver = "3"
 members = ["xtask", "crates/*"]
-exclude = ["spikes"]
+# `spikes` are throwaway. `fuzz` is the cargo-fuzz crate (FF-15, ADR-023): it needs
+# nightly and libfuzzer-sys, so it stays out of the production workspace and its
+# dependency is not part of the FF-01 matrix or the cargo-deny scan.
+exclude = ["spikes", "fuzz"]
 
 [workspace.package]
 edition = "2024"

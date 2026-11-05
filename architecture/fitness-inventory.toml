@@ -6,7 +6,7 @@
 # "Architecture-Change: ADR-NNN" trailer (FF-19 also protects this file).
 
 [meta]
-current_phase = 3
+current_phase = 4
 
 [FF-01]
 name = "Internal crate dependency matrix"
@@ -95,7 +95,8 @@ check = "test:crates/mc-app/tests/properties.rs#ff14_"
 [FF-15]
 name = "Importer and loader fuzzing"
 phase = 4
-status = "planned"
+status = "active"
+check = "workflow:fuzz"
 
 [FF-16]
 name = "No allocation in RT callback bodies"
@@ -112,7 +113,8 @@ check = "xtask:rt-scan"
 [FF-18]
 name = "Playback glitch test"
 phase = 4
-status = "planned"
+status = "active"
+check = "procedure:benchmarks/ff18-glitch.md"
 
 [FF-19]
 name = "Protected paths require ADR trailer"
@@ -177,7 +179,8 @@ check = "ci:complexity"
 [FF-29]
 name = "Binary and bundle size"
 phase = 4
-status = "planned"
+status = "active"
+check = "procedure:benchmarks/bundle-size.md"
 
 [FF-30]
 name = "Dependency freshness"

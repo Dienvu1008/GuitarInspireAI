@@ -1,7 +1,7 @@
 # Architecture Fitness Functions
 
 Purpose: Define the automated checks that keep the architecture rules true over time, with criticality, tool, activation phase and threshold justification.
-Status: Accepted (catalogue). Each function is implemented in its activation phase; none exist yet.
+Status: Accepted (catalogue). Each function is implemented in its activation phase. As of Phase 4, 33 of 34 are active; only FF-31 (Phase 8) is still planned.
 Related documents: [dependency-rules.md](dependency-rules.md), [domain-invariants.md](domain-invariants.md), [project-format.md](project-format.md), [performance-requirements.md](performance-requirements.md), [decisions/README.md](decisions/README.md), `.kiro/steering/architecture-guardrails.md`.
 
 Criticality: Critical blocks merge. Important needs review when it fails (does not block automatically). Advisory produces reports.

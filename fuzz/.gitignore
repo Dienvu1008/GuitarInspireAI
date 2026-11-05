@@ -1,0 +1,7 @@
+# cargo-fuzz build output and the live corpus are not committed; only the fuzz target,
+# its Cargo.toml, and any minimized crash regressions (which move into mc-midi fixtures).
+/target
+/corpus
+/artifacts
+/coverage
+Cargo.lock
