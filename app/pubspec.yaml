@@ -15,6 +15,8 @@ dependencies:
     path: ../packages/core_bridge
   editor_feature:
     path: ../packages/editor_feature
+  playback_feature:
+    path: ../packages/playback_feature
   app_platform:
     path: ../packages/app_platform
   ui_kit:

@@ -8,6 +8,8 @@ import 'generated/api/document.dart';
 import 'generated/api/layout.dart';
 import 'generated/api/types.dart';
 import 'generated/frb_generated.dart';
+import 'playback_service.dart' show MidiService, PlaybackFactory;
+import 'rust_playback_service.dart' show RustMidiService, RustPlaybackFactory;
 
 /// Loads the native Music Core. Call once before creating documents.
 abstract final class CoreBridge {
@@ -26,6 +28,15 @@ abstract final class CoreBridge {
   }
 
   static DocumentFactory get documents => const _RustDocumentFactory();
+
+  /// Starts the shared audio engine and returns the playback factory (ADR-028). Call
+  /// once after [init]; [soundfontPath] is the bundled SoundFont (4c). Throws [ApiError]
+  /// with rule `audio` if there is no output device at all.
+  static Future<PlaybackFactory> startPlayback({String? soundfontPath}) =>
+      RustPlaybackFactory.start(soundfontPath: soundfontPath);
+
+  /// MIDI import and export (no audio device needed, ADR-023).
+  static MidiService get midi => const RustMidiService();
 }
 
 final class _RustDocumentFactory implements DocumentFactory {
@@ -129,3 +140,19 @@ final class RustDocumentService implements DocumentService {
     _handle.dispose();
   }
 }
+
+/// The native handle behind a [RustDocumentService], for the playback service in this
+/// library (ADR-028: the engine drives transport against the document handle). Throws if
+/// the service is not Rust-backed (for example a fake), which is a wiring bug.
+DocumentHandle rustDocumentHandle(DocumentService service) {
+  if (service is! RustDocumentService) {
+    throw StateError(
+      'the Rust engine needs a RustDocumentService, got ${service.runtimeType}',
+    );
+  }
+  return service._handle;
+}
+
+/// Wraps a native handle (for example from MIDI import) as a [DocumentService].
+DocumentService rustServiceFromHandle(DocumentHandle handle) =>
+    RustDocumentService._(handle);

@@ -1,0 +1,24 @@
+name: playback_feature
+description: "Transport UI: play/stop, tempo factor, per-track mute, playback cursor and MIDI import/export. No musical rules (GR-05); the Rust core owns playback (ADR-028)."
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.13.2
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: 3.4.3
+  core_bridge:
+    path: ../core_bridge
+  app_platform:
+    path: ../app_platform
+  ui_kit:
+    path: ../ui_kit
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 6.0.0

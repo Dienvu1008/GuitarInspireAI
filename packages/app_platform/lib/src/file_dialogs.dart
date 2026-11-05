@@ -1,11 +1,22 @@
+import 'dart:typed_data';
+
 import 'package:file_selector/file_selector.dart';
 
-/// Open and save dialogs for project files. Returns `null` when the user cancels.
+/// Open and save dialogs for project and MIDI files. Returns `null` when the user
+/// cancels. MIDI bytes are read and written here because file I/O is a platform concern
+/// (GR-11, FF-08); the core only receives and produces bytes.
 abstract interface class FileDialogs {
   Future<String?> pickProjectToOpen();
 
   /// [suggestedName] is shown in the dialog, for example `Untitled.giproj`.
   Future<String?> pickProjectToSave({required String suggestedName});
+
+  /// Pick a Standard MIDI File and return its bytes, or `null` if cancelled.
+  Future<List<int>?> pickMidiToImport();
+
+  /// Pick a save location and write [bytes] as a `.mid` file. Returns the path written,
+  /// or `null` if cancelled.
+  Future<String?> saveMidi(List<int> bytes, {required String suggestedName});
 }
 
 /// Product extension of project files (Q-08). Adapter-level convention only: the
@@ -15,6 +26,11 @@ const String projectExtension = 'giproj';
 const _projectFiles = XTypeGroup(
   label: 'GuitarInspire project',
   extensions: [projectExtension],
+);
+
+const _midiFiles = XTypeGroup(
+  label: 'Standard MIDI File',
+  extensions: ['mid', 'midi'],
 );
 
 /// System dialogs via the `file_selector` plugin.
@@ -38,5 +54,31 @@ final class SystemFileDialogs implements FileDialogs {
     // Append the product extension when the user typed a name without one.
     final name = path.split(RegExp(r'[\\/]')).last;
     return name.contains('.') ? path : '$path.$projectExtension';
+  }
+
+  @override
+  Future<List<int>?> pickMidiToImport() async {
+    final file = await openFile(acceptedTypeGroups: const [_midiFiles]);
+    if (file == null) return null;
+    return file.readAsBytes();
+  }
+
+  @override
+  Future<String?> saveMidi(
+    List<int> bytes, {
+    required String suggestedName,
+  }) async {
+    final location = await getSaveLocation(
+      acceptedTypeGroups: const [_midiFiles],
+      suggestedName: suggestedName,
+    );
+    if (location == null) return null;
+    final name = location.path.split(RegExp(r'[\\/]')).last;
+    final path = name.contains('.') ? location.path : '${location.path}.mid';
+    await XFile.fromData(
+      Uint8List.fromList(bytes),
+      name: suggestedName,
+    ).saveTo(path);
+    return path;
   }
 }
