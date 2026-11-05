@@ -85,11 +85,38 @@ class _TabViewState extends ConsumerState<TabView> {
     return _layout!;
   }
 
+  /// Maps a playback tick to an x inside `system` from the played-bar tick ranges and
+  /// the system's bar x-positions. A played bar's master-bar index is matched to the
+  /// bar layout; x is the bar's left plus the within-bar fraction times its width.
+  /// Returns null when the tick is not in a bar this system draws.
+  double? Function(int tick) _tickToX(SystemDto system, List<PlayedBarDto> played) {
+    return (int tick) {
+      for (final pb in played) {
+        if (tick < pb.startTick || tick >= pb.startTick + pb.lengthTicks) {
+          continue;
+        }
+        for (final bar in system.bars) {
+          if (bar.bar != pb.masterBar) continue;
+          final frac = pb.lengthTicks <= 0
+              ? 0.0
+              : (tick - pb.startTick) / pb.lengthTicks;
+          return bar.x + frac * bar.width;
+        }
+      }
+      return null;
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = ref.watch(editorProvider);
     final colors = TabColors.of(Theme.of(context).colorScheme);
     final fontSize = 11.0 * widget.zoom;
+    final cursorBuilder = ref.watch(cursorOverlayProvider);
+    // Played-bar tick ranges for the cursor; empty when there is no cursor overlay.
+    final played = cursorBuilder == null
+        ? const <PlayedBarDto>[]
+        : s.service.playedBars();
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth.clamp(320.0, 4000.0);
@@ -145,6 +172,13 @@ class _TabViewState extends ConsumerState<TabView> {
                             ),
                           ),
                         ),
+                        if (cursorBuilder != null)
+                          Positioned.fill(
+                            child: cursorBuilder(
+                              _tickToX(system, played),
+                              system.height,
+                            ),
+                          ),
                       ],
                     ),
                   ),

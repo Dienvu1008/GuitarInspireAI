@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:core_bridge/core_bridge.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:app_platform/app_platform.dart';
+import 'package:core_bridge/core_bridge.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'editor_cursor.dart';
 
@@ -15,6 +16,14 @@ final documentFactoryProvider = Provider<DocumentFactory>(
 final fileDialogsProvider = Provider<FileDialogs>(
   (ref) => const SystemFileDialogs(),
 );
+
+/// Builds the playback cursor overlay for a TAB system, given a tick-to-x mapper and the
+/// system height. The app overrides it with a `PlaybackCursor` from `playback_feature`;
+/// by default there is no cursor (editor_feature does not depend on playback, FF-05).
+typedef CursorOverlayBuilder =
+    Widget Function(double? Function(int tick) tickToX, double height);
+
+final cursorOverlayProvider = Provider<CursorOverlayBuilder?>((ref) => null);
 
 /// Per-user app data paths (recovery directory). Overridden in tests.
 final appPathsProvider = Provider<AppPaths>((ref) => const SystemAppPaths());

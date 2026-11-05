@@ -65,3 +65,9 @@ Related documents: links
 | [ADR-020](ADR-020-invariants-vs-diagnostics.md) | Invariants vs diagnostics model | Accepted |
 | [ADR-021](ADR-021-bundled-font-ofl.md) | Bundled TAB font under SIL OFL 1.1 (Noto Sans Mono) | Accepted (2026-10-31) |
 | [ADR-022](ADR-022-unsafe-confined-to-generated-ffi.md) | Unsafe code confined to the generated FFI module | Accepted (2026-10-31) |
+| [ADR-023](ADR-023-midi-adapter-crate.md) | MIDI interchange in its own adapter crate `mc-midi` | Accepted (2026-10-31) |
+| [ADR-024](ADR-024-playback-rendering-conventions-and-rt-failures.md) | Playback rendering conventions and real-time failure handling | Accepted (2026-10-31) |
+| [ADR-025](ADR-025-single-machine-evidence-accepted.md) | Single-machine performance and glitch evidence accepted (R-21 deferred) | Accepted (2026-10-31) |
+| [ADR-026](ADR-026-bundled-soundfont-trimmed-fluidr3.md) | Bundled SoundFont: trimmed FluidR3 GM (guitar preset only) | Accepted (2026-10-31) |
+| [ADR-027](ADR-027-unsafe-exception-mmcss-module.md) | Unsafe exception for the Windows MMCSS call in mc-audio (extends ADR-022) | Accepted (2026-10-31) |
+| [ADR-028](ADR-028-playback-transport-port-and-session-state.md) | Playback transport: application-owned AudioPort, session transport state, swap-on-edit | Accepted (2026-10-31) |

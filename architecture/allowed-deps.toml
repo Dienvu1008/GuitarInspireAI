@@ -36,14 +36,16 @@ layer = "application"
 phase = 1
 # mc-guitar added in Phase 2 (ADR-003 context map: Application -> Guitar; ADR-019).
 # mc-notation added in Phase 3 (dependency-rules matrix: app -> notation; ADR-018).
-internal = ["mc-theory", "mc-score", "mc-project", "mc-guitar", "mc-notation"]
+# mc-playback added in Phase 4 (matrix: app -> playback; ADR-003; Phase 4 entry decision Q2).
+internal = ["mc-theory", "mc-score", "mc-project", "mc-guitar", "mc-notation", "mc-playback"]
 external = []
 dev_external = ["proptest", "criterion"]
 
 [mc-cli]
 layer = "adapter"
 phase = 1
-internal = ["mc-app", "mc-project"]
+# mc-midi added in Phase 4 (ADR-023).
+internal = ["mc-app", "mc-project", "mc-midi"]
 external = []
 dev_external = []
 
@@ -66,7 +68,8 @@ dev_external = []
 [mc-ffi]
 layer = "adapter"
 phase = 3
-internal = ["mc-app", "mc-audio"]
+# mc-midi added in Phase 4 (ADR-023).
+internal = ["mc-app", "mc-audio", "mc-midi"]
 external = ["flutter_rust_bridge"]
 dev_external = []
 
@@ -82,7 +85,16 @@ layer = "adapter"
 phase = 4
 internal = ["mc-theory", "mc-playback", "mc-dsp", "mc-app"]
 external = ["cpal", "rustysynth", "rtrb", "windows-sys"]
-dev_external = []
+# assert_no_alloc (BSD-1-Clause) for FF-16 callback tests (Q2).
+dev_external = ["assert_no_alloc"]
+
+[mc-midi]
+layer = "adapter"
+phase = 4
+# SMF import and export (ADR-023). String assignment is called from mc-guitar.
+internal = ["mc-theory", "mc-score", "mc-guitar", "mc-playback"]
+external = ["midly"]
+dev_external = ["proptest"]
 
 [mc-dsp]
 layer = "domain"

@@ -71,7 +71,8 @@ From Phase 6, `mc-project` and `mc-app` also depend on `mc-pattern`. There is no
 | `mc-guitar` | Domain (supporting) | Phase 2 | Fretboard, chord finder, voicings | none |
 | `mc-notation` | Projection | Phase 3 | TAB layout display list | none |
 | `mc-ffi` | Adapter (interop, composition root) | Phase 3 | frb API, DTO mapping, streams. The only crate with its own lint table: `unsafe_code = "deny"` with one `allow` on the generated module ([ADR-022](decisions/ADR-022-unsafe-confined-to-generated-ffi.md)) | flutter_rust_bridge |
-| `mc-playback` | Domain service (pure) | Phase 4 | Score to PerformanceTimeline, MIDI mapping | midly (in adapter module) |
+| `mc-playback` | Domain service (pure) | Phase 4 | Score to PerformanceTimeline, MIDI mapping (channels, programs, `MidiNote`) | none |
+| `mc-midi` | Adapter (interchange) | Phase 4 | SMF import through `ScoreBuilder` with ImportReport, SMF export from the timeline ([ADR-023](decisions/ADR-023-midi-adapter-crate.md)) | midly |
 | `mc-audio` | Adapter (RT) | Phase 4 | cpal streams, synth, RT queues, tuner thread; small Windows-only module for callback thread priority (MMCSS) | cpal (without `realtime`), rustysynth, rtrb, windows-sys (Windows only) |
 | `mc-dsp` | Generic (pure) | Phase 5 | YIN/MPM, FFT wrappers | realfft or rustfft |
 | `mc-pattern` | Domain (supporting) | Phase 6a | Pattern IR and binding | none |

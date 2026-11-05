@@ -2,7 +2,11 @@ import 'package:editor_feature/editor_feature.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:playback_feature/playback_feature.dart';
 import 'package:ui_kit/ui_kit.dart';
+
+import 'midi_menu.dart';
+import 'playback_wiring.dart';
 
 class GuitarInspireApp extends StatelessWidget {
   const GuitarInspireApp({super.key});
@@ -41,6 +45,14 @@ class _ShellState extends ConsumerState<Shell> {
   Widget build(BuildContext context) {
     final s = ref.watch(editorProvider);
     final editor = ref.read(editorProvider.notifier);
+    // While playing, a score edit (revision bump) recompiles and swaps the timeline so
+    // the change is heard without a restart (ADR-028 item 5). Only active when the
+    // engine started.
+    if (ref.watch(playbackAvailableProvider)) {
+      ref.listen(editorProvider.select((e) => e.summary.revision), (_, _) {
+        ref.read(transportProvider.notifier).refreshAfterEdit();
+      });
+    }
     final shortcuts = <ShortcutActivator, VoidCallback>{
       const SingleActivator(LogicalKeyboardKey.keyN, control: true):
           editor.newDocument,
@@ -68,6 +80,10 @@ class _ShellState extends ConsumerState<Shell> {
             children: [
               _MenuBar(shortcuts: shortcuts),
               const Divider(height: 1),
+              if (ref.watch(playbackAvailableProvider)) ...[
+                TransportBar(cursorMasterBar: s.cursor.bar),
+                const Divider(height: 1),
+              ],
               const Expanded(
                 child: Row(
                   children: [
@@ -134,6 +150,8 @@ class _MenuBar extends ConsumerWidget {
                   ),
                   editor.saveAs,
                 ),
+                const Divider(),
+                ...buildMidiMenuItems(context, ref),
               ],
               child: const Text('File'),
             ),

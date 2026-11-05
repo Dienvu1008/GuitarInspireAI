@@ -79,10 +79,34 @@ impl DocumentHandle {
         }
     }
 
+    /// Wraps a score built by an adapter (for example MIDI import, ADR-023) as a new,
+    /// unsaved document. The validated `Score` already satisfies every hard invariant.
+    pub(crate) fn from_imported_score(score: mc_app::types::Score) -> Self {
+        Self::wrap(DocumentSession::new(
+            DocumentId(NEXT_DOCUMENT.fetch_add(1, Ordering::Relaxed)),
+            score,
+            SessionConfig::default(),
+            &SystemClock,
+            &SystemEntropy,
+        ))
+    }
+
+    /// A cheap immutable snapshot of the current score, for background work such as MIDI
+    /// export (ADR-023 item 3 compiles it without a mute set).
+    pub(crate) fn score_snapshot(&self) -> mc_app::types::Score {
+        self.lock().snapshot()
+    }
+
     fn lock(&self) -> MutexGuard<'_, DocumentSession> {
         // A panic while holding the lock leaves the session as it was before the
         // failed call (commands check before mutating), so recovering it is safe.
         self.session.lock().unwrap_or_else(|p| p.into_inner())
+    }
+
+    /// Locks the session for a transport call driven by the engine (ADR-028). Same lock
+    /// as [`Self::lock`]; a distinct name documents the audio entry point.
+    pub(crate) fn lock_for_transport(&self) -> MutexGuard<'_, DocumentSession> {
+        self.lock()
     }
 
     fn recovery_dir(&self) -> MutexGuard<'_, Option<PathBuf>> {
@@ -267,6 +291,23 @@ impl DocumentHandle {
         summary_dto(&self.lock())
     }
 
+    /// Played-bar layout for the playback cursor (ADR-028): each bar's score index and
+    /// tick range after repeat and volta expansion. The UI maps a playback tick to an x
+    /// on the TAB from this. Independent of mute (PB-04).
+    #[frb(sync)]
+    pub fn played_bars(&self) -> Vec<PlayedBarDto> {
+        self.lock()
+            .played_bars()
+            .into_iter()
+            .map(|b| PlayedBarDto {
+                order: b.order as i64,
+                master_bar: b.master_bar as i64,
+                start_tick: b.start_tick,
+                length_ticks: b.length_ticks,
+            })
+            .collect()
+    }
+
     /// Beats of one voice of one bar, in order.
     #[frb(sync)]
     pub fn beats(&self, track: i64, bar: u32, voice: u32) -> Result<Vec<BeatDto>, ApiError> {
@@ -376,7 +417,17 @@ fn summary_dto(s: &DocumentSession) -> DocumentSummaryDto {
     }
 }
 
-fn outcome_dto(o: &CommandOutcome) -> OutcomeDto {
+/// Maps the application `PlaybackState` to its DTO (ADR-028). Used by the event mapping
+/// here and by the engine API.
+pub(crate) fn playback_state_dto(state: mc_app::PlaybackState) -> PlaybackStateDto {
+    match state {
+        mc_app::PlaybackState::Stopped => PlaybackStateDto::Stopped,
+        mc_app::PlaybackState::Playing => PlaybackStateDto::Playing,
+        mc_app::PlaybackState::Failed => PlaybackStateDto::Failed,
+    }
+}
+
+pub(crate) fn outcome_dto(o: &CommandOutcome) -> OutcomeDto {
     OutcomeDto {
         revision: o.revision.0 as i64,
         events: o.events.iter().map(event_dto).collect(),
@@ -424,6 +475,16 @@ fn event_dto(e: &EventEnvelope) -> EventDto {
                 }
             }
             AppEvent::HistoryApplied => EventKindDto::HistoryApplied,
+            AppEvent::PlaybackStateChanged { state } => EventKindDto::PlaybackStateChanged {
+                state: playback_state_dto(*state),
+            },
+            AppEvent::MuteChanged { track, muted } => EventKindDto::MuteChanged {
+                track: t(*track),
+                muted: *muted,
+            },
+            AppEvent::TempoFactorChanged { hundredths } => EventKindDto::TempoFactorChanged {
+                hundredths: *hundredths,
+            },
         },
     };
     EventDto {

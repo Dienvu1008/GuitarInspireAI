@@ -1,0 +1,37 @@
+[package]
+name = "mc-audio"
+version = "0.1.0"
+description = "Audio engine adapter: cpal output, rustysynth synthesis, wait-free rings, control thread and the real-time callback core (ADR-007, ADR-024)."
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+mc-playback.workspace = true
+cpal.workspace = true
+rustysynth.workspace = true
+rtrb.workspace = true
+
+# Windows MMCSS promotion of the callback thread (ADR-007 amendment 1, ADR-027).
+[target.'cfg(windows)'.dependencies]
+windows-sys.workspace = true
+
+[dev-dependencies]
+assert_no_alloc.workspace = true
+# Reference scores for engine tests (mc-app is an allowed dependency of mc-audio).
+mc-app = { workspace = true, features = ["fixtures"] }
+# Direct synth access for the bundled-SoundFont pitch verification test (4c). rustysynth
+# is already wrapper-banned to mc-audio (FF-02); a dev-dep of mc-audio is still mc-audio.
+rustysynth.workspace = true
+
+# ADR-027: the workspace lints, restated, with one difference: unsafe_code is "deny"
+# instead of "forbid", so that only the MMCSS module may allow it. FF-34 checks that
+# this table equals [workspace.lints] except for that one value, that no key is added,
+# and that `allow(unsafe_code)` appears only on `mod mmcss;` in src/lib.rs.
+[lints.rust]
+unsafe_code = "deny"
+missing_debug_implementations = "warn"
+
+[lints.clippy]
+dbg_macro = "warn"
+todo = "warn"

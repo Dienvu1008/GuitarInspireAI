@@ -88,7 +88,7 @@ All estimates are FTE weeks for one developer. Research items are timeboxed and 
 - Architectural prerequisites: ADR-007 accepted; FF-15 to FF-18 activated.
 - Deliverables: Playback in the app; MIDI adapters with fixtures; glitch test procedure based on callback timing; Windows MMCSS thread promotion in `mc-audio`; bundled FluidR3 GM with its original license text and a provenance record (source, version, SHA-256) (ADR-015).
 - Technical risks: RT glitches (R-02), device handling (R-08), MIDI string assignment quality (R-10).
-- Acceptance criteria: A1 to A7 hold in the product build; all tracks play simultaneously regardless of the displayed track; play, stop, seek, tempo factor and per-track mute work; PB-09 and timeline variants of PB-02, PB-04 and PB-07 pass; MIDI round trip preserves pitches and rhythm within reported quantization.
+- Acceptance criteria: A1 to A7 hold in the product build on the reference machine (single-machine evidence, R-21 open, [ADR-025](../architecture/decisions/ADR-025-single-machine-evidence-accepted.md)); all tracks play simultaneously regardless of the displayed track; play, stop, seek, tempo factor and per-track mute work; PB-09 and timeline variants of PB-02, PB-04 and PB-07 pass; MIDI round trip preserves pitches and rhythm within reported quantization.
 - Testing strategy: Timeline unit tests, assert_no_alloc tests, fuzzing of MIDI import, manual glitch test.
 - Estimated complexity: Medium to high.
 - Exit criteria: Milestone M4.

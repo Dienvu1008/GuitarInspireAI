@@ -40,7 +40,7 @@ S3 (tuner), S6 (Web) and S8 to S12 were not part of M0.
 
 | Risk | State after M0 |
 |---|---|
-| R-02 audio glitches | Engine work is clean; residual OS-level stalls up to 44 ms with priority promotion on the reference machine. Re-test in Phase 4, including a second machine |
+| R-02 audio glitches | Engine work is clean; residual OS-level stalls up to 44 ms with priority promotion on the reference machine. Re-test in Phase 4, including a second machine (amended 2026-10-31: the second machine is deferred, [ADR-025](../architecture/decisions/ADR-025-single-machine-evidence-accepted.md); Phase 4 re-tests on the reference machine only) |
 | R-21 single-machine evidence | All numbers come from one machine; lower-end or different audio hardware is untested |
 | R-01 frb toolchain | Works; costs are the `freezed` toolchain, pinned helper tools and stale template lockfiles |
 | R-04 TAB editor effort | Unchanged and the largest effort item; S4 removed only the rendering-performance part |

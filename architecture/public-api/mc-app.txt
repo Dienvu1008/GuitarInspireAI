@@ -168,6 +168,11 @@ pub use mc_app::notation::NotationError
 pub use mc_app::notation::Rect
 pub use mc_app::notation::SystemLayout
 pub use mc_app::notation::TabLayout
+pub mod mc_app::playback
+pub use mc_app::playback::PerformanceTimeline
+pub use mc_app::playback::TempoFactor
+pub use mc_app::playback::Tick
+pub fn mc_app::playback::compile_for_export(&mc_score::score::Score) -> core::result::Result<mc_playback::timeline::PerformanceTimeline, alloc::string::String>
 pub mod mc_app::ports
 pub enum mc_app::ports::StoreError
 pub mc_app::ports::StoreError::Io
@@ -242,6 +247,152 @@ pub fn mc_app::infra::FsRecoveryStore::end_session(&self) -> core::result::Resul
 pub fn mc_app::infra::FsRecoveryStore::list(&self) -> core::result::Result<alloc::vec::Vec<mc_app::ports::RecoveryEntry>, mc_app::ports::StoreError>
 pub fn mc_app::infra::FsRecoveryStore::read(&self, &mc_app::ports::RecoveryEntry) -> core::result::Result<alloc::vec::Vec<u8>, mc_app::ports::StoreError>
 pub fn mc_app::infra::FsRecoveryStore::write_autosave(&self, &str, core::option::Option<&std::path::Path>, &[u8], u64) -> core::result::Result<std::path::PathBuf, mc_app::ports::StoreError>
+pub mod mc_app::transport
+pub enum mc_app::transport::PlaybackState
+pub mc_app::transport::PlaybackState::Failed
+pub mc_app::transport::PlaybackState::Playing
+pub mc_app::transport::PlaybackState::Stopped
+impl core::clone::Clone for mc_app::transport::PlaybackState
+pub fn mc_app::transport::PlaybackState::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::PlaybackState
+impl core::cmp::PartialEq for mc_app::transport::PlaybackState
+pub fn mc_app::transport::PlaybackState::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::transport::PlaybackState
+pub fn mc_app::transport::PlaybackState::default() -> Self
+impl core::fmt::Debug for mc_app::transport::PlaybackState
+pub fn mc_app::transport::PlaybackState::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::PlaybackState
+impl core::marker::StructuralPartialEq for mc_app::transport::PlaybackState
+impl core::marker::Freeze for mc_app::transport::PlaybackState
+impl core::marker::Send for mc_app::transport::PlaybackState
+impl core::marker::Sync for mc_app::transport::PlaybackState
+impl core::marker::Unpin for mc_app::transport::PlaybackState
+impl core::marker::UnsafeUnpin for mc_app::transport::PlaybackState
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::PlaybackState
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PlaybackState
+pub enum mc_app::transport::TransportCommand
+pub mc_app::transport::TransportCommand::Play
+pub mc_app::transport::TransportCommand::Play::from_master_bar: core::option::Option<usize>
+pub mc_app::transport::TransportCommand::Seek
+pub mc_app::transport::TransportCommand::Seek::tick: mc_playback::types::Tick
+pub mc_app::transport::TransportCommand::SetMuted
+pub mc_app::transport::TransportCommand::SetMuted::muted: bool
+pub mc_app::transport::TransportCommand::SetMuted::track: mc_score::ids::TrackId
+pub mc_app::transport::TransportCommand::SetTempoFactor
+pub mc_app::transport::TransportCommand::SetTempoFactor::factor: mc_playback::types::TempoFactor
+pub mc_app::transport::TransportCommand::Stop
+impl core::clone::Clone for mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::TransportCommand
+impl core::cmp::PartialEq for mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::TransportCommand
+impl core::marker::StructuralPartialEq for mc_app::transport::TransportCommand
+impl core::marker::Freeze for mc_app::transport::TransportCommand
+impl core::marker::Send for mc_app::transport::TransportCommand
+impl core::marker::Sync for mc_app::transport::TransportCommand
+impl core::marker::Unpin for mc_app::transport::TransportCommand
+impl core::marker::UnsafeUnpin for mc_app::transport::TransportCommand
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportCommand
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportCommand
+pub enum mc_app::transport::TransportError
+pub mc_app::transport::TransportError::Audio(alloc::string::String)
+pub mc_app::transport::TransportError::BarOutOfRange
+pub mc_app::transport::TransportError::BarOutOfRange::master_bar: usize
+pub mc_app::transport::TransportError::Compile(alloc::string::String)
+impl core::clone::Clone for mc_app::transport::TransportError
+pub fn mc_app::transport::TransportError::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::TransportError
+impl core::cmp::PartialEq for mc_app::transport::TransportError
+pub fn mc_app::transport::TransportError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_app::transport::TransportError
+impl core::fmt::Debug for mc_app::transport::TransportError
+pub fn mc_app::transport::TransportError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_app::transport::TransportError
+pub fn mc_app::transport::TransportError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::transport::TransportError
+impl core::marker::Freeze for mc_app::transport::TransportError
+impl core::marker::Send for mc_app::transport::TransportError
+impl core::marker::Sync for mc_app::transport::TransportError
+impl core::marker::Unpin for mc_app::transport::TransportError
+impl core::marker::UnsafeUnpin for mc_app::transport::TransportError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportError
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportError
+pub struct mc_app::transport::PlayedBarInfo
+pub mc_app::transport::PlayedBarInfo::length_ticks: i64
+pub mc_app::transport::PlayedBarInfo::master_bar: usize
+pub mc_app::transport::PlayedBarInfo::order: u32
+pub mc_app::transport::PlayedBarInfo::start_tick: i64
+impl core::clone::Clone for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::PlayedBarInfo
+impl core::cmp::PartialEq for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::PlayedBarInfo
+impl core::marker::StructuralPartialEq for mc_app::transport::PlayedBarInfo
+impl core::marker::Freeze for mc_app::transport::PlayedBarInfo
+impl core::marker::Send for mc_app::transport::PlayedBarInfo
+impl core::marker::Sync for mc_app::transport::PlayedBarInfo
+impl core::marker::Unpin for mc_app::transport::PlayedBarInfo
+impl core::marker::UnsafeUnpin for mc_app::transport::PlayedBarInfo
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::PlayedBarInfo
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PlayedBarInfo
+pub struct mc_app::transport::PositionUpdate
+pub mc_app::transport::PositionUpdate::document: mc_app::DocumentId
+pub mc_app::transport::PositionUpdate::playing: bool
+pub mc_app::transport::PositionUpdate::tick: i64
+impl core::clone::Clone for mc_app::transport::PositionUpdate
+pub fn mc_app::transport::PositionUpdate::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::PositionUpdate
+impl core::cmp::PartialEq for mc_app::transport::PositionUpdate
+pub fn mc_app::transport::PositionUpdate::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::transport::PositionUpdate
+pub fn mc_app::transport::PositionUpdate::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::PositionUpdate
+impl core::marker::StructuralPartialEq for mc_app::transport::PositionUpdate
+impl core::marker::Freeze for mc_app::transport::PositionUpdate
+impl core::marker::Send for mc_app::transport::PositionUpdate
+impl core::marker::Sync for mc_app::transport::PositionUpdate
+impl core::marker::Unpin for mc_app::transport::PositionUpdate
+impl core::marker::UnsafeUnpin for mc_app::transport::PositionUpdate
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::PositionUpdate
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PositionUpdate
+pub struct mc_app::transport::TransportState
+impl mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::is_muted(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::muted(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
+pub fn mc_app::transport::TransportState::state(&self) -> mc_app::transport::PlaybackState
+pub fn mc_app::transport::TransportState::tempo_factor(&self) -> mc_playback::types::TempoFactor
+impl core::clone::Clone for mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::TransportState
+impl core::cmp::PartialEq for mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::default() -> Self
+impl core::fmt::Debug for mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::transport::TransportState
+impl core::marker::Freeze for mc_app::transport::TransportState
+impl core::marker::Send for mc_app::transport::TransportState
+impl core::marker::Sync for mc_app::transport::TransportState
+impl core::marker::Unpin for mc_app::transport::TransportState
+impl core::marker::UnsafeUnpin for mc_app::transport::TransportState
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportState
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportState
+pub trait mc_app::transport::AudioPort: core::marker::Send
+pub fn mc_app::transport::AudioPort::last_error(&self) -> core::option::Option<alloc::string::String>
+pub fn mc_app::transport::AudioPort::load_timeline(&mut self, mc_playback::timeline::PerformanceTimeline) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::transport::AudioPort::play(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::transport::AudioPort::position(&self) -> mc_playback::types::Tick
+pub fn mc_app::transport::AudioPort::seek(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::transport::AudioPort::set_tempo_factor(&mut self, mc_playback::types::TempoFactor) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::transport::AudioPort::state(&self) -> mc_app::transport::PlaybackState
+pub fn mc_app::transport::AudioPort::stop(&mut self) -> core::result::Result<(), mc_app::transport::TransportError>
 pub mod mc_app::types
 pub use mc_app::types::AppInfo
 pub use mc_app::types::BarContent
@@ -274,6 +425,13 @@ pub mc_app::AppEvent::DirtyChanged::dirty: bool
 pub mc_app::AppEvent::DocumentSaved
 pub mc_app::AppEvent::DocumentSaved::revision: mc_app::Revision
 pub mc_app::AppEvent::HistoryApplied
+pub mc_app::AppEvent::MuteChanged
+pub mc_app::AppEvent::MuteChanged::muted: bool
+pub mc_app::AppEvent::MuteChanged::track: mc_score::ids::TrackId
+pub mc_app::AppEvent::PlaybackStateChanged
+pub mc_app::AppEvent::PlaybackStateChanged::state: mc_app::transport::PlaybackState
+pub mc_app::AppEvent::TempoFactorChanged
+pub mc_app::AppEvent::TempoFactorChanged::hundredths: u16
 pub mc_app::AppEvent::UndoAvailabilityChanged
 pub mc_app::AppEvent::UndoAvailabilityChanged::can_redo: bool
 pub mc_app::AppEvent::UndoAvailabilityChanged::can_undo: bool
@@ -406,6 +564,28 @@ impl core::marker::Unpin for mc_app::OpenError
 impl core::marker::UnsafeUnpin for mc_app::OpenError
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::OpenError
 impl core::panic::unwind_safe::UnwindSafe for mc_app::OpenError
+pub enum mc_app::PlaybackState
+pub mc_app::PlaybackState::Failed
+pub mc_app::PlaybackState::Playing
+pub mc_app::PlaybackState::Stopped
+impl core::clone::Clone for mc_app::transport::PlaybackState
+pub fn mc_app::transport::PlaybackState::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::PlaybackState
+impl core::cmp::PartialEq for mc_app::transport::PlaybackState
+pub fn mc_app::transport::PlaybackState::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::transport::PlaybackState
+pub fn mc_app::transport::PlaybackState::default() -> Self
+impl core::fmt::Debug for mc_app::transport::PlaybackState
+pub fn mc_app::transport::PlaybackState::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::PlaybackState
+impl core::marker::StructuralPartialEq for mc_app::transport::PlaybackState
+impl core::marker::Freeze for mc_app::transport::PlaybackState
+impl core::marker::Send for mc_app::transport::PlaybackState
+impl core::marker::Sync for mc_app::transport::PlaybackState
+impl core::marker::Unpin for mc_app::transport::PlaybackState
+impl core::marker::UnsafeUnpin for mc_app::transport::PlaybackState
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::PlaybackState
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PlaybackState
 pub enum mc_app::SaveError
 pub mc_app::SaveError::NoLocation
 pub mc_app::SaveError::Store(mc_app::ports::StoreError)
@@ -527,6 +707,56 @@ impl core::marker::Unpin for mc_app::TrackCommand
 impl core::marker::UnsafeUnpin for mc_app::TrackCommand
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::TrackCommand
 impl core::panic::unwind_safe::UnwindSafe for mc_app::TrackCommand
+pub enum mc_app::TransportCommand
+pub mc_app::TransportCommand::Play
+pub mc_app::TransportCommand::Play::from_master_bar: core::option::Option<usize>
+pub mc_app::TransportCommand::Seek
+pub mc_app::TransportCommand::Seek::tick: mc_playback::types::Tick
+pub mc_app::TransportCommand::SetMuted
+pub mc_app::TransportCommand::SetMuted::muted: bool
+pub mc_app::TransportCommand::SetMuted::track: mc_score::ids::TrackId
+pub mc_app::TransportCommand::SetTempoFactor
+pub mc_app::TransportCommand::SetTempoFactor::factor: mc_playback::types::TempoFactor
+pub mc_app::TransportCommand::Stop
+impl core::clone::Clone for mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::TransportCommand
+impl core::cmp::PartialEq for mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::TransportCommand
+impl core::marker::StructuralPartialEq for mc_app::transport::TransportCommand
+impl core::marker::Freeze for mc_app::transport::TransportCommand
+impl core::marker::Send for mc_app::transport::TransportCommand
+impl core::marker::Sync for mc_app::transport::TransportCommand
+impl core::marker::Unpin for mc_app::transport::TransportCommand
+impl core::marker::UnsafeUnpin for mc_app::transport::TransportCommand
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportCommand
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportCommand
+pub enum mc_app::TransportError
+pub mc_app::TransportError::Audio(alloc::string::String)
+pub mc_app::TransportError::BarOutOfRange
+pub mc_app::TransportError::BarOutOfRange::master_bar: usize
+pub mc_app::TransportError::Compile(alloc::string::String)
+impl core::clone::Clone for mc_app::transport::TransportError
+pub fn mc_app::transport::TransportError::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::TransportError
+impl core::cmp::PartialEq for mc_app::transport::TransportError
+pub fn mc_app::transport::TransportError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_app::transport::TransportError
+impl core::fmt::Debug for mc_app::transport::TransportError
+pub fn mc_app::transport::TransportError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_app::transport::TransportError
+pub fn mc_app::transport::TransportError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::transport::TransportError
+impl core::marker::Freeze for mc_app::transport::TransportError
+impl core::marker::Send for mc_app::transport::TransportError
+impl core::marker::Sync for mc_app::transport::TransportError
+impl core::marker::Unpin for mc_app::transport::TransportError
+impl core::marker::UnsafeUnpin for mc_app::transport::TransportError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportError
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportError
 pub struct mc_app::BeatAddress
 pub mc_app::BeatAddress::bar: usize
 pub mc_app::BeatAddress::beat: mc_score::ids::BeatId
@@ -687,9 +917,11 @@ pub fn mc_app::DocumentSession::location(&self) -> core::option::Option<&std::pa
 pub fn mc_app::DocumentSession::mark_autosaved(&mut self, u64)
 pub fn mc_app::DocumentSession::new(mc_app::DocumentId, mc_score::score::Score, mc_app::SessionConfig, &dyn mc_app::ports::Clock, &dyn mc_app::ports::Entropy) -> Self
 pub fn mc_app::DocumentSession::open(mc_app::DocumentId, &dyn mc_app::ports::ProjectStore, &std::path::Path, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
+pub fn mc_app::DocumentSession::played_bars(&self) -> alloc::vec::Vec<mc_app::transport::PlayedBarInfo>
 pub fn mc_app::DocumentSession::project_id(&self) -> &str
 pub fn mc_app::DocumentSession::recover(mc_app::DocumentId, &[u8], core::option::Option<std::path::PathBuf>, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
 pub fn mc_app::DocumentSession::redo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
+pub fn mc_app::DocumentSession::refresh_playback_after_edit(&mut self, &mut dyn mc_app::transport::AudioPort) -> core::result::Result<mc_app::CommandOutcome, mc_app::transport::TransportError>
 pub fn mc_app::DocumentSession::revision(&self) -> mc_app::Revision
 pub fn mc_app::DocumentSession::save(&mut self, &dyn mc_app::ports::ProjectStore, &mc_project::AppInfo) -> core::result::Result<mc_app::CommandOutcome, mc_app::SaveError>
 pub fn mc_app::DocumentSession::save_as(&mut self, &dyn mc_app::ports::ProjectStore, &std::path::Path, &mc_project::AppInfo) -> core::result::Result<mc_app::CommandOutcome, mc_app::SaveError>
@@ -699,6 +931,8 @@ pub fn mc_app::DocumentSession::set_sink(&mut self, alloc::boxed::Box<dyn mc_app
 pub fn mc_app::DocumentSession::snapshot(&self) -> mc_score::score::Score
 pub fn mc_app::DocumentSession::snapshot_bytes(&self, &mc_project::AppInfo) -> alloc::vec::Vec<u8>
 pub fn mc_app::DocumentSession::take_sink(&mut self) -> core::option::Option<alloc::boxed::Box<dyn mc_app::EventSink>>
+pub fn mc_app::DocumentSession::transport(&mut self, mc_app::transport::TransportCommand, &mut dyn mc_app::transport::AudioPort) -> core::result::Result<mc_app::CommandOutcome, mc_app::transport::TransportError>
+pub fn mc_app::DocumentSession::transport_state(&self) -> &mc_app::transport::TransportState
 pub fn mc_app::DocumentSession::undo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::undo_depth(&self) -> usize
 pub fn mc_app::DocumentSession::unknown_content(&self) -> &[alloc::string::String]
@@ -819,6 +1053,47 @@ impl core::marker::Unpin for mc_app::OpenReport
 impl core::marker::UnsafeUnpin for mc_app::OpenReport
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::OpenReport
 impl core::panic::unwind_safe::UnwindSafe for mc_app::OpenReport
+pub struct mc_app::PlayedBarInfo
+pub mc_app::PlayedBarInfo::length_ticks: i64
+pub mc_app::PlayedBarInfo::master_bar: usize
+pub mc_app::PlayedBarInfo::order: u32
+pub mc_app::PlayedBarInfo::start_tick: i64
+impl core::clone::Clone for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::PlayedBarInfo
+impl core::cmp::PartialEq for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::PlayedBarInfo
+impl core::marker::StructuralPartialEq for mc_app::transport::PlayedBarInfo
+impl core::marker::Freeze for mc_app::transport::PlayedBarInfo
+impl core::marker::Send for mc_app::transport::PlayedBarInfo
+impl core::marker::Sync for mc_app::transport::PlayedBarInfo
+impl core::marker::Unpin for mc_app::transport::PlayedBarInfo
+impl core::marker::UnsafeUnpin for mc_app::transport::PlayedBarInfo
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::PlayedBarInfo
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PlayedBarInfo
+pub struct mc_app::PositionUpdate
+pub mc_app::PositionUpdate::document: mc_app::DocumentId
+pub mc_app::PositionUpdate::playing: bool
+pub mc_app::PositionUpdate::tick: i64
+impl core::clone::Clone for mc_app::transport::PositionUpdate
+pub fn mc_app::transport::PositionUpdate::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::PositionUpdate
+impl core::cmp::PartialEq for mc_app::transport::PositionUpdate
+pub fn mc_app::transport::PositionUpdate::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::transport::PositionUpdate
+pub fn mc_app::transport::PositionUpdate::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::PositionUpdate
+impl core::marker::StructuralPartialEq for mc_app::transport::PositionUpdate
+impl core::marker::Freeze for mc_app::transport::PositionUpdate
+impl core::marker::Send for mc_app::transport::PositionUpdate
+impl core::marker::Sync for mc_app::transport::PositionUpdate
+impl core::marker::Unpin for mc_app::transport::PositionUpdate
+impl core::marker::UnsafeUnpin for mc_app::transport::PositionUpdate
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::PositionUpdate
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PositionUpdate
 pub struct mc_app::Revision(pub u64)
 impl core::clone::Clone for mc_app::Revision
 pub fn mc_app::Revision::clone(&self) -> Self
@@ -866,6 +1141,38 @@ impl core::marker::Unpin for mc_app::SessionConfig
 impl core::marker::UnsafeUnpin for mc_app::SessionConfig
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::SessionConfig
 impl core::panic::unwind_safe::UnwindSafe for mc_app::SessionConfig
+pub struct mc_app::TransportState
+impl mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::is_muted(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::muted(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
+pub fn mc_app::transport::TransportState::state(&self) -> mc_app::transport::PlaybackState
+pub fn mc_app::transport::TransportState::tempo_factor(&self) -> mc_playback::types::TempoFactor
+impl core::clone::Clone for mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::TransportState
+impl core::cmp::PartialEq for mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::default() -> Self
+impl core::fmt::Debug for mc_app::transport::TransportState
+pub fn mc_app::transport::TransportState::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::transport::TransportState
+impl core::marker::Freeze for mc_app::transport::TransportState
+impl core::marker::Send for mc_app::transport::TransportState
+impl core::marker::Sync for mc_app::transport::TransportState
+impl core::marker::Unpin for mc_app::transport::TransportState
+impl core::marker::UnsafeUnpin for mc_app::transport::TransportState
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportState
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportState
+pub trait mc_app::AudioPort: core::marker::Send
+pub fn mc_app::AudioPort::last_error(&self) -> core::option::Option<alloc::string::String>
+pub fn mc_app::AudioPort::load_timeline(&mut self, mc_playback::timeline::PerformanceTimeline) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::AudioPort::play(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::AudioPort::position(&self) -> mc_playback::types::Tick
+pub fn mc_app::AudioPort::seek(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::AudioPort::set_tempo_factor(&mut self, mc_playback::types::TempoFactor) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::AudioPort::state(&self) -> mc_app::transport::PlaybackState
+pub fn mc_app::AudioPort::stop(&mut self) -> core::result::Result<(), mc_app::transport::TransportError>
 pub trait mc_app::EventSink: core::marker::Send
 pub fn mc_app::EventSink::publish(&mut self, &[mc_app::EventEnvelope])
 impl mc_app::EventSink for mc_app::CollectingSink

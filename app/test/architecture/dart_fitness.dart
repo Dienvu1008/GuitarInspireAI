@@ -217,6 +217,8 @@ const Set<String> _approved = {
   'characters',
   'vector_math',
   'equatable',
+  'crypto',
+  'typed_data',
 };
 
 List<String> checkFF09Dart(Directory packagesDir, Directory appDir) {

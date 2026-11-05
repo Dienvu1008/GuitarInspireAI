@@ -24,11 +24,13 @@ pub const IMPLEMENTED: &[&str] = &[
     "xtask:coupling",
     "xtask:module-cycles",
     "xtask:unsafe-scope",
+    "xtask:rt-scan",
     "ci:bindings",
     "ci:dart-fitness",
     "ci:complexity",
     "workflow:public-api",
     "workflow:coverage",
+    "workflow:fuzz",
     "xtask:purity",
     "xtask:wasm",
     "xtask:platform",
@@ -222,7 +224,8 @@ pub fn consistency(inv: &Inventory, catalogue: &BTreeMap<String, u32>) -> Vec<St
                 Some(c)
                     if !IMPLEMENTED.contains(&c)
                         && !c.starts_with("test:")
-                        && !c.starts_with("bench:") =>
+                        && !c.starts_with("bench:")
+                        && !c.starts_with("procedure:") =>
                 {
                     errors.push(format!("{id} is active but check '{c}' is not implemented"))
                 }
@@ -270,6 +273,7 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
             "ci:complexity" => Some((CI_WORKFLOW, "clippy::cognitive_complexity")),
             "workflow:public-api" => Some((WEEKLY_WORKFLOW, "cargo +nightly public-api")),
             "workflow:coverage" => Some((WEEKLY_WORKFLOW, "cargo llvm-cov")),
+            "workflow:fuzz" => Some((WEEKLY_WORKFLOW, "cargo +nightly fuzz run import_smf")),
             "xtask:freshness" => Some((WEEKLY_WORKFLOW, "xtask fitness freshness")),
             "xtask:rule-coverage" => Some((CI_WORKFLOW, "xtask fitness rule-coverage")),
             "xtask:coupling" => Some((CI_WORKFLOW, "xtask fitness coupling")),
@@ -293,6 +297,16 @@ fn wiring(root: &Path, inv: &Inventory) -> Vec<String> {
             && let Some(problem) = super::reports::check_reference(root, check)
         {
             errors.push(format!("{id}: {problem}"));
+        }
+        // A "procedure:<file>" check is a manual run whose evidence is a committed result
+        // file (FF-18 glitch, FF-29 size; hosted CI cannot produce it, ADR-025). The file
+        // must exist and be non-empty, so an active procedure cannot point at nothing.
+        if let Some(rel) = check.strip_prefix("procedure:") {
+            match fs::read_to_string(root.join(rel)) {
+                Ok(text) if text.trim().len() > 100 => {}
+                Ok(_) => errors.push(format!("{id}: procedure result '{rel}' is empty")),
+                Err(_) => errors.push(format!("{id}: procedure result '{rel}' is missing")),
+            }
         }
     }
     errors

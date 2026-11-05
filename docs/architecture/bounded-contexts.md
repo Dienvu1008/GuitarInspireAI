@@ -107,7 +107,7 @@ Open design point: whether `mc-project` reads bytes only (pure, WASM-friendly) o
 5. Domain services: `compile(score, options) -> (PerformanceTimeline, Vec<PlaybackWarning>)`, `to_smf(timeline)`.
 6. Domain events: None.
 7. Public interface: Pure compile functions.
-8. Dependencies: `mc-score`, `mc-theory`. MIDI file writing via `midly` stays in an adapter module.
+8. Dependencies: `mc-score`, `mc-theory`. MIDI file reading and writing (`midly`) is the separate adapter crate `mc-midi` ([ADR-023](decisions/ADR-023-midi-adapter-crate.md)).
 9. Invariants: Timeline events sorted by tick; every note on has a matching note off; pitches outside MIDI range are reported (D-05), not silently clamped.
 10. Relationships: Downstream of Composition; upstream of `mc-audio`.
 

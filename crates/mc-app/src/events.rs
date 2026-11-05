@@ -22,6 +22,20 @@ pub enum AppEvent {
     },
     /// Undo or redo replaced content; the ranges in the accompanying domain events say where.
     HistoryApplied,
+    /// The playback transport changed state (started, stopped or failed). Session state
+    /// only (Q3, Q6): it never changes the revision or the document.
+    PlaybackStateChanged {
+        state: crate::transport::PlaybackState,
+    },
+    /// The set of muted tracks changed (session state, not saved).
+    MuteChanged {
+        track: mc_score::TrackId,
+        muted: bool,
+    },
+    /// The user tempo factor changed (session state, not saved).
+    TempoFactorChanged {
+        hundredths: u16,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

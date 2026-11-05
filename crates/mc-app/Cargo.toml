@@ -19,6 +19,7 @@ mc-score.workspace = true
 mc-project.workspace = true
 mc-guitar.workspace = true
 mc-notation.workspace = true
+mc-playback.workspace = true
 
 [dev-dependencies]
 mc-score = { workspace = true, features = ["fixtures"] }

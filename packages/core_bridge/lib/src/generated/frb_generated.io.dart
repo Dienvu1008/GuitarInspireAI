@@ -4,8 +4,10 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/document.dart';
+import 'api/engine.dart';
 import 'api/info.dart';
 import 'api/layout.dart';
+import 'api/midi.dart';
 import 'api/types.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -26,17 +28,37 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
                   CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_DocumentHandlePtr => wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandlePtr;
 
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_EngineHandlePtr => wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandlePtr;
+
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr => wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResultPtr;
+
 
 
                   @protected AnyhowException dco_decode_AnyhowException(dynamic raw);
 
 @protected DocumentHandle dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw);
 
+@protected EngineHandle dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw);
+
+@protected ImportResult dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
+
+@protected ImportResult dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
+
 @protected DocumentHandle dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw);
+
+@protected EngineHandle dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw);
+
+@protected ImportResult dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
 
 @protected DocumentHandle dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw);
 
+@protected EngineHandle dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw);
+
+@protected ImportResult dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
+
 @protected RustStreamSink<EventDto> dco_decode_StreamSink_event_dto_Sse(dynamic raw);
+
+@protected RustStreamSink<PositionDto> dco_decode_StreamSink_position_dto_Sse(dynamic raw);
 
 @protected String dco_decode_String(dynamic raw);
 
@@ -66,6 +88,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected TupletDto dco_decode_box_autoadd_tuplet_dto(dynamic raw);
 
+@protected int dco_decode_box_autoadd_u_32(dynamic raw);
+
 @protected int dco_decode_box_autoadd_u_8(dynamic raw);
 
 @protected CommandDto dco_decode_command_dto(dynamic raw);
@@ -80,6 +104,10 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected EventKindDto dco_decode_event_kind_dto(dynamic raw);
 
+@protected ExportReportDto dco_decode_export_report_dto(dynamic raw);
+
+@protected ExportResult dco_decode_export_result(dynamic raw);
+
 @protected double dco_decode_f_32(dynamic raw);
 
 @protected GlyphDto dco_decode_glyph_dto(dynamic raw);
@@ -93,6 +121,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 @protected int dco_decode_i_32(dynamic raw);
 
 @protected PlatformInt64 dco_decode_i_64(dynamic raw);
+
+@protected ImportReportDto dco_decode_import_report_dto(dynamic raw);
 
 @protected InstrumentDto dco_decode_instrument_dto(dynamic raw);
 
@@ -114,11 +144,15 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected List<NoteDto> dco_decode_list_note_dto(dynamic raw);
 
+@protected List<PlayedBarDto> dco_decode_list_played_bar_dto(dynamic raw);
+
 @protected Float32List dco_decode_list_prim_f_32_strict(dynamic raw);
 
 @protected Int32List dco_decode_list_prim_i_32_strict(dynamic raw);
 
 @protected Int64List dco_decode_list_prim_i_64_strict(dynamic raw);
+
+@protected List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
 
 @protected Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
@@ -140,9 +174,17 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected TupletDto? dco_decode_opt_box_autoadd_tuplet_dto(dynamic raw);
 
+@protected int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
+
 @protected int? dco_decode_opt_box_autoadd_u_8(dynamic raw);
 
 @protected OutcomeDto dco_decode_outcome_dto(dynamic raw);
+
+@protected PlaybackStateDto dco_decode_playback_state_dto(dynamic raw);
+
+@protected PlayedBarDto dco_decode_played_bar_dto(dynamic raw);
+
+@protected PositionDto dco_decode_position_dto(dynamic raw);
 
 @protected RecoveryEntryDto dco_decode_recovery_entry_dto(dynamic raw);
 
@@ -153,6 +195,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 @protected TrackSummaryDto dco_decode_track_summary_dto(dynamic raw);
 
 @protected TupletDto dco_decode_tuplet_dto(dynamic raw);
+
+@protected int dco_decode_u_16(dynamic raw);
 
 @protected int dco_decode_u_32(dynamic raw);
 
@@ -166,11 +210,27 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected DocumentHandle sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer);
 
+@protected EngineHandle sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer);
+
+@protected ImportResult sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
+
+@protected ImportResult sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
+
 @protected DocumentHandle sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer);
+
+@protected EngineHandle sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer);
+
+@protected ImportResult sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
 
 @protected DocumentHandle sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer);
 
+@protected EngineHandle sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer);
+
+@protected ImportResult sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
+
 @protected RustStreamSink<EventDto> sse_decode_StreamSink_event_dto_Sse(SseDeserializer deserializer);
+
+@protected RustStreamSink<PositionDto> sse_decode_StreamSink_position_dto_Sse(SseDeserializer deserializer);
 
 @protected String sse_decode_String(SseDeserializer deserializer);
 
@@ -200,6 +260,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected TupletDto sse_decode_box_autoadd_tuplet_dto(SseDeserializer deserializer);
 
+@protected int sse_decode_box_autoadd_u_32(SseDeserializer deserializer);
+
 @protected int sse_decode_box_autoadd_u_8(SseDeserializer deserializer);
 
 @protected CommandDto sse_decode_command_dto(SseDeserializer deserializer);
@@ -214,6 +276,10 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected EventKindDto sse_decode_event_kind_dto(SseDeserializer deserializer);
 
+@protected ExportReportDto sse_decode_export_report_dto(SseDeserializer deserializer);
+
+@protected ExportResult sse_decode_export_result(SseDeserializer deserializer);
+
 @protected double sse_decode_f_32(SseDeserializer deserializer);
 
 @protected GlyphDto sse_decode_glyph_dto(SseDeserializer deserializer);
@@ -227,6 +293,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 @protected int sse_decode_i_32(SseDeserializer deserializer);
 
 @protected PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
+
+@protected ImportReportDto sse_decode_import_report_dto(SseDeserializer deserializer);
 
 @protected InstrumentDto sse_decode_instrument_dto(SseDeserializer deserializer);
 
@@ -248,11 +316,15 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected List<NoteDto> sse_decode_list_note_dto(SseDeserializer deserializer);
 
+@protected List<PlayedBarDto> sse_decode_list_played_bar_dto(SseDeserializer deserializer);
+
 @protected Float32List sse_decode_list_prim_f_32_strict(SseDeserializer deserializer);
 
 @protected Int32List sse_decode_list_prim_i_32_strict(SseDeserializer deserializer);
 
 @protected Int64List sse_decode_list_prim_i_64_strict(SseDeserializer deserializer);
+
+@protected List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
 
 @protected Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
@@ -274,9 +346,17 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected TupletDto? sse_decode_opt_box_autoadd_tuplet_dto(SseDeserializer deserializer);
 
+@protected int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
+
 @protected int? sse_decode_opt_box_autoadd_u_8(SseDeserializer deserializer);
 
 @protected OutcomeDto sse_decode_outcome_dto(SseDeserializer deserializer);
+
+@protected PlaybackStateDto sse_decode_playback_state_dto(SseDeserializer deserializer);
+
+@protected PlayedBarDto sse_decode_played_bar_dto(SseDeserializer deserializer);
+
+@protected PositionDto sse_decode_position_dto(SseDeserializer deserializer);
 
 @protected RecoveryEntryDto sse_decode_recovery_entry_dto(SseDeserializer deserializer);
 
@@ -287,6 +367,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 @protected TrackSummaryDto sse_decode_track_summary_dto(SseDeserializer deserializer);
 
 @protected TupletDto sse_decode_tuplet_dto(SseDeserializer deserializer);
+
+@protected int sse_decode_u_16(SseDeserializer deserializer);
 
 @protected int sse_decode_u_32(SseDeserializer deserializer);
 
@@ -300,11 +382,27 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer);
 
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer);
+
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
+
+@protected void sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
+
 @protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer);
+
+@protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer);
+
+@protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer);
 
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer);
+
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
+
 @protected void sse_encode_StreamSink_event_dto_Sse(RustStreamSink<EventDto> self, SseSerializer serializer);
+
+@protected void sse_encode_StreamSink_position_dto_Sse(RustStreamSink<PositionDto> self, SseSerializer serializer);
 
 @protected void sse_encode_String(String self, SseSerializer serializer);
 
@@ -334,6 +432,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected void sse_encode_box_autoadd_tuplet_dto(TupletDto self, SseSerializer serializer);
 
+@protected void sse_encode_box_autoadd_u_32(int self, SseSerializer serializer);
+
 @protected void sse_encode_box_autoadd_u_8(int self, SseSerializer serializer);
 
 @protected void sse_encode_command_dto(CommandDto self, SseSerializer serializer);
@@ -348,6 +448,10 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected void sse_encode_event_kind_dto(EventKindDto self, SseSerializer serializer);
 
+@protected void sse_encode_export_report_dto(ExportReportDto self, SseSerializer serializer);
+
+@protected void sse_encode_export_result(ExportResult self, SseSerializer serializer);
+
 @protected void sse_encode_f_32(double self, SseSerializer serializer);
 
 @protected void sse_encode_glyph_dto(GlyphDto self, SseSerializer serializer);
@@ -361,6 +465,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 @protected void sse_encode_i_32(int self, SseSerializer serializer);
 
 @protected void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
+
+@protected void sse_encode_import_report_dto(ImportReportDto self, SseSerializer serializer);
 
 @protected void sse_encode_instrument_dto(InstrumentDto self, SseSerializer serializer);
 
@@ -382,11 +488,15 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected void sse_encode_list_note_dto(List<NoteDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_played_bar_dto(List<PlayedBarDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_i_32_strict(Int32List self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_i_64_strict(Int64List self, SseSerializer serializer);
+
+@protected void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
 
@@ -408,9 +518,17 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 @protected void sse_encode_opt_box_autoadd_tuplet_dto(TupletDto? self, SseSerializer serializer);
 
+@protected void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
+
 @protected void sse_encode_opt_box_autoadd_u_8(int? self, SseSerializer serializer);
 
 @protected void sse_encode_outcome_dto(OutcomeDto self, SseSerializer serializer);
+
+@protected void sse_encode_playback_state_dto(PlaybackStateDto self, SseSerializer serializer);
+
+@protected void sse_encode_played_bar_dto(PlayedBarDto self, SseSerializer serializer);
+
+@protected void sse_encode_position_dto(PositionDto self, SseSerializer serializer);
 
 @protected void sse_encode_recovery_entry_dto(RecoveryEntryDto self, SseSerializer serializer);
 
@@ -421,6 +539,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 @protected void sse_encode_track_summary_dto(TrackSummaryDto self, SseSerializer serializer);
 
 @protected void sse_encode_tuplet_dto(TupletDto self, SseSerializer serializer);
+
+@protected void sse_encode_u_16(int self, SseSerializer serializer);
 
 @protected void sse_encode_u_32(int self, SseSerializer serializer);
 
@@ -471,6 +591,50 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
             late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandlePtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle');
             late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle = _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandlePtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+            
+            void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(
+              ffi.Pointer<ffi.Void> ptr,
+            ) {
+              return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(
+                ptr,
+              );
+            }
+
+            late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandlePtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle');
+            late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle = _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandlePtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+            
+            void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(
+              ffi.Pointer<ffi.Void> ptr,
+            ) {
+              return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(
+                ptr,
+              );
+            }
+
+            late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandlePtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle');
+            late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle = _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandlePtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+            
+            void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(
+              ffi.Pointer<ffi.Void> ptr,
+            ) {
+              return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(
+                ptr,
+              );
+            }
+
+            late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResultPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult');
+            late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult = _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResultPtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+            
+            void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(
+              ffi.Pointer<ffi.Void> ptr,
+            ) {
+              return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(
+                ptr,
+              );
+            }
+
+            late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResultPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult');
+            late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult = _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResultPtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
             
         }
         

@@ -10,20 +10,23 @@ Criticality: Critical blocks merge. Important requires review. Advisory reports 
 
 Rows may depend on columns marked Y. Everything else is forbidden. The matrix is stored as a version-controlled file (planned `architecture/allowed-deps.toml`) and checked by FF-01.
 
-| From \ To | theory | score | guitar | pattern | notation | playback | project | dsp | app | audio | ffi |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| theory | | | | | | | | | | | |
-| score | Y | | | | | | | | | | |
-| guitar | Y | | | | | | | | | | |
-| pattern | Y | Y | Y | | | | | | | | |
-| notation | Y | Y | | | | | | | | | |
-| playback | Y | Y | | | | | | | | | |
-| project | Y | Y | | Y (Phase 6) | | | | | | | |
-| dsp | | | | | | | | | | | |
-| app | Y | Y | Y | Y (Phase 6) | Y | Y | Y | Y | | | |
-| audio | Y | | | | | Y | | Y | Y | | |
-| ffi | | | | | | | | | Y | Y | |
-| cli | | | | | | | Y | | Y | Y (optional) | |
+| From \ To | theory | score | guitar | pattern | notation | playback | project | dsp | app | audio | midi | ffi |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| theory | | | | | | | | | | | | |
+| score | Y | | | | | | | | | | | |
+| guitar | Y | | | | | | | | | | | |
+| pattern | Y | Y | Y | | | | | | | | | |
+| notation | Y | Y | | | | | | | | | | |
+| playback | Y | Y | | | | | | | | | | |
+| project | Y | Y | | Y (Phase 6) | | | | | | | | |
+| dsp | | | | | | | | | | | | |
+| app | Y | Y | Y | Y (Phase 6) | Y | Y | Y | Y | | | | |
+| audio | Y | | | | | Y | | Y | Y | | | |
+| midi | Y | Y | Y | | | Y | | | | | | |
+| ffi | | | | | | | | | Y | Y | Y (Phase 4) | |
+| cli | | | | | | | Y | | Y | Y (optional) | Y (Phase 4) | |
+
+`midi` (`mc-midi`, Phase 4) is the SMF import and export adapter ([ADR-023](decisions/ADR-023-midi-adapter-crate.md)); only the adapters `ffi` and `cli` use it.
 
 Future `mc-analysis` (Phase 8): may depend on `theory` and `dsp` only. `app` may depend on it. It is added to the matrix file in Phase 8 by ADR.
 
@@ -96,7 +99,12 @@ Planned `clippy.toml` `disallowed-methods` and `disallowed-types` for `mc-theory
 
 ### 3a. Unsafe code (ADR-022, FF-34)
 
-All crates use the workspace lint table (`[lints] workspace = true`), which sets `unsafe_code = "forbid"`. The single exception is `mc-ffi`: it restates the workspace lints with `unsafe_code = "deny"` so that the generated module may carry `#[allow(unsafe_code)] mod frb_generated;`. No other `allow(unsafe_code)` exists in the repository, hand-written `mc-ffi` code has no `unsafe`, and generated files are never edited by hand (FF-12). Any other crate that needs `unsafe` requires a new ADR.
+All crates use the workspace lint table (`[lints] workspace = true`), which sets `unsafe_code = "forbid"`. There are exactly two exceptions (ADR-022, extended by [ADR-027](decisions/ADR-027-unsafe-exception-mmcss-module.md)):
+
+1. `mc-ffi` restates the workspace lints with `unsafe_code = "deny"` so that the generated module may carry `#[allow(unsafe_code)] mod frb_generated;`. Hand-written `mc-ffi` code has no `unsafe`, and generated files are never edited by hand (FF-12).
+2. `mc-audio` restates the workspace lints with `unsafe_code = "deny"` so that `#[cfg(windows)] #[allow(unsafe_code)] mod mmcss;` may make the one MMCSS thread-promotion call. `mmcss.rs` contains exactly one `unsafe` token with a `// SAFETY:` comment directly above it; nothing else in `mc-audio` may use `unsafe`.
+
+No other `allow(unsafe_code)` exists in the repository. Any other crate or module that needs `unsafe` requires a new ADR.
 
 ## 4. Review checklist (for changes not fully automatable)
 
@@ -104,5 +112,5 @@ All crates use the workspace lint table (`[lints] workspace = true`), which sets
 - Does a new public item expose internal representation? (GR-06)
 - Does a new event carry content instead of ranges? ([ADR-006](decisions/ADR-006-event-model.md))
 - Does RT code lock, allocate, log, or perform I/O? (GR-10)
-- Does a change add `unsafe`, an `allow(unsafe_code)` or a crate-local `[lints]` table? (ADR-022, FF-34)
+- Does a change add `unsafe`, an `allow(unsafe_code)` or a crate-local `[lints]` table? (ADR-022, ADR-027, FF-34)
 - Does a new dependency pass license policy and is it necessary? ([ADR-015](decisions/ADR-015-dependency-license-policy.md))

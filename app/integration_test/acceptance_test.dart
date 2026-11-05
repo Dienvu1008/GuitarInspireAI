@@ -16,15 +16,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:guitar_inspire/src/shell.dart';
 import 'package:guitar_inspire/src/startup.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:playback_feature/playback_feature.dart';
 
 final class _Dialogs implements FileDialogs {
   String? openPath;
   String? savePath;
+  List<int>? midiBytes;
+  String? midiSavePath;
   @override
   Future<String?> pickProjectToOpen() async => openPath;
   @override
   Future<String?> pickProjectToSave({required String suggestedName}) async =>
       savePath;
+  @override
+  Future<List<int>?> pickMidiToImport() async => midiBytes;
+  @override
+  Future<String?> saveMidi(List<int> bytes, {required String suggestedName}) async =>
+      midiSavePath;
 }
 
 final class _Paths implements AppPaths {
@@ -70,6 +78,7 @@ void main() {
           documentFactoryProvider.overrideWithValue(CoreBridge.documents),
           fileDialogsProvider.overrideWithValue(dialogs),
           appPathsProvider.overrideWithValue(_Paths(recoveryDir)),
+          midiServiceProvider.overrideWithValue(CoreBridge.midi),
         ],
         // Autosave is triggered explicitly in the recovery test.
         child: const StartupGate(autosavePoll: Duration(hours: 1)),
@@ -191,6 +200,7 @@ Future<ProviderContainer> _startExpectingRecovery(
         documentFactoryProvider.overrideWithValue(CoreBridge.documents),
         fileDialogsProvider.overrideWithValue(dialogs),
         appPathsProvider.overrideWithValue(_Paths(recoveryDir)),
+        midiServiceProvider.overrideWithValue(CoreBridge.midi),
       ],
       child: const StartupGate(autosavePoll: Duration(hours: 1)),
     ),

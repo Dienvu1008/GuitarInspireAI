@@ -76,8 +76,24 @@ Score edits during playback: recompile and swap; continuity is checked by A6.
 5. Same-tick ordering: note off, then tempo, then program change, then note on. Ties within a category are ordered by track index, then voice index, then string index.
 6. Tempo: tempo map entries are converted to ticks. Seconds are derived by piecewise integration over tempo segments. The user tempo factor scales all tempos uniformly. Tick to sample conversion uses integer arithmetic (`u128` intermediates) with rounding down, so sample positions are reproducible on every platform.
 7. Pitch: sounding pitch comes from tuning, capo and fret. Pitches outside MIDI 0 to 127 are omitted with D-05 warnings.
+8. Fixed values ([ADR-024](decisions/ADR-024-playback-rendering-conventions-and-rt-failures.md)): velocity 96 for every note; dead notes velocity 40 and a note off after exactly 1/64 of a whole note (or at the end of a shorter beat), outside tie chains and without let ring (so 64 is always among the tick denominators of rule 3); let ring as in rule 4, taken from the first note of a tie chain; a note on that hits a key already sounding on its channel first ends the earlier note at the same tick; channels 0 to 8 and 10 to 15 in score order, General MIDI program 25 (Acoustic Guitar (steel)) on every channel at tick 0.
 
 Tests: PB-09 (determinism), timeline variants of PB-02, PB-04 and PB-07, a golden timeline for the reference scores, and a property test that every note on has exactly one later or equal note off on the same channel and key. All are Phase 4 `mc-playback` tests; the bar timing rules they depend on are tested in Phase 1 (PB-01 to PB-08).
+
+## 3b. Implementation status of the playback engine (slice 4b)
+
+`mc-audio` implements sections 1 to 3 and 6. Where it is and how it is checked:
+
+| Part | Where | Check |
+|---|---|---|
+| Callback core (events applied sample-accurately by splitting blocks, seek, stop, tempo factor re-anchored at the same tick, timeline and synth swap, silence on panic) | `crates/mc-audio/src/rt/` | unit tests (buffer-size independence, determinism, swap, panic path); FF-16 `tests/no_alloc.rs` with a negative control; FF-17 `cargo xtask fitness rt-scan` |
+| Control thread (SoundFont loaded lazily at the first Play, warm-up before install, rings, freeing retired objects, stream rebuild after a device error) | `control.rs`, `device.rs`, `soundfont.rs` | `tests/device.rs` (ignored without a device; run on the reference machine) |
+| Offline engine (same core, no device) | `offline.rs` | used by the tests above |
+| Tick to sample conversion integrates every tempo segment | `mc-playback` `PerformanceTimeline::tick_to_sample` | `tempo_changes_are_integrated_piecewise` |
+
+Measured on the reference machine (evidence for that machine only, ADR-025): 48 kHz shared mode, 0 late callbacks in 2 s, longest callback 3.45 ms, reported output latency 32.9 ms.
+
+Windows MMCSS promotion of the callback thread (ADR-007 amendment 1) is implemented in `crates/mc-audio/src/mmcss.rs` under the reviewed `unsafe` exception of [ADR-027](decisions/ADR-027-unsafe-exception-mmcss-module.md). The status reports `Promotion::Promoted`, or `Promotion::Unavailable` if the OS call fails (the callback then runs at normal priority; S2 saw late callbacks of up to 37 ms in that case). Other platforms report `NotNeeded`.
 
 ## 4. Tuner design
 

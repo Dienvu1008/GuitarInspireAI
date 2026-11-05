@@ -15,6 +15,8 @@ dependencies:
     path: ../packages/core_bridge
   editor_feature:
     path: ../packages/editor_feature
+  playback_feature:
+    path: ../packages/playback_feature
   app_platform:
     path: ../packages/app_platform
   ui_kit:
@@ -26,6 +28,8 @@ dev_dependencies:
   flutter_lints: 6.0.0
   integration_test:
     sdk: flutter
+  # SHA-256 lock of the bundled SoundFont in app/test/soundfont_test.dart (4c).
+  crypto: 3.0.6
 
 flutter:
   uses-material-design: true

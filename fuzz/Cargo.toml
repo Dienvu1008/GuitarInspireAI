@@ -1,0 +1,31 @@
+# cargo-fuzz crate for the MIDI importer (FF-15, GR-09, ADR-023). Excluded from the
+# production workspace (root Cargo.toml): it needs nightly and libfuzzer-sys, which are
+# not part of the FF-01 dependency matrix or the cargo-deny scan. Run weekly on Linux.
+#
+#   cargo +nightly fuzz run import_smf
+#
+# Any crash is minimized and committed as a regression fixture, which then becomes part
+# of FF-11 (Critical) via the mc-midi fixture tests.
+[package]
+name = "mc-midi-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+mc-midi = { path = "../crates/mc-midi" }
+
+[[bin]]
+name = "import_smf"
+path = "fuzz_targets/import_smf.rs"
+test = false
+doc = false
+bench = false
+
+# libfuzzer needs an unwinding panic strategy; keep debug assertions on to catch UB.
+[profile.release]
+debug = true

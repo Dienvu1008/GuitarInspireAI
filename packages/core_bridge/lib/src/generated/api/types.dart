@@ -9,7 +9,7 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'types.freezed.dart';
 
             // These functions are ignored because they are not marked as `pub`: `new`, `note_id`, `to_app`, `to_app`, `to_app`, `track_id`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
 
 
             
@@ -262,6 +262,14 @@ final EventKindDto kind;
  const factory EventKindDto.dirtyChanged({   required bool dirty , }) = EventKindDto_DirtyChanged;
  const factory EventKindDto.undoAvailabilityChanged({   required bool canUndo ,  required bool canRedo , }) = EventKindDto_UndoAvailabilityChanged;
  const factory EventKindDto.historyApplied() = EventKindDto_HistoryApplied;
+ /// Playback transport state changed (session state, ADR-028). The revision is
+/// unchanged on the carrying event.
+const factory EventKindDto.playbackStateChanged({   required PlaybackStateDto state , }) = EventKindDto_PlaybackStateChanged;
+ /// A track was muted or unmuted (session state, ADR-028).
+const factory EventKindDto.muteChanged({   required PlatformInt64 track ,  required bool muted , }) = EventKindDto_MuteChanged;
+ /// The user tempo factor changed (session state, ADR-028). Hundredths of normal
+/// speed (100 = 1.0x), 25..=200 in steps of 5.
+const factory EventKindDto.tempoFactorChanged({   required int hundredths , }) = EventKindDto_TempoFactorChanged;
 
                     
 
@@ -373,6 +381,73 @@ final List<EventDto> events;
             other is OutcomeDto &&
                 runtimeType == other.runtimeType
                 && revision == other.revision&& events == other.events;
+
+            }
+
+/// Playback transport state mirrored to Dart (ADR-028).
+enum PlaybackStateDto {
+                    stopped,
+playing,
+/// Playback could not run; the message is read with `EngineHandle::last_error`.
+failed,
+                    ;
+                    
+                }
+
+/// One played bar for the cursor's tick-to-x mapping (ADR-028). Ticks are `i64`.
+class PlayedBarDto  {
+                /// Playback order after repeat and volta expansion, from 0.
+final PlatformInt64 order;
+/// Score master-bar index this played bar came from.
+final PlatformInt64 masterBar;
+final PlatformInt64 startTick;
+final PlatformInt64 lengthTicks;
+
+                const PlayedBarDto({required this.order ,required this.masterBar ,required this.startTick ,required this.lengthTicks ,});
+
+
+
+
+
+        @override
+        int get hashCode => order.hashCode^masterBar.hashCode^startTick.hashCode^lengthTicks.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is PlayedBarDto &&
+                runtimeType == other.runtimeType
+                && order == other.order&& masterBar == other.masterBar&& startTick == other.startTick&& lengthTicks == other.lengthTicks;
+
+            }
+
+/// A playback position update for the UI cursor (60 Hz stream, ADR-028). All fields map
+/// to Dart `int`/`bool` (ADR-005 amendment 2: never `u64`).
+class PositionDto  {
+                /// Tick on the current timeline (i64, non-negative in a running timeline).
+final PlatformInt64 tick;
+final bool playing;
+final PlaybackStateDto state;
+
+                const PositionDto({required this.tick ,required this.playing ,required this.state ,});
+
+
+
+
+
+        @override
+        int get hashCode => tick.hashCode^playing.hashCode^state.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is PositionDto &&
+                runtimeType == other.runtimeType
+                && tick == other.tick&& playing == other.playing&& state == other.state;
 
             }
 

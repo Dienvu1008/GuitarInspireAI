@@ -34,6 +34,11 @@ abstract interface class DocumentService {
 
   int voiceCount(int track, int bar);
 
+  /// Played-bar layout for the playback cursor (ADR-028): each bar's score index and
+  /// tick range after repeat and volta expansion. The UI maps a playback tick to an x
+  /// on the TAB from this. Independent of mute (PB-04).
+  List<PlayedBarDto> playedBars();
+
   /// TAB layout of a track at the current revision (synchronous; see ADR-018).
   TabLayoutDto tabLayout(int track, MetricsDto metrics);
 

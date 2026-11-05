@@ -1,7 +1,7 @@
 # Architecture Fitness Functions
 
 Purpose: Define the automated checks that keep the architecture rules true over time, with criticality, tool, activation phase and threshold justification.
-Status: Accepted (catalogue). Each function is implemented in its activation phase; none exist yet.
+Status: Accepted (catalogue). Each function is implemented in its activation phase. As of Phase 4, 33 of 34 are active; only FF-31 (Phase 8) is still planned.
 Related documents: [dependency-rules.md](dependency-rules.md), [domain-invariants.md](domain-invariants.md), [project-format.md](project-format.md), [performance-requirements.md](performance-requirements.md), [decisions/README.md](decisions/README.md), `.kiro/steering/architecture-guardrails.md`.
 
 Criticality: Critical blocks merge. Important needs review when it fails (does not block automatically). Advisory produces reports.
@@ -45,7 +45,7 @@ Planned implementation home: a Rust `xtask` crate (`cargo xtask fitness`) plus c
 | FF-31 | Candidate acceptance passes domain validation | GR-04, AI-02 | Integration test with invalid candidate | Critical | Phase 8 | Binary |
 | FF-32 | DTO JSON schema snapshot requires version bump | GR-08 | schemars snapshot test | Critical | Phase 1 | Binary |
 | FF-33 | Documentation links and Mermaid diagrams valid | GR-12 | Link check script, mermaid-cli | Important | Phase 0 | Binary |
-| FF-34 | Unsafe code confined to the generated FFI module ([ADR-022](decisions/ADR-022-unsafe-confined-to-generated-ffi.md)): every crate except `mc-ffi` uses the workspace lints (`unsafe_code = "forbid"`); the `mc-ffi` lint table equals the workspace table except `unsafe_code = "deny"`; the only `allow(unsafe_code)` is on `mod frb_generated;` in `crates/mc-ffi/src/lib.rs` | Security, ADR-005 | `cargo xtask fitness unsafe-scope` (source and manifest scan) | Critical | Phase 3 | Binary |
+| FF-34 | Unsafe code confined to two reviewed exceptions ([ADR-022](decisions/ADR-022-unsafe-confined-to-generated-ffi.md), [ADR-027](decisions/ADR-027-unsafe-exception-mmcss-module.md)): every crate except `mc-ffi` and `mc-audio` uses the workspace lints (`unsafe_code = "forbid"`); the lint tables of those two equal the workspace table except `unsafe_code = "deny"`; the only `allow(unsafe_code)` are on `mod frb_generated;` in `crates/mc-ffi/src/lib.rs` and on `#[cfg(windows)] mod mmcss;` in `crates/mc-audio/src/lib.rs`; `mmcss.rs` has exactly one `unsafe` token preceded by a `// SAFETY:` comment | Security, ADR-005 | `cargo xtask fitness unsafe-scope` (source and manifest scan) | Critical | Phase 3 | Binary |
 
 ## Activation by phase
 

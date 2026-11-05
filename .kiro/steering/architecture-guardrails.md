@@ -22,7 +22,7 @@ These rules apply to every change in this repository. Full details: `docs/archit
 - GR-12 Fitness functions are version-controlled in this repository.
 - GR-13 Changes to protected paths require an ADR reference.
 - GR-14 Agents must not weaken or delete fitness functions to make tests pass.
-- Unsafe code is forbidden in every crate; only the generated module `mc-ffi/src/frb_generated.rs` may contain it (ADR-022, FF-34).
+- Unsafe code is forbidden in every crate; only the generated module `mc-ffi/src/frb_generated.rs` and the single MMCSS call in `mc-audio/src/mmcss.rs` may contain it (ADR-022, ADR-027, FF-34).
 
 ## Protected paths
 
@@ -37,4 +37,4 @@ These rules apply to every change in this repository. Full details: `docs/archit
 5. Do not put music rules in Dart or in adapters; add them to the owning Rust context.
 6. Do not create empty crates or packages ahead of the phase that needs them.
 7. Do not modify fixture files of released project format versions; they are append-only.
-8. Do not write `unsafe` code. The only exception is the generated `mc-ffi` module `frb_generated` (ADR-022, FF-34); never edit generated bindings by hand (FF-12), and never add another `allow(unsafe_code)` or a crate-local lint table that relaxes the workspace lints.
+8. Do not write `unsafe` code. The only exceptions are the generated `mc-ffi` module `frb_generated` (ADR-022, FF-34) and the `mc-audio` module `mmcss` with its one reviewed `unsafe` call (ADR-027, FF-34); never edit generated bindings by hand (FF-12), and never add another `allow(unsafe_code)` or a crate-local lint table that relaxes the workspace lints.

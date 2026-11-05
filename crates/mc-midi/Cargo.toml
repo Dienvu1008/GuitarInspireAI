@@ -1,0 +1,20 @@
+[package]
+name = "mc-midi"
+version = "0.1.0"
+description = "MIDI interchange adapter: Standard MIDI File export from a performance timeline and import into a validated score with an ImportReport (ADR-012, ADR-023)."
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+mc-theory.workspace = true
+mc-score.workspace = true
+mc-guitar.workspace = true
+mc-playback.workspace = true
+midly.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true

@@ -6,9 +6,13 @@ use crate::events::{AppEvent, DocumentId, EventEnvelope, EventPayload, EventSink
 use crate::handlers::{guitar_handlers, score_handlers, track_handlers};
 use crate::history::{History, HistoryLimits};
 use crate::ports::{Clock, Entropy, ProjectStore};
+use crate::transport::{
+    AudioPort, PlaybackState, PlayedBarInfo, TransportCommand, TransportError, TransportState,
+};
 use crate::{CommandError, CommandId, Constraints, OpenError, SaveError, diff};
+use mc_playback::{CompileOptions, PerformanceTimeline, TempoFactor, Tick, compile};
 use mc_project::{AppInfo, LoadWarning, ProjectId, SaveInfo};
-use mc_score::{Diagnostic, DomainEvent, Score};
+use mc_score::{Diagnostic, DomainEvent, Score, TrackId};
 use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -65,6 +69,9 @@ pub struct DocumentSession {
     /// D-01 diagnostics of `score`, kept current incrementally on every change (a full
     /// scan of a large score costs several ms, too much per keystroke).
     diagnostics: Vec<Diagnostic>,
+    /// Playback transport settings: session state, not document content (Q3, Q6). Not
+    /// saved to the file, not part of undo.
+    transport: TransportState,
 }
 
 /// Full D-01 scan; overflow (not reachable with validated durations) reports nothing,
@@ -113,6 +120,7 @@ impl DocumentSession {
             unknown_content: Vec::new(),
             last_autosave_millis: now,
             sink: None,
+            transport: TransportState::default(),
         }
     }
 
@@ -179,6 +187,7 @@ impl DocumentSession {
             unknown_content: report.unknown_content.clone(),
             last_autosave_millis: clock.now_unix_millis(),
             sink: None,
+            transport: TransportState::default(),
         };
         Ok((session, report))
     }
@@ -253,6 +262,114 @@ impl DocumentSession {
             could_undo,
             could_redo,
         ))
+    }
+
+    // ------------------------------------------------------------ transport
+
+    /// Compiles the current snapshot for playback, applying the muted set (pruned to
+    /// tracks that still exist). Pure (PB-09); called when playback (re)starts and after
+    /// an edit during playback. The user tempo factor is not part of the timeline; it is
+    /// a render scalar sent through [`AudioPort::set_tempo_factor`].
+    fn compile_timeline(&self) -> Result<PerformanceTimeline, TransportError> {
+        let mut options = CompileOptions::new();
+        let existing: Vec<TrackId> = self.score.tracks().map(|t| t.id()).collect();
+        options.muted = self
+            .transport
+            .muted()
+            .iter()
+            .copied()
+            .filter(|t| existing.contains(t))
+            .collect();
+        compile(&self.score, &options)
+            .map(|out| out.timeline)
+            .map_err(|e| TransportError::Compile(e.to_string()))
+    }
+
+    /// Carries out a transport command through `port`. Playback is session state: no
+    /// command id, no revision bump, no undo, nothing written to the file (Q3, Q6).
+    /// Events are published so the UI can update the transport bar and cursor.
+    pub fn transport(
+        &mut self,
+        cmd: TransportCommand,
+        port: &mut dyn AudioPort,
+    ) -> Result<CommandOutcome, TransportError> {
+        let mut payloads: Vec<EventPayload> = Vec::new();
+        match cmd {
+            TransportCommand::Play { from_master_bar } => {
+                let timeline = self.compile_timeline()?;
+                let start = match from_master_bar {
+                    Some(bar) => timeline
+                        .first_played_start_of_master_bar(bar)
+                        .ok_or(TransportError::BarOutOfRange { master_bar: bar })?,
+                    None => Tick(port.position().0.max(0)),
+                };
+                port.load_timeline(timeline)?;
+                port.set_tempo_factor(self.transport.tempo_factor())?;
+                port.play(start)?;
+            }
+            TransportCommand::Stop => port.stop()?,
+            TransportCommand::Seek { tick } => port.seek(tick)?,
+            TransportCommand::SetMuted { track, muted } => {
+                let changed = self.set_muted_state(track, muted);
+                if changed {
+                    payloads.push(EventPayload::App(AppEvent::MuteChanged { track, muted }));
+                    // Recompile and swap so the change is heard without restarting while
+                    // playing (Q8 releases held notes on swap).
+                    if port.state() == PlaybackState::Playing {
+                        let timeline = self.compile_timeline()?;
+                        port.load_timeline(timeline)?;
+                    }
+                }
+            }
+            TransportCommand::SetTempoFactor { factor } => {
+                if factor != self.transport.tempo_factor() {
+                    self.set_tempo_factor_state(factor);
+                    port.set_tempo_factor(factor)?;
+                    payloads.push(EventPayload::App(AppEvent::TempoFactorChanged {
+                        hundredths: factor.hundredths(),
+                    }));
+                }
+            }
+        }
+        payloads.extend(self.sync_playback_state(port));
+        Ok(self.emit(None, payloads))
+    }
+
+    /// After an edit while playing, recompile and swap so the engine hears the change
+    /// (audio-dsp section 3 "Score edits during playback"). A no-op when stopped.
+    pub fn refresh_playback_after_edit(
+        &mut self,
+        port: &mut dyn AudioPort,
+    ) -> Result<CommandOutcome, TransportError> {
+        if port.state() == PlaybackState::Playing {
+            let timeline = self.compile_timeline()?;
+            port.load_timeline(timeline)?;
+        }
+        let payloads = self.sync_playback_state(port);
+        Ok(self.emit(None, payloads))
+    }
+
+    fn set_muted_state(&mut self, track: TrackId, muted: bool) -> bool {
+        if muted {
+            self.transport.set_muted_insert(track)
+        } else {
+            self.transport.set_muted_remove(track)
+        }
+    }
+
+    fn set_tempo_factor_state(&mut self, factor: TempoFactor) {
+        self.transport.set_tempo_factor(factor);
+    }
+
+    /// Reads the engine state through the port and, if it changed, returns a
+    /// `PlaybackStateChanged` payload. Keeps the session's mirror current.
+    fn sync_playback_state(&mut self, port: &dyn AudioPort) -> Vec<EventPayload> {
+        let state = port.state();
+        if self.transport.set_state(state) {
+            vec![EventPayload::App(AppEvent::PlaybackStateChanged { state })]
+        } else {
+            Vec::new()
+        }
     }
 
     fn commit(
@@ -452,6 +569,34 @@ impl DocumentSession {
     /// D-01 diagnostics of the whole score (kept current on every change).
     pub fn diagnostics(&self) -> Vec<Diagnostic> {
         self.diagnostics.clone()
+    }
+
+    /// Current playback transport settings (muted tracks, tempo factor, last state).
+    /// Session state, not document content.
+    pub fn transport_state(&self) -> &TransportState {
+        &self.transport
+    }
+
+    /// Played-bar layout of the current score for the playback cursor: each bar's score
+    /// index, start tick and length after repeat and volta expansion (ADR-028). Timing
+    /// is independent of mute (PB-04), so this compiles without a mute set. Returns an
+    /// empty vector if compilation fails. The UI maps a playback tick to an x position
+    /// on the TAB from this table.
+    pub fn played_bars(&self) -> Vec<PlayedBarInfo> {
+        match compile(&self.score, &CompileOptions::new()) {
+            Ok(out) => out
+                .timeline
+                .played_bars()
+                .iter()
+                .map(|b| PlayedBarInfo {
+                    order: b.order,
+                    master_bar: b.master_bar,
+                    start_tick: b.start.0,
+                    length_ticks: b.length.0,
+                })
+                .collect(),
+            Err(_) => Vec::new(),
+        }
     }
 
     /// `self.score` just replaced `before`; recheck only the bars that changed.
