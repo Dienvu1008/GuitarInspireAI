@@ -1,7 +1,7 @@
 # Phase 4 Exit Report
 
 Purpose: Evidence against the Phase 4 acceptance criteria (playback with tempo and mute, MIDI import and export), the measurements and their single-machine scope, the defects found during implementation, the fitness functions activated, and open points for the user.
-Status: Proposed for user acceptance. CI status in section 9.
+Status: Final. Phase 4 accepted by the user on 2026-10-31 with the single-machine evidence scope of section 4 and the open points of section 7. CI status in section 9.
 Related documents: [implementation-phases.md](implementation-phases.md), [milestones.md](milestones.md), [phase-3-exit-report.md](phase-3-exit-report.md), [audio-dsp-architecture.md](../architecture/audio-dsp-architecture.md), [performance-requirements.md](../architecture/performance-requirements.md), [ADR-023](../architecture/decisions/ADR-023-midi-adapter-crate.md), [ADR-024](../architecture/decisions/ADR-024-playback-rendering-conventions-and-rt-failures.md), [ADR-025](../architecture/decisions/ADR-025-single-machine-evidence-accepted.md), [ADR-026](../architecture/decisions/ADR-026-bundled-soundfont-trimmed-fluidr3.md), [ADR-027](../architecture/decisions/ADR-027-unsafe-exception-mmcss-module.md), [ADR-028](../architecture/decisions/ADR-028-playback-transport-port-and-session-state.md).
 
 ## 1. Outcome
@@ -109,4 +109,4 @@ Commits `e0f3911` (4a), `3996a38` (4e), `f4d960a` (4b), `ef05ce3` (ADR-027), `33
 
 ## 10. Closure
 
-Phase 4 closes with the squash-merge of `phase-4-playback` into `main` with CI passing, carrying the Phase 4 ADR trailers (ADR-023 to ADR-028). Next phase: Phase 5 (tuner, chord finder and fretboard UI; MVP, M5).
+Decisions (user, 2026-10-31): Phase 4 accepted with the single-machine evidence scope of section 4 (R-21 open, ADR-025) and the open points O-1 to O-6 of section 7. Phase 4 closes with a `--no-ff` merge of `phase-4-playback` into `main` with CI passing. The six slice commits keep their individual `Architecture-Change` trailers; the merge commit carries the full Phase 4 trailer set (ADR-005, ADR-007, ADR-022, ADR-023, ADR-024, ADR-025, ADR-026, ADR-027, ADR-028) so FF-19 passes for the merge commit itself. Next phase: Phase 5 (tuner, chord finder and fretboard UI; MVP, M5).
