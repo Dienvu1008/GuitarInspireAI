@@ -1,7 +1,7 @@
 # Phase 5 Exit Report (MVP, M5)
 
 Purpose: Evidence against the Phase 5 acceptance criteria (tuner, chord finder, fretboard; MVP close), the single-machine and synthetic-only scope of the tuner evidence, the MVP feature checklist, the crate-count and Web-priority (Q-14) review the roadmap asks for at M5, and open points.
-Status: Proposed for user acceptance. CI status in section 8.
+Status: Proposed for user acceptance. CI status in section 8. Read the "Known evidence gaps" block (after section 4) before relying on this report: the MVP has **not** been verified on real hardware beyond the single reference machine, and the tuner has **not** been measured on a real guitar. Evidence gaps (a) and (b) are conditions of acceptance, not post-acceptance debt; M5 is accepted with these gaps on the record.
 Related documents: [implementation-phases.md](implementation-phases.md), [milestones.md](milestones.md), [README.md](README.md), [mvp-known-limitations.md](mvp-known-limitations.md), [mvp-release-notes.md](mvp-release-notes.md), [phase-4-exit-report.md](phase-4-exit-report.md), [ADR-029](../architecture/decisions/ADR-029-tuner-pitch-detection.md), [ADR-025](../architecture/decisions/ADR-025-single-machine-evidence-accepted.md).
 
 ## 1. Outcome
@@ -45,6 +45,15 @@ Milestone M5 demo ("tune a guitar, find a chord, insert it, play it back, save")
 - **A9/A8 measured on synthetic signals** (sine and a harmonic pluck, ± 20 dB noise): MPM is within ~0.02 cents across E2..E6 clean, 0% octave errors, allocation-free per window; latency 24–35 ms. Numbers and thresholds are fixed in [ADR-029](../architecture/decisions/ADR-029-tuner-pitch-detection.md) before the run.
 - **Real-guitar accuracy is not measured.** The development environment cannot capture a physical instrument; a web virtual guitar was considered and rejected as not representative of microphone input. ADR-029 stays **Draft**; the MPM-vs-YIN choice is provisional (MPM). The capture harness and procedure are committed (`spikes/s3-tuner/`); the developer records the set and fills ADR-029 §5 to close it. **No real-guitar number is invented.**
 - Single machine only (ADR-025, R-21 open). The exit report does not claim coverage beyond the reference machine.
+
+## Known evidence gaps
+
+This MVP was accepted **with** the following gaps on the record. A reader must not take this report to mean the MVP was verified on real hardware or a real instrument; it was not.
+
+- **(a) The tuner has never been measured on a real guitar through a real microphone.** Every A8/A9 number in this report comes from synthetic signals only: pure sine and a synthesised harmonic pluck, with added noise. No microphone capture of a real instrument was used. A web virtual guitar was considered and rejected as not representative of microphone capture, and no real-guitar number was invented. [ADR-029](../architecture/decisions/ADR-029-tuner-pitch-detection.md) therefore stays **Draft** and the MPM-vs-YIN choice is provisional. The capture harness and procedure are committed at `spikes/s3-tuner/results/README.md`; anyone with an instrument can record the set and fill ADR-029 §5 to close the gap. The pre-fixed thresholds (ADR-029 §2) will be applied unchanged — they are not lowered to match a result.
+- **(b) All latency, glitch and MMCSS evidence is from a single machine** (ADR-025, R-21 open). Behaviour on other CPUs, audio devices or OS builds is unverified. A second-machine run is deferred.
+
+These gaps are mirrored for end users in [mvp-release-notes.md](mvp-release-notes.md) and [mvp-known-limitations.md](mvp-known-limitations.md).
 
 ## 5. Defects and decisions
 

@@ -1,6 +1,7 @@
 # ADR-029 Tuner pitch detection: owned MPM/YIN, thresholds and S3 results
 
 Status: Draft (thresholds fixed before S3 runs, 2026-10-31). Becomes Accepted when the S3 results and the algorithm decision are filled in (section 5).
+Draft until a real-guitar sample set exists; the pass/fail thresholds are fixed in section 2 and the decision rule in section 1, and they will be applied unchanged when the set is recorded — the thresholds are not lowered to match a result (section 3, section 4).
 Date: 2026-10-31
 Related documents: [audio-dsp-architecture.md](../audio-dsp-architecture.md), [technology-evaluation.md](../../research/technology-evaluation.md), [technical-spikes.md](../../research/technical-spikes.md), [performance-requirements.md](../performance-requirements.md), [ADR-007](ADR-007-audio-thread-isolation.md), [ADR-025](ADR-025-single-machine-evidence-accepted.md), [risk-register.md](../../roadmap/risk-register.md)
 

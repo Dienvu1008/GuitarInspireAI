@@ -30,6 +30,18 @@ Build from source (Windows): `flutter build windows --release` in `app/`, then r
 `app\build\windows\x64\runner\Release\guitar_inspire.exe`. The trimmed SoundFont ships
 next to the executable; the first Play loads it.
 
+## About the tuner (please read)
+
+The tuner works and is accurate on test signals, but it has **not yet been checked against
+a real guitar through a real microphone**. If it reads oddly on your instrument —
+especially on the low E and A strings, or in a noisy room — that is a **known limitation,
+not a surprise bug**. No real-guitar measurements were claimed; the tuner is labelled as
+unverified on real instruments until a recorded set exists. If you
+have a guitar and want to help, the recording harness and steps are in
+`spikes/s3-tuner/results/README.md`; a recorded set lets us finalise the tuner
+([ADR-029](../architecture/decisions/ADR-029-tuner-pitch-detection.md) moves from Draft to
+Accepted).
+
 ## Notes and limitations
 
 See [mvp-known-limitations.md](mvp-known-limitations.md). In short: Windows x64 only;

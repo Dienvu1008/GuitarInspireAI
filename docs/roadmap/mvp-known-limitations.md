@@ -20,8 +20,12 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   development environment cannot capture a physical instrument, so [ADR-029](../architecture/decisions/ADR-029-tuner-pitch-detection.md)
   stays in Draft and the MPM-vs-YIN choice is provisional (MPM). A web virtual guitar was
   considered and rejected as not representative of real microphone input. Expect the low
-  strings (E2, A2) to be the least robust with a noisy signal (R-11); the capture harness
-  and procedure are in `spikes/s3-tuner/results/README.md`.
+  strings (E2, A2) to be the least robust with a noisy signal (R-11). The pre-set pass/fail
+  thresholds (ADR-029 §2) are applied as-is and are not relaxed to match a contributed
+  set. **If you have a guitar, you can help close this gap:** the capture harness and
+  step-by-step procedure are in `spikes/s3-tuner/results/README.md`; recording the six
+  open strings and running the analysis fills ADR-029 §5 and lets the tuner move from
+  Draft to Accepted.
 - Default input device only; no microphone picker (parallels playback's default-output
   rule). If there is no microphone or access is denied, the tuner shows a message and the
   rest of the app keeps working.
