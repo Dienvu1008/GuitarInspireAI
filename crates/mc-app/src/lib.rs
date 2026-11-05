@@ -28,7 +28,8 @@ pub use events::{AppEvent, CollectingSink, DocumentId, EventEnvelope, EventPaylo
 pub use history::HistoryLimits;
 pub use session::{CommandOutcome, DocumentSession, OpenReport, SessionConfig};
 pub use transport::{
-    AudioPort, PlaybackState, PositionUpdate, TransportCommand, TransportError, TransportState,
+    AudioPort, PlaybackState, PlayedBarInfo, PositionUpdate, TransportCommand, TransportError,
+    TransportState,
 };
 
 /// Playback value objects re-exported for adapters (so `mc-ffi` and `mc-cli` map DTOs

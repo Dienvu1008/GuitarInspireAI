@@ -108,6 +108,40 @@ void main() {
     h.service.close();
   });
 
+  testWidgets('missing SoundFont on first Play is reported, no crash', (
+    tester,
+  ) async {
+    final h = _harness(const TransportBar(cursorMasterBar: 0));
+    await tester.pumpWidget(h.scope);
+    // Lazy load fails on the first Play (Q10): engine started, but no SoundFont.
+    h.service.failOnPlay = 'SoundFont error: GuitarSteel.sf2: file not found';
+    await tester.tap(find.byKey(const ValueKey('transport-play-stop')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(h.service.position().playing, isFalse, reason: 'did not start');
+    expect(find.byKey(const ValueKey('transport-message')), findsOneWidget);
+    expect(find.textContaining('SoundFont error'), findsOneWidget);
+    // Still interactive: the play button is there and the app did not crash.
+    expect(find.byKey(const ValueKey('transport-play-stop')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    h.service.close();
+  });
+
+  testWidgets('a device error shows a different message than a missing SoundFont', (
+    tester,
+  ) async {
+    final h = _harness(const TransportBar());
+    await tester.pumpWidget(h.scope);
+    h.service.failWith('audio error: the output device was lost');
+    await tester.pump();
+    final text = tester
+        .widget<Text>(find.byKey(const ValueKey('transport-message')))
+        .data!;
+    expect(text, contains('device'));
+    expect(text, isNot(contains('SoundFont')));
+    h.service.close();
+  });
+
   testWidgets('play from a bar past the end surfaces an error', (tester) async {
     final doc = FakeDocumentService(bars: 2);
     final service = FakePlaybackService(masterBars: 2);

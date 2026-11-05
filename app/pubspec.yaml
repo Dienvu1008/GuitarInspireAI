@@ -28,6 +28,8 @@ dev_dependencies:
   flutter_lints: 6.0.0
   integration_test:
     sdk: flutter
+  # SHA-256 lock of the bundled SoundFont in app/test/soundfont_test.dart (4c).
+  crypto: 3.0.6
 
 flutter:
   uses-material-design: true

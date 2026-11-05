@@ -4,9 +4,11 @@ library;
 
 export 'src/document_controller.dart'
     show
+        CursorOverlayBuilder,
         DocumentController,
         EditorState,
         appPathsProvider,
+        cursorOverlayProvider,
         documentFactoryProvider,
         editorProvider,
         fileDialogsProvider;

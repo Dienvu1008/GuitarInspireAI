@@ -31,4 +31,9 @@ List<Override> playbackOverrides(PlaybackFactory? factory, MidiService midi) => 
       ref.onDispose(service.close);
       return service;
     }),
+  // The playback cursor overlay on the TAB (ADR-028). Only when the engine started.
+  if (factory != null)
+    cursorOverlayProvider.overrideWithValue(
+      (tickToX, height) => PlaybackCursor(tickToX: tickToX, height: height),
+    ),
 ];

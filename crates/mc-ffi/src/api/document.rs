@@ -291,6 +291,23 @@ impl DocumentHandle {
         summary_dto(&self.lock())
     }
 
+    /// Played-bar layout for the playback cursor (ADR-028): each bar's score index and
+    /// tick range after repeat and volta expansion. The UI maps a playback tick to an x
+    /// on the TAB from this. Independent of mute (PB-04).
+    #[frb(sync)]
+    pub fn played_bars(&self) -> Vec<PlayedBarDto> {
+        self.lock()
+            .played_bars()
+            .into_iter()
+            .map(|b| PlayedBarDto {
+                order: b.order as i64,
+                master_bar: b.master_bar as i64,
+                start_tick: b.start_tick,
+                length_ticks: b.length_ticks,
+            })
+            .collect()
+    }
+
     /// Beats of one voice of one bar, in order.
     #[frb(sync)]
     pub fn beats(&self, track: i64, bar: u32, voice: u32) -> Result<Vec<BeatDto>, ApiError> {

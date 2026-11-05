@@ -172,6 +172,7 @@ pub mod mc_app::playback
 pub use mc_app::playback::PerformanceTimeline
 pub use mc_app::playback::TempoFactor
 pub use mc_app::playback::Tick
+pub fn mc_app::playback::compile_for_export(&mc_score::score::Score) -> core::result::Result<mc_playback::timeline::PerformanceTimeline, alloc::string::String>
 pub mod mc_app::ports
 pub enum mc_app::ports::StoreError
 pub mc_app::ports::StoreError::Io
@@ -319,6 +320,27 @@ impl core::marker::Unpin for mc_app::transport::TransportError
 impl core::marker::UnsafeUnpin for mc_app::transport::TransportError
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportError
 impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportError
+pub struct mc_app::transport::PlayedBarInfo
+pub mc_app::transport::PlayedBarInfo::length_ticks: i64
+pub mc_app::transport::PlayedBarInfo::master_bar: usize
+pub mc_app::transport::PlayedBarInfo::order: u32
+pub mc_app::transport::PlayedBarInfo::start_tick: i64
+impl core::clone::Clone for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::PlayedBarInfo
+impl core::cmp::PartialEq for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::PlayedBarInfo
+impl core::marker::StructuralPartialEq for mc_app::transport::PlayedBarInfo
+impl core::marker::Freeze for mc_app::transport::PlayedBarInfo
+impl core::marker::Send for mc_app::transport::PlayedBarInfo
+impl core::marker::Sync for mc_app::transport::PlayedBarInfo
+impl core::marker::Unpin for mc_app::transport::PlayedBarInfo
+impl core::marker::UnsafeUnpin for mc_app::transport::PlayedBarInfo
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::PlayedBarInfo
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PlayedBarInfo
 pub struct mc_app::transport::PositionUpdate
 pub mc_app::transport::PositionUpdate::document: mc_app::DocumentId
 pub mc_app::transport::PositionUpdate::playing: bool
@@ -895,6 +917,7 @@ pub fn mc_app::DocumentSession::location(&self) -> core::option::Option<&std::pa
 pub fn mc_app::DocumentSession::mark_autosaved(&mut self, u64)
 pub fn mc_app::DocumentSession::new(mc_app::DocumentId, mc_score::score::Score, mc_app::SessionConfig, &dyn mc_app::ports::Clock, &dyn mc_app::ports::Entropy) -> Self
 pub fn mc_app::DocumentSession::open(mc_app::DocumentId, &dyn mc_app::ports::ProjectStore, &std::path::Path, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
+pub fn mc_app::DocumentSession::played_bars(&self) -> alloc::vec::Vec<mc_app::transport::PlayedBarInfo>
 pub fn mc_app::DocumentSession::project_id(&self) -> &str
 pub fn mc_app::DocumentSession::recover(mc_app::DocumentId, &[u8], core::option::Option<std::path::PathBuf>, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
 pub fn mc_app::DocumentSession::redo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
@@ -1030,6 +1053,27 @@ impl core::marker::Unpin for mc_app::OpenReport
 impl core::marker::UnsafeUnpin for mc_app::OpenReport
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::OpenReport
 impl core::panic::unwind_safe::UnwindSafe for mc_app::OpenReport
+pub struct mc_app::PlayedBarInfo
+pub mc_app::PlayedBarInfo::length_ticks: i64
+pub mc_app::PlayedBarInfo::master_bar: usize
+pub mc_app::PlayedBarInfo::order: u32
+pub mc_app::PlayedBarInfo::start_tick: i64
+impl core::clone::Clone for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::transport::PlayedBarInfo
+impl core::cmp::PartialEq for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::transport::PlayedBarInfo
+pub fn mc_app::transport::PlayedBarInfo::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::transport::PlayedBarInfo
+impl core::marker::StructuralPartialEq for mc_app::transport::PlayedBarInfo
+impl core::marker::Freeze for mc_app::transport::PlayedBarInfo
+impl core::marker::Send for mc_app::transport::PlayedBarInfo
+impl core::marker::Sync for mc_app::transport::PlayedBarInfo
+impl core::marker::Unpin for mc_app::transport::PlayedBarInfo
+impl core::marker::UnsafeUnpin for mc_app::transport::PlayedBarInfo
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::PlayedBarInfo
+impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PlayedBarInfo
 pub struct mc_app::PositionUpdate
 pub mc_app::PositionUpdate::document: mc_app::DocumentId
 pub mc_app::PositionUpdate::playing: bool

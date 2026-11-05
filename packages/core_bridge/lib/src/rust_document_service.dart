@@ -110,6 +110,9 @@ final class RustDocumentService implements DocumentService {
       _handle.voiceCount(track: track, bar: bar);
 
   @override
+  List<PlayedBarDto> playedBars() => _handle.playedBars();
+
+  @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _handle.tabLayout(track: track, metrics: metrics);
 

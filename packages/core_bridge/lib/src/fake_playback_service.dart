@@ -43,6 +43,11 @@ final class FakePlaybackService implements PlaybackService {
     if (!_positions.isClosed) _positions.add(_snapshot());
   }
 
+  /// Test hook: when set, the first Play fails with this message instead of starting,
+  /// mirroring the lazy SoundFont load failing on the control thread (Q10). Cleared
+  /// after it fires once.
+  String? failOnPlay;
+
   @override
   Future<void> play({int? fromMasterBar}) async {
     if (fromMasterBar != null) {
@@ -54,6 +59,12 @@ final class FakePlaybackService implements PlaybackService {
         );
       }
       _tick = fromMasterBar * ticksPerBar;
+    }
+    final fail = failOnPlay;
+    if (fail != null) {
+      failOnPlay = null;
+      failWith(fail);
+      throw ApiError(rule: 'transport', message: fail);
     }
     _playing = true;
     _state = PlaybackStateDto.playing;

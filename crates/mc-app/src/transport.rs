@@ -166,3 +166,14 @@ pub struct PositionUpdate {
     /// True while the transport is running.
     pub playing: bool,
 }
+
+/// One played bar for the playback cursor's tick-to-x mapping (ADR-028). After repeat
+/// and volta expansion: playback order, the score master-bar index, and the tick range.
+/// Ticks are `i64` for Dart (ADR-005 amendment 2).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PlayedBarInfo {
+    pub order: u32,
+    pub master_bar: usize,
+    pub start_tick: i64,
+    pub length_ticks: i64,
+}

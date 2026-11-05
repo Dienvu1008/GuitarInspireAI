@@ -24,6 +24,12 @@ final playbackServiceProvider = Provider<PlaybackService>(
 /// What the transport bar and cursor show. Playback is session state (ADR-028): none of
 /// this edits the document or is saved. [tick] and [playing] come from the engine's
 /// position stream; [mutedTracks] and [tempoFactor] are the user's current settings.
+///
+/// For a smooth cursor the state also carries the two most recent position samples, each
+/// stamped with the real monotonic time it arrived ([sampleTick]/[sampleAtMicros] and the
+/// previous pair). The cursor extrapolates between frames from the measured tick velocity
+/// of those samples, not from a wall clock in the widget, so an uneven frame interval
+/// does not make it jump (ADR-005 amendment 5).
 final class TransportState {
   const TransportState({
     required this.playing,
@@ -31,6 +37,10 @@ final class TransportState {
     required this.tick,
     required this.tempoFactor,
     required this.mutedTracks,
+    required this.sampleTick,
+    required this.sampleAtMicros,
+    required this.prevSampleTick,
+    required this.prevSampleAtMicros,
     this.message,
   });
 
@@ -40,6 +50,10 @@ final class TransportState {
       tick = 0,
       tempoFactor = TempoFactorSteps.normal,
       mutedTracks = const {},
+      sampleTick = 0,
+      sampleAtMicros = 0,
+      prevSampleTick = 0,
+      prevSampleAtMicros = 0,
       message = null;
 
   final bool playing;
@@ -54,6 +68,14 @@ final class TransportState {
   /// Tracks the user has muted (by track id).
   final Set<int> mutedTracks;
 
+  /// Latest position sample and the monotonic microsecond timestamp it arrived at.
+  final int sampleTick;
+  final int sampleAtMicros;
+
+  /// The sample before [sampleTick], for the velocity estimate.
+  final int prevSampleTick;
+  final int prevSampleAtMicros;
+
   /// Last playback failure message (missing SoundFont, lost device), else `null`.
   final String? message;
 
@@ -61,12 +83,35 @@ final class TransportState {
 
   String get tempoLabel => TempoFactorSteps.label(tempoFactor);
 
+  /// Measured tick velocity (ticks per microsecond) from the last two samples, or 0 when
+  /// not playing or the samples are degenerate. Used to extrapolate the cursor.
+  double get tickVelocityPerMicro {
+    if (!playing) return 0;
+    final dt = sampleAtMicros - prevSampleAtMicros;
+    if (dt <= 0) return 0;
+    return (sampleTick - prevSampleTick) / dt;
+  }
+
+  /// Extrapolated tick at monotonic time [nowMicros], clamped so it never runs backwards
+  /// before the last sample. When stopped it is just the last tick.
+  int tickAt(int nowMicros) {
+    if (!playing) return tick;
+    final ahead = nowMicros - sampleAtMicros;
+    if (ahead <= 0) return sampleTick;
+    final extra = (tickVelocityPerMicro * ahead).round();
+    return sampleTick + (extra > 0 ? extra : 0);
+  }
+
   TransportState copyWith({
     bool? playing,
     bool? failed,
     int? tick,
     int? tempoFactor,
     Set<int>? mutedTracks,
+    int? sampleTick,
+    int? sampleAtMicros,
+    int? prevSampleTick,
+    int? prevSampleAtMicros,
     String? message,
     bool clearMessage = false,
   }) => TransportState(
@@ -75,6 +120,10 @@ final class TransportState {
     tick: tick ?? this.tick,
     tempoFactor: tempoFactor ?? this.tempoFactor,
     mutedTracks: mutedTracks ?? this.mutedTracks,
+    sampleTick: sampleTick ?? this.sampleTick,
+    sampleAtMicros: sampleAtMicros ?? this.sampleAtMicros,
+    prevSampleTick: prevSampleTick ?? this.prevSampleTick,
+    prevSampleAtMicros: prevSampleAtMicros ?? this.prevSampleAtMicros,
     message: clearMessage ? null : (message ?? this.message),
   );
 }
@@ -90,6 +139,14 @@ final class TransportController extends Notifier<TransportState> {
   PlaybackService? _service;
   StreamSubscription<PositionDto>? _positions;
 
+  /// Monotonic clock for stamping position samples, in microseconds. A real stopwatch by
+  /// default; tests override it to feed controlled timestamps. It measures elapsed real
+  /// time at the moment a sample arrives, never a wall clock read inside a widget build.
+  int Function() nowMicros = _defaultClock;
+
+  static final Stopwatch _stopwatch = Stopwatch()..start();
+  static int _defaultClock() => _stopwatch.elapsedMicroseconds;
+
   @override
   TransportState build() {
     final service = ref.watch(playbackServiceProvider);
@@ -102,10 +159,16 @@ final class TransportController extends Notifier<TransportState> {
   }
 
   void _onPosition(PositionDto p) {
+    final now = nowMicros();
     state = state.copyWith(
       tick: p.tick,
       playing: p.playing,
       failed: p.state.isFailed,
+      // Shift the newest sample into "previous" so the cursor can measure velocity.
+      prevSampleTick: state.sampleTick,
+      prevSampleAtMicros: state.sampleAtMicros,
+      sampleTick: p.tick,
+      sampleAtMicros: now,
       message: p.state.isFailed ? (_service?.lastError ?? state.message) : null,
       clearMessage: !p.state.isFailed && state.message != null,
     );
@@ -175,4 +238,9 @@ final class TransportController extends Notifier<TransportState> {
   Future<void> refreshAfterEdit() async {
     if (state.playing) await _guard(() => _s.refreshAfterEdit());
   }
+
+  /// The tick to draw the cursor at right now: the last sample extrapolated to the
+  /// current monotonic time by the measured velocity (ADR-028, ADR-005 amendment 5). The
+  /// cursor widget calls this every frame between position updates for smooth motion.
+  int displayTick() => state.tickAt(nowMicros());
 }

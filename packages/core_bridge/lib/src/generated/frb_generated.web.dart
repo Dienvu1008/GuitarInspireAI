@@ -147,6 +147,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected List<NoteDto> dco_decode_list_note_dto(dynamic raw);
 
+@protected List<PlayedBarDto> dco_decode_list_played_bar_dto(dynamic raw);
+
 @protected Float32List dco_decode_list_prim_f_32_strict(dynamic raw);
 
 @protected Int32List dco_decode_list_prim_i_32_strict(dynamic raw);
@@ -182,6 +184,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 @protected OutcomeDto dco_decode_outcome_dto(dynamic raw);
 
 @protected PlaybackStateDto dco_decode_playback_state_dto(dynamic raw);
+
+@protected PlayedBarDto dco_decode_played_bar_dto(dynamic raw);
 
 @protected PositionDto dco_decode_position_dto(dynamic raw);
 
@@ -315,6 +319,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected List<NoteDto> sse_decode_list_note_dto(SseDeserializer deserializer);
 
+@protected List<PlayedBarDto> sse_decode_list_played_bar_dto(SseDeserializer deserializer);
+
 @protected Float32List sse_decode_list_prim_f_32_strict(SseDeserializer deserializer);
 
 @protected Int32List sse_decode_list_prim_i_32_strict(SseDeserializer deserializer);
@@ -350,6 +356,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 @protected OutcomeDto sse_decode_outcome_dto(SseDeserializer deserializer);
 
 @protected PlaybackStateDto sse_decode_playback_state_dto(SseDeserializer deserializer);
+
+@protected PlayedBarDto sse_decode_played_bar_dto(SseDeserializer deserializer);
 
 @protected PositionDto sse_decode_position_dto(SseDeserializer deserializer);
 
@@ -483,6 +491,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 
 @protected void sse_encode_list_note_dto(List<NoteDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_played_bar_dto(List<PlayedBarDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_i_32_strict(Int32List self, SseSerializer serializer);
@@ -518,6 +528,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr =>
 @protected void sse_encode_outcome_dto(OutcomeDto self, SseSerializer serializer);
 
 @protected void sse_encode_playback_state_dto(PlaybackStateDto self, SseSerializer serializer);
+
+@protected void sse_encode_played_bar_dto(PlayedBarDto self, SseSerializer serializer);
 
 @protected void sse_encode_position_dto(PositionDto self, SseSerializer serializer);
 

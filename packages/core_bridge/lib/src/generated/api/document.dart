@@ -57,6 +57,12 @@ static Future<DocumentHandle>  open({required String path })=>RustLib.instance.a
 static Future<DocumentHandle>  openFromRecovery({required String dir , required String projectId })=>RustLib.instance.api.crateApiDocumentDocumentHandleOpenFromRecovery(dir: dir, projectId: projectId);
 
 
+/// Played-bar layout for the playback cursor (ADR-028): each bar's score index and
+/// tick range after repeat and volta expansion. The UI maps a playback tick to an x
+/// on the TAB from this. Independent of mute (PB-04).
+ List<PlayedBarDto>  playedBars();
+
+
  Future<OutcomeDto>  redo();
 
 

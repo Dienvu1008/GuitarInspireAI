@@ -38,7 +38,21 @@ python tools/sf2-trim/trim_sf2.py FluidR3_GM.sf2 GuitarSteel.sf2 --preset 0:25
 | Size | 2 108 670 bytes |
 | SHA-256 | `8C9B74EF954235164D8C5EA58FE10C8687F808D92FBB23BA388F5CE5FAB49EF8` |
 | Presets | bank 0 program 25 ("Steel String Guitar") |
-| Samples | 10 |
-| Validated | loads in rustysynth 1.3.8; program 25 note renders audio (peak 0.12, rms 0.028 over 1 s at 48 kHz) |
+| Samples | 10 of 1418 in the source (0.7% kept) |
+| Compressed size | 1 836 913 bytes (zip deflate, ~1.75 MiB) |
+| Validated | loads in rustysynth 1.3.8; every semitone E2..=E6 (MIDI 40..=88) renders audio at the correct fundamental (within +4/-1 cents; measured by autocorrelation at 48 kHz) |
 
 Regenerating from the same source archive produces a byte-identical file.
+
+## Verification
+
+Two reproducible checks guard the trim:
+
+- `python tools/sf2-trim/verify.py <source FluidR3_GM.sf2> assets/soundfonts/GuitarSteel.sf2`
+  confirms the sample count (10 of 1418), and that every kept sample is copied intact:
+  same frame count and loop points as in the source, in bounds (the sample-pool
+  compaction did not truncate a sample or lose a loop).
+- `cargo test -p mc-audio --test soundfont_pitch -- --ignored` renders program 25 across
+  E2..=E6 and asserts each note is audible at its expected pitch. E2 and the lowest notes
+  are produced by pitch-shifting the "Steel E3" sample down; the test confirms there is
+  no dead region. Device-free, run on the developer machine (ADR-025).

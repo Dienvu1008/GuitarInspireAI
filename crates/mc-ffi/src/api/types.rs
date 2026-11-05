@@ -317,6 +317,17 @@ pub struct PositionDto {
     pub state: PlaybackStateDto,
 }
 
+/// One played bar for the cursor's tick-to-x mapping (ADR-028). Ticks are `i64`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PlayedBarDto {
+    /// Playback order after repeat and volta expansion, from 0.
+    pub order: i64,
+    /// Score master-bar index this played bar came from.
+    pub master_bar: i64,
+    pub start_tick: i64,
+    pub length_ticks: i64,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct EventDto {
     /// Per document, gapless, starting at 1.

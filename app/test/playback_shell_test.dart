@@ -59,7 +59,10 @@ void main() {
   testWidgets('the File menu has MIDI import and export items', (tester) async {
     await _pumpWithPlayback(tester);
     await tester.tap(find.text('File'));
-    await tester.pumpAndSettle();
+    // The playback cursor runs a Ticker, so the tree never "settles"; pump a few
+    // frames to open the menu instead of pumpAndSettle.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('Import MIDI...'), findsOneWidget);
     expect(find.text('Export MIDI...'), findsOneWidget);
   });

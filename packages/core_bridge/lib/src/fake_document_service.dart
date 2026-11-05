@@ -284,6 +284,18 @@ final class FakeDocumentService implements DocumentService {
     return bar >= 0 && bar < t.bars.length ? t.bars[bar].length : 0;
   }
 
+  /// One played bar per master bar, each 960 ticks (no repeats in the fake).
+  @override
+  List<PlayedBarDto> playedBars() => [
+    for (var b = 0; b < _state.bars; b++)
+      PlayedBarDto(
+        order: b,
+        masterBar: b,
+        startTick: b * 960,
+        lengthTicks: 960,
+      ),
+  ];
+
   /// One system, one fixed-width column per beat; enough for widget tests.
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) {
@@ -458,6 +470,8 @@ final class _Tracked implements DocumentService {
       _inner.beats(track, bar, voice);
   @override
   int voiceCount(int track, int bar) => _inner.voiceCount(track, bar);
+  @override
+  List<PlayedBarDto> playedBars() => _inner.playedBars();
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _inner.tabLayout(track, metrics);

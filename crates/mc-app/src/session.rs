@@ -7,7 +7,7 @@ use crate::handlers::{guitar_handlers, score_handlers, track_handlers};
 use crate::history::{History, HistoryLimits};
 use crate::ports::{Clock, Entropy, ProjectStore};
 use crate::transport::{
-    AudioPort, PlaybackState, TransportCommand, TransportError, TransportState,
+    AudioPort, PlaybackState, PlayedBarInfo, TransportCommand, TransportError, TransportState,
 };
 use crate::{CommandError, CommandId, Constraints, OpenError, SaveError, diff};
 use mc_playback::{CompileOptions, PerformanceTimeline, TempoFactor, Tick, compile};
@@ -575,6 +575,28 @@ impl DocumentSession {
     /// Session state, not document content.
     pub fn transport_state(&self) -> &TransportState {
         &self.transport
+    }
+
+    /// Played-bar layout of the current score for the playback cursor: each bar's score
+    /// index, start tick and length after repeat and volta expansion (ADR-028). Timing
+    /// is independent of mute (PB-04), so this compiles without a mute set. Returns an
+    /// empty vector if compilation fails. The UI maps a playback tick to an x position
+    /// on the TAB from this table.
+    pub fn played_bars(&self) -> Vec<PlayedBarInfo> {
+        match compile(&self.score, &CompileOptions::new()) {
+            Ok(out) => out
+                .timeline
+                .played_bars()
+                .iter()
+                .map(|b| PlayedBarInfo {
+                    order: b.order,
+                    master_bar: b.master_bar,
+                    start_tick: b.start.0,
+                    length_ticks: b.length.0,
+                })
+                .collect(),
+            Err(_) => Vec::new(),
+        }
     }
 
     /// `self.score` just replaced `before`; recheck only the bars that changed.

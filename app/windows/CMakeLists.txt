@@ -106,3 +106,11 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
+
+# Bundle the trimmed SoundFont next to the executable (ADR-026, slice 4c). The Dart side
+# resolves it via Platform.resolvedExecutable (see app/lib/src/soundfont.dart). One
+# canonical copy lives at the repo root assets/; this copies it, it is not duplicated in
+# the source tree.
+set(GUITAR_SOUNDFONT "${CMAKE_CURRENT_SOURCE_DIR}/../../assets/soundfonts/GuitarSteel.sf2")
+install(FILES "${GUITAR_SOUNDFONT}" DESTINATION "${CMAKE_INSTALL_PREFIX}"
+  COMPONENT Runtime)

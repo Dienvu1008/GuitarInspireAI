@@ -29,6 +29,6 @@ This is the only measurement machine. All performance, latency and glitch eviden
 | Source | Debian source package `fluid-soundfont_3.1.orig.tar.gz` from `deb.debian.org/debian/pool/main/f/fluid-soundfont/` |
 | Archive | 134 835 922 bytes, SHA-256 `2621ACAA1C78E4ABDB24BDD163230CC577E61276936D6AA6E3180582142F0343` |
 | SoundFont | 148 398 306 bytes, SHA-256 `74594E8F4250680ADF590507A306655A299935343583256F3B722C48A1BC1CB0` |
-| Status | Candidate; not bundled yet (bundling decision pending, Phase 4 slice 4c) |
+| Status | Trimmed and bundled (slice 4c). The app ships the derivative `GuitarSteel.sf2` (2 108 670 bytes, SHA-256 `8C9B74EF954235164D8C5EA58FE10C8687F808D92FBB23BA388F5CE5FAB49EF8`), 10 of 1418 samples, program 25 only; see `assets/soundfonts/PROVENANCE.md`. Bundle size in `bundle-size.md` (FF-29). |
 
-S2 used the GeneralUser GS bank and a sine test font; Phase 4 runs use the file above. Each FF-18 result file repeats the machine summary, the output device, its sample rate and the SoundFont SHA-256.
+S2 used the GeneralUser GS bank and a sine test font; Phase 4 runs use the trimmed derivative of the file above. Each FF-18 result file repeats the machine summary, the output device, its sample rate and the SoundFont SHA-256.

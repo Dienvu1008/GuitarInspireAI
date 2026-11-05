@@ -9,7 +9,7 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'types.freezed.dart';
 
             // These functions are ignored because they are not marked as `pub`: `new`, `note_id`, `to_app`, `to_app`, `to_app`, `track_id`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
 
 
             
@@ -393,6 +393,35 @@ failed,
                     ;
                     
                 }
+
+/// One played bar for the cursor's tick-to-x mapping (ADR-028). Ticks are `i64`.
+class PlayedBarDto  {
+                /// Playback order after repeat and volta expansion, from 0.
+final PlatformInt64 order;
+/// Score master-bar index this played bar came from.
+final PlatformInt64 masterBar;
+final PlatformInt64 startTick;
+final PlatformInt64 lengthTicks;
+
+                const PlayedBarDto({required this.order ,required this.masterBar ,required this.startTick ,required this.lengthTicks ,});
+
+
+
+
+
+        @override
+        int get hashCode => order.hashCode^masterBar.hashCode^startTick.hashCode^lengthTicks.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is PlayedBarDto &&
+                runtimeType == other.runtimeType
+                && order == other.order&& masterBar == other.masterBar&& startTick == other.startTick&& lengthTicks == other.lengthTicks;
+
+            }
 
 /// A playback position update for the UI cursor (60 Hz stream, ADR-028). All fields map
 /// to Dart `int`/`bool` (ADR-005 amendment 2: never `u64`).

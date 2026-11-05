@@ -20,6 +20,9 @@ windows-sys.workspace = true
 assert_no_alloc.workspace = true
 # Reference scores for engine tests (mc-app is an allowed dependency of mc-audio).
 mc-app = { workspace = true, features = ["fixtures"] }
+# Direct synth access for the bundled-SoundFont pitch verification test (4c). rustysynth
+# is already wrapper-banned to mc-audio (FF-02); a dev-dep of mc-audio is still mc-audio.
+rustysynth.workspace = true
 
 # ADR-027: the workspace lints, restated, with one difference: unsafe_code is "deny"
 # instead of "forbid", so that only the MMCSS module may allow it. FF-34 checks that
