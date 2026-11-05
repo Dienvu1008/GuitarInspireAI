@@ -240,20 +240,81 @@ pub enum CommandDto {
 /// Invalidation hint (ADR-006). Consumers re-query summary, beats or layout.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EventKindDto {
-    TrackAdded { track: i64 },
-    TrackRemoved { track: i64 },
-    TrackChanged { track: i64 },
+    TrackAdded {
+        track: i64,
+    },
+    TrackRemoved {
+        track: i64,
+    },
+    TrackChanged {
+        track: i64,
+    },
     TracksReordered,
-    MasterBarsInserted { at: u32, count: u32 },
-    MasterBarsRemoved { at: u32, count: u32 },
-    MasterBarsChanged { start: u32, end: u32 },
-    BarContentChanged { track: i64, start: u32, end: u32 },
+    MasterBarsInserted {
+        at: u32,
+        count: u32,
+    },
+    MasterBarsRemoved {
+        at: u32,
+        count: u32,
+    },
+    MasterBarsChanged {
+        start: u32,
+        end: u32,
+    },
+    BarContentChanged {
+        track: i64,
+        start: u32,
+        end: u32,
+    },
     TempoMapChanged,
-    TiesRemoved { track: i64, notes: Vec<i64> },
+    TiesRemoved {
+        track: i64,
+        notes: Vec<i64>,
+    },
     DocumentSaved,
-    DirtyChanged { dirty: bool },
-    UndoAvailabilityChanged { can_undo: bool, can_redo: bool },
+    DirtyChanged {
+        dirty: bool,
+    },
+    UndoAvailabilityChanged {
+        can_undo: bool,
+        can_redo: bool,
+    },
     HistoryApplied,
+    /// Playback transport state changed (session state, ADR-028). The revision is
+    /// unchanged on the carrying event.
+    PlaybackStateChanged {
+        state: PlaybackStateDto,
+    },
+    /// A track was muted or unmuted (session state, ADR-028).
+    MuteChanged {
+        track: i64,
+        muted: bool,
+    },
+    /// The user tempo factor changed (session state, ADR-028). Hundredths of normal
+    /// speed (100 = 1.0x), 25..=200 in steps of 5.
+    TempoFactorChanged {
+        hundredths: u16,
+    },
+}
+
+/// Playback transport state mirrored to Dart (ADR-028).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PlaybackStateDto {
+    Stopped,
+    Playing,
+    /// Playback could not run; the message is read with `EngineHandle::last_error`.
+    Failed,
+}
+
+/// A playback position update for the UI cursor (60 Hz stream, ADR-028). All fields map
+/// to Dart `int`/`bool` (ADR-005 amendment 2: never `u64`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PositionDto {
+    /// Tick on the current timeline (i64, non-negative in a running timeline).
+    pub tick: i64,
+    pub playing: bool,
+    pub state: PlaybackStateDto,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

@@ -13,6 +13,7 @@ mod history;
 pub mod notation;
 pub mod ports;
 mod session;
+pub mod transport;
 
 #[cfg(feature = "native-fs")]
 pub mod infra;
@@ -26,6 +27,25 @@ pub use error::{CommandError, OpenError, SaveError};
 pub use events::{AppEvent, CollectingSink, DocumentId, EventEnvelope, EventPayload, EventSink};
 pub use history::HistoryLimits;
 pub use session::{CommandOutcome, DocumentSession, OpenReport, SessionConfig};
+pub use transport::{
+    AudioPort, PlaybackState, PositionUpdate, TransportCommand, TransportError, TransportState,
+};
+
+/// Playback value objects re-exported for adapters (so `mc-ffi` and `mc-cli` map DTOs
+/// without depending on `mc-playback` directly; dependency-rules section 1).
+pub mod playback {
+    pub use mc_playback::{PerformanceTimeline, TempoFactor, Tick};
+
+    /// Compile a score for MIDI export: every track included, no mute (ADR-023 item 3,
+    /// ADR-028). Compilation is an application decision (GR-05), so adapters call this
+    /// rather than invoking the compiler with their own options. Returns the warning-free
+    /// timeline or a message.
+    pub fn compile_for_export(score: &mc_score::Score) -> Result<PerformanceTimeline, String> {
+        mc_playback::compile(score, &mc_playback::CompileOptions::new())
+            .map(|out| out.timeline)
+            .map_err(|e| e.to_string())
+    }
+}
 
 /// Domain and format types re-exported for adapters.
 pub mod types {

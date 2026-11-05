@@ -9,7 +9,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
 
-            // These functions are ignored because they are not marked as `pub`: `app_info`, `discard_own_recovery`, `event_dto`, `lock`, `master_bar_dto`, `outcome_dto`, `recovery_dir`, `summary_dto`, `to_command`, `with_session`, `wrap`
+            // These functions are ignored because they are not marked as `pub`: `app_info`, `discard_own_recovery`, `event_dto`, `from_imported_score`, `lock_for_transport`, `lock`, `master_bar_dto`, `outcome_dto`, `playback_state_dto`, `recovery_dir`, `score_snapshot`, `summary_dto`, `to_command`, `with_session`, `wrap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DartEventSink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `publish`
 

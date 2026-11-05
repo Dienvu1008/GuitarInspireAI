@@ -70,3 +70,4 @@ Related documents: links
 | [ADR-025](ADR-025-single-machine-evidence-accepted.md) | Single-machine performance and glitch evidence accepted (R-21 deferred) | Accepted (2026-10-31) |
 | [ADR-026](ADR-026-bundled-soundfont-trimmed-fluidr3.md) | Bundled SoundFont: trimmed FluidR3 GM (guitar preset only) | Accepted (2026-10-31) |
 | [ADR-027](ADR-027-unsafe-exception-mmcss-module.md) | Unsafe exception for the Windows MMCSS call in mc-audio (extends ADR-022) | Accepted (2026-10-31) |
+| [ADR-028](ADR-028-playback-transport-port-and-session-state.md) | Playback transport: application-owned AudioPort, session transport state, swap-on-edit | Accepted (2026-10-31) |

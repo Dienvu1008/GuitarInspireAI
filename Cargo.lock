@@ -957,6 +957,7 @@ dependencies = [
  "criterion",
  "mc-guitar",
  "mc-notation",
+ "mc-playback",
  "mc-project",
  "mc-score",
  "mc-theory",
@@ -990,6 +991,8 @@ version = "0.1.0"
 dependencies = [
  "flutter_rust_bridge",
  "mc-app",
+ "mc-audio",
+ "mc-midi",
 ]
 
 [[package]]
