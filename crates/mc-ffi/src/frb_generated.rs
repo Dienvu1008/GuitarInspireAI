@@ -43,7 +43,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -498707339;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -600166443;
 
 // Section: executor
 
@@ -827,6 +827,114 @@ fn wire__crate__api__document__DocumentHandle_save_as_impl(
                     std::result::Result::Ok(output_ok)
                 })())
             }
+        },
+    )
+}
+fn wire__crate__api__document__DocumentHandle_score_outline_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "DocumentHandle_score_outline",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
+            >>::sse_decode(&mut deserializer);
+            let api_tracks = <Vec<i64>>::sse_decode(&mut deserializer);
+            let api_metrics = <crate::api::layout::MetricsDto>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, crate::api::types::ApiError>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok = crate::api::document::DocumentHandle::score_outline(
+                    &*api_that_guard,
+                    api_tracks,
+                    api_metrics,
+                )?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__document__DocumentHandle_score_systems_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "DocumentHandle_score_systems",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
+            >>::sse_decode(&mut deserializer);
+            let api_tracks = <Vec<i64>>::sse_decode(&mut deserializer);
+            let api_metrics = <crate::api::layout::MetricsDto>::sse_decode(&mut deserializer);
+            let api_first = <u32>::sse_decode(&mut deserializer);
+            let api_count = <u32>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, crate::api::types::ApiError>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok = crate::api::document::DocumentHandle::score_systems(
+                    &*api_that_guard,
+                    api_tracks,
+                    api_metrics,
+                    api_first,
+                    api_count,
+                )?;
+                std::result::Result::Ok(output_ok)
+            })())
         },
     )
 }
@@ -3322,6 +3430,20 @@ impl SseDecode for Vec<crate::api::types::NoteDto> {
     }
 }
 
+impl SseDecode for Vec<crate::api::layout::OutlineSystemDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::layout::OutlineSystemDto>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::api::types::PlayedBarDto> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3391,6 +3513,32 @@ impl SseDecode for Vec<crate::api::document::RecoveryEntryDto> {
             ans_.push(<crate::api::document::RecoveryEntryDto>::sse_decode(
                 deserializer,
             ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::layout::ScoreSystemDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::layout::ScoreSystemDto>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::layout::StaveDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::layout::StaveDto>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -3585,6 +3733,24 @@ impl SseDecode for crate::api::types::OutcomeDto {
     }
 }
 
+impl SseDecode for crate::api::layout::OutlineSystemDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_index = <u32>::sse_decode(deserializer);
+        let mut var_y = <f32>::sse_decode(deserializer);
+        let mut var_height = <f32>::sse_decode(deserializer);
+        let mut var_firstBar = <u32>::sse_decode(deserializer);
+        let mut var_endBar = <u32>::sse_decode(deserializer);
+        return crate::api::layout::OutlineSystemDto {
+            index: var_index,
+            y: var_y,
+            height: var_height,
+            first_bar: var_firstBar,
+            end_bar: var_endBar,
+        };
+    }
+}
+
 impl SseDecode for crate::api::types::PlaybackStateDto {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3640,6 +3806,54 @@ impl SseDecode for crate::api::document::RecoveryEntryDto {
             path: var_path,
             source: var_source,
             timestamp: var_timestamp,
+        };
+    }
+}
+
+impl SseDecode for crate::api::layout::ScoreOutlineDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_revision = <i64>::sse_decode(deserializer);
+        let mut var_width = <f32>::sse_decode(deserializer);
+        let mut var_height = <f32>::sse_decode(deserializer);
+        let mut var_systems = <Vec<crate::api::layout::OutlineSystemDto>>::sse_decode(deserializer);
+        return crate::api::layout::ScoreOutlineDto {
+            revision: var_revision,
+            width: var_width,
+            height: var_height,
+            systems: var_systems,
+        };
+    }
+}
+
+impl SseDecode for crate::api::layout::ScoreSystemDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_index = <u32>::sse_decode(deserializer);
+        let mut var_y = <f32>::sse_decode(deserializer);
+        let mut var_height = <f32>::sse_decode(deserializer);
+        let mut var_staves = <Vec<crate::api::layout::StaveDto>>::sse_decode(deserializer);
+        return crate::api::layout::ScoreSystemDto {
+            index: var_index,
+            y: var_y,
+            height: var_height,
+            staves: var_staves,
+        };
+    }
+}
+
+impl SseDecode for crate::api::layout::StaveDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_track = <i64>::sse_decode(deserializer);
+        let mut var_strings = <u8>::sse_decode(deserializer);
+        let mut var_top = <f32>::sse_decode(deserializer);
+        let mut var_system = <crate::api::layout::SystemDto>::sse_decode(deserializer);
+        return crate::api::layout::StaveDto {
+            track: var_track,
+            strings: var_strings,
+            top: var_top,
+            system: var_system,
         };
     }
 }
@@ -3827,47 +4041,47 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        19 => wire__crate__api__document__DocumentHandle_subscribe_events_impl(
+        21 => wire__crate__api__document__DocumentHandle_subscribe_events_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        22 => {
+        24 => {
             wire__crate__api__document__DocumentHandle_undo_impl(port, ptr, rust_vec_len, data_len)
         }
-        25 => wire__crate__api__document__DocumentHandle_write_autosave_impl(
+        27 => wire__crate__api__document__DocumentHandle_write_autosave_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        27 => wire__crate__api__engine__EngineHandle_play_impl(port, ptr, rust_vec_len, data_len),
-        29 => {
+        29 => wire__crate__api__engine__EngineHandle_play_impl(port, ptr, rust_vec_len, data_len),
+        31 => {
             wire__crate__api__engine__EngineHandle_positions_impl(port, ptr, rust_vec_len, data_len)
         }
-        30 => wire__crate__api__engine__EngineHandle_refresh_after_edit_impl(
+        32 => wire__crate__api__engine__EngineHandle_refresh_after_edit_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        31 => wire__crate__api__engine__EngineHandle_seek_impl(port, ptr, rust_vec_len, data_len),
-        32 => {
+        33 => wire__crate__api__engine__EngineHandle_seek_impl(port, ptr, rust_vec_len, data_len),
+        34 => {
             wire__crate__api__engine__EngineHandle_set_muted_impl(port, ptr, rust_vec_len, data_len)
         }
-        33 => wire__crate__api__engine__EngineHandle_set_tempo_factor_impl(
+        35 => wire__crate__api__engine__EngineHandle_set_tempo_factor_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        34 => wire__crate__api__engine__EngineHandle_start_impl(port, ptr, rust_vec_len, data_len),
-        35 => wire__crate__api__engine__EngineHandle_stop_impl(port, ptr, rust_vec_len, data_len),
-        42 => wire__crate__api__tuner__TunerHandle_start_impl(port, ptr, rust_vec_len, data_len),
-        46 => wire__crate__api__midi__export_midi_impl(port, ptr, rust_vec_len, data_len),
-        47 => wire__crate__api__midi__import_midi_impl(port, ptr, rust_vec_len, data_len),
-        48 => wire__crate__api__info__init_app_impl(port, ptr, rust_vec_len, data_len),
+        36 => wire__crate__api__engine__EngineHandle_start_impl(port, ptr, rust_vec_len, data_len),
+        37 => wire__crate__api__engine__EngineHandle_stop_impl(port, ptr, rust_vec_len, data_len),
+        44 => wire__crate__api__tuner__TunerHandle_start_impl(port, ptr, rust_vec_len, data_len),
+        48 => wire__crate__api__midi__export_midi_impl(port, ptr, rust_vec_len, data_len),
+        49 => wire__crate__api__midi__import_midi_impl(port, ptr, rust_vec_len, data_len),
+        50 => wire__crate__api__info__init_app_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -3926,45 +4140,55 @@ fn pde_ffi_dispatcher_sync_impl(
         15 => {
             wire__crate__api__document__DocumentHandle_played_bars_impl(ptr, rust_vec_len, data_len)
         }
-        20 => wire__crate__api__document__DocumentHandle_summary_impl(ptr, rust_vec_len, data_len),
-        21 => {
+        19 => wire__crate__api__document__DocumentHandle_score_outline_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        20 => wire__crate__api__document__DocumentHandle_score_systems_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        22 => wire__crate__api__document__DocumentHandle_summary_impl(ptr, rust_vec_len, data_len),
+        23 => {
             wire__crate__api__document__DocumentHandle_tab_layout_impl(ptr, rust_vec_len, data_len)
         }
-        23 => wire__crate__api__document__DocumentHandle_unsubscribe_events_impl(
+        25 => wire__crate__api__document__DocumentHandle_unsubscribe_events_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        24 => {
+        26 => {
             wire__crate__api__document__DocumentHandle_voice_count_impl(ptr, rust_vec_len, data_len)
         }
-        26 => wire__crate__api__engine__EngineHandle_last_error_impl(ptr, rust_vec_len, data_len),
-        28 => wire__crate__api__engine__EngineHandle_position_impl(ptr, rust_vec_len, data_len),
-        36 => wire__crate__api__midi__ImportResult_auto_accessor_get_document_impl(
+        28 => wire__crate__api__engine__EngineHandle_last_error_impl(ptr, rust_vec_len, data_len),
+        30 => wire__crate__api__engine__EngineHandle_position_impl(ptr, rust_vec_len, data_len),
+        38 => wire__crate__api__midi__ImportResult_auto_accessor_get_document_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        37 => wire__crate__api__midi__ImportResult_auto_accessor_get_report_impl(
+        39 => wire__crate__api__midi__ImportResult_auto_accessor_get_report_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        38 => wire__crate__api__midi__ImportResult_auto_accessor_set_document_impl(
+        40 => wire__crate__api__midi__ImportResult_auto_accessor_set_document_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        39 => wire__crate__api__midi__ImportResult_auto_accessor_set_report_impl(
+        41 => wire__crate__api__midi__ImportResult_auto_accessor_set_report_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        40 => wire__crate__api__tuner__TunerHandle_failed_impl(ptr, rust_vec_len, data_len),
-        41 => wire__crate__api__tuner__TunerHandle_reading_impl(ptr, rust_vec_len, data_len),
-        43 => wire__crate__api__tuner__TunerHandle_stop_impl(ptr, rust_vec_len, data_len),
-        44 => wire__crate__api__info__core_version_impl(ptr, rust_vec_len, data_len),
-        45 => wire__crate__api__layout__default_metrics_impl(ptr, rust_vec_len, data_len),
+        42 => wire__crate__api__tuner__TunerHandle_failed_impl(ptr, rust_vec_len, data_len),
+        43 => wire__crate__api__tuner__TunerHandle_reading_impl(ptr, rust_vec_len, data_len),
+        45 => wire__crate__api__tuner__TunerHandle_stop_impl(ptr, rust_vec_len, data_len),
+        46 => wire__crate__api__info__core_version_impl(ptr, rust_vec_len, data_len),
+        47 => wire__crate__api__layout__default_metrics_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -4882,6 +5106,30 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::OutcomeDto>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::layout::OutlineSystemDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.index.into_into_dart().into_dart(),
+            self.y.into_into_dart().into_dart(),
+            self.height.into_into_dart().into_dart(),
+            self.first_bar.into_into_dart().into_dart(),
+            self.end_bar.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::layout::OutlineSystemDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::OutlineSystemDto>
+    for crate::api::layout::OutlineSystemDto
+{
+    fn into_into_dart(self) -> crate::api::layout::OutlineSystemDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::types::PlaybackStateDto {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -4968,6 +5216,72 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::document::RecoveryEntryDto>
     for crate::api::document::RecoveryEntryDto
 {
     fn into_into_dart(self) -> crate::api::document::RecoveryEntryDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::layout::ScoreOutlineDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.revision.into_into_dart().into_dart(),
+            self.width.into_into_dart().into_dart(),
+            self.height.into_into_dart().into_dart(),
+            self.systems.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::layout::ScoreOutlineDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::ScoreOutlineDto>
+    for crate::api::layout::ScoreOutlineDto
+{
+    fn into_into_dart(self) -> crate::api::layout::ScoreOutlineDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::layout::ScoreSystemDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.index.into_into_dart().into_dart(),
+            self.y.into_into_dart().into_dart(),
+            self.height.into_into_dart().into_dart(),
+            self.staves.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::layout::ScoreSystemDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::ScoreSystemDto>
+    for crate::api::layout::ScoreSystemDto
+{
+    fn into_into_dart(self) -> crate::api::layout::ScoreSystemDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::layout::StaveDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.track.into_into_dart().into_dart(),
+            self.strings.into_into_dart().into_dart(),
+            self.top.into_into_dart().into_dart(),
+            self.system.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::layout::StaveDto {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::StaveDto>
+    for crate::api::layout::StaveDto
+{
+    fn into_into_dart(self) -> crate::api::layout::StaveDto {
         self
     }
 }
@@ -5877,6 +6191,16 @@ impl SseEncode for Vec<crate::api::types::NoteDto> {
     }
 }
 
+impl SseEncode for Vec<crate::api::layout::OutlineSystemDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::layout::OutlineSystemDto>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::types::PlayedBarDto> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -5933,6 +6257,26 @@ impl SseEncode for Vec<crate::api::document::RecoveryEntryDto> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <crate::api::document::RecoveryEntryDto>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::layout::ScoreSystemDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::layout::ScoreSystemDto>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::layout::StaveDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::layout::StaveDto>::sse_encode(item, serializer);
         }
     }
 }
@@ -6073,6 +6417,17 @@ impl SseEncode for crate::api::types::OutcomeDto {
     }
 }
 
+impl SseEncode for crate::api::layout::OutlineSystemDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.index, serializer);
+        <f32>::sse_encode(self.y, serializer);
+        <f32>::sse_encode(self.height, serializer);
+        <u32>::sse_encode(self.first_bar, serializer);
+        <u32>::sse_encode(self.end_bar, serializer);
+    }
+}
+
 impl SseEncode for crate::api::types::PlaybackStateDto {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -6116,6 +6471,36 @@ impl SseEncode for crate::api::document::RecoveryEntryDto {
         <String>::sse_encode(self.path, serializer);
         <Option<String>>::sse_encode(self.source, serializer);
         <i64>::sse_encode(self.timestamp, serializer);
+    }
+}
+
+impl SseEncode for crate::api::layout::ScoreOutlineDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i64>::sse_encode(self.revision, serializer);
+        <f32>::sse_encode(self.width, serializer);
+        <f32>::sse_encode(self.height, serializer);
+        <Vec<crate::api::layout::OutlineSystemDto>>::sse_encode(self.systems, serializer);
+    }
+}
+
+impl SseEncode for crate::api::layout::ScoreSystemDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.index, serializer);
+        <f32>::sse_encode(self.y, serializer);
+        <f32>::sse_encode(self.height, serializer);
+        <Vec<crate::api::layout::StaveDto>>::sse_encode(self.staves, serializer);
+    }
+}
+
+impl SseEncode for crate::api::layout::StaveDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i64>::sse_encode(self.track, serializer);
+        <u8>::sse_encode(self.strings, serializer);
+        <f32>::sse_encode(self.top, serializer);
+        <crate::api::layout::SystemDto>::sse_encode(self.system, serializer);
     }
 }
 

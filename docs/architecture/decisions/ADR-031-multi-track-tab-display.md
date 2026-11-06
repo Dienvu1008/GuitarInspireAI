@@ -145,3 +145,33 @@ Reference machine, release build, `mc-app` bench `edit_and_score_relayout` (note
 | Emitting lines, glyphs and hits for all 101 systems | 32 to 70 ms | about 70% |
 
 Fallback 1 (plan cache) alone therefore cannot meet P3: emission alone is at least 32 ms. The threshold is not changed. The next step is decided with the user.
+
+## Fallback 2: emit only the systems in view (6b-2b, user decision 2026-11-06)
+
+The user chose to apply fallback 2 before fallback 1, because the measured breakdown shows fallback 1 alone cannot pass.
+
+**API.**
+- `outline_score` does the line breaking for the whole score: system positions, heights, bar ranges and justification.
+- `layout_score_systems(outline, range)` measures and emits only the requested systems.
+- `layout_score` is these two composed, and its output is unchanged.
+- `mc-app` keeps the outline per (revision, tracks, metrics), so the outline and the systems fetched for the view come from one state.
+- FFI: `score_outline` and `score_systems(first, count)`, both sync. The outline DTO carries no track list, because a returned `Vec<i64>` becomes `BigInt`s in Dart. Each stave carries its track id instead.
+- Dart sizes the virtualized list from the outline and fetches systems in batches of 4 when items are built.
+
+**Equivalence.**
+- `layout_tab` and `layout_score` fingerprints before and after the split: 20 of 20 identical on the fixtures.
+- Windowed layout equals the full layout on more than 900 random ranges over 300 seeded scores.
+- A stale outline (bars or tracks changed) is an error, not a panic.
+
+**Measured, reference machine (ADR-025).**
+
+| Id | Rust bench (edit plus outline plus 3 systems) | In the app, profile build, every track shown (`app/tool/edit_latency.dart`) | Budget | Result |
+|---|---|---|---|---|
+| P1 TYPICAL, 4 tracks | p99 1.2 ms | Compute bound (command plus frame build plus raster, p99 summed) 13.4 ms; 0 edits missed the next frame | 16 ms | Pass |
+| P2 LARGE, 4 tracks | p99 4.3 ms | not measured yet (the tool shows every track) | 33 ms | Pass (Rust only) |
+| P3 LARGE, 20 tracks | p99 14.1 ms | Edit to frame p50 40.9 ms, **p99 63.3 ms**. Frame build p99 50.9 ms, raster p99 21.7 ms. Layout query in view (FFI included) p50 19.7 ms, p99 36.2 ms | 33 ms | **Fail end to end** |
+| P4 TYPICAL scroll | — | Build plus raster per frame p99 5.4 ms, 0 frames over 33 ms (300 frames) | 16 ms; none over 33 ms | Pass |
+
+The Rust-only bench number for P3 is within budget, but the budget in performance-requirements is for the whole path, so P3 is recorded as **failing**. It is not passed on the bench number.
+
+In the app, most of the frame build is the synchronous layout query made during build. Each revision recomputes the outline, which measures every bar of all 20 tracks (13 to 20 ms). This is what fallback 1 (the bar-plan cache) removes, so it is applied next. For reference, LARGE scroll with 20 tracks gave p99 24.0 ms and 1 frame over 33 ms. P4 sets a budget for TYPICAL only.

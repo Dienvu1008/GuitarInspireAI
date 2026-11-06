@@ -243,7 +243,32 @@ fn notation_layout(c: &mut Criterion) {
             samples.push(t.elapsed().as_nanos());
         }
         percentiles(
-            &format!("edit_and_score_relayout/{name} (budget {budget})"),
+            &format!("edit_and_score_relayout/{name} full (budget {budget})"),
+            samples,
+        );
+        // What the view does (ADR-031 fallback 2): outline for the whole score, then
+        // the systems in view; three systems around the edited bar is more than a
+        // screen holds when many tracks are shown.
+        let mut samples = Vec::with_capacity(100);
+        for i in 0..100 {
+            let t = Instant::now();
+            edit(&mut s, b, 1000 + i);
+            let at = s
+                .score_outline(&tracks, &metrics)
+                .expect("outline")
+                .systems
+                .iter()
+                .position(|x| (x.first_bar..x.end_bar).contains(&b.bar))
+                .expect("bar in a system");
+            let from = at.saturating_sub(1);
+            black_box(
+                s.score_systems(&tracks, &metrics, from..from + 3)
+                    .expect("systems"),
+            );
+            samples.push(t.elapsed().as_nanos());
+        }
+        percentiles(
+            &format!("edit_and_score_relayout/{name} in view (budget {budget})"),
             samples,
         );
     }

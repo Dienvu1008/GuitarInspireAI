@@ -186,6 +186,48 @@ pub struct TabLayoutDto {
     pub systems: Vec<SystemDto>,
 }
 
+/// One track's stave in a multi-track system (ADR-031). `system` is in stave
+/// coordinates, like a single-track system, so Dart paints and hit-tests it the same
+/// way; `top` places it in the system. Bar x-positions are equal in every stave.
+#[derive(Clone, Debug, PartialEq)]
+pub struct StaveDto {
+    pub track: i64,
+    pub strings: u8,
+    pub top: f32,
+    pub system: SystemDto,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct ScoreSystemDto {
+    pub index: u32,
+    pub y: f32,
+    pub height: f32,
+    pub staves: Vec<StaveDto>,
+}
+
+/// Where a system sits and which bars it holds, without content.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct OutlineSystemDto {
+    pub index: u32,
+    pub y: f32,
+    pub height: f32,
+    pub first_bar: u32,
+    /// One past the last bar.
+    pub end_bar: u32,
+}
+
+/// Line breaking of the shown tracks at `revision` (ADR-031): sizes the scroll view.
+/// Fetch the content of the systems in view with `score_systems`.
+/// No track list here: a returned `Vec<i64>` becomes `BigInt`s in Dart; each stave of
+/// `score_systems` carries its track id instead (score order).
+#[derive(Clone, Debug, PartialEq)]
+pub struct ScoreOutlineDto {
+    pub revision: i64,
+    pub width: f32,
+    pub height: f32,
+    pub systems: Vec<OutlineSystemDto>,
+}
+
 impl From<NotationError> for ApiError {
     fn from(e: NotationError) -> Self {
         ApiError::new("layout", e.to_string())
@@ -193,6 +235,72 @@ impl From<NotationError> for ApiError {
 }
 
 impl DocumentHandle {
+    /// Line breaking of the shown `tracks` at the current revision (ADR-031). Kept by
+    /// the core per (revision, tracks, metrics), so the systems fetched next match it.
+    #[frb(sync)]
+    pub fn score_outline(
+        &self,
+        tracks: Vec<i64>,
+        metrics: MetricsDto,
+    ) -> Result<ScoreOutlineDto, ApiError> {
+        let ids: Vec<_> = tracks.iter().map(|&t| track_id(t)).collect();
+        let mut s = self.lock_for_layout();
+        let revision = s.revision().0 as i64;
+        let o = s.score_outline(&ids, &metrics.to_core())?;
+        Ok(ScoreOutlineDto {
+            revision,
+            width: o.width,
+            height: o.height,
+            systems: o
+                .systems
+                .iter()
+                .map(|x| OutlineSystemDto {
+                    index: x.index as u32,
+                    y: x.y,
+                    height: x.height,
+                    first_bar: x.first_bar as u32,
+                    end_bar: x.end_bar as u32,
+                })
+                .collect(),
+        })
+    }
+
+    /// The content of `count` systems starting at `first`, for the current outline of
+    /// the same tracks and metrics. Only these systems are laid out.
+    #[frb(sync)]
+    pub fn score_systems(
+        &self,
+        tracks: Vec<i64>,
+        metrics: MetricsDto,
+        first: u32,
+        count: u32,
+    ) -> Result<Vec<ScoreSystemDto>, ApiError> {
+        let ids: Vec<_> = tracks.iter().map(|&t| track_id(t)).collect();
+        let systems = self.lock_for_layout().score_systems(
+            &ids,
+            &metrics.to_core(),
+            first as usize..(first as usize + count as usize),
+        )?;
+        Ok(systems
+            .into_iter()
+            .map(|sys| ScoreSystemDto {
+                index: sys.index as u32,
+                y: sys.y,
+                height: sys.height,
+                staves: sys
+                    .staves
+                    .into_iter()
+                    .map(|st| StaveDto {
+                        track: st.track.raw() as i64,
+                        strings: st.strings,
+                        top: st.top,
+                        system: system_dto(st.layout),
+                    })
+                    .collect(),
+            })
+            .collect())
+    }
+
     /// TAB layout of a track at the current revision.
     #[frb(sync)]
     pub fn tab_layout(&self, track: i64, metrics: MetricsDto) -> Result<TabLayoutDto, ApiError> {
@@ -202,76 +310,76 @@ impl DocumentHandle {
             strings: layout.strings,
             width: layout.width,
             height: layout.height,
-            systems: layout
-                .systems
-                .into_iter()
-                .map(|s| {
-                    let mut lines = Vec::with_capacity(s.lines.len() * 4);
-                    let mut line_kinds = Vec::with_capacity(s.lines.len());
-                    for l in &s.lines {
-                        lines.extend([l.x1, l.y1, l.x2, l.y2]);
-                        line_kinds.push(match l.kind {
-                            LineKind::String => LINE_STRING,
-                            LineKind::BarLine => LINE_BAR,
-                            LineKind::ThickBarLine => LINE_THICK_BAR,
-                            LineKind::Stem => LINE_STEM,
-                            LineKind::Beam => LINE_BEAM,
-                            LineKind::Volta => LINE_VOLTA,
+            systems: layout.systems.into_iter().map(system_dto).collect(),
+        })
+    }
+}
+
+/// One stave or single-track system as packed arrays (lines, hit regions).
+fn system_dto(s: mc_app::notation::SystemLayout) -> SystemDto {
+    {
+        let mut lines = Vec::with_capacity(s.lines.len() * 4);
+        let mut line_kinds = Vec::with_capacity(s.lines.len());
+        for l in &s.lines {
+            lines.extend([l.x1, l.y1, l.x2, l.y2]);
+            line_kinds.push(match l.kind {
+                LineKind::String => LINE_STRING,
+                LineKind::BarLine => LINE_BAR,
+                LineKind::ThickBarLine => LINE_THICK_BAR,
+                LineKind::Stem => LINE_STEM,
+                LineKind::Beam => LINE_BEAM,
+                LineKind::Volta => LINE_VOLTA,
+            });
+        }
+        let mut hit_rects = Vec::with_capacity(s.hits.len() * 4);
+        let mut hit_meta = Vec::with_capacity(s.hits.len() * 4);
+        let mut beats: Vec<HitBeatDto> = Vec::new();
+        let mut slots: HashMap<(usize, usize, usize), i32> = HashMap::new();
+        for h in &s.hits {
+            hit_rects.extend([h.rect.x, h.rect.y, h.rect.w, h.rect.h]);
+            let (voice, slot) = match h.target {
+                HitTarget::Beat {
+                    voice,
+                    beat,
+                    beat_id,
+                } => {
+                    let slot = *slots.entry((h.bar, voice, beat)).or_insert_with(|| {
+                        beats.push(HitBeatDto {
+                            id: beat_id.raw() as i64,
+                            bar: h.bar as u32,
+                            voice: voice as u32,
+                            index: beat as u32,
                         });
-                    }
-                    let mut hit_rects = Vec::with_capacity(s.hits.len() * 4);
-                    let mut hit_meta = Vec::with_capacity(s.hits.len() * 4);
-                    let mut beats: Vec<HitBeatDto> = Vec::new();
-                    let mut slots: HashMap<(usize, usize, usize), i32> = HashMap::new();
-                    for h in &s.hits {
-                        hit_rects.extend([h.rect.x, h.rect.y, h.rect.w, h.rect.h]);
-                        let (voice, slot) = match h.target {
-                            HitTarget::Beat {
-                                voice,
-                                beat,
-                                beat_id,
-                            } => {
-                                let slot =
-                                    *slots.entry((h.bar, voice, beat)).or_insert_with(|| {
-                                        beats.push(HitBeatDto {
-                                            id: beat_id.raw() as i64,
-                                            bar: h.bar as u32,
-                                            voice: voice as u32,
-                                            index: beat as u32,
-                                        });
-                                        beats.len() as i32 - 1
-                                    });
-                                (voice as i32, slot)
-                            }
-                            HitTarget::Append { voice } => (voice as i32, -1),
-                        };
-                        hit_meta.extend([h.bar as i32, h.string as i32, voice, slot]);
-                    }
-                    SystemDto {
-                        index: s.index as u32,
-                        y: s.y,
-                        height: s.height,
-                        staff_top: s.staff_top,
-                        bars: s
-                            .bars
-                            .iter()
-                            .map(|b| BarLayoutDto {
-                                bar: b.bar as u32,
-                                x: b.x,
-                                width: b.width,
-                                diagnostic: b.diagnostic,
-                            })
-                            .collect(),
-                        lines,
-                        line_kinds,
-                        glyphs: s.glyphs.into_iter().map(glyph_dto).collect(),
-                        hit_rects,
-                        hit_meta,
-                        beats,
-                    }
+                        beats.len() as i32 - 1
+                    });
+                    (voice as i32, slot)
+                }
+                HitTarget::Append { voice } => (voice as i32, -1),
+            };
+            hit_meta.extend([h.bar as i32, h.string as i32, voice, slot]);
+        }
+        SystemDto {
+            index: s.index as u32,
+            y: s.y,
+            height: s.height,
+            staff_top: s.staff_top,
+            bars: s
+                .bars
+                .iter()
+                .map(|b| BarLayoutDto {
+                    bar: b.bar as u32,
+                    x: b.x,
+                    width: b.width,
+                    diagnostic: b.diagnostic,
                 })
                 .collect(),
-        })
+            lines,
+            line_kinds,
+            glyphs: s.glyphs.into_iter().map(glyph_dto).collect(),
+            hit_rects,
+            hit_meta,
+            beats,
+        }
     }
 }
 

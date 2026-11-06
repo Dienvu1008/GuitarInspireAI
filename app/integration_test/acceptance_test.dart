@@ -130,7 +130,10 @@ void main() {
     await _until(tester, () => frets(guitar).length == 2);
 
     // Switch the active TAB track and enter a note there.
-    await tester.tap(find.text('Track 2'));
+    // The track list entry (the stave label shows the name too, ADR-031).
+    await tester.tap(
+      find.descendant(of: find.byType(TrackList), matching: find.text('Track 2')),
+    );
     await _until(tester, () => s().activeTrack == second);
     await tester.sendKeyEvent(LogicalKeyboardKey.digit5);
     await _until(tester, () => frets(second).isNotEmpty);

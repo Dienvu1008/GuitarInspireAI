@@ -85,6 +85,9 @@ pub struct DocumentSession {
     /// Score as created, for a new document until its first save (see
     /// [`DocumentSession::has_unsaved_work`]). `None` for opened or recovered ones.
     pristine: Option<Score>,
+    /// Line breaking of the shown tracks at one revision (ADR-031 fallback 2), so the
+    /// outline and the systems in view come from the same state. A view cache only.
+    pub(crate) outline_cache: Option<crate::notation::OutlineCache>,
 }
 
 /// Full D-01 scan; overflow (not reachable with validated durations) reports nothing,
@@ -136,6 +139,7 @@ impl DocumentSession {
             sink: None,
             transport: TransportState::default(),
             pristine: Some(score_for_pristine),
+            outline_cache: None,
         }
     }
 
@@ -204,6 +208,7 @@ impl DocumentSession {
             sink: None,
             transport: TransportState::default(),
             pristine: None,
+            outline_cache: None,
         };
         Ok((session, report))
     }

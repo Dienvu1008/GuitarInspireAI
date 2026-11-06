@@ -20,8 +20,10 @@ final fileDialogsProvider = Provider<FileDialogs>(
 /// Builds the playback cursor overlay for a TAB system, given a tick-to-x mapper and the
 /// system height. The app overrides it with a `PlaybackCursor` from `playback_feature`;
 /// by default there is no cursor (editor_feature does not depend on playback, FF-05).
-typedef CursorOverlayBuilder =
-    Widget Function(double? Function(int tick) tickToX, double height);
+typedef CursorOverlayBuilder = Widget Function(
+  double? Function(int tick) tickToX,
+  double height,
+);
 
 final cursorOverlayProvider = Provider<CursorOverlayBuilder?>((ref) => null);
 
@@ -30,7 +32,10 @@ final cursorOverlayProvider = Provider<CursorOverlayBuilder?>((ref) => null);
 /// section 3); the default allows the replacement.
 typedef ReplaceGuard = Future<bool> Function();
 
-final replaceGuardProvider = Provider<ReplaceGuard>((ref) => () async => true);
+final replaceGuardProvider = Provider<ReplaceGuard>(
+  (ref) =>
+      () async => true,
+);
 
 /// Per-user app data paths (recovery directory). Overridden in tests.
 final appPathsProvider = Provider<AppPaths>((ref) => const SystemAppPaths());
@@ -48,6 +53,7 @@ final class EditorState {
     required this.cursor,
     this.message,
     this.anchor,
+    this.hiddenTracks = const {},
   });
 
   final DocumentService service;
@@ -63,6 +69,18 @@ final class EditorState {
   /// Where a Shift selection started. Pure UI state: not in the document, not in
   /// undo (ADR-030 section 1).
   final BeatSlot? anchor;
+
+  /// Tracks the user hid from the TAB view (ADR-031). UI state only: every track is
+  /// shown when a document opens, and the set is not saved. Ids of deleted tracks are
+  /// harmless and ignored.
+  final Set<int> hiddenTracks;
+
+  /// Track ids shown in the TAB view, in score order. The active track is always
+  /// shown (ADR-031 5.3).
+  List<int> get shownTracks => [
+    for (final t in summary.tracks)
+      if (t.id == activeTrack || !hiddenTracks.contains(t.id)) t.id,
+  ];
 
   /// The selected run of beats from [anchor] to the cursor, in written order and
   /// inclusive, or null when nothing is selected (no anchor, cursor on the append
@@ -92,6 +110,7 @@ final class EditorState {
     bool clearMessage = false,
     BeatSlot? anchor,
     bool clearAnchor = false,
+    Set<int>? hiddenTracks,
   }) => EditorState(
     service: service,
     summary: summary ?? this.summary,
@@ -99,6 +118,7 @@ final class EditorState {
     cursor: cursor ?? this.cursor,
     message: clearMessage ? null : (message ?? this.message),
     anchor: clearAnchor ? null : (anchor ?? this.anchor),
+    hiddenTracks: hiddenTracks ?? this.hiddenTracks,
   );
 }
 
@@ -233,11 +253,22 @@ final class DocumentController extends Notifier<EditorState> {
   Future<bool> execute(CommandDto command, {int? coalesceKey}) =>
       _guard(() => state.service.execute(command, coalesceKey: coalesceKey));
 
+  /// Makes [track] the edited track. A hidden track becomes shown, since the active
+  /// track always is (ADR-031 5.3).
   void selectTrack(int track) => state = state.copyWith(
     activeTrack: track,
     cursor: EditorCursor.start,
     clearAnchor: true,
+    hiddenTracks: {...state.hiddenTracks}..remove(track),
   );
+
+  /// Shows or hides [track] in the TAB view. The active track cannot be hidden.
+  void toggleTrackShown(int track) {
+    if (track == state.activeTrack) return;
+    final hidden = {...state.hiddenTracks};
+    if (!hidden.remove(track)) hidden.add(track);
+    state = state.copyWith(hiddenTracks: hidden);
+  }
 
   /// Moves the cursor. With [extend] (Shift), the selection grows from where it
   /// started, or from the old cursor if that was on a beat; otherwise it is cleared.

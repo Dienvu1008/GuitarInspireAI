@@ -57,6 +57,20 @@ abstract interface class DocumentService {
     required int toIndex,
   });
 
+  /// Line breaking of the shown [tracks] at the current revision (ADR-031): each
+  /// system's position, height and bars, without content. Sizes the scroll view.
+  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics);
+
+  /// The content of [count] systems from [first], one stave per shown track, laid out
+  /// for the current outline of the same [tracks] and [metrics] (ADR-031). Only these
+  /// systems are laid out, so a large score stays fast.
+  List<ScoreSystemDto> scoreSystems(
+    List<int> tracks,
+    MetricsDto metrics,
+    int first,
+    int count,
+  );
+
   /// TAB layout of a track at the current revision (synchronous; see ADR-018).
   TabLayoutDto tabLayout(int track, MetricsDto metrics);
 

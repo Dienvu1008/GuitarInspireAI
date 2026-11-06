@@ -1,7 +1,8 @@
 import 'dart:async';
 
+// The bridge's own Int64List (it differs from dart:typed_data's on the web).
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart'
-    show ExternalLibrary;
+    show ExternalLibrary, Int64List;
 
 import 'document_service.dart';
 import 'generated/api/document.dart';
@@ -148,6 +149,23 @@ final class RustDocumentService implements DocumentService {
     fromIndex: fromIndex,
     toBar: toBar,
     toIndex: toIndex,
+  );
+
+  @override
+  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics) => _handle
+      .scoreOutline(tracks: Int64List.fromList(tracks), metrics: metrics);
+
+  @override
+  List<ScoreSystemDto> scoreSystems(
+    List<int> tracks,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) => _handle.scoreSystems(
+    tracks: Int64List.fromList(tracks),
+    metrics: metrics,
+    first: first,
+    count: count,
   );
 
   @override

@@ -461,6 +461,96 @@ final class FakeDocumentService implements DocumentService {
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) {
     final t = _track(track);
+    final system = _stave(t, metrics, [
+      for (final bar in t.bars) bar[0].length,
+    ]);
+    return TabLayoutDto(
+      track: track,
+      strings: t.instrument.tuning.length,
+      width: metrics.width,
+      height: system.height,
+      systems: [system],
+    );
+  }
+
+  /// The shown tracks in score order; throws like the core for none or unknown ids.
+  List<_Track> _shown(List<int> tracks) {
+    for (final id in tracks) {
+      _track(id);
+    }
+    final shown = [
+      for (final t in _state.tracks)
+        if (tracks.contains(t.id)) t,
+    ];
+    if (shown.isEmpty) throw ApiError(rule: 'layout', message: 'no track');
+    return shown;
+  }
+
+  /// Columns per bar shared by every stave (beat k of every track in column k), so
+  /// bar lines line up as in the core.
+  List<int> _columns(List<_Track> shown) => [
+    for (var bar = 0; bar < _state.bars; bar++)
+      shown.map((t) => t.bars[bar][0].length).reduce((a, b) => a > b ? a : b),
+  ];
+
+  /// The whole score is one system in the fake.
+  @override
+  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics) {
+    final shown = _shown(tracks);
+    final height = shown
+        .map((t) => _staveHeight(t, metrics))
+        .reduce((a, b) => a + b);
+    return ScoreOutlineDto(
+      revision: _revision,
+      width: metrics.width,
+      height: height,
+      systems: [
+        OutlineSystemDto(
+          index: 0,
+          y: 0,
+          height: height,
+          firstBar: 0,
+          endBar: _state.bars,
+        ),
+      ],
+    );
+  }
+
+  @override
+  List<ScoreSystemDto> scoreSystems(
+    List<int> tracks,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) {
+    final shown = _shown(tracks);
+    if (first > 0 || count <= 0) return const [];
+    final columns = _columns(shown);
+    final staves = <StaveDto>[];
+    var top = 0.0;
+    for (final t in shown) {
+      final system = _stave(t, metrics, columns);
+      staves.add(
+        StaveDto(
+          track: t.id,
+          strings: t.instrument.tuning.length,
+          top: top,
+          system: system,
+        ),
+      );
+      top += system.height;
+    }
+    return [ScoreSystemDto(index: 0, y: 0, height: top, staves: staves)];
+  }
+
+  double _staveHeight(_Track t, MetricsDto metrics) =>
+      metrics.aboveStaff +
+      (t.instrument.tuning.length - 1) * metrics.stringSpacing +
+      metrics.belowStaff;
+
+  /// One stave in stave coordinates; `columns[bar]` columns per bar (an empty bar has
+  /// the empty-bar width).
+  SystemDto _stave(_Track t, MetricsDto metrics, List<int> columns) {
     final strings = t.instrument.tuning.length;
     final glyphs = <GlyphDto>[];
     final rects = <double>[];
@@ -501,7 +591,9 @@ final class FakeDocumentService implements DocumentService {
         }
         x += w;
       }
-      x += beats.isEmpty ? metrics.emptyBarWidth : metrics.barPadding;
+      // Columns this track does not use still take their width, so bars line up.
+      x += (columns[bar] - beats.length) * metrics.minColumnWidth;
+      x += columns[bar] == 0 ? metrics.emptyBarWidth : metrics.barPadding;
       bars.add(
         BarLayoutDto(bar: bar, x: start, width: x - start, diagnostic: false),
       );
@@ -513,28 +605,18 @@ final class FakeDocumentService implements DocumentService {
       lines.addAll([metrics.marginLeft, y, x, y]);
       kinds.add(LineKind.string);
     }
-    final height =
-        top + (strings - 1) * metrics.stringSpacing + metrics.belowStaff;
-    return TabLayoutDto(
-      track: track,
-      strings: strings,
-      width: metrics.width,
-      height: height,
-      systems: [
-        SystemDto(
-          index: 0,
-          y: 0,
-          height: height,
-          staffTop: top,
-          bars: bars,
-          lines: Float32List.fromList(lines),
-          lineKinds: Uint8List.fromList(kinds),
-          glyphs: glyphs,
-          hitRects: Float32List.fromList(rects),
-          hitMeta: Int32List.fromList(meta),
-          beats: hitBeats,
-        ),
-      ],
+    return SystemDto(
+      index: 0,
+      y: 0,
+      height: _staveHeight(t, metrics),
+      staffTop: top,
+      bars: bars,
+      lines: Float32List.fromList(lines),
+      lineKinds: Uint8List.fromList(kinds),
+      glyphs: glyphs,
+      hitRects: Float32List.fromList(rects),
+      hitMeta: Int32List.fromList(meta),
+      beats: hitBeats,
     );
   }
 
@@ -693,6 +775,16 @@ final class _Tracked implements DocumentService {
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _inner.tabLayout(track, metrics);
+  @override
+  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics) =>
+      _inner.scoreOutline(tracks, metrics);
+  @override
+  List<ScoreSystemDto> scoreSystems(
+    List<int> tracks,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) => _inner.scoreSystems(tracks, metrics, first, count);
   @override
   Stream<EventDto> get events => _inner.events;
   @override

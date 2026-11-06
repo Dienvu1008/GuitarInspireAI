@@ -48,11 +48,79 @@ pub fn layout_tab(
 /// Lays out every bar of the shown `tracks` together (ADR-031): each system has one
 /// stave per track, in score order (duplicates ignored). Bar lines and beats that
 /// start together line up across staves; bars are as wide as the busiest track needs.
+///
+/// Equal to [`outline_score`] followed by [`layout_score_systems`] for every system;
+/// large scores should use those two to lay out only the systems in view.
 pub fn layout_score(
     score: &Score,
     tracks: &[TrackId],
     metrics: &LayoutMetrics,
 ) -> Result<ScoreLayout, NotationError> {
+    let shown = shown_tracks(score, tracks, metrics)?;
+    let plans = plan_all(score, &shown, metrics)?;
+    let outline = break_systems(score, &shown, &plans, metrics);
+    let systems = emit_systems(score, &shown, &outline.systems, metrics, |range| {
+        Ok(plans[range].iter().collect())
+    })?;
+    Ok(ScoreLayout {
+        tracks: outline.tracks,
+        width: outline.width,
+        height: outline.height,
+        systems,
+    })
+}
+
+/// Line breaking of the shown `tracks` for the whole score (ADR-031 fallback 2):
+/// which bars each system holds, its justification and its height, without emitting
+/// any lines, glyphs or hit regions. Cheap enough to recompute per revision; pair it
+/// with [`layout_score_systems`] for the systems in view.
+pub fn outline_score(
+    score: &Score,
+    tracks: &[TrackId],
+    metrics: &LayoutMetrics,
+) -> Result<ScoreOutline, NotationError> {
+    let shown = shown_tracks(score, tracks, metrics)?;
+    let plans = plan_all(score, &shown, metrics)?;
+    Ok(break_systems(score, &shown, &plans, metrics))
+}
+
+/// Lays out the systems `range` of `outline`, exactly as [`layout_score`] would. Only
+/// the bars of those systems are measured again. `outline` must come from the same
+/// score, tracks and metrics; a mismatch that would address missing bars or tracks
+/// is an error, not a panic.
+pub fn layout_score_systems(
+    score: &Score,
+    outline: &ScoreOutline,
+    range: std::ops::Range<usize>,
+    metrics: &LayoutMetrics,
+) -> Result<Vec<ScoreSystem>, NotationError> {
+    let shown = shown_tracks(score, &outline.tracks, metrics)?;
+    if shown.len() != outline.tracks.len() || outline.bar_count != score.master_bar_count() {
+        return Err(NotationError::StaleOutline);
+    }
+    let range = range.start.min(outline.systems.len())..range.end.min(outline.systems.len());
+    let wanted = &outline.systems[range];
+    let plans_of = |bars: std::ops::Range<usize>| -> Result<Vec<BarPlan>, NotationError> {
+        bars.map(|b| plan_bar(score, &shown, b, metrics)).collect()
+    };
+    let mut owned: Vec<Vec<BarPlan>> = Vec::with_capacity(wanted.len());
+    for s in wanted {
+        owned.push(plans_of(s.first_bar..s.end_bar)?);
+    }
+    let mut k = 0;
+    emit_systems(score, &shown, wanted, metrics, |_| {
+        let group = owned[k].iter().collect();
+        k += 1;
+        Ok(group)
+    })
+}
+
+/// The shown tracks in score order, after validating metrics and ids.
+fn shown_tracks<'a>(
+    score: &'a Score,
+    tracks: &[TrackId],
+    metrics: &LayoutMetrics,
+) -> Result<Vec<&'a Track>, NotationError> {
     metrics.validate()?;
     for &t in tracks {
         score.track(t).ok_or(NotationError::UnknownTrack(t))?;
@@ -64,32 +132,35 @@ pub fn layout_score(
     if shown.is_empty() {
         return Err(NotationError::NoTracks);
     }
-    let count = score.master_bar_count();
-    let mut diagnostics = Vec::with_capacity(shown.len());
-    for t in &shown {
-        let bars: BTreeSet<usize> = score
-            .track_diagnostics(t.id(), 0..count)
-            .map_err(|_| NotationError::Overflow)?
-            .into_iter()
-            .map(|d| d.bar)
-            .collect();
-        diagnostics.push(bars);
-    }
-    let plans = (0..count)
-        .map(|b| plan_bar(score, &shown, b, metrics))
-        .collect::<Result<Vec<_>, _>>()?;
-    let ctxs: Vec<Ctx> = shown
-        .iter()
-        .enumerate()
-        .map(|(stave, track)| Ctx {
-            m: metrics,
-            track,
-            stave,
-            strings: track.fretted().tuning.string_count(),
-            master: score.master_bars(),
-        })
-        .collect();
+    Ok(shown)
+}
 
+fn plan_all(
+    score: &Score,
+    shown: &[&Track],
+    metrics: &LayoutMetrics,
+) -> Result<Vec<BarPlan>, NotationError> {
+    (0..score.master_bar_count())
+        .map(|b| plan_bar(score, shown, b, metrics))
+        .collect()
+}
+
+/// Height of one stave: the space above, the strings, and the space below (the same
+/// value `emit_system` reports, without emitting anything).
+fn stave_height(strings: u8, m: &LayoutMetrics) -> f32 {
+    m.above_staff + (strings as f32 - 1.0) * m.string_spacing + m.below_staff
+}
+
+fn break_systems(
+    score: &Score,
+    shown: &[&Track],
+    plans: &[BarPlan],
+    metrics: &LayoutMetrics,
+) -> ScoreOutline {
+    let height_of_system: f32 = shown
+        .iter()
+        .map(|t| stave_height(t.fretted().tuning.string_count(), metrics))
+        .sum();
     let available = metrics.content_width();
     let mut systems = Vec::new();
     let mut y = 0.0f32;
@@ -101,13 +172,66 @@ pub fn layout_score(
             used += plans[end].natural();
             end += 1;
         }
-        let group = &plans[start..end];
-        let scale = system_scale(group, end == plans.len(), metrics);
-        let index = systems.len();
+        systems.push(OutlineSystem {
+            index: systems.len(),
+            y,
+            height: height_of_system,
+            first_bar: start,
+            end_bar: end,
+            scale: system_scale(&plans[start..end], end == plans.len(), metrics),
+        });
+        y += height_of_system + metrics.system_gap;
+        start = end;
+    }
+    let height = if systems.is_empty() {
+        0.0
+    } else {
+        y - metrics.system_gap
+    };
+    ScoreOutline {
+        tracks: shown.iter().map(|t| t.id()).collect(),
+        width: metrics.width,
+        height,
+        bar_count: score.master_bar_count(),
+        systems,
+    }
+}
+
+/// Emits the given outline systems. `plans_for` returns the bar plans of each system
+/// in turn (borrowed from a full plan list, or measured for just that system).
+fn emit_systems<'p>(
+    score: &Score,
+    shown: &[&Track],
+    systems: &[OutlineSystem],
+    metrics: &LayoutMetrics,
+    mut plans_for: impl FnMut(std::ops::Range<usize>) -> Result<Vec<&'p BarPlan>, NotationError>,
+) -> Result<Vec<ScoreSystem>, NotationError> {
+    let ctxs: Vec<Ctx> = shown
+        .iter()
+        .enumerate()
+        .map(|(stave, track)| Ctx {
+            m: metrics,
+            track,
+            stave,
+            strings: track.fretted().tuning.string_count(),
+            master: score.master_bars(),
+        })
+        .collect();
+    let mut out = Vec::with_capacity(systems.len());
+    for sys in systems {
+        let bars = sys.first_bar..sys.end_bar;
+        let group = plans_for(bars.clone())?;
         let mut staves = Vec::with_capacity(ctxs.len());
         let mut top = 0.0f32;
-        for (ctx, diag) in ctxs.iter().zip(&diagnostics) {
-            let layout = ctx.emit_system(index, y + top, group, scale, diag);
+        for ctx in &ctxs {
+            let diagnostic_bars: BTreeSet<usize> = score
+                .track_diagnostics(ctx.track.id(), bars.clone())
+                .map_err(|_| NotationError::Overflow)?
+                .into_iter()
+                .map(|d| d.bar)
+                .collect();
+            let layout =
+                ctx.emit_system(sys.index, sys.y + top, &group, sys.scale, &diagnostic_bars);
             let height = layout.height;
             staves.push(Stave {
                 track: ctx.track.id(),
@@ -117,26 +241,14 @@ pub fn layout_score(
             });
             top += height;
         }
-        systems.push(ScoreSystem {
-            index,
-            y,
+        out.push(ScoreSystem {
+            index: sys.index,
+            y: sys.y,
             height: top,
             staves,
         });
-        y += top + metrics.system_gap;
-        start = end;
     }
-    let height = if systems.is_empty() {
-        0.0
-    } else {
-        y - metrics.system_gap
-    };
-    Ok(ScoreLayout {
-        tracks: shown.iter().map(|t| t.id()).collect(),
-        width: metrics.width,
-        height,
-        systems,
-    })
+    Ok(out)
 }
 
 /// Justification factor of a system's flexible width, shared by all its staves. The
@@ -355,7 +467,7 @@ impl Ctx<'_> {
         &self,
         index: usize,
         y: f32,
-        plans: &[BarPlan],
+        plans: &[&BarPlan],
         scale: f32,
         diagnostic_bars: &BTreeSet<usize>,
     ) -> SystemLayout {

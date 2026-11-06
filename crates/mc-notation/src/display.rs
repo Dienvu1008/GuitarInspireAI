@@ -199,6 +199,34 @@ pub struct ScoreSystem {
     pub staves: Vec<Stave>,
 }
 
+/// Where a system sits and which bars it holds, without its content (ADR-031).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct OutlineSystem {
+    pub index: usize,
+    /// Top of the system in document coordinates.
+    pub y: f32,
+    /// Sum of the stave heights.
+    pub height: f32,
+    pub first_bar: usize,
+    /// One past the last bar.
+    pub end_bar: usize,
+    /// Justification factor of the system's flexible width (shared by its staves).
+    pub scale: f32,
+}
+
+/// Line breaking of the shown tracks for the whole score: enough to size a scroll
+/// view and to lay out any system later with `layout_score_systems`.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ScoreOutline {
+    /// The shown tracks in stave order (score order).
+    pub tracks: Vec<TrackId>,
+    pub width: f32,
+    pub height: f32,
+    /// Master bar count the outline was computed for (stale-outline check).
+    pub bar_count: usize,
+    pub systems: Vec<OutlineSystem>,
+}
+
 /// Layout of several tracks shown together: systems from top to bottom.
 #[derive(Clone, Debug, PartialEq)]
 pub struct ScoreLayout {

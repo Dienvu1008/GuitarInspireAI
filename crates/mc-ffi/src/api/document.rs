@@ -446,6 +446,12 @@ impl DocumentHandle {
             .map_or(0, |b| b.voices.len() as u32)
     }
 
+    /// Locks the session for a layout query that may update its view cache (the
+    /// multi-track outline, ADR-031). Same lock as every other call.
+    pub(crate) fn lock_for_layout(&self) -> MutexGuard<'_, DocumentSession> {
+        self.lock()
+    }
+
     pub(crate) fn with_session<R>(&self, f: impl FnOnce(&DocumentSession) -> R) -> R {
         f(&self.lock())
     }

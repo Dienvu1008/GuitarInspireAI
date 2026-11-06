@@ -9,7 +9,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
 
-            // These functions are ignored because they are not marked as `pub`: `app_info`, `chord_result_dto`, `discard_own_recovery`, `event_dto`, `from_imported_score`, `lock_for_transport`, `lock`, `master_bar_dto`, `outcome_dto`, `playback_state_dto`, `recovery_dir`, `recovery_entry_dto`, `score_snapshot`, `summary_dto`, `to_command`, `with_session`, `wrap`
+            // These functions are ignored because they are not marked as `pub`: `app_info`, `chord_result_dto`, `discard_own_recovery`, `event_dto`, `from_imported_score`, `lock_for_layout`, `lock_for_transport`, `lock`, `master_bar_dto`, `outcome_dto`, `playback_state_dto`, `recovery_dir`, `recovery_entry_dto`, `score_snapshot`, `summary_dto`, `to_command`, `with_session`, `wrap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DartEventSink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `publish`
 
@@ -106,6 +106,16 @@ static Future<DocumentHandle>  openFromRecovery({required String dir , required 
 
 
  Future<OutcomeDto>  saveAs({required String path });
+
+
+/// Line breaking of the shown `tracks` at the current revision (ADR-031). Kept by
+/// the core per (revision, tracks, metrics), so the systems fetched next match it.
+ ScoreOutlineDto  scoreOutline({required Int64List tracks , required MetricsDto metrics });
+
+
+/// The content of `count` systems starting at `first`, for the current outline of
+/// the same tracks and metrics. Only these systems are laid out.
+ List<ScoreSystemDto>  scoreSystems({required Int64List tracks , required MetricsDto metrics , required int first , required int count });
 
 
  Stream<EventDto>  subscribeEvents();

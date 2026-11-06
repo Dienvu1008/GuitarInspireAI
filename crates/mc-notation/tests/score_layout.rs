@@ -5,7 +5,10 @@
 //! Randomised cases use a fixed-seed generator (no extra dependency): many cases,
 //! reproducible from the seed printed on failure.
 
-use mc_notation::{HitTarget, LayoutMetrics, NotationError, ScoreLayout, layout_score, layout_tab};
+use mc_notation::{
+    HitTarget, LayoutMetrics, NotationError, ScoreLayout, layout_score, layout_score_systems,
+    layout_tab, outline_score,
+};
 use mc_score::{BeatRef, FrettedInstrument, InstrumentSpec, MasterBar, Score, TrackId};
 use mc_theory::fretted::{Fret, FretPosition, StringIndex};
 use mc_theory::{BaseValue, NoteValue, Rational, Tempo};
@@ -408,4 +411,66 @@ fn m7_golden_two_of_three_tracks_with_a_repeat() {
     }
     let again = dump(&layout_score(&s, &[ids[0], ids[2]], &LayoutMetrics::default()).unwrap());
     assert_eq!(actual, again, "deterministic");
+}
+
+/// ADR-031 fallback 2: the outline sizes every system exactly as the full layout does,
+/// and laying out any range of systems gives exactly those systems of the full layout.
+#[test]
+fn windowed_layout_equals_the_full_layout() {
+    let mut ranges = 0;
+    for seed in 0..CASES {
+        let (s, ids) = random_score(seed);
+        let shown = subset(seed, &ids);
+        let m = metrics_for(seed);
+        let full = layout_score(&s, &shown, &m).unwrap();
+        let outline = outline_score(&s, &shown, &m).unwrap();
+        assert_eq!(outline.tracks, full.tracks);
+        assert_eq!(
+            outline.height.to_bits(),
+            full.height.to_bits(),
+            "seed {seed}"
+        );
+        assert_eq!(outline.systems.len(), full.systems.len());
+        for (o, f) in outline.systems.iter().zip(&full.systems) {
+            assert_eq!(
+                (o.index, o.y.to_bits()),
+                (f.index, f.y.to_bits()),
+                "seed {seed}"
+            );
+            assert!((o.height - f.height).abs() < 1e-3, "seed {seed}");
+            let bars = &f.staves[0].layout.bars;
+            assert_eq!(o.first_bar, bars.first().unwrap().bar);
+            assert_eq!(o.end_bar, bars.last().unwrap().bar + 1);
+        }
+        let n = full.systems.len();
+        let mut rng = Rng(seed + 7);
+        for _ in 0..3 {
+            let a = rng.below(n as u64 + 1) as usize;
+            let b = a + rng.below(4) as usize;
+            let part = layout_score_systems(&s, &outline, a..b, &m).unwrap();
+            let expected = &full.systems[a.min(n)..b.min(n)];
+            assert_eq!(part, expected, "seed {seed} range {a}..{b}");
+            ranges += 1;
+        }
+    }
+    assert!(ranges >= 900);
+}
+
+#[test]
+fn a_stale_outline_is_an_error() {
+    let (mut s, ids) = new_score(2, 4);
+    let m = LayoutMetrics::default();
+    let outline = outline_score(&s, &ids, &m).unwrap();
+    s.remove_master_bars(2, 2).unwrap();
+    assert_eq!(
+        layout_score_systems(&s, &outline, 0..10, &m),
+        Err(NotationError::StaleOutline)
+    );
+    let (mut s, ids) = new_score(2, 4);
+    let outline = outline_score(&s, &ids, &m).unwrap();
+    s.remove_track(ids[1]).unwrap();
+    assert_eq!(
+        layout_score_systems(&s, &outline, 0..1, &m),
+        Err(NotationError::UnknownTrack(ids[1]))
+    );
 }

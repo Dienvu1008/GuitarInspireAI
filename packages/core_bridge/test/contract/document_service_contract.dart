@@ -289,6 +289,66 @@ void documentServiceContract(
       expect(d.beats(track, 0, 0), hasLength(1));
     });
 
+    test(
+      'ADR-031: outline and systems show one aligned stave per track',
+      () async {
+        await d.execute(
+          CommandDto.addTrack(
+            name: 'Second',
+            instrument: d.summary().tracks.single.instrument,
+          ),
+        );
+        final ids = d.summary().tracks.map((t) => t.id).toList();
+        final a = await insertBeat(0);
+        await d.execute(CommandDto.setNote(beat: a, string: 1, fret: 5));
+        // A beat on the second track, bar 0.
+        await d.execute(
+          CommandDto.insertBeat(
+            track: ids[1],
+            bar: 0,
+            voice: 0,
+            index: 0,
+            duration: quarter,
+          ),
+        );
+
+        final m = metrics();
+        // Asked in reverse order: staves come in score order.
+        final outline = d.scoreOutline(ids.reversed.toList(), m);
+        expect(outline.revision, d.summary().revision);
+        expect(outline.systems, isNotEmpty);
+        expect(outline.systems.first.firstBar, 0);
+        expect(outline.systems.last.endBar, 2);
+
+        final systems = d.scoreSystems(ids, m, 0, outline.systems.length);
+        expect(systems.length, outline.systems.length);
+        for (var i = 0; i < systems.length; i++) {
+          final s = systems[i];
+          expect(s.index, outline.systems[i].index);
+          expect(s.height, closeTo(outline.systems[i].height, 1e-3));
+          expect(s.staves.map((st) => st.track), ids);
+          final bars = s.staves.first.system.bars;
+          for (final st in s.staves) {
+            expect(
+              st.system.bars.map((b) => (b.bar, b.x, b.width)),
+              bars.map((b) => (b.bar, b.x, b.width)),
+              reason: 'bar lines line up',
+            );
+            for (final beat in st.system.beats) {
+              final own = d.beats(st.track, beat.bar, beat.voice);
+              expect(
+                own[beat.index].id,
+                beat.id,
+                reason: 'hits stay on their track',
+              );
+            }
+          }
+        }
+        expect(d.scoreSystems(ids, m, outline.systems.length, 3), isEmpty);
+        expect(() => d.scoreOutline(const [], m), throwsA(isA<ApiError>()));
+      },
+    );
+
     test('save requires a location; save as then save succeed', () async {
       await expectLater(
         d.save(),
