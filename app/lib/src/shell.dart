@@ -84,7 +84,7 @@ class _ShellState extends ConsumerState<Shell> {
         child: Scaffold(
           body: Column(
             children: [
-              _MenuBar(shortcuts: shortcuts),
+              _MenuBar(shortcuts: shortcuts, keys: _keys),
               const Divider(height: 1),
               if (ref.watch(playbackAvailableProvider)) ...[
                 TransportBar(cursorMasterBar: s.cursor.bar),
@@ -120,9 +120,12 @@ class _ShellState extends ConsumerState<Shell> {
 }
 
 class _MenuBar extends ConsumerWidget {
-  const _MenuBar({required this.shortcuts});
+  const _MenuBar({required this.shortcuts, required this.keys});
 
   final Map<ShortcutActivator, VoidCallback> shortcuts;
+
+  /// The editor's key handler, so menu edits run in the same order as keys.
+  final KeyboardHandler keys;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -180,6 +183,23 @@ class _MenuBar extends ConsumerWidget {
                   'Redo',
                   const SingleActivator(LogicalKeyboardKey.keyY, control: true),
                   s.summary.canRedo ? editor.redo : null,
+                ),
+                const Divider(),
+                // ADR-030: in-app beat clipboard (not the system clipboard).
+                item(
+                  'Cut',
+                  const SingleActivator(LogicalKeyboardKey.keyX, control: true),
+                  keys.cut,
+                ),
+                item(
+                  'Copy',
+                  const SingleActivator(LogicalKeyboardKey.keyC, control: true),
+                  keys.copy,
+                ),
+                item(
+                  'Paste',
+                  const SingleActivator(LogicalKeyboardKey.keyV, control: true),
+                  ref.watch(beatClipboardProvider) == null ? null : keys.paste,
                 ),
               ],
               child: const Text('Edit'),

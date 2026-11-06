@@ -44,6 +44,19 @@ abstract interface class DocumentService {
   /// frets feed ordinary `setNote` commands when the user inserts one (GR-05).
   ChordResultDto chordVoicings(int track, String symbol, {int max = 5});
 
+  /// Copies the beats of [voice] from ([fromBar], [fromIndex]) to ([toBar],
+  /// [toIndex]), both inclusive, possibly across bars, as plain values for the in-app
+  /// clipboard (ADR-030). Throws [ApiError] when either end does not exist. Paste them
+  /// with `CommandDto.pasteBeats`; cut with `CommandDto.removeBeats`.
+  List<ClipBeatDto> copyBeats(
+    int track,
+    int voice, {
+    required int fromBar,
+    required int fromIndex,
+    required int toBar,
+    required int toIndex,
+  });
+
   /// TAB layout of a track at the current revision (synchronous; see ADR-018).
   TabLayoutDto tabLayout(int track, MetricsDto metrics);
 

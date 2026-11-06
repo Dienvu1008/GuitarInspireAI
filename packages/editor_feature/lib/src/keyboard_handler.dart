@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'clipboard.dart';
 import 'document_controller.dart';
 import 'editor_cursor.dart';
 import 'key_bindings.dart';
@@ -121,9 +122,163 @@ final class KeyboardHandler {
         await _setBeatDuration(s, 4);
       case EditorIntent.dot:
         await _toggleDot(s);
+      case EditorIntent.selectLeft:
+        final c = _stepBeat(s, forward: false);
+        if (c != null) _editor.moveCursor(c, extend: true);
+      case EditorIntent.selectRight:
+        final c = _stepBeat(s, forward: true);
+        if (c != null) _editor.moveCursor(c, extend: true);
+      case EditorIntent.clearSelection:
+        _editor.moveCursor(s.cursor);
+      case EditorIntent.copy:
+        _copy(s);
+      case EditorIntent.cut:
+        await _cut(s);
+      case EditorIntent.paste:
+        await _paste(s);
       default:
         break;
     }
+  }
+
+  /// Edit menu entry points; they run in the same queue as keys.
+  void copy() => _enqueue(() => _handle(EditorIntent.copy));
+  void cut() => _enqueue(() => _handle(EditorIntent.cut));
+  void paste() => _enqueue(() => _handle(EditorIntent.paste));
+
+  // ---------------------------------------------------------- selection, clipboard
+
+  /// The next or previous existing beat in the cursor's voice, across bars and
+  /// skipping empty bars and append slots, so a Shift selection always ends on a beat.
+  EditorCursor? _stepBeat(EditorState s, {required bool forward}) {
+    final bars = s.summary.masterBars.length;
+    final voice = s.cursor.voice;
+    int len(int bar) => bar < 0 || bar >= bars
+        ? 0
+        : (voice < s.service.voiceCount(s.activeTrack, bar)
+              ? s.service.beats(s.activeTrack, bar, voice).length
+              : 0);
+    EditorCursor at(int bar, int index) => EditorCursor(
+      bar: bar,
+      voice: voice,
+      string: s.cursor.string,
+      beat: index,
+    );
+    var bar = s.cursor.bar;
+    final cur = s.cursor.beat;
+    if (forward) {
+      if (cur != null && cur + 1 < len(bar)) return at(bar, cur + 1);
+      // Past the last beat (or from the append slot): first beat of the next bar
+      // that has beats.
+      for (bar = bar + 1; bar < bars; bar++) {
+        if (len(bar) > 0) return at(bar, 0);
+      }
+      return null;
+    }
+    if (cur != null && cur > 0) return at(bar, cur - 1);
+    if (cur == null && len(bar) > 0) return at(bar, len(bar) - 1);
+    for (bar = bar - 1; bar >= 0; bar--) {
+      if (len(bar) > 0) return at(bar, len(bar) - 1);
+    }
+    return null;
+  }
+
+  /// The selection, or the single beat under the cursor.
+  (BeatSlot, BeatSlot)? _range(EditorState s) {
+    final sel = s.selection;
+    if (sel != null) return sel;
+    final beat = s.cursor.beat;
+    if (beat == null) return null;
+    final slot = (bar: s.cursor.bar, voice: s.cursor.voice, index: beat);
+    return (slot, slot);
+  }
+
+  static String _beats(int n) => '$n beat${n == 1 ? '' : 's'}';
+
+  List<ClipBeatDto>? _copy(EditorState s) {
+    final r = _range(s);
+    if (r == null) {
+      _editor.showMessage('Nothing to copy: put the cursor on a beat');
+      return null;
+    }
+    final (from, to) = r;
+    try {
+      final clip = s.service.copyBeats(
+        s.activeTrack,
+        from.voice,
+        fromBar: from.bar,
+        fromIndex: from.index,
+        toBar: to.bar,
+        toIndex: to.index,
+      );
+      _ref.read(beatClipboardProvider.notifier).set(clip);
+      _editor.showMessage('Copied ${_beats(clip.length)}');
+      return clip;
+    } on ApiError catch (e) {
+      _editor.showMessage('${e.rule}: ${e.message}');
+      return null;
+    }
+  }
+
+  /// Copy, then remove the run in one core command (one undo step).
+  Future<void> _cut(EditorState s) async {
+    final clip = _copy(s);
+    if (clip == null) return;
+    final (from, to) = _range(s)!;
+    final ok = await _editor.execute(
+      CommandDto.removeBeats(
+        track: s.activeTrack,
+        voice: from.voice,
+        fromBar: from.bar,
+        fromIndex: from.index,
+        toBar: to.bar,
+        toIndex: to.index,
+      ),
+    );
+    if (!ok) return;
+    final left = _state.service.beats(s.activeTrack, from.bar, from.voice);
+    _editor.moveCursor(
+      EditorCursor(
+        bar: from.bar,
+        voice: from.voice,
+        string: s.cursor.string,
+        beat: from.index < left.length ? from.index : null,
+      ),
+    );
+    _editor.showMessage('Cut ${_beats(clip.length)}');
+  }
+
+  /// Inserts the clipboard at the cursor (before the beat under it, or at the end of
+  /// the bar on the append slot), in one core command. The core checks every note
+  /// against this track and rejects the whole paste if one does not fit.
+  Future<void> _paste(EditorState s) async {
+    final clip = _ref.read(beatClipboardProvider);
+    if (clip == null || clip.isEmpty) {
+      _editor.showMessage('The clipboard is empty');
+      return;
+    }
+    final index =
+        s.cursor.beat ??
+        s.service.beats(s.activeTrack, s.cursor.bar, s.cursor.voice).length;
+    final ok = await _editor.execute(
+      CommandDto.pasteBeats(
+        track: s.activeTrack,
+        bar: s.cursor.bar,
+        voice: s.cursor.voice,
+        index: index,
+        beats: clip,
+      ),
+    );
+    if (!ok) return;
+    _editor.moveCursor(
+      EditorCursor(
+        bar: s.cursor.bar,
+        voice: s.cursor.voice,
+        string: s.cursor.string,
+        beat: index,
+      ),
+    );
+    _editor.showMessage('Pasted ${_beats(clip.length)}');
   }
 
   // ---------------------------------------------------------------- digit entry

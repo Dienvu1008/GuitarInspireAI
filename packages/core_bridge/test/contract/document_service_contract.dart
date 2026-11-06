@@ -173,6 +173,113 @@ void documentServiceContract(
       },
     );
 
+    test(
+      'ADR-030: copy and paste a run across bars is one undo step',
+      () async {
+        final a = await insertBeat(0);
+        await d.execute(CommandDto.setNote(beat: a, string: 1, fret: 5));
+        final b = await insertBeat(1);
+        await d.execute(CommandDto.setNote(beat: b, string: 6, fret: 3));
+
+        final clip = d.copyBeats(
+          track,
+          0,
+          fromBar: 0,
+          fromIndex: 0,
+          toBar: 1,
+          toIndex: 0,
+        );
+        expect(clip.map((c) => c.notes.single.fret), [5, 3]);
+
+        final rev = d.summary().revision;
+        await d.execute(
+          CommandDto.pasteBeats(
+            track: track,
+            bar: 1,
+            voice: 0,
+            index: 1,
+            beats: clip,
+          ),
+        );
+        expect(d.summary().revision, rev + 1);
+        expect(
+          d
+              .beats(track, 1, 0)
+              .map((x) => (x.notes.single.string, x.notes.single.fret)),
+          [(6, 3), (1, 5), (6, 3)],
+        );
+        await d.undo();
+        expect(d.beats(track, 1, 0), hasLength(1));
+      },
+    );
+
+    test('ADR-030: cut removes the run as one undo step', () async {
+      await insertBeat(0);
+      await insertBeat(0);
+      await insertBeat(1);
+      await d.execute(
+        CommandDto.removeBeats(
+          track: track,
+          voice: 0,
+          fromBar: 0,
+          fromIndex: 1,
+          toBar: 1,
+          toIndex: 0,
+        ),
+      );
+      expect(
+        (d.beats(track, 0, 0).length, d.beats(track, 1, 0).length),
+        (1, 0),
+      );
+      await d.undo();
+      expect(
+        (d.beats(track, 0, 0).length, d.beats(track, 1, 0).length),
+        (2, 1),
+      );
+    });
+
+    test('ADR-030: an invalid paste is rejected and changes nothing', () async {
+      await insertBeat(0);
+      final before = d.summary().revision;
+      const bad = ClipBeatDto(
+        duration: quarter,
+        notes: [
+          ClipNoteDto(
+            string: 9,
+            fret: 0,
+            tie: false,
+            letRing: false,
+            dead: false,
+          ),
+        ],
+      );
+      await expectLater(
+        d.execute(
+          CommandDto.pasteBeats(
+            track: track,
+            bar: 0,
+            voice: 0,
+            index: 0,
+            beats: const [bad],
+          ),
+        ),
+        throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'H-03')),
+      );
+      expect(
+        () => d.copyBeats(
+          track,
+          0,
+          fromBar: 0,
+          fromIndex: 3,
+          toBar: 0,
+          toIndex: 3,
+        ),
+        throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'E-04')),
+      );
+      expect(d.summary().revision, before);
+      expect(d.beats(track, 0, 0), hasLength(1));
+    });
+
     test('save requires a location; save as then save succeed', () async {
       await expectLater(
         d.save(),

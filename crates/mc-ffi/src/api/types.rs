@@ -3,8 +3,11 @@
 //! amendment 2). Conversions into application types live here; every musical rule is
 //! checked by the core, never by this module.
 
-use mc_app::types::{BeatId, NoteId, TrackId};
-use mc_app::{BeatAddress, CommandError, DurationSpec, InstrumentSpecInput, OpenError, SaveError};
+use mc_app::types::{BeatId, NoteEffects, NoteId, TrackId};
+use mc_app::{
+    BeatAddress, ClipBeat, ClipNote, CommandError, DurationSpec, InstrumentSpecInput, OpenError,
+    SaveError,
+};
 
 /// Error returned to Dart. `rule` is the domain rule id when one applies (for example
 /// `H-04`), otherwise a short category such as `save` or `layout`.
@@ -235,6 +238,87 @@ pub enum CommandDto {
         instrument: InstrumentDto,
         keep_pitches: bool,
     },
+    /// Inserts a copied run of beats at `index` of a voice (ADR-030). All or nothing;
+    /// one undo step; never creates bars.
+    PasteBeats {
+        track: i64,
+        bar: u32,
+        voice: u32,
+        index: u32,
+        beats: Vec<ClipBeatDto>,
+    },
+    /// Removes the beats of one voice from (`from_bar`, `from_index`) to (`to_bar`,
+    /// `to_index`), both inclusive, possibly across bars (ADR-030 cut).
+    RemoveBeats {
+        track: i64,
+        voice: u32,
+        from_bar: u32,
+        from_index: u32,
+        to_bar: u32,
+        to_index: u32,
+    },
+}
+
+/// A note of a clipboard fragment: strings and frets, not pitches; no ids (ADR-030).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ClipNoteDto {
+    pub string: u8,
+    pub fret: u8,
+    pub tie: bool,
+    pub let_ring: bool,
+    pub dead: bool,
+}
+
+/// A beat of a clipboard fragment: written duration and notes; no ids (ADR-030).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ClipBeatDto {
+    pub duration: DurationDto,
+    pub notes: Vec<ClipNoteDto>,
+}
+
+impl ClipBeatDto {
+    pub(crate) fn to_app(&self) -> ClipBeat {
+        ClipBeat {
+            duration: self.duration.to_app(),
+            notes: self
+                .notes
+                .iter()
+                .map(|n| ClipNote {
+                    string: n.string,
+                    fret: n.fret,
+                    tie: n.tie,
+                    effects: NoteEffects {
+                        let_ring: n.let_ring,
+                        dead: n.dead,
+                    },
+                })
+                .collect(),
+        }
+    }
+
+    pub(crate) fn from_app(b: ClipBeat) -> Self {
+        ClipBeatDto {
+            duration: DurationDto {
+                base: b.duration.base,
+                dots: b.duration.dots,
+                tuplet: b
+                    .duration
+                    .tuplet
+                    .map(|(actual, normal)| TupletDto { actual, normal }),
+            },
+            notes: b
+                .notes
+                .into_iter()
+                .map(|n| ClipNoteDto {
+                    string: n.string,
+                    fret: n.fret,
+                    tie: n.tie,
+                    let_ring: n.effects.let_ring,
+                    dead: n.effects.dead,
+                })
+                .collect(),
+        }
+    }
 }
 
 /// Invalidation hint (ADR-006). Consumers re-query summary, beats or layout.

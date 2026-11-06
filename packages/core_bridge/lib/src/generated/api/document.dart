@@ -42,6 +42,12 @@ static bool  beginSession({required String dir })=>RustLib.instance.api.crateApi
  ChordResultDto  chordVoicings({required PlatformInt64 track , required String symbol , required int max });
 
 
+/// Copies the beats of one voice from (`from_bar`, `from_index`) to (`to_bar`,
+/// `to_index`), both inclusive, possibly across bars, as plain values for the
+/// in-app clipboard (ADR-030). A query: nothing changes.
+ List<ClipBeatDto>  copyBeats({required PlatformInt64 track , required int voice , required int fromBar , required int fromIndex , required int toBar , required int toIndex });
+
+
 /// A new, unsaved document with one standard-guitar track and `bars` empty 4/4 bars.
 static DocumentHandle  create({required int bars })=>RustLib.instance.api.crateApiDocumentDocumentHandleCreate(bars: bars);
 

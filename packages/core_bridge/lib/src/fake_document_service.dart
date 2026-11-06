@@ -211,6 +211,73 @@ final class FakeDocumentService implements DocumentService {
           EventKindDto.masterBarsInserted(at: at, count: count),
           const EventKindDto.tempoMapChanged(),
         ];
+      // Paste and cut: a small subset of the core rules (string count, empty
+      // fragment, positions). The contract suite runs the same cases on the core.
+      case CommandDto_PasteBeats(
+        :final track,
+        :final bar,
+        :final voice,
+        :final index,
+        :final beats,
+      ):
+        final v = _voice(track, bar, voice);
+        if (beats.isEmpty || index < 0 || index > v.length) {
+          throw ApiError(rule: 'E-04', message: 'paste at $index');
+        }
+        final strings = _track(track).instrument.tuning.length;
+        for (final b in beats) {
+          for (final n in b.notes) {
+            if (n.string < 1 || n.string > strings) {
+              throw ApiError(rule: 'H-03', message: 'string ${n.string}');
+            }
+          }
+        }
+        v.insertAll(index, [
+          for (final b in beats)
+            _Beat(_nextId++, b.duration, [
+              for (final n in b.notes)
+                NoteDto(
+                  id: _nextId++,
+                  string: n.string,
+                  fret: n.fret,
+                  tie: n.tie,
+                  letRing: n.letRing,
+                  dead: n.dead,
+                ),
+            ]),
+        ]);
+        return [
+          EventKindDto.barContentChanged(
+            track: track,
+            start: bar,
+            end: bar + 1,
+          ),
+        ];
+      case CommandDto_RemoveBeats(
+        :final track,
+        :final voice,
+        :final fromBar,
+        :final fromIndex,
+        :final toBar,
+        :final toIndex,
+      ):
+        for (final (bar, from, to) in _run(
+          track,
+          voice,
+          fromBar,
+          fromIndex,
+          toBar,
+          toIndex,
+        )) {
+          _voice(track, bar, voice).removeRange(from, to);
+        }
+        return [
+          EventKindDto.barContentChanged(
+            track: track,
+            start: fromBar,
+            end: toBar + 1,
+          ),
+        ];
       default:
         throw ApiError(rule: 'unsupported', message: 'FakeDocumentService: $c');
     }
@@ -283,6 +350,62 @@ final class FakeDocumentService implements DocumentService {
     final t = _track(track);
     return bar >= 0 && bar < t.bars.length ? t.bars[bar].length : 0;
   }
+
+  /// `(bar, index range)` pieces of an inclusive run; throws E-04 like the core.
+  List<(int, int, int)> _run(
+    int track,
+    int voice,
+    int fb,
+    int fi,
+    int tb,
+    int ti,
+  ) {
+    if (fb > tb || (fb == tb && fi > ti) || tb >= _state.bars) {
+      throw ApiError(rule: 'E-04', message: 'beat run ($fb,$fi) to ($tb,$ti)');
+    }
+    final pieces = <(int, int, int)>[];
+    for (var bar = fb; bar <= tb; bar++) {
+      final len = _voice(track, bar, voice).length;
+      if ((bar == fb && fi >= len) || (bar == tb && ti >= len)) {
+        throw ApiError(rule: 'E-04', message: 'beat out of range in bar $bar');
+      }
+      pieces.add((bar, bar == fb ? fi : 0, bar == tb ? ti + 1 : len));
+    }
+    return pieces;
+  }
+
+  @override
+  List<ClipBeatDto> copyBeats(
+    int track,
+    int voice, {
+    required int fromBar,
+    required int fromIndex,
+    required int toBar,
+    required int toIndex,
+  }) => [
+    for (final (bar, from, to) in _run(
+      track,
+      voice,
+      fromBar,
+      fromIndex,
+      toBar,
+      toIndex,
+    ))
+      for (final b in _voice(track, bar, voice).sublist(from, to))
+        ClipBeatDto(
+          duration: b.duration,
+          notes: [
+            for (final n in b.notes)
+              ClipNoteDto(
+                string: n.string,
+                fret: n.fret,
+                tie: n.tie,
+                letRing: n.letRing,
+                dead: n.dead,
+              ),
+          ],
+        ),
+  ];
 
   /// A fixed voicing set for widget tests: "x32010" (open C shape) regardless of the
   /// symbol, plus a barre. A bad symbol (empty) throws, to exercise the error path.
@@ -532,6 +655,22 @@ final class _Tracked implements DocumentService {
   @override
   ChordResultDto chordVoicings(int track, String symbol, {int max = 5}) =>
       _inner.chordVoicings(track, symbol, max: max);
+  @override
+  List<ClipBeatDto> copyBeats(
+    int track,
+    int voice, {
+    required int fromBar,
+    required int fromIndex,
+    required int toBar,
+    required int toIndex,
+  }) => _inner.copyBeats(
+    track,
+    voice,
+    fromBar: fromBar,
+    fromIndex: fromIndex,
+    toBar: toBar,
+    toIndex: toIndex,
+  );
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _inner.tabLayout(track, metrics);

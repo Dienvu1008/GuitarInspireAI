@@ -106,6 +106,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected ChordResultDto dco_decode_chord_result_dto(dynamic raw);
 
+@protected ClipBeatDto dco_decode_clip_beat_dto(dynamic raw);
+
+@protected ClipNoteDto dco_decode_clip_note_dto(dynamic raw);
+
 @protected CommandDto dco_decode_command_dto(dynamic raw);
 
 @protected DiagnosticDto dco_decode_diagnostic_dto(dynamic raw);
@@ -147,6 +151,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected List<BarLayoutDto> dco_decode_list_bar_layout_dto(dynamic raw);
 
 @protected List<BeatDto> dco_decode_list_beat_dto(dynamic raw);
+
+@protected List<ClipBeatDto> dco_decode_list_clip_beat_dto(dynamic raw);
+
+@protected List<ClipNoteDto> dco_decode_list_clip_note_dto(dynamic raw);
 
 @protected List<DiagnosticDto> dco_decode_list_diagnostic_dto(dynamic raw);
 
@@ -294,6 +302,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected ChordResultDto sse_decode_chord_result_dto(SseDeserializer deserializer);
 
+@protected ClipBeatDto sse_decode_clip_beat_dto(SseDeserializer deserializer);
+
+@protected ClipNoteDto sse_decode_clip_note_dto(SseDeserializer deserializer);
+
 @protected CommandDto sse_decode_command_dto(SseDeserializer deserializer);
 
 @protected DiagnosticDto sse_decode_diagnostic_dto(SseDeserializer deserializer);
@@ -335,6 +347,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected List<BarLayoutDto> sse_decode_list_bar_layout_dto(SseDeserializer deserializer);
 
 @protected List<BeatDto> sse_decode_list_beat_dto(SseDeserializer deserializer);
+
+@protected List<ClipBeatDto> sse_decode_list_clip_beat_dto(SseDeserializer deserializer);
+
+@protected List<ClipNoteDto> sse_decode_list_clip_note_dto(SseDeserializer deserializer);
 
 @protected List<DiagnosticDto> sse_decode_list_diagnostic_dto(SseDeserializer deserializer);
 
@@ -482,6 +498,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_chord_result_dto(ChordResultDto self, SseSerializer serializer);
 
+@protected void sse_encode_clip_beat_dto(ClipBeatDto self, SseSerializer serializer);
+
+@protected void sse_encode_clip_note_dto(ClipNoteDto self, SseSerializer serializer);
+
 @protected void sse_encode_command_dto(CommandDto self, SseSerializer serializer);
 
 @protected void sse_encode_diagnostic_dto(DiagnosticDto self, SseSerializer serializer);
@@ -523,6 +543,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_list_bar_layout_dto(List<BarLayoutDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_beat_dto(List<BeatDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_clip_beat_dto(List<ClipBeatDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_clip_note_dto(List<ClipNoteDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_diagnostic_dto(List<DiagnosticDto> self, SseSerializer serializer);
 

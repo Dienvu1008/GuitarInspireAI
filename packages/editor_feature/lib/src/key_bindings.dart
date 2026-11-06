@@ -34,6 +34,13 @@ enum EditorIntent {
   open,
   save,
   saveAs,
+  // ADR-030: beat selection and the in-app clipboard.
+  selectLeft,
+  selectRight,
+  clearSelection,
+  copy,
+  cut,
+  paste,
 }
 
 /// Maps a key event to an [EditorIntent], or null for unhandled keys. Tab is
@@ -58,10 +65,16 @@ EditorIntent? intentOf(
       LogicalKeyboardKey.keyO => EditorIntent.open,
       LogicalKeyboardKey.keyS when shift => EditorIntent.saveAs,
       LogicalKeyboardKey.keyS => EditorIntent.save,
+      LogicalKeyboardKey.keyC => EditorIntent.copy,
+      LogicalKeyboardKey.keyX => EditorIntent.cut,
+      LogicalKeyboardKey.keyV => EditorIntent.paste,
       _ => null,
     };
   }
   return switch (key) {
+    LogicalKeyboardKey.arrowLeft when shift => EditorIntent.selectLeft,
+    LogicalKeyboardKey.arrowRight when shift => EditorIntent.selectRight,
+    LogicalKeyboardKey.escape => EditorIntent.clearSelection,
     LogicalKeyboardKey.arrowLeft => EditorIntent.moveLeft,
     LogicalKeyboardKey.arrowRight => EditorIntent.moveRight,
     LogicalKeyboardKey.arrowUp => EditorIntent.moveUp,

@@ -325,6 +325,32 @@ impl DocumentHandle {
         summary_dto(&self.lock())
     }
 
+    /// Copies the beats of one voice from (`from_bar`, `from_index`) to (`to_bar`,
+    /// `to_index`), both inclusive, possibly across bars, as plain values for the
+    /// in-app clipboard (ADR-030). A query: nothing changes.
+    #[frb(sync)]
+    pub fn copy_beats(
+        &self,
+        track: i64,
+        voice: u32,
+        from_bar: u32,
+        from_index: u32,
+        to_bar: u32,
+        to_index: u32,
+    ) -> Result<Vec<ClipBeatDto>, ApiError> {
+        Ok(self
+            .lock()
+            .copy_beats(
+                track_id(track),
+                voice as usize,
+                (from_bar as usize, from_index as usize),
+                (to_bar as usize, to_index as usize),
+            )?
+            .into_iter()
+            .map(ClipBeatDto::from_app)
+            .collect())
+    }
+
     /// Chord voicings for `track` using its tuning and capo (ADR-029 T6/T8). `max` caps
     /// the results (the UI shows a handful). Returns the canonical symbol, the spelled
     /// tones and the voicings; a bad chord symbol is an `ApiError`, an unknown track is
@@ -698,6 +724,32 @@ fn to_command(s: &DocumentSession, c: CommandDto) -> Result<Command, ApiError> {
             track: track_id(track),
             bars: (from_bar as usize, to_bar as usize + 1),
             delta,
+        }),
+        CommandDto::PasteBeats {
+            track,
+            bar,
+            voice,
+            index,
+            beats,
+        } => sc(ScoreCommand::PasteBeats {
+            track: track_id(track),
+            bar: bar as usize,
+            voice: voice as usize,
+            index: index as usize,
+            beats: beats.iter().map(ClipBeatDto::to_app).collect(),
+        }),
+        CommandDto::RemoveBeats {
+            track,
+            voice,
+            from_bar,
+            from_index,
+            to_bar,
+            to_index,
+        } => sc(ScoreCommand::RemoveBeats {
+            track: track_id(track),
+            voice: voice as usize,
+            from: (from_bar as usize, from_index as usize),
+            to: (to_bar as usize, to_index as usize),
         }),
         CommandDto::AddTrack { name, instrument } => tc(TrackCommand::Add {
             name,

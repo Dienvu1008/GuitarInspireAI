@@ -1,5 +1,6 @@
 import 'package:core_bridge/core_bridge.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HardwareKeyboard;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ui_kit/ui_kit.dart';
 
@@ -38,6 +39,27 @@ extension SystemHits on SystemDto {
       first ??= i;
     }
     return first;
+  }
+
+  /// One rectangle per selected beat in this system (the union of its string hit
+  /// regions), for the selection painter.
+  List<Rect> selectionRects((BeatSlot, BeatSlot)? selection) {
+    if (selection == null) return const [];
+    final (from, to) = selection;
+    final bySlot = <int, Rect>{};
+    for (var i = 0; i < hitCount; i++) {
+      final slot = hitMeta[i * 4 + 3];
+      if (slot < 0 || hitMeta[i * 4 + 2] != from.voice) continue;
+      final bar = hitMeta[i * 4];
+      final index = beats[slot].index;
+      final afterStart =
+          bar > from.bar || (bar == from.bar && index >= from.index);
+      final beforeEnd = bar < to.bar || (bar == to.bar && index <= to.index);
+      if (!afterStart || !beforeEnd) continue;
+      final r = hitRect(i);
+      bySlot[slot] = bySlot[slot]?.expandToInclude(r) ?? r;
+    }
+    return bySlot.values.toList();
   }
 
   /// Hit region for a cursor, if the cursor is in this system.
@@ -140,9 +162,14 @@ class _TabViewState extends ConsumerState<TabView> {
                       voice: s.cursor.voice,
                     );
                     if (hit != null) {
+                      final target = system.hitCursor(hit);
+                      // Shift+click extends the selection to a beat (ADR-030).
+                      final extend =
+                          HardwareKeyboard.instance.isShiftPressed &&
+                          target.beat != null;
                       ref
                           .read(editorProvider.notifier)
-                          .moveCursor(system.hitCursor(hit));
+                          .moveCursor(target, extend: extend);
                     }
                   },
                   child: SizedBox(
@@ -159,6 +186,15 @@ class _TabViewState extends ConsumerState<TabView> {
                                 colors: colors,
                                 fontSize: fontSize,
                               ),
+                            ),
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: CustomPaint(
+                            key: ValueKey('selection-${system.index}'),
+                            painter: SelectionPainter(
+                              rects: system.selectionRects(s.selection),
+                              color: colors.cursor,
                             ),
                           ),
                         ),

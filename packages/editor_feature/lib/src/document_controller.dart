@@ -30,6 +30,9 @@ final appPathsProvider = Provider<AppPaths>((ref) => const SystemAppPaths());
 
 /// What the editor shows. `summary` is re-read after every document event; the core
 /// remains the only owner of document state (ADR-002).
+/// One end of a beat selection: bar, voice and beat index (ADR-030).
+typedef BeatSlot = ({int bar, int voice, int index});
+
 final class EditorState {
   const EditorState({
     required this.service,
@@ -37,6 +40,7 @@ final class EditorState {
     required this.activeTrack,
     required this.cursor,
     this.message,
+    this.anchor,
   });
 
   final DocumentService service;
@@ -48,6 +52,22 @@ final class EditorState {
 
   /// Last error or status message for the status bar.
   final String? message;
+
+  /// Where a Shift selection started. Pure UI state: not in the document, not in
+  /// undo (ADR-030 section 1).
+  final BeatSlot? anchor;
+
+  /// The selected run of beats from [anchor] to the cursor, in written order and
+  /// inclusive, or null when nothing is selected (no anchor, cursor on the append
+  /// slot, or anchor in another voice).
+  (BeatSlot, BeatSlot)? get selection {
+    final a = anchor;
+    final b = cursor.beat;
+    if (a == null || b == null || a.voice != cursor.voice) return null;
+    final c = (bar: cursor.bar, voice: cursor.voice, index: b);
+    final ordered = a.bar < c.bar || (a.bar == c.bar && a.index <= c.index);
+    return ordered ? (a, c) : (c, a);
+  }
 
   String get title {
     final location = summary.location;
@@ -63,12 +83,15 @@ final class EditorState {
     EditorCursor? cursor,
     String? message,
     bool clearMessage = false,
+    BeatSlot? anchor,
+    bool clearAnchor = false,
   }) => EditorState(
     service: service,
     summary: summary ?? this.summary,
     activeTrack: activeTrack ?? this.activeTrack,
     cursor: cursor ?? this.cursor,
     message: clearMessage ? null : (message ?? this.message),
+    anchor: clearAnchor ? null : (anchor ?? this.anchor),
   );
 }
 
@@ -197,9 +220,29 @@ final class DocumentController extends Notifier<EditorState> {
   Future<bool> execute(CommandDto command, {int? coalesceKey}) =>
       _guard(() => state.service.execute(command, coalesceKey: coalesceKey));
 
-  void selectTrack(int track) =>
-      state = state.copyWith(activeTrack: track, cursor: EditorCursor.start);
+  void selectTrack(int track) => state = state.copyWith(
+    activeTrack: track,
+    cursor: EditorCursor.start,
+    clearAnchor: true,
+  );
 
-  void moveCursor(EditorCursor cursor) =>
-      state = state.copyWith(cursor: cursor);
+  /// Moves the cursor. With [extend] (Shift), the selection grows from where it
+  /// started, or from the old cursor if that was on a beat; otherwise it is cleared.
+  void moveCursor(EditorCursor cursor, {bool extend = false}) {
+    if (!extend) {
+      state = state.copyWith(cursor: cursor, clearAnchor: true);
+      return;
+    }
+    final old = state.cursor;
+    final oldBeat = old.beat;
+    final anchor =
+        state.anchor ??
+        (oldBeat == null
+            ? null
+            : (bar: old.bar, voice: old.voice, index: oldBeat));
+    state = state.copyWith(cursor: cursor, anchor: anchor);
+  }
+
+  /// Shows a status message (for example the result of a copy).
+  void showMessage(String message) => state = state.copyWith(message: message);
 }

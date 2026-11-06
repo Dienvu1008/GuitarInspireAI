@@ -134,6 +134,23 @@ final class RustDocumentService implements DocumentService {
       _handle.chordVoicings(track: track, symbol: symbol, max: max);
 
   @override
+  List<ClipBeatDto> copyBeats(
+    int track,
+    int voice, {
+    required int fromBar,
+    required int fromIndex,
+    required int toBar,
+    required int toIndex,
+  }) => _handle.copyBeats(
+    track: track,
+    voice: voice,
+    fromBar: fromBar,
+    fromIndex: fromIndex,
+    toBar: toBar,
+    toIndex: toIndex,
+  );
+
+  @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _handle.tabLayout(track: track, metrics: metrics);
 
