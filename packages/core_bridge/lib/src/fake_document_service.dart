@@ -284,6 +284,35 @@ final class FakeDocumentService implements DocumentService {
     return bar >= 0 && bar < t.bars.length ? t.bars[bar].length : 0;
   }
 
+  /// A fixed voicing set for widget tests: "x32010" (open C shape) regardless of the
+  /// symbol, plus a barre. A bad symbol (empty) throws, to exercise the error path.
+  @override
+  ChordResultDto chordVoicings(int track, String symbol, {int max = 5}) {
+    _track(track); // validate the track exists
+    if (symbol.trim().isEmpty) {
+      throw ApiError(rule: 'chord', message: 'empty chord symbol');
+    }
+    final open = VoicingDto(
+      frets: Int32List.fromList([0, 1, 0, 2, 3, -1]), // string 1..6 (x32010)
+      chartText: 'x32010',
+      fingers: 3,
+      lowestFret: 1,
+      highestFret: 3,
+    );
+    final barre = VoicingDto(
+      frets: Int32List.fromList([3, 5, 5, 5, 3, -1]),
+      chartText: 'x35553',
+      fingers: 3,
+      lowestFret: 3,
+      highestFret: 5,
+    );
+    return ChordResultDto(
+      symbol: symbol,
+      tones: const ['C', 'E', 'G'],
+      voicings: [open, barre].take(max).toList(),
+    );
+  }
+
   /// One played bar per master bar, each 960 ticks (no repeats in the fake).
   @override
   List<PlayedBarDto> playedBars() => [
@@ -472,6 +501,9 @@ final class _Tracked implements DocumentService {
   int voiceCount(int track, int bar) => _inner.voiceCount(track, bar);
   @override
   List<PlayedBarDto> playedBars() => _inner.playedBars();
+  @override
+  ChordResultDto chordVoicings(int track, String symbol, {int max = 5}) =>
+      _inner.chordVoicings(track, symbol, max: max);
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _inner.tabLayout(track, metrics);

@@ -317,6 +317,48 @@ pub struct PositionDto {
     pub state: PlaybackStateDto,
 }
 
+/// A tuner reading for the UI (ADR-029). `hz` and `cents` are `f64` for Dart `double`;
+/// `string` is the 1-based nearest open string of the active track (0 when no match).
+/// `clarity` 0..1; `has_pitch` false means no confident pitch right now (show "—").
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct TunerReadingDto {
+    pub has_pitch: bool,
+    pub hz: f64,
+    pub clarity: f64,
+    /// Nearest open string, 1-based; 0 when `has_pitch` is false.
+    pub string: i64,
+    /// Cents off the nearest string (positive is sharp); 0 when `has_pitch` is false.
+    pub cents: f64,
+    /// Target frequency of the nearest string, Hz.
+    pub target_hz: f64,
+    /// Monotonic counter so the UI can tell the tuner is producing readings.
+    pub updates: i64,
+}
+
+/// One voicing of a chord for the chord finder (ADR-029 T6). `frets` is per string,
+/// string 1 first; `-1` is a muted string, `0` an open string, `>0` a fretted fret.
+/// `chartText` is the chord-chart shape (string 6 first), e.g. "x32010".
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct VoicingDto {
+    pub frets: Vec<i32>,
+    pub chart_text: String,
+    pub fingers: i32,
+    /// Lowest and highest fretted fret, or -1 when the voicing is all open/muted.
+    pub lowest_fret: i32,
+    pub highest_fret: i32,
+}
+
+/// Result of a chord-finder query (ADR-029 T6): the canonical symbol, the spelled chord
+/// tones, and up to the requested number of voicings for the track's tuning and capo.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ChordResultDto {
+    /// Canonical chord symbol (e.g. "Cmaj7").
+    pub symbol: String,
+    /// Spelled chord tones, e.g. ["C","E","G"].
+    pub tones: Vec<String>,
+    pub voicings: Vec<VoicingDto>,
+}
+
 /// One played bar for the cursor's tick-to-x mapping (ADR-028). Ticks are `i64`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct PlayedBarDto {

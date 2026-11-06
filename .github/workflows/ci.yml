@@ -135,6 +135,13 @@ jobs:
           dart analyze --fatal-infos
           flutter test
 
+      - name: tools_feature analysis and tests (ADR-029)
+        working-directory: packages/tools_feature
+        run: |
+          flutter pub get
+          dart analyze --fatal-infos
+          flutter test
+
       - name: app analysis and tests (FF-05, FF-06, FF-08, FF-09 Dart, shell)
         working-directory: app
         run: |

@@ -9,7 +9,7 @@ import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'types.freezed.dart';
 
             // These functions are ignored because they are not marked as `pub`: `new`, `note_id`, `to_app`, `to_app`, `to_app`, `track_id`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
 
 
             
@@ -90,6 +90,35 @@ final List<NoteDto> notes;
             other is BeatDto &&
                 runtimeType == other.runtimeType
                 && id == other.id&& duration == other.duration&& notes == other.notes;
+
+            }
+
+/// Result of a chord-finder query (ADR-029 T6): the canonical symbol, the spelled chord
+/// tones, and up to the requested number of voicings for the track's tuning and capo.
+class ChordResultDto  {
+                /// Canonical chord symbol (e.g. "Cmaj7").
+final String symbol;
+/// Spelled chord tones, e.g. ["C","E","G"].
+final List<String> tones;
+final List<VoicingDto> voicings;
+
+                const ChordResultDto({required this.symbol ,required this.tones ,required this.voicings ,});
+
+
+
+
+
+        @override
+        int get hashCode => symbol.hashCode^tones.hashCode^voicings.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ChordResultDto &&
+                runtimeType == other.runtimeType
+                && symbol == other.symbol&& tones == other.tones&& voicings == other.voicings;
 
             }
 
@@ -476,6 +505,42 @@ final InstrumentDto instrument;
 
             }
 
+/// A tuner reading for the UI (ADR-029). `hz` and `cents` are `f64` for Dart `double`;
+/// `string` is the 1-based nearest open string of the active track (0 when no match).
+/// `clarity` 0..1; `has_pitch` false means no confident pitch right now (show "—").
+class TunerReadingDto  {
+                final bool hasPitch;
+final double hz;
+final double clarity;
+/// Nearest open string, 1-based; 0 when `has_pitch` is false.
+final PlatformInt64 string;
+/// Cents off the nearest string (positive is sharp); 0 when `has_pitch` is false.
+final double cents;
+/// Target frequency of the nearest string, Hz.
+final double targetHz;
+/// Monotonic counter so the UI can tell the tuner is producing readings.
+final PlatformInt64 updates;
+
+                const TunerReadingDto({required this.hasPitch ,required this.hz ,required this.clarity ,required this.string ,required this.cents ,required this.targetHz ,required this.updates ,});
+
+
+
+
+
+        @override
+        int get hashCode => hasPitch.hashCode^hz.hashCode^clarity.hashCode^string.hashCode^cents.hashCode^targetHz.hashCode^updates.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is TunerReadingDto &&
+                runtimeType == other.runtimeType
+                && hasPitch == other.hasPitch&& hz == other.hz&& clarity == other.clarity&& string == other.string&& cents == other.cents&& targetHz == other.targetHz&& updates == other.updates;
+
+            }
+
 class TupletDto  {
                 final int actual;
 final int normal;
@@ -497,6 +562,37 @@ final int normal;
             other is TupletDto &&
                 runtimeType == other.runtimeType
                 && actual == other.actual&& normal == other.normal;
+
+            }
+
+/// One voicing of a chord for the chord finder (ADR-029 T6). `frets` is per string,
+/// string 1 first; `-1` is a muted string, `0` an open string, `>0` a fretted fret.
+/// `chartText` is the chord-chart shape (string 6 first), e.g. "x32010".
+class VoicingDto  {
+                final Int32List frets;
+final String chartText;
+final int fingers;
+/// Lowest and highest fretted fret, or -1 when the voicing is all open/muted.
+final int lowestFret;
+final int highestFret;
+
+                const VoicingDto({required this.frets ,required this.chartText ,required this.fingers ,required this.lowestFret ,required this.highestFret ,});
+
+
+
+
+
+        @override
+        int get hashCode => frets.hashCode^chartText.hashCode^fingers.hashCode^lowestFret.hashCode^highestFret.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is VoicingDto &&
+                runtimeType == other.runtimeType
+                && frets == other.frets&& chartText == other.chartText&& fingers == other.fingers&& lowestFret == other.lowestFret&& highestFret == other.highestFret;
 
             }
             

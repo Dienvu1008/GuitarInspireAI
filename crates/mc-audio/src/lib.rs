@@ -21,6 +21,7 @@ mod platform;
 pub mod rt;
 mod soundfont;
 mod status;
+mod tuner;
 
 #[cfg(test)]
 mod tests;
@@ -30,3 +31,4 @@ pub use error::AudioError;
 pub use offline::OfflineEngine;
 pub use soundfont::{build_synth, parse_soundfont};
 pub use status::{EngineStatus, LastError, Promotion, Status};
+pub use tuner::{TunerHandle, TunerReading};

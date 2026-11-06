@@ -60,6 +60,9 @@ This package is the accepted pre-implementation baseline (2026-10-31). M0 is com
 - [phase-2-exit-report.md](roadmap/phase-2-exit-report.md): Phase 2 (Guitar core) evidence, golden set, open interpretations and ambiguous cases.
 - [phase-3-exit-report.md](roadmap/phase-3-exit-report.md): Phase 3 (desktop TAB editor) evidence, edit-feedback measurements, defects fixed, open points and the manual test script.
 - [phase-4-exit-report.md](roadmap/phase-4-exit-report.md): Phase 4 (playback and MIDI) evidence, the single-machine glitch and SoundFont measurements, the three defects found, fitness activation and open points.
+- [phase-5-exit-report.md](roadmap/phase-5-exit-report.md): Phase 5 (MVP) evidence, the tuner's synthetic-only and single-machine scope, the MVP feature checklist, the crate-count and Web (Q-14) review.
+- [mvp-known-limitations.md](roadmap/mvp-known-limitations.md): what the MVP does not do or does partially.
+- [mvp-release-notes.md](roadmap/mvp-release-notes.md): MVP (M5) release notes.
 
 ### Research
 - [technology-evaluation.md](research/technology-evaluation.md): libraries and tools.

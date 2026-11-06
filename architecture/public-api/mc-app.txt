@@ -47,6 +47,25 @@ impl core::marker::Unpin for mc_app::guitar::QueryError
 impl core::marker::UnsafeUnpin for mc_app::guitar::QueryError
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::guitar::QueryError
 impl core::panic::unwind_safe::UnwindSafe for mc_app::guitar::QueryError
+pub struct mc_app::guitar::ChordLookup
+pub mc_app::guitar::ChordLookup::symbol: alloc::string::String
+pub mc_app::guitar::ChordLookup::tones: alloc::vec::Vec<alloc::string::String>
+pub mc_app::guitar::ChordLookup::voicings: alloc::vec::Vec<mc_guitar::voicing::Voicing>
+impl core::clone::Clone for mc_app::guitar::ChordLookup
+pub fn mc_app::guitar::ChordLookup::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::guitar::ChordLookup
+impl core::cmp::PartialEq for mc_app::guitar::ChordLookup
+pub fn mc_app::guitar::ChordLookup::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::guitar::ChordLookup
+pub fn mc_app::guitar::ChordLookup::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::guitar::ChordLookup
+impl core::marker::Freeze for mc_app::guitar::ChordLookup
+impl core::marker::Send for mc_app::guitar::ChordLookup
+impl core::marker::Sync for mc_app::guitar::ChordLookup
+impl core::marker::Unpin for mc_app::guitar::ChordLookup
+impl core::marker::UnsafeUnpin for mc_app::guitar::ChordLookup
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::guitar::ChordLookup
+impl core::panic::unwind_safe::UnwindSafe for mc_app::guitar::ChordLookup
 pub fn mc_app::guitar::chord_tones(&mc_theory::chord::Chord) -> alloc::vec::Vec<alloc::string::String>
 pub fn mc_app::guitar::chord_voicings(&str, &mc_theory::fretted::Tuning, u8, &mc_guitar::search::SearchOptions) -> core::result::Result<(mc_theory::chord::Chord, alloc::vec::Vec<mc_guitar::voicing::Voicing>), mc_app::guitar::QueryError>
 pub fn mc_app::guitar::format_chord(&mc_theory::chord::Chord) -> alloc::string::String
@@ -56,6 +75,7 @@ pub fn mc_app::guitar::parse_chord(&str) -> core::result::Result<mc_theory::chor
 pub fn mc_app::guitar::parse_tuning(&str) -> core::result::Result<mc_theory::fretted::Tuning, mc_app::guitar::QueryError>
 pub fn mc_app::guitar::scale_names() -> alloc::vec::Vec<&'static str>
 pub fn mc_app::guitar::scale_positions(&str, &str, &mc_theory::fretted::Tuning, u8, core::ops::range::RangeInclusive<u8>) -> core::result::Result<alloc::vec::Vec<mc_guitar::scales::ScaleNote>, mc_app::guitar::QueryError>
+pub fn mc_app::guitar::track_chord_voicings(&mc_score::model::FrettedInstrument, &str, usize) -> core::result::Result<mc_app::guitar::ChordLookup, mc_app::guitar::QueryError>
 pub mod mc_app::infra
 pub struct mc_app::infra::FsProjectStore
 pub mc_app::infra::FsProjectStore::keep_backup: bool
@@ -908,6 +928,7 @@ impl mc_app::DocumentSession
 pub fn mc_app::DocumentSession::autosave_due(&self, u64) -> bool
 pub fn mc_app::DocumentSession::can_redo(&self) -> bool
 pub fn mc_app::DocumentSession::can_undo(&self) -> bool
+pub fn mc_app::DocumentSession::chord_voicings(&self, mc_score::ids::TrackId, &str, usize) -> core::option::Option<core::result::Result<mc_app::guitar::ChordLookup, mc_app::guitar::QueryError>>
 pub fn mc_app::DocumentSession::diagnostics(&self) -> alloc::vec::Vec<mc_score::diagnostics::Diagnostic>
 pub fn mc_app::DocumentSession::execute(&mut self, mc_app::CommandEnvelope) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::from_bytes(mc_app::DocumentId, &[u8], core::option::Option<std::path::PathBuf>, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
@@ -933,6 +954,7 @@ pub fn mc_app::DocumentSession::snapshot_bytes(&self, &mc_project::AppInfo) -> a
 pub fn mc_app::DocumentSession::take_sink(&mut self) -> core::option::Option<alloc::boxed::Box<dyn mc_app::EventSink>>
 pub fn mc_app::DocumentSession::transport(&mut self, mc_app::transport::TransportCommand, &mut dyn mc_app::transport::AudioPort) -> core::result::Result<mc_app::CommandOutcome, mc_app::transport::TransportError>
 pub fn mc_app::DocumentSession::transport_state(&self) -> &mc_app::transport::TransportState
+pub fn mc_app::DocumentSession::tuner_match(&self, mc_score::ids::TrackId, f32) -> core::option::Option<mc_app::TunerReference>
 pub fn mc_app::DocumentSession::undo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::undo_depth(&self) -> usize
 pub fn mc_app::DocumentSession::unknown_content(&self) -> &[alloc::string::String]
@@ -1164,6 +1186,25 @@ impl core::marker::Unpin for mc_app::transport::TransportState
 impl core::marker::UnsafeUnpin for mc_app::transport::TransportState
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportState
 impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportState
+pub struct mc_app::TunerReference
+pub mc_app::TunerReference::cents: f32
+pub mc_app::TunerReference::string: u8
+pub mc_app::TunerReference::target_hz: f32
+impl core::clone::Clone for mc_app::TunerReference
+pub fn mc_app::TunerReference::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_app::TunerReference
+pub fn mc_app::TunerReference::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::TunerReference
+pub fn mc_app::TunerReference::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::TunerReference
+impl core::marker::StructuralPartialEq for mc_app::TunerReference
+impl core::marker::Freeze for mc_app::TunerReference
+impl core::marker::Send for mc_app::TunerReference
+impl core::marker::Sync for mc_app::TunerReference
+impl core::marker::Unpin for mc_app::TunerReference
+impl core::marker::UnsafeUnpin for mc_app::TunerReference
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::TunerReference
+impl core::panic::unwind_safe::UnwindSafe for mc_app::TunerReference
 pub trait mc_app::AudioPort: core::marker::Send
 pub fn mc_app::AudioPort::last_error(&self) -> core::option::Option<alloc::string::String>
 pub fn mc_app::AudioPort::load_timeline(&mut self, mc_playback::timeline::PerformanceTimeline) -> core::result::Result<(), mc_app::transport::TransportError>

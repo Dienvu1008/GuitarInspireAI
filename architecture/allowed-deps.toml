@@ -101,7 +101,9 @@ layer = "domain"
 phase = 5
 internal = []
 external = ["realfft", "rustfft"]
-dev_external = []
+# proptest for the sine-sweep accuracy property; assert_no_alloc for the frame-processing
+# no-alloc test (ADR-029: precondition for the tuner thread to run mc-dsp off the input ring).
+dev_external = ["proptest", "assert_no_alloc"]
 
 [mc-pattern]
 layer = "domain"

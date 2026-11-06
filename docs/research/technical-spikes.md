@@ -1,7 +1,7 @@
 # Technical Spikes
 
 Purpose: Define the proof-of-concept experiments (S1 to S12) that answer questions documentation cannot, with question, timebox, success criteria and the phase gate each one unblocks.
-Status: S1, S2, S4, S5 and S7 executed in M0 (results below). S3, S6, S8 to S12 not started.
+Status: S1, S2, S4, S5 and S7 executed in M0 (results below). S3 executed in Phase 5 (synthetic and latency measured; real-guitar pending; see ADR-029). S6, S8 to S12 not started.
 Related documents: [implementation-phases.md](../roadmap/implementation-phases.md), [dependency-map.md](../roadmap/dependency-map.md), [technology-evaluation.md](technology-evaluation.md), [audio-dsp-architecture.md](../architecture/audio-dsp-architecture.md), [risk-register.md](../roadmap/risk-register.md).
 
 Rules:
@@ -125,3 +125,15 @@ No temp files were left in any case. Real OneDrive sync, real antivirus holds, n
 - NOTICE requirement: Apache-2.0 and BSD dependencies require attribution in distributed binaries. A generated third-party notices file is a Phase 3 packaging task (for example `cargo about`, license to verify).
 - SoundFont: FluidR3 GM is MIT according to the author's release statement as quoted on musescore.org and in redistributions [Verified via secondary sources, 2026-10; read the original COPYING file before bundling]. GeneralUser GS License v2.0 allows commercial use and software bundling, but its author states that some sample origins are uncertain [Verified: official LICENSE.txt, 2026-10]. TimGM6mb remains excluded (GPL). rustysynth documents SF2 only, so compressed SF3 banks need conversion. Decision (Q-11): FluidR3 GM is the default bundled SoundFont, with provenance and license recorded when it is bundled in Phase 4 (ADR-015). User-supplied SoundFonts are a future capability.
 - Dart package licenses were not audited (no Dart dependencies outside the throwaway spike). The Dart half of FF-09 activates in Phase 3.
+
+### S3 tuner pitch detection (Phase 5; synthetic Pass, real-guitar pending)
+
+Spike `spikes/s3-tuner/` (throwaway, own workspace). Owned MPM and YIN, window 2048 @ 48 kHz, hop 512. Full numbers and the pass/fail thresholds are in [ADR-029](../architecture/decisions/ADR-029-tuner-pitch-detection.md); raw output in `spikes/s3-tuner/results/`.
+
+| Assumption | Measured (synthetic) | Result |
+|---|---|---|
+| A9 accuracy (±2 cents on mid strings; octave-stable low E) | MPM: mean ≤ 0.2 cents clean on every open string, 0% octave, 100% detection; sine sweep E2..E6 worst mean 0.02 cents. Under 20 dB SNR: 6–9 cents, 0% octave, ~77% detection. YIN worse across the range (clean E4 9 cents; sweep worst 38.57 cents; ~50% detection under noise) | Pass on synthetic (MPM); real-guitar pending |
+| A8 latency (≤ ~100 ms) | MPM 24–35 ms to first stable reading; YIN 35–56 ms | Pass |
+| A10 typed errors, no crash | Default input opened (48 kHz); outcomes `Ok`/`NoInputDevice`/`PermissionDenied`/`DeviceBusyOrConfig`; stream error surfaced as a typed error | Pass (automated path); privacy/busy cases in the MVP manual script |
+
+Findings: a spike MPM bug (missing initial-lobe skip gave E2 ~427 kHz) was fixed before measuring; 5b must include the same skip. Recommendation: MPM (provisional until the real-guitar set is recorded; the agent cannot capture a physical instrument — the developer records it per `spikes/s3-tuner/results/README.md` and fills ADR-029 §5). The decision rule for MPM-vs-YIN was fixed in ADR-029 before the run.

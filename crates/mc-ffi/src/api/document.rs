@@ -291,6 +291,26 @@ impl DocumentHandle {
         summary_dto(&self.lock())
     }
 
+    /// Chord voicings for `track` using its tuning and capo (ADR-029 T6/T8). `max` caps
+    /// the results (the UI shows a handful). Returns the canonical symbol, the spelled
+    /// tones and the voicings; a bad chord symbol is an `ApiError`, an unknown track is
+    /// `not-found`. The voicings' frets feed ordinary `SetNote` commands when the user
+    /// inserts one (no new music rule, GR-05).
+    #[frb(sync)]
+    pub fn chord_voicings(
+        &self,
+        track: i64,
+        symbol: String,
+        max: u32,
+    ) -> Result<ChordResultDto, ApiError> {
+        let s = self.lock();
+        let lookup = s
+            .chord_voicings(track_id(track), &symbol, max.max(1) as usize)
+            .ok_or_else(|| ApiError::new("not-found", format!("track {track}")))?
+            .map_err(|e| ApiError::new("chord", e.to_string()))?;
+        Ok(chord_result_dto(&lookup))
+    }
+
     /// Played-bar layout for the playback cursor (ADR-028): each bar's score index and
     /// tick range after repeat and volta expansion. The UI maps a playback tick to an x
     /// on the TAB from this. Independent of mute (PB-04).
@@ -412,6 +432,30 @@ fn summary_dto(s: &DocumentSession) -> DocumentSummaryDto {
                     DiagnosticKind::Underfull { .. } => "underfull".into(),
                     DiagnosticKind::Overfull { .. } => "overfull".into(),
                 },
+            })
+            .collect(),
+    }
+}
+
+/// Maps a `ChordLookup` to its DTO (ADR-029 T6). Frets are per string, string 1 first;
+/// `-1` muted, `0` open, `>0` fretted.
+fn chord_result_dto(lookup: &mc_app::guitar::ChordLookup) -> ChordResultDto {
+    ChordResultDto {
+        symbol: lookup.symbol.clone(),
+        tones: lookup.tones.clone(),
+        voicings: lookup
+            .voicings
+            .iter()
+            .map(|v| VoicingDto {
+                frets: v
+                    .frets()
+                    .iter()
+                    .map(|f| f.map_or(-1, |fret| fret.0 as i32))
+                    .collect(),
+                chart_text: v.to_string(),
+                fingers: v.fingers() as i32,
+                lowest_fret: v.lowest_fretted().map_or(-1, |f| f as i32),
+                highest_fret: v.highest_fretted().map_or(-1, |f| f as i32),
             })
             .collect(),
     }

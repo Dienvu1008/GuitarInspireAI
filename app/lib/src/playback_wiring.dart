@@ -3,10 +3,36 @@ import 'package:editor_feature/editor_feature.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:playback_feature/playback_feature.dart';
+import 'package:tools_feature/tools_feature.dart';
 
 /// Whether the audio engine started (an output device was found). The transport bar is
 /// shown only when true; MIDI import/export work regardless.
 final playbackAvailableProvider = Provider<bool>((ref) => false);
+
+/// Whether the tuner panel is shown (Tools menu toggle). The microphone opens when the
+/// panel is shown and closes when it is hidden (privacy), driven by the panel's lifecycle.
+final tunerVisibleProvider = NotifierProvider<TunerVisible, bool>(TunerVisible.new);
+
+/// Boolean toggle for the tuner panel (a small Notifier instead of the legacy
+/// StateProvider, Q-12: no code generation).
+final class TunerVisible extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void toggle() => state = !state;
+}
+
+/// Whether the chord finder panel is shown (Tools menu toggle).
+final chordVisibleProvider = NotifierProvider<ChordVisible, bool>(
+  ChordVisible.new,
+);
+
+final class ChordVisible extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void toggle() => state = !state;
+}
 
 /// Binds the playback feature to the editor's active document (ADR-028). This lives in
 /// the composition root because it joins two feature packages, which may not import each
@@ -36,4 +62,19 @@ List<Override> playbackOverrides(PlaybackFactory? factory, MidiService midi) => 
     cursorOverlayProvider.overrideWithValue(
       (tickToX, height) => PlaybackCursor(tickToX: tickToX, height: height),
     ),
+];
+
+/// Wires the tuner (ADR-029) to the editor's active document and track. The tuner is
+/// independent of the playback engine: it works even when `playbackOverrides` had no
+/// engine (no output device). The factory binds to the current document; the referenced
+/// track follows the editor's active track (T8), so retuning or switching tracks changes
+/// the reading with no restart.
+List<Override> tunerOverrides() => [
+  tunerFactoryProvider.overrideWith((ref) {
+    final document = ref.watch(editorProvider.select((s) => s.service));
+    return CoreBridge.tunerFor(document);
+  }),
+  tunerTrackProvider.overrideWith(
+    (ref) => ref.watch(editorProvider.select((s) => s.activeTrack)),
+  ),
 ];

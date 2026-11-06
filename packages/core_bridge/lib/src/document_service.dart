@@ -39,6 +39,11 @@ abstract interface class DocumentService {
   /// on the TAB from this. Independent of mute (PB-04).
   List<PlayedBarDto> playedBars();
 
+  /// Chord voicings for [track] using its tuning and capo (ADR-029 T6/T8), at most [max]
+  /// results. Throws [ApiError] for a bad chord symbol or unknown track. The voicings'
+  /// frets feed ordinary `setNote` commands when the user inserts one (GR-05).
+  ChordResultDto chordVoicings(int track, String symbol, {int max = 5});
+
   /// TAB layout of a track at the current revision (synchronous; see ADR-018).
   TabLayoutDto tabLayout(int track, MetricsDto metrics);
 

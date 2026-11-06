@@ -21,6 +21,16 @@ pub struct CommandOutcome {
     pub events: Vec<EventEnvelope>,
 }
 
+/// A tuner reading mapped to a track's strings (ADR-029 T8): the nearest open string
+/// (1-based), its target frequency, and how many cents the measured note is off
+/// (positive is sharp). Produced by [`DocumentSession::tuner_match`].
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct TunerReference {
+    pub string: u8,
+    pub target_hz: f32,
+    pub cents: f32,
+}
+
 /// What the user should be told after opening a file.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct OpenReport {
@@ -575,6 +585,37 @@ impl DocumentSession {
     /// Session state, not document content.
     pub fn transport_state(&self) -> &TransportState {
         &self.transport
+    }
+
+    /// Chord voicings for `track`, using that track's tuning and capo (ADR-029 T6/T8).
+    /// Default constraints, limited to `max` results. The musical search is `mc-guitar`
+    /// (GR-05); this reads the track and delegates. Returns the canonical symbol, the
+    /// spelled tones, and the voicings. `None` for an unknown track; errors for a bad
+    /// chord symbol are returned as `Err`.
+    pub fn chord_voicings(
+        &self,
+        track: TrackId,
+        symbol: &str,
+        max: usize,
+    ) -> Option<Result<crate::guitar::ChordLookup, crate::guitar::QueryError>> {
+        let fretted = self.score.track(track)?.fretted().clone();
+        Some(crate::guitar::track_chord_voicings(&fretted, symbol, max))
+    }
+
+    /// Maps a measured frequency to the nearest open string of `track` and the cents off,
+    /// using that track's tuning and capo (ADR-029 T8). The reference-pitch rule lives in
+    /// the Guitar context (`mc_guitar`, GR-05); this reads the track and delegates. When
+    /// the track changes tuning or capo, the next call reflects it with no restart.
+    /// Returns `None` for an unknown track or a non-positive frequency.
+    pub fn tuner_match(&self, track: TrackId, hz: f32) -> Option<TunerReference> {
+        let t = self.score.track(track)?;
+        let fretted = t.fretted();
+        let targets = mc_guitar::tuner_targets(&fretted.tuning, fretted.capo);
+        mc_guitar::nearest(&targets, hz).map(|m| TunerReference {
+            string: m.string.get(),
+            target_hz: m.target_hz,
+            cents: m.cents,
+        })
     }
 
     /// Played-bar layout of the current score for the playback cursor: each bar's score

@@ -1,0 +1,47 @@
+S3 synthetic accuracy (window 2048 @ 48 kHz, gate 0.5)
+reference signals are synthetic; real-guitar numbers come from `wav` (ADR-029 s.4)
+
+=== Mpm ===
+signal                 mean c    p95 c     oct%     det%
+E2 sine                  0.02     0.04     0.0%   100.0%
+E2 pluck                 0.12     0.32     0.0%   100.0%
+E2 pluck+20dB            8.52    39.72     0.0%    77.0%
+A2 sine                  0.01     0.02     0.0%   100.0%
+A2 pluck                 0.18     0.33     0.0%   100.0%
+A2 pluck+20dB            8.72    41.43     0.0%    77.9%
+D3 sine                  0.01     0.01     0.0%   100.0%
+D3 pluck                 0.10     0.19     0.0%   100.0%
+D3 pluck+20dB            7.31    27.69     0.0%    77.9%
+G3 sine                  0.00     0.01     0.0%   100.0%
+G3 pluck                 0.04     0.08     0.0%   100.0%
+G3 pluck+20dB            8.46    29.64     0.0%    77.0%
+B3 sine                  0.01     0.01     0.0%   100.0%
+B3 pluck                 0.01     0.03     0.0%   100.0%
+B3 pluck+20dB            6.33    24.54     0.0%    77.9%
+E4 sine                  0.00     0.01     0.0%   100.0%
+E4 pluck                 0.01     0.02     0.0%   100.0%
+E4 pluck+20dB            6.20    39.71     0.0%    77.0%
+sine sweep E2..E6 worst mean |cents|: 0.02
+
+=== Yin ===
+signal                 mean c    p95 c     oct%     det%
+E2 sine                  2.83     2.83     0.0%   100.0%
+E2 pluck                 2.75     2.97     0.0%   100.0%
+E2 pluck+20dB           28.72    87.77     0.0%    50.8%
+A2 sine                  2.89     2.89     0.0%   100.0%
+A2 pluck                 2.84     3.14     0.0%   100.0%
+A2 pluck+20dB           21.67    71.49     0.0%    50.8%
+D3 sine                  1.03     1.03     0.0%   100.0%
+D3 pluck                 1.05     1.22     0.0%   100.0%
+D3 pluck+20dB           13.77    49.64     0.8%    51.6%
+G3 sine                  1.41     1.41     0.0%   100.0%
+G3 pluck                 1.43     1.50     0.0%   100.0%
+G3 pluck+20dB            8.33    45.25     1.6%    50.8%
+B3 sine                  6.73     6.73     0.0%   100.0%
+B3 pluck                 6.72     6.75     0.0%   100.0%
+B3 pluck+20dB            9.43    23.36     1.6%    51.6%
+E4 sine                  9.06     9.06     0.0%   100.0%
+E4 pluck                 9.06     9.08     0.0%   100.0%
+E4 pluck+20dB           10.99    23.36     3.3%    52.5%
+sine sweep E2..E6 worst mean |cents|: 38.57
+

@@ -10,6 +10,8 @@ import 'generated/api/types.dart';
 import 'generated/frb_generated.dart';
 import 'playback_service.dart' show MidiService, PlaybackFactory;
 import 'rust_playback_service.dart' show RustMidiService, RustPlaybackFactory;
+import 'rust_tuner_service.dart' show RustTunerFactory;
+import 'tuner_service.dart' show TunerFactory;
 
 /// Loads the native Music Core. Call once before creating documents.
 abstract final class CoreBridge {
@@ -37,6 +39,11 @@ abstract final class CoreBridge {
 
   /// MIDI import and export (no audio device needed, ADR-023).
   static MidiService get midi => const RustMidiService();
+
+  /// A tuner factory bound to [document] (ADR-029). Call `start()` on it to open the
+  /// microphone; independent of the playback engine.
+  static TunerFactory tunerFor(DocumentService document) =>
+      RustTunerFactory.forDocument(document);
 }
 
 final class _RustDocumentFactory implements DocumentFactory {
@@ -111,6 +118,10 @@ final class RustDocumentService implements DocumentService {
 
   @override
   List<PlayedBarDto> playedBars() => _handle.playedBars();
+
+  @override
+  ChordResultDto chordVoicings(int track, String symbol, {int max = 5}) =>
+      _handle.chordVoicings(track: track, symbol: symbol, max: max);
 
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>

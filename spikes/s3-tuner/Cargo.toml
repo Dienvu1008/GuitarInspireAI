@@ -1,0 +1,19 @@
+[package]
+name = "s3-tuner"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# Standalone workspace: spike code never joins the production workspace (ADR-029 s.6).
+[workspace]
+
+[dependencies]
+# Autocorrelation for MPM via a real FFT; the same crate mc-dsp will use (tech-eval).
+realfft = "=3.5.0"
+# cpal for the input-latency and A10 (device/permission) experiments; same pin as mc-audio.
+cpal = "=0.18.2"
+# Windows MMCSS promotion experiment for the tuner thread (reuses the ADR-027 call shape).
+windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_System_Threading"] }
+
+[profile.release]
+debug = true

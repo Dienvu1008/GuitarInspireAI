@@ -12,6 +12,7 @@ Rules:
 | Folder | Spike |
 |---|---|
 | `s2-audio/` | S2 real-time playback: cpal (WASAPI), rustysynth, rtrb |
+| `s3-tuner/` | S3 tuner pitch detection: owned MPM and YIN, accuracy (A9), latency (A8), mic input and typed errors (A10). Evidence for ADR-029 |
 | `s5-format/` | S5 project format: ZIP + JSON, atomic replace, unknown-field detection |
 | `s1_s4_flutter/` | S1 frb interop and S4 TAB rendering (one throwaway Flutter app, two scenarios; `fake_app/` stands in for `mc-app` without any frb dependency) |
 
