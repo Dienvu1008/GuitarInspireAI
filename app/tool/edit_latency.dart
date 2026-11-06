@@ -74,6 +74,8 @@ ScrollableState? _tabScrollable() {
 Future<void> main(List<String> args) async {
   final shapeName = args.length > 1 ? args[1] : 'typical';
   final shape = shapeName == 'large' ? _large : _typical;
+  // Optional: how many tracks are shown (the first N); default every track.
+  final showCount = args.length > 2 ? int.parse(args[2]) : shape.tracks;
 
   WidgetsFlutterBinding.ensureInitialized();
   await CoreBridge.init();
@@ -115,7 +117,9 @@ Future<void> main(List<String> args) async {
   final layout = <int>[];
   final scoreLayout = <int>[];
   final metrics = measureTabMetrics(width: 1200);
-  final shown = [for (final t in doc.summary().tracks) t.id];
+  final shown = [for (final t in doc.summary().tracks) t.id]
+      .take(showCount)
+      .toList();
   for (var i = 0; i < _warmup + 100; i++) {
     final w = Stopwatch()..start();
     await doc.execute(noteEdit(i));
@@ -139,6 +143,10 @@ Future<void> main(List<String> args) async {
   }
 
   container.read(editorProvider.notifier).replace(doc);
+  // Hide the tracks beyond the first N, as a user would from the track list.
+  for (final t in doc.summary().tracks.skip(showCount)) {
+    container.read(editorProvider.notifier).toggleTrackShown(t.id);
+  }
   await WidgetsBinding.instance.endOfFrame;
   final editor = container.read(editorProvider.notifier);
 

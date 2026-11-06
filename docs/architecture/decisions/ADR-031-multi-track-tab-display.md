@@ -175,3 +175,57 @@ The user chose to apply fallback 2 before fallback 1, because the measured break
 The Rust-only bench number for P3 is within budget, but the budget in performance-requirements is for the whole path, so P3 is recorded as **failing**. It is not passed on the bench number.
 
 In the app, most of the frame build is the synchronous layout query made during build. Each revision recomputes the outline, which measures every bar of all 20 tracks (13 to 20 ms). This is what fallback 1 (the bar-plan cache) removes, so it is applied next. For reference, LARGE scroll with 20 tracks gave p99 24.0 ms and 1 frame over 33 ms. P4 sets a budget for TYPICAL only.
+
+## Fallback 1: bar-width cache (6b-2c, 2026-11-06)
+
+`LayoutCache` and `outline_score_cached` keep each bar's natural widths across revisions. The key for a bar is:
+- the `Arc` of its content in every shown track, compared with `Arc::ptr_eq` (edits copy only what they change, ADR-016);
+- its master bar;
+- the previous bar's time signature;
+- the shown tracks and the metrics.
+
+The cache holds the `Arc`s it keys on, so an address cannot be freed and reused by other content. The `mc-app` session keeps one cache.
+
+Tests:
+- The cached outline equals a fresh outline after every kind of change: note edits, inserted bars, time-signature changes, added and removed tracks, other shown tracks and other metrics. This was checked over 60 seeded scores × 25 steps.
+- A note edit re-measures exactly one bar, and a repeated request measures none.
+- Two deliberate mutations of the key are caught: one drops the previous-time-signature check, the other drops the `Arc` comparison.
+
+**Measurement note.** The first two end-to-end TYPICAL runs after this change looked worse than before. An A/B run was then started, but it overlapped with an interrupted command that kept running in the background, so two instances of the tool ran at once and wrote the same files. Those numbers were **discarded**.
+
+The protocol was then made strict:
+- one tool instance at a time, refusing to start while another runs;
+- a distinct output file per run;
+- several runs per case, reported as median and range.
+
+Clean results, reference machine (ADR-025), profile build, `app/tool/edit_latency.dart`:
+
+| Id | Runs | Edit to frame p99 | Compute bound (p99 summed) | Edits missing the next frame | Layout query in view (FFI incl.) p99 | Budget | Result |
+|---|---|---|---|---|---|---|---|
+| P1 TYPICAL, 4 tracks | 5 | median 16.1 ms (15.3 to 32.8) | median 11.2 ms (10.7 to 16.8) | 0/200 in 4 runs, 20/200 in 1 | 0.6 to 0.9 ms | 16 ms | **Pass** (compute 11.2 ms; the outlier run had build and raster both up together, machine noise) |
+| P4 TYPICAL scroll | 5 | — | frame p99 6.9 to 12.7 ms | 0 frames over 33 ms in every run | — | 16 ms; none over 33 ms | **Pass** |
+| P3 LARGE, 20 tracks | 3 | 43.0, 44.3, 46.4 ms | 44.6, 44.3, 49.1 ms | 146 to 192 of 200 | 6.4 to 8.6 ms (was 36.2 ms before the cache) | 33 ms | **Fail** |
+
+In the Rust bench, an edit plus outline plus 3 systems on LARGE with 20 tracks is now p99 1.8 ms (it was 14.1 ms).
+
+**P3 after both fallbacks.** Layout is no longer the bottleneck. The rest is Flutter work:
+- frame build p99 23 to 28 ms, which includes the synchronous layout query of about 7 ms;
+- raster p99 16 to 22 ms;
+- both come from building and painting 20 staves of glyphs for the systems in view.
+
+Both fallbacks of section 6 are now applied, so step 3 (scope reduction, decided with the user) is next. The threshold is not changed.
+
+**How many shown tracks LARGE can take.** The tool has an optional shown-track count; the other tracks are hidden through the track-list control. 2 runs per count, same protocol:
+
+| LARGE, shown tracks | Edit to frame p99 | Compute bound | Missed next frame | Result vs 33 ms |
+|---|---|---|---|---|
+| 4 | 16.8, 16.1 ms | 18.3, 17.5 ms | 0, 0 | Pass (P2 end to end) |
+| 8 | 18.2, 18.4 ms | 18.0, 16.7 ms | 0, 0 | Pass |
+| 12 | 17.0, 18.2 ms | 19.9, 24.0 ms | 0, 1 | Pass |
+| 16 | 17.0, 25.9 ms | 19.7, 26.6 ms | 0, 16 | Pass |
+| 20 | 43.0 to 46.4 ms | 44.3 to 49.1 ms | 146 to 192 | Fail |
+
+The cost does not grow linearly from 16 to 20 tracks; it roughly doubles for 25% more staves. The cause is **not yet known**. A hypothesis, not verified:
+- a 20-stave system is about 2480 px tall, more than 2048 px, a common GPU texture limit;
+- a 16-stave system is about 1984 px;
+- every stave of a system item is built and painted even when only a few are on screen.

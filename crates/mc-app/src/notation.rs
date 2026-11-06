@@ -7,7 +7,7 @@ use mc_score::TrackId;
 use std::ops::Range;
 
 pub use mc_notation::{
-    BarLayout, Glyph, GlyphKind, HitRegion, HitTarget, LayoutMetrics, Line, LineKind,
+    BarLayout, Glyph, GlyphKind, HitRegion, HitTarget, LayoutCache, LayoutMetrics, Line, LineKind,
     NotationError, OutlineSystem, Rect, ScoreLayout, ScoreOutline, ScoreSystem, Stave,
     SystemLayout, TabLayout,
 };
@@ -58,7 +58,8 @@ impl DocumentSession {
             c.revision == self.revision() && c.tracks == tracks && c.metrics == *metrics
         });
         if !fresh {
-            let outline = mc_notation::outline_score(self.score(), tracks, metrics)?;
+            let (score, widths) = self.score_and_width_cache();
+            let outline = mc_notation::outline_score_cached(score, tracks, metrics, widths)?;
             self.outline_cache = Some(OutlineCache {
                 revision: self.revision(),
                 tracks: tracks.to_vec(),

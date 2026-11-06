@@ -170,6 +170,13 @@ impl Track {
         self.bars.get(index).map(|b| b.as_ref())
     }
 
+    /// The shared content of one bar. Edits copy only what they change (ADR-016), so
+    /// an unchanged bar keeps the same `Arc` across revisions; a view cache that holds
+    /// the `Arc` can recognise it with `Arc::ptr_eq` (ADR-031). Read-only.
+    pub fn bar_shared(&self, index: usize) -> Option<&Arc<BarContent>> {
+        self.bars.get(index)
+    }
+
     pub fn fretted(&self) -> &FrettedInstrument {
         match &self.instrument {
             InstrumentSpec::Fretted(f) => f,

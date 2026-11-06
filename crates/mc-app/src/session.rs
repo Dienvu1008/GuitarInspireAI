@@ -88,6 +88,9 @@ pub struct DocumentSession {
     /// Line breaking of the shown tracks at one revision (ADR-031 fallback 2), so the
     /// outline and the systems in view come from the same state. A view cache only.
     pub(crate) outline_cache: Option<crate::notation::OutlineCache>,
+    /// Bar widths kept across revisions (ADR-031 fallback 1), so an edit re-measures
+    /// only the bars it changed. A view cache only.
+    width_cache: crate::notation::LayoutCache,
 }
 
 /// Full D-01 scan; overflow (not reachable with validated durations) reports nothing,
@@ -140,6 +143,7 @@ impl DocumentSession {
             transport: TransportState::default(),
             pristine: Some(score_for_pristine),
             outline_cache: None,
+            width_cache: Default::default(),
         }
     }
 
@@ -209,6 +213,7 @@ impl DocumentSession {
             transport: TransportState::default(),
             pristine: None,
             outline_cache: None,
+            width_cache: Default::default(),
         };
         Ok((session, report))
     }
@@ -549,6 +554,11 @@ impl DocumentSession {
 
     pub fn revision(&self) -> Revision {
         self.revision
+    }
+
+    /// The score with the bar-width cache, borrowed together for layout queries.
+    pub(crate) fn score_and_width_cache(&mut self) -> (&Score, &mut crate::notation::LayoutCache) {
+        (&self.score, &mut self.width_cache)
     }
 
     pub fn is_dirty(&self) -> bool {

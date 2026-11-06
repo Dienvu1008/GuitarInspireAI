@@ -175,6 +175,21 @@ impl core::marker::Unpin for mc_notation::HitRegion
 impl core::marker::UnsafeUnpin for mc_notation::HitRegion
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::HitRegion
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::HitRegion
+pub struct mc_notation::LayoutCache
+impl mc_notation::LayoutCache
+pub fn mc_notation::LayoutCache::last_measured(&self) -> usize
+pub fn mc_notation::LayoutCache::new() -> Self
+impl core::default::Default for mc_notation::LayoutCache
+pub fn mc_notation::LayoutCache::default() -> Self
+impl core::fmt::Debug for mc_notation::LayoutCache
+pub fn mc_notation::LayoutCache::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Freeze for mc_notation::LayoutCache
+impl core::marker::Send for mc_notation::LayoutCache
+impl core::marker::Sync for mc_notation::LayoutCache
+impl core::marker::Unpin for mc_notation::LayoutCache
+impl core::marker::UnsafeUnpin for mc_notation::LayoutCache
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::LayoutCache
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::LayoutCache
 pub struct mc_notation::LayoutMetrics
 pub mc_notation::LayoutMetrics::above_staff: f32
 pub mc_notation::LayoutMetrics::bar_padding: f32
@@ -412,3 +427,4 @@ pub fn mc_notation::layout_score(&mc_score::score::Score, &[mc_score::ids::Track
 pub fn mc_notation::layout_score_systems(&mc_score::score::Score, &mc_notation::ScoreOutline, core::ops::range::Range<usize>, &mc_notation::LayoutMetrics) -> core::result::Result<alloc::vec::Vec<mc_notation::ScoreSystem>, mc_notation::NotationError>
 pub fn mc_notation::layout_tab(&mc_score::score::Score, mc_score::ids::TrackId, &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::TabLayout, mc_notation::NotationError>
 pub fn mc_notation::outline_score(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
+pub fn mc_notation::outline_score_cached(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics, &mut mc_notation::LayoutCache) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>

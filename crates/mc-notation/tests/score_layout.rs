@@ -474,3 +474,68 @@ fn a_stale_outline_is_an_error() {
         Err(NotationError::UnknownTrack(ids[1]))
     );
 }
+
+/// ADR-031 fallback 1: the cached outline equals a fresh one after every kind of
+/// change (note edits, inserted and removed bars, time signature changes, added and
+/// removed tracks, other shown tracks, other metrics), and a note edit re-measures
+/// exactly one bar.
+#[test]
+fn cached_outline_equals_a_fresh_outline_after_every_change() {
+    use mc_notation::{LayoutCache, outline_score_cached};
+    let mut single_bar_edits = 0;
+    for seed in 0..60 {
+        let (mut s, mut ids) = random_score(seed);
+        let mut rng = Rng(seed * 31 + 5);
+        let mut cache = LayoutCache::new();
+        let mut m = metrics_for(seed);
+        for step in 0..25 {
+            let shown = subset(seed + step, &ids);
+            let fresh = outline_score(&s, &shown, &m).unwrap();
+            let cached = outline_score_cached(&s, &shown, &m, &mut cache).unwrap();
+            assert_eq!(cached, fresh, "seed {seed} step {step}");
+            // The same request again measures nothing.
+            outline_score_cached(&s, &shown, &m, &mut cache).unwrap();
+            assert_eq!(cache.last_measured(), 0, "seed {seed} step {step}");
+
+            match rng.below(7) {
+                0..=2 => {
+                    // A note edit in one bar of a shown track: one bar re-measured.
+                    let t = shown[rng.below(shown.len() as u64) as usize];
+                    let bar = rng.below(s.master_bar_count() as u64) as usize;
+                    beat(&mut s, t, bar, v(3), &[(1, rng.below(12) as u8)]);
+                    outline_score_cached(&s, &shown, &m, &mut cache).unwrap();
+                    assert_eq!(cache.last_measured(), 1, "seed {seed} step {step}");
+                    single_bar_edits += 1;
+                }
+                3 => {
+                    s.insert_master_bars(
+                        rng.below(s.master_bar_count() as u64 + 1) as usize,
+                        1,
+                        MasterBar::default(),
+                    )
+                    .unwrap();
+                }
+                4 => {
+                    let b = rng.below(s.master_bar_count() as u64) as usize;
+                    let mut mb = s.master_bars()[b].clone();
+                    mb.time_signature =
+                        mc_theory::TimeSignature::new(2 + rng.below(4) as u8, 4).unwrap();
+                    s.set_master_bar(b, mb).unwrap();
+                }
+                5 => {
+                    if ids.len() > 1 && rng.below(2) == 0 {
+                        let t = ids.remove(rng.below(ids.len() as u64) as usize);
+                        s.remove_track(t).unwrap();
+                    } else {
+                        let (t, _) = s.add_track("X", guitar()).unwrap();
+                        ids.push(t);
+                    }
+                }
+                _ => {
+                    m = metrics_for(seed + step + 1);
+                }
+            }
+        }
+    }
+    assert!(single_bar_edits > 300, "{single_bar_edits}");
+}

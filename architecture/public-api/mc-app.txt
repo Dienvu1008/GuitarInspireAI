@@ -182,6 +182,7 @@ pub use mc_app::notation::Glyph
 pub use mc_app::notation::GlyphKind
 pub use mc_app::notation::HitRegion
 pub use mc_app::notation::HitTarget
+pub use mc_app::notation::LayoutCache
 pub use mc_app::notation::LayoutMetrics
 pub use mc_app::notation::Line
 pub use mc_app::notation::LineKind

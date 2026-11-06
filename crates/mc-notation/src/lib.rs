@@ -15,5 +15,8 @@ pub use display::{
     ScoreLayout, ScoreOutline, ScoreSystem, Stave, SystemLayout, TabLayout,
 };
 pub use error::NotationError;
-pub use layout::{layout_score, layout_score_systems, layout_tab, outline_score};
+pub use layout::{
+    LayoutCache, layout_score, layout_score_systems, layout_tab, outline_score,
+    outline_score_cached,
+};
 pub use metrics::LayoutMetrics;

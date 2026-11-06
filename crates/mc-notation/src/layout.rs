@@ -14,9 +14,10 @@
 
 use crate::display::*;
 use crate::{LayoutMetrics, NotationError};
-use mc_score::{Beat, MasterBar, Score, Track, TrackId};
-use mc_theory::Rational;
+use mc_score::{BarContent, Beat, MasterBar, Score, Track, TrackId};
+use mc_theory::{Rational, TimeSignature};
 use std::collections::BTreeSet;
+use std::sync::Arc;
 
 /// Lays out every bar of `track`. The same as the single stave of
 /// [`layout_score`] with only this track (ADR-031 M1).
@@ -58,7 +59,8 @@ pub fn layout_score(
 ) -> Result<ScoreLayout, NotationError> {
     let shown = shown_tracks(score, tracks, metrics)?;
     let plans = plan_all(score, &shown, metrics)?;
-    let outline = break_systems(score, &shown, &plans, metrics);
+    let widths: Vec<BarWidths> = plans.iter().map(BarPlan::widths).collect();
+    let outline = break_systems(score, &shown, &widths, metrics);
     let systems = emit_systems(score, &shown, &outline.systems, metrics, |range| {
         Ok(plans[range].iter().collect())
     })?;
@@ -81,7 +83,96 @@ pub fn outline_score(
 ) -> Result<ScoreOutline, NotationError> {
     let shown = shown_tracks(score, tracks, metrics)?;
     let plans = plan_all(score, &shown, metrics)?;
-    Ok(break_systems(score, &shown, &plans, metrics))
+    let widths: Vec<BarWidths> = plans.iter().map(BarPlan::widths).collect();
+    Ok(break_systems(score, &shown, &widths, metrics))
+}
+
+/// Bar widths kept between revisions (ADR-031 fallback 1): a bar is measured again
+/// only when its content in a shown track, its master bar, the previous bar's time
+/// signature, the shown tracks or the metrics changed. Edits copy only what they
+/// change (ADR-016), so after a note edit one bar is measured, not the whole score.
+///
+/// The cache holds the bar contents it keyed on, so an `Arc` it compares cannot be
+/// freed and its address reused by different content.
+#[derive(Debug, Default)]
+pub struct LayoutCache {
+    metrics: Option<LayoutMetrics>,
+    bars: Vec<Option<CachedBar>>,
+    last_measured: usize,
+}
+
+#[derive(Debug)]
+struct CachedBar {
+    contents: Vec<Arc<BarContent>>,
+    master: MasterBar,
+    previous_time_signature: Option<TimeSignature>,
+    widths: BarWidths,
+}
+
+impl LayoutCache {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Bars measured by the last [`outline_score_cached`] call (the others came from
+    /// the cache).
+    pub fn last_measured(&self) -> usize {
+        self.last_measured
+    }
+}
+
+/// [`outline_score`] using and updating `cache`; the result is identical.
+pub fn outline_score_cached(
+    score: &Score,
+    tracks: &[TrackId],
+    metrics: &LayoutMetrics,
+    cache: &mut LayoutCache,
+) -> Result<ScoreOutline, NotationError> {
+    let shown = shown_tracks(score, tracks, metrics)?;
+    if cache.metrics != Some(*metrics) {
+        cache.bars.clear();
+        cache.metrics = Some(*metrics);
+    }
+    let count = score.master_bar_count();
+    cache.bars.resize_with(count, || None);
+    let master_bars = score.master_bars();
+    let mut widths = Vec::with_capacity(count);
+    let mut measured = 0;
+    for b in 0..count {
+        let master = &master_bars[b];
+        let previous = b.checked_sub(1).map(|p| master_bars[p].time_signature);
+        let contents = || {
+            shown
+                .iter()
+                .map(|t| t.bar_shared(b).expect("H-02: bars aligned"))
+        };
+        let hit = cache.bars[b].as_ref().filter(|c| {
+            c.master == *master
+                && c.previous_time_signature == previous
+                && c.contents.len() == shown.len()
+                && c.contents
+                    .iter()
+                    .zip(contents())
+                    .all(|(a, b)| Arc::ptr_eq(a, b))
+        });
+        let w = match hit {
+            Some(c) => c.widths,
+            None => {
+                measured += 1;
+                let w = plan_bar(score, &shown, b, metrics)?.widths();
+                cache.bars[b] = Some(CachedBar {
+                    contents: contents().cloned().collect(),
+                    master: master.clone(),
+                    previous_time_signature: previous,
+                    widths: w,
+                });
+                w
+            }
+        };
+        widths.push(w);
+    }
+    cache.last_measured = measured;
+    Ok(break_systems(score, &shown, &widths, metrics))
 }
 
 /// Lays out the systems `range` of `outline`, exactly as [`layout_score`] would. Only
@@ -154,7 +245,7 @@ fn stave_height(strings: u8, m: &LayoutMetrics) -> f32 {
 fn break_systems(
     score: &Score,
     shown: &[&Track],
-    plans: &[BarPlan],
+    plans: &[BarWidths],
     metrics: &LayoutMetrics,
 ) -> ScoreOutline {
     let height_of_system: f32 = shown
@@ -253,7 +344,7 @@ fn emit_systems<'p>(
 
 /// Justification factor of a system's flexible width, shared by all its staves. The
 /// last system stays at natural width when it would stretch by more than a third.
-fn system_scale(plans: &[BarPlan], is_last: bool, m: &LayoutMetrics) -> f32 {
+fn system_scale(plans: &[BarWidths], is_last: bool, m: &LayoutMetrics) -> f32 {
     let fixed: f32 = plans.iter().map(|p| p.fixed_left + p.fixed_right).sum();
     let flexible: f32 = plans.iter().map(|p| p.flexible).sum();
     let target = m.content_width() - fixed;
@@ -299,6 +390,24 @@ struct BarPlan {
 }
 
 impl BarPlan {
+    fn widths(&self) -> BarWidths {
+        BarWidths {
+            fixed_left: self.fixed_left,
+            flexible: self.flexible,
+            fixed_right: self.fixed_right,
+        }
+    }
+}
+
+/// What line breaking needs of a bar: its fixed and flexible natural widths.
+#[derive(Clone, Copy, Debug, PartialEq)]
+struct BarWidths {
+    fixed_left: f32,
+    flexible: f32,
+    fixed_right: f32,
+}
+
+impl BarWidths {
     fn natural(&self) -> f32 {
         self.fixed_left + self.flexible + self.fixed_right
     }

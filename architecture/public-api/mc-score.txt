@@ -533,6 +533,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_score::TempoChange
 pub struct mc_score::Track
 impl mc_score::Track
 pub fn mc_score::Track::bar(&self, usize) -> core::option::Option<&mc_score::BarContent>
+pub fn mc_score::Track::bar_shared(&self, usize) -> core::option::Option<&alloc::rcs::arc::Arc<mc_score::BarContent>>
 pub fn mc_score::Track::bars(&self) -> impl core::iter::traits::exact_size::ExactSizeIterator<Item = &mc_score::BarContent>
 pub fn mc_score::Track::fretted(&self) -> &mc_score::FrettedInstrument
 pub fn mc_score::Track::id(&self) -> mc_score::TrackId
