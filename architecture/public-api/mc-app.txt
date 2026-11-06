@@ -986,6 +986,7 @@ pub fn mc_app::DocumentSession::copy_beats(&self, mc_score::ids::TrackId, usize,
 pub fn mc_app::DocumentSession::diagnostics(&self) -> alloc::vec::Vec<mc_score::diagnostics::Diagnostic>
 pub fn mc_app::DocumentSession::execute(&mut self, mc_app::CommandEnvelope) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::from_bytes(mc_app::DocumentId, &[u8], core::option::Option<std::path::PathBuf>, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
+pub fn mc_app::DocumentSession::has_unsaved_work(&self) -> bool
 pub fn mc_app::DocumentSession::history_bytes(&self) -> usize
 pub fn mc_app::DocumentSession::is_dirty(&self) -> bool
 pub fn mc_app::DocumentSession::location(&self) -> core::option::Option<&std::path::Path>

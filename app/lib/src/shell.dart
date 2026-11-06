@@ -6,6 +6,7 @@ import 'package:playback_feature/playback_feature.dart';
 import 'package:tools_feature/tools_feature.dart';
 import 'package:ui_kit/ui_kit.dart';
 
+import 'close_guard.dart';
 import 'midi_menu.dart';
 import 'playback_wiring.dart';
 
@@ -14,6 +15,7 @@ class GuitarInspireApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
+    navigatorKey: appNavigatorKey,
     title: 'GuitarInspireAI',
     theme: AppTheme.light(),
     darkTheme: AppTheme.dark(),

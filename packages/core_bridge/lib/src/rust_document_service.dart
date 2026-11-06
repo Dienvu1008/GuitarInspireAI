@@ -174,6 +174,9 @@ final class RustDocumentService implements DocumentService {
   Future<void> writeAutosave(String dir) => _handle.writeAutosave(dir: dir);
 
   @override
+  void discardAutosaves() => _handle.discardAutosaves();
+
+  @override
   void close() {
     _handle.unsubscribeEvents();
     unawaited(_source?.cancel());

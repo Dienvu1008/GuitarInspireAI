@@ -75,7 +75,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
                   String get codegenVersion => '2.13.0';
 
                   @override
-                  int get rustContentHash => -122611378;
+                  int get rustContentHash => -498707339;
 
                   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
                     stem: 'mc_ffi',
@@ -98,6 +98,8 @@ ChordResultDto crateApiDocumentDocumentHandleChordVoicings({required DocumentHan
 List<ClipBeatDto> crateApiDocumentDocumentHandleCopyBeats({required DocumentHandle that , required PlatformInt64 track , required int voice , required int fromBar , required int fromIndex , required int toBar , required int toIndex });
 
 DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars });
+
+void crateApiDocumentDocumentHandleDiscardAutosaves({required DocumentHandle that });
 
 void crateApiDocumentDocumentHandleDiscardRecovery({required String dir , required String projectId });
 
@@ -379,12 +381,37 @@ sse_encode_u_32(toIndex, serializer);
         );
         
 
+@override void crateApiDocumentDocumentHandleDiscardAutosaves({required DocumentHandle that })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleDiscardAutosavesConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleDiscardAutosavesConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_discard_autosaves",
+            argNames: ["that"],
+        );
+        
+
 @override void crateApiDocumentDocumentHandleDiscardRecovery({required String dir , required String projectId })  { return handler.executeSync(SyncTask(
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
 sse_encode_String(projectId, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
             
             },
             codec: 
@@ -409,7 +436,7 @@ sse_encode_String(projectId, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
             
             },
             codec: 
@@ -437,7 +464,7 @@ sse_encode_String(projectId, serializer);
 sse_encode_box_autoadd_command_dto(command, serializer);
 sse_encode_opt_box_autoadd_i_64(coalesceKey, serializer);
 sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
             
             },
             codec: 
@@ -462,7 +489,7 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
             
             },
             codec: 
@@ -488,7 +515,7 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
 sse_encode_bool(unclean, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
             
             },
             codec: 
@@ -513,7 +540,7 @@ sse_encode_bool(unclean, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
             
             },
             codec: 
@@ -539,7 +566,7 @@ sse_encode_bool(unclean, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
 sse_encode_String(projectId, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
             
             },
             codec: 
@@ -564,7 +591,7 @@ sse_encode_String(projectId, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
             
             },
             codec: 
@@ -589,7 +616,7 @@ sse_encode_String(projectId, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
             
             },
             codec: 
@@ -614,7 +641,7 @@ sse_encode_String(projectId, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
             
             },
             codec: 
@@ -640,7 +667,7 @@ sse_encode_String(projectId, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_String(path, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
             
             },
             codec: 
@@ -668,7 +695,7 @@ sse_encode_String(path, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_StreamSink_event_dto_Sse(sink, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19, port: port_);
             
             },
             codec: 
@@ -695,7 +722,7 @@ sse_encode_StreamSink_event_dto_Sse(sink, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20)!;
             
             },
             codec: 
@@ -722,7 +749,7 @@ sse_encode_StreamSink_event_dto_Sse(sink, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_box_autoadd_metrics_dto(metrics, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21)!;
             
             },
             codec: 
@@ -747,7 +774,7 @@ sse_encode_box_autoadd_metrics_dto(metrics, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22, port: port_);
             
             },
             codec: 
@@ -772,7 +799,7 @@ sse_encode_box_autoadd_metrics_dto(metrics, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23)!;
             
             },
             codec: 
@@ -799,7 +826,7 @@ sse_encode_box_autoadd_metrics_dto(metrics, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_u_32(bar, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24)!;
             
             },
             codec: 
@@ -825,7 +852,7 @@ sse_encode_u_32(bar, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_String(dir, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25, port: port_);
             
             },
             codec: 
@@ -850,7 +877,7 @@ sse_encode_String(dir, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26)!;
             
             },
             codec: 
@@ -877,7 +904,7 @@ sse_encode_String(dir, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_opt_box_autoadd_u_32(fromMasterBar, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27, port: port_);
             
             },
             codec: 
@@ -902,7 +929,7 @@ sse_encode_opt_box_autoadd_u_32(fromMasterBar, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28)!;
             
             },
             codec: 
@@ -930,7 +957,7 @@ sse_encode_opt_box_autoadd_u_32(fromMasterBar, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_StreamSink_position_dto_Sse(sink, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29, port: port_);
             
             },
             codec: 
@@ -958,7 +985,7 @@ sse_encode_StreamSink_position_dto_Sse(sink, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30, port: port_);
             
             },
             codec: 
@@ -985,7 +1012,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(tick, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31, port: port_);
             
             },
             codec: 
@@ -1013,7 +1040,7 @@ sse_encode_i_64(tick, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_bool(muted, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32, port: port_);
             
             },
             codec: 
@@ -1040,7 +1067,7 @@ sse_encode_bool(muted, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_u_16(hundredths, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33, port: port_);
             
             },
             codec: 
@@ -1065,7 +1092,7 @@ sse_encode_u_16(hundredths, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_opt_String(soundfontPath, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34, port: port_);
             
             },
             codec: 
@@ -1091,7 +1118,7 @@ sse_encode_u_16(hundredths, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35, port: port_);
             
             },
             codec: 
@@ -1116,7 +1143,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36)!;
             
             },
             codec: 
@@ -1141,7 +1168,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37)!;
             
             },
             codec: 
@@ -1167,7 +1194,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
 sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38)!;
             
             },
             codec: 
@@ -1193,7 +1220,7 @@ sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueI
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
 sse_encode_import_report_dto(report, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39)!;
             
             },
             codec: 
@@ -1218,7 +1245,7 @@ sse_encode_import_report_dto(report, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40)!;
             
             },
             codec: 
@@ -1245,7 +1272,7 @@ sse_encode_import_report_dto(report, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(track, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 41)!;
             
             },
             codec: 
@@ -1270,7 +1297,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 41, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 42, port: port_);
             
             },
             codec: 
@@ -1295,7 +1322,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 42)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 43)!;
             
             },
             codec: 
@@ -1320,7 +1347,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 43)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 44)!;
             
             },
             codec: 
@@ -1345,7 +1372,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 44)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 45)!;
             
             },
             codec: 
@@ -1370,7 +1397,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 45, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 46, port: port_);
             
             },
             codec: 
@@ -1395,7 +1422,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_list_prim_u_8_loose(bytes, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 46, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 47, port: port_);
             
             },
             codec: 
@@ -1420,7 +1447,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 47, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 48, port: port_);
             
             },
             codec: 
@@ -1633,16 +1660,17 @@ kind: dco_decode_String(arr[4]),); }
 
 @protected DocumentSummaryDto dco_decode_document_summary_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
+                if (arr.length != 10) throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
                 return DocumentSummaryDto(revision: dco_decode_i_64(arr[0]),
 dirty: dco_decode_bool(arr[1]),
-canUndo: dco_decode_bool(arr[2]),
-canRedo: dco_decode_bool(arr[3]),
-location: dco_decode_opt_String(arr[4]),
-unknownContent: dco_decode_list_String(arr[5]),
-tracks: dco_decode_list_track_summary_dto(arr[6]),
-masterBars: dco_decode_list_master_bar_dto(arr[7]),
-diagnostics: dco_decode_list_diagnostic_dto(arr[8]),); }
+unsavedWork: dco_decode_bool(arr[2]),
+canUndo: dco_decode_bool(arr[3]),
+canRedo: dco_decode_bool(arr[4]),
+location: dco_decode_opt_String(arr[5]),
+unknownContent: dco_decode_list_String(arr[6]),
+tracks: dco_decode_list_track_summary_dto(arr[7]),
+masterBars: dco_decode_list_master_bar_dto(arr[8]),
+diagnostics: dco_decode_list_diagnostic_dto(arr[9]),); }
 
 @protected DurationDto dco_decode_duration_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2197,6 +2225,7 @@ return DiagnosticDto(rule: var_rule, track: var_track, bar: var_bar, voice: var_
 @protected DocumentSummaryDto sse_decode_document_summary_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_revision = sse_decode_i_64(deserializer);
 var var_dirty = sse_decode_bool(deserializer);
+var var_unsavedWork = sse_decode_bool(deserializer);
 var var_canUndo = sse_decode_bool(deserializer);
 var var_canRedo = sse_decode_bool(deserializer);
 var var_location = sse_decode_opt_String(deserializer);
@@ -2204,7 +2233,7 @@ var var_unknownContent = sse_decode_list_String(deserializer);
 var var_tracks = sse_decode_list_track_summary_dto(deserializer);
 var var_masterBars = sse_decode_list_master_bar_dto(deserializer);
 var var_diagnostics = sse_decode_list_diagnostic_dto(deserializer);
-return DocumentSummaryDto(revision: var_revision, dirty: var_dirty, canUndo: var_canUndo, canRedo: var_canRedo, location: var_location, unknownContent: var_unknownContent, tracks: var_tracks, masterBars: var_masterBars, diagnostics: var_diagnostics); }
+return DocumentSummaryDto(revision: var_revision, dirty: var_dirty, unsavedWork: var_unsavedWork, canUndo: var_canUndo, canRedo: var_canRedo, location: var_location, unknownContent: var_unknownContent, tracks: var_tracks, masterBars: var_masterBars, diagnostics: var_diagnostics); }
 
 @protected DurationDto sse_decode_duration_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_base = sse_decode_u_8(deserializer);
@@ -2864,6 +2893,7 @@ sse_encode_String(self.kind, serializer);
 @protected void sse_encode_document_summary_dto(DocumentSummaryDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self.revision, serializer);
 sse_encode_bool(self.dirty, serializer);
+sse_encode_bool(self.unsavedWork, serializer);
 sse_encode_bool(self.canUndo, serializer);
 sse_encode_bool(self.canRedo, serializer);
 sse_encode_opt_String(self.location, serializer);
@@ -3281,6 +3311,11 @@ sse_encode_i_32(self.highestFret, serializer);
 /// `to_index`), both inclusive, possibly across bars, as plain values for the
 /// in-app clipboard (ADR-030). A query: nothing changes.
  List<ClipBeatDto>  copyBeats({required PlatformInt64 track , required int voice , required int fromBar , required int fromIndex , required int toBar , required int toIndex })=>RustLib.instance.api.crateApiDocumentDocumentHandleCopyBeats(that: this, track: track, voice: voice, fromBar: fromBar, fromIndex: fromIndex, toBar: toBar, toIndex: toIndex);
+
+
+/// Deletes this document's own autosaves (the user chose "Don't save" when closing,
+/// ADR-030 section 3). No-op if it never autosaved.
+ void  discardAutosaves()=>RustLib.instance.api.crateApiDocumentDocumentHandleDiscardAutosaves(that: this, );
 
 
 /// Applies one command. On error the document is unchanged.

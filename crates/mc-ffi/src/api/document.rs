@@ -304,6 +304,14 @@ impl DocumentHandle {
         Ok(handle)
     }
 
+    /// Deletes this document's own autosaves (the user chose "Don't save" when closing,
+    /// ADR-030 section 3). No-op if it never autosaved.
+    #[frb(sync)]
+    pub fn discard_autosaves(&self) {
+        let s = self.lock();
+        self.discard_own_recovery(&s);
+    }
+
     /// Deletes all autosaves of `project_id` in `dir` (the user chose Discard).
     #[frb(sync)]
     pub fn discard_recovery(dir: String, project_id: String) {
@@ -460,6 +468,7 @@ fn summary_dto(s: &DocumentSession) -> DocumentSummaryDto {
     DocumentSummaryDto {
         revision: s.revision().0 as i64,
         dirty: s.is_dirty(),
+        unsaved_work: s.has_unsaved_work(),
         can_undo: s.can_undo(),
         can_redo: s.can_redo(),
         location: s.location().map(|p| p.to_string_lossy().into_owned()),

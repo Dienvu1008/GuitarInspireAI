@@ -3,6 +3,7 @@ import 'package:editor_feature/editor_feature.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'src/close_guard.dart';
 import 'src/playback_wiring.dart';
 import 'src/soundfont.dart';
 import 'src/startup.dart';
@@ -32,6 +33,7 @@ Future<void> main() async {
         ...playbackOverrides(playback, CoreBridge.midi),
         ...tunerOverrides(),
         ...toolsOverrides(),
+        ...closeOverrides(),
       ],
       child: const StartupGate(),
     ),

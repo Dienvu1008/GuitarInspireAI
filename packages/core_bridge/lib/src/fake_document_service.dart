@@ -49,10 +49,18 @@ final class FakeDocumentService implements DocumentService {
 
   bool get _dirty => !_state.sameAs(_saved);
 
+  /// State as created, until the first save; mirrors `has_unsaved_work` in the core.
+  late _State? _pristine = _state.copy();
+
+  /// How often [writeAutosave] and [discardAutosaves] were called (for tests).
+  int autosaveWrites = 0;
+  int autosaveDiscards = 0;
+
   @override
   DocumentSummaryDto summary() => DocumentSummaryDto(
     revision: _revision,
     dirty: _dirty,
+    unsavedWork: _dirty && !_state.sameAs(_pristine),
     canUndo: _undo.isNotEmpty,
     canRedo: _redo.isNotEmpty,
     location: _location,
@@ -336,6 +344,7 @@ final class FakeDocumentService implements DocumentService {
   Future<OutcomeDto> saveAs(String path) async {
     _location = path;
     _saved = _state.copy();
+    _pristine = null;
     return _commit([const EventKindDto.documentSaved()], null);
   }
 
@@ -537,8 +546,12 @@ final class FakeDocumentService implements DocumentService {
 
   @override
   Future<void> writeAutosave(String dir) async {
-    // No-op in the fake; just mark the autosave done.
+    // The fake keeps no files; it only counts the call.
+    autosaveWrites++;
   }
+
+  @override
+  void discardAutosaves() => autosaveDiscards++;
 
   @override
   void close() {
@@ -550,9 +563,15 @@ final class FakeDocumentService implements DocumentService {
 final class FakeDocumentFactory implements DocumentFactory {
   final Map<String, FakeDocumentService> _files = {};
 
+  /// Every document created, in order, so tests can read their counters.
+  final List<FakeDocumentService> created = [];
+
   @override
-  DocumentService create({int bars = 4}) =>
-      _Tracked(FakeDocumentService(bars: bars), _files);
+  DocumentService create({int bars = 4}) {
+    final doc = FakeDocumentService(bars: bars);
+    created.add(doc);
+    return _Tracked(doc, _files);
+  }
 
   @override
   Future<DocumentService> open(String path) async {
@@ -680,6 +699,8 @@ final class _Tracked implements DocumentService {
   bool autosaveDue() => _inner.autosaveDue();
   @override
   Future<void> writeAutosave(String dir) => _inner.writeAutosave(dir);
+  @override
+  void discardAutosaves() => _inner.discardAutosaves();
   @override
   void close() => _inner.close();
 }

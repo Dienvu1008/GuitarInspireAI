@@ -69,6 +69,10 @@ abstract interface class DocumentService {
   /// Writes an autosave snapshot to the recovery directory.
   Future<void> writeAutosave(String dir);
 
+  /// Deletes this document's own autosaves (the user chose "Don't save" on close,
+  /// ADR-030 section 3). Does nothing if it never autosaved.
+  void discardAutosaves();
+
   /// Releases the document. The service must not be used afterwards.
   void close();
 }

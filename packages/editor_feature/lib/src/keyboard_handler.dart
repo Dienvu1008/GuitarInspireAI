@@ -91,7 +91,7 @@ final class KeyboardHandler {
       case EditorIntent.redo:
         await _editor.redo();
       case EditorIntent.newDocument:
-        _editor.newDocument();
+        await _editor.newDocument();
       case EditorIntent.open:
         await _editor.open();
       case EditorIntent.save:

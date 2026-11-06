@@ -492,6 +492,8 @@ pub struct DiagnosticDto {
 pub struct DocumentSummaryDto {
     pub revision: i64,
     pub dirty: bool,
+    /// Closing would lose work: dirty, except an untouched new document (ADR-030).
+    pub unsaved_work: bool,
     pub can_undo: bool,
     pub can_redo: bool,
     /// File path of the document, `None` until saved.

@@ -92,3 +92,26 @@ FF-12 (bindings in sync), FF-13 and FF-14 (invariants, undo identity), FF-19 (tr
 ## Reconsideration conditions
 
 A text interchange format for TAB, a second platform with its own exit semantics, or multi-document windows would change sections 1 and 3.
+
+## Implementation notes (6b-1, 2026-11-06)
+
+Recorded so the decision matches what was built. None of these lowers a criterion of section 4.
+
+- **B1 result: pass.** On the reference machine, with Flutter 3.47.2 and the stock Windows runner:
+  1. The release build was started and one note was typed, so there was unsaved work.
+  2. The same message the title-bar close button sends (`WM_SYSCOMMAND` / `SC_CLOSE`) was posted to the window.
+  3. The app stayed open and showed the "Save changes?" dialog. A screenshot was checked.
+  4. While the dialog was open, the recovery folder held the new autosave and `session.lock`.
+  5. Choosing "Don't save" closed the app with exit code 0 and left the recovery folder empty: the marker was removed and the autosave discarded.
+  
+  The `WM_CLOSE` fallback in the C++ runner is therefore not needed and was not added. Single machine (ADR-025).
+- **The fragment is built by the core, not by Dart** (differs from section 1, which said Dart builds it from the beat data it reads).
+  - `copy_beats` in `mc-score`/`mc-app` returns the plain-value fragment. Dart only keeps it in the app-level clipboard and sends it back with `PasteBeats`.
+  - There is one conversion instead of two, and Dart never interprets beat structure (GR-05). Behaviour seen by the user is the same.
+- **"Unsaved work" is a core rule.** `DocumentSession::has_unsaved_work` is `is_dirty`, except for a new, never-saved document that still equals what it was created as.
+  - Such a document is dirty, because it is not on disk, but it holds nothing to lose. Closing it does not prompt.
+  - Opened and recovered documents follow `is_dirty` exactly.
+  - Autosave timing (`autosave_due`) is unchanged.
+- **MIDI import also asks**, because it replaces the current document like Open.
+- **C9 is met by ordering.** The prompt writes an autosave before it asks, and the marker is removed only after the prompt resolves to an exit. A system shutdown while the prompt is open therefore leaves both, and the next start offers the work.
+  - A real log-off is still a manual step of the exit-report script.

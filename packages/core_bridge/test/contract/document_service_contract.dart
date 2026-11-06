@@ -38,6 +38,15 @@ void documentServiceContract(
       return BeatAddressDto(track: track, bar: bar, voice: 0, beat: id);
     }
 
+    test('ADR-030: unsaved work ignores an untouched new document', () async {
+      expect(d.summary().unsavedWork, isFalse);
+      await insertBeat(0);
+      expect(d.summary().unsavedWork, isTrue);
+      await d.undo();
+      expect(d.summary().unsavedWork, isFalse);
+      expect(d.summary().dirty, isTrue, reason: 'still not on disk');
+    });
+
     test('a new document is clean, with one track and the requested bars', () {
       final s = d.summary();
       expect(s.revision, 0);

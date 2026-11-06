@@ -25,6 +25,13 @@ typedef CursorOverlayBuilder =
 
 final cursorOverlayProvider = Provider<CursorOverlayBuilder?>((ref) => null);
 
+/// Asked before the current document is replaced (New, Open, MIDI import). Returns
+/// false to keep it. The app overrides it with its "save changes?" prompt (ADR-030
+/// section 3); the default allows the replacement.
+typedef ReplaceGuard = Future<bool> Function();
+
+final replaceGuardProvider = Provider<ReplaceGuard>((ref) => () async => true);
+
 /// Per-user app data paths (recovery directory). Overridden in tests.
 final appPathsProvider = Provider<AppPaths>((ref) => const SystemAppPaths());
 
@@ -183,13 +190,19 @@ final class DocumentController extends Notifier<EditorState> {
     }
   }
 
-  void newDocument() =>
-      _replace(ref.read(documentFactoryProvider).create(bars: 4));
+  /// Asks [replaceGuardProvider] whether the current document may be replaced.
+  Future<bool> confirmReplace() => ref.read(replaceGuardProvider)();
+
+  Future<void> newDocument() async {
+    if (!await confirmReplace()) return;
+    _replace(ref.read(documentFactoryProvider).create(bars: 4));
+  }
 
   /// Replaces the current document (used by recovery). Exposed for the recovery dialog.
   void replace(DocumentService service) => _replace(service);
 
   Future<bool> open() async {
+    if (!await confirmReplace()) return false;
     final path = await ref.read(fileDialogsProvider).pickProjectToOpen();
     if (path == null) return false;
     return openPath(path);

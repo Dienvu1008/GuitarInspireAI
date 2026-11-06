@@ -52,6 +52,11 @@ static bool  beginSession({required String dir })=>RustLib.instance.api.crateApi
 static DocumentHandle  create({required int bars })=>RustLib.instance.api.crateApiDocumentDocumentHandleCreate(bars: bars);
 
 
+/// Deletes this document's own autosaves (the user chose "Don't save" when closing,
+/// ADR-030 section 3). No-op if it never autosaved.
+ void  discardAutosaves();
+
+
 /// Deletes all autosaves of `project_id` in `dir` (the user chose Discard).
 static void  discardRecovery({required String dir , required String projectId })=>RustLib.instance.api.crateApiDocumentDocumentHandleDiscardRecovery(dir: dir, projectId: projectId);
 

@@ -33,8 +33,13 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
 
 ## Playback
 
-- Default output device only; device selection is deferred. Loop selection, metronome and
-  count-in are not implemented (deferred from Phase 4). The playback cursor follows the
+- Default output device only; device selection is deferred. Metronome and count-in are
+  not implemented (deferred from Phase 4). Loop selection is **deferred on purpose**
+  (user decision, Phase 6): it needs its own interaction design (choosing a range,
+  showing it, keeping it in step with the transport); it is not an oversight.
+- One fixed instrument sound for every track (Acoustic Guitar steel, decided in Phase 4).
+  A per-track SoundFont program is **deferred and needs an ADR**, because it changes
+  both playback and MIDI export. The playback cursor follows the
   engine position but does not correct for the ~33 ms output latency, so it leads the
   sound by under a frame.
 - One bundled SoundFont (trimmed FluidR3, program 25). User-supplied SoundFonts are a
@@ -48,6 +53,18 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
 - Effects are limited to tie, let ring and dead note. No lyrics. Repeat editing is limited
   to simple start and end markers.
 - A pickup bar round-trips through MIDI as a full-length bar with a trailing rest.
+- Copy and paste (Phase 6b-1, ADR-030) work on a run of beats in one voice, possibly
+  across bars, selected with Shift+Left/Right or Shift+click. Paste inserts; there is no
+  overwrite mode. Bar lines, time signatures and tempo marks are not copied, and paste
+  never adds bars.
+- Selecting **whole bars** (keeping bar structure) is deferred on purpose: it changes
+  master bars, which every track shares, and needs its own rules.
+- The clipboard is **in-app only**: nothing goes to or comes from the system clipboard,
+  so you cannot paste TAB into or from other programs. It is shared by all documents
+  while the app runs and is empty after a restart.
+- Paste keeps **strings and frets, not pitches**. Pasting into a track with a different
+  tuning or capo keeps the same fingering, so it sounds different. A note on a string or
+  fret the target track does not have makes the whole paste fail, and nothing changes.
 
 ## Chord finder
 
@@ -58,9 +75,9 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
 ## Interchange and storage
 
 - MIDI import and export only. No MusicXML or Guitar Pro. No SQLite library index.
-- The crash-recovery session marker is not wired: recovery is offered whenever autosaves
-  exist, which includes a normal close with unsaved changes (there is no "save changes?"
-  prompt on close). Carried from Phase 3 (O-1 to O-3); planned with a close prompt later.
+- Resolved in Phase 6b-1 (ADR-030): the session marker, the "save changes?" prompt on
+  window close, New, Open and MIDI import, "Open original", and offering only autosaves
+  newer than their source. Kept here as a record; it is no longer a limitation.
 
 ## Not in the MVP at all
 

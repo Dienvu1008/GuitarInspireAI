@@ -82,6 +82,9 @@ pub struct DocumentSession {
     /// Playback transport settings: session state, not document content (Q3, Q6). Not
     /// saved to the file, not part of undo.
     transport: TransportState,
+    /// Score as created, for a new document until its first save (see
+    /// [`DocumentSession::has_unsaved_work`]). `None` for opened or recovered ones.
+    pristine: Option<Score>,
 }
 
 /// Full D-01 scan; overflow (not reachable with validated durations) reports nothing,
@@ -113,6 +116,7 @@ impl DocumentSession {
         entropy: &dyn Entropy,
     ) -> Self {
         let now = clock.now_unix_millis();
+        let score_for_pristine = score.clone(); // structural sharing: cheap
         DocumentSession {
             id,
             diagnostics: full_diagnostics(&score),
@@ -131,6 +135,7 @@ impl DocumentSession {
             last_autosave_millis: now,
             sink: None,
             transport: TransportState::default(),
+            pristine: Some(score_for_pristine),
         }
     }
 
@@ -198,6 +203,7 @@ impl DocumentSession {
             last_autosave_millis: clock.now_unix_millis(),
             sink: None,
             transport: TransportState::default(),
+            pristine: None,
         };
         Ok((session, report))
     }
@@ -487,6 +493,8 @@ impl DocumentSession {
         let bytes = mc_project::save(&self.score, &info);
         store.write_atomic(path, &bytes).map_err(SaveError::Store)?;
         let was_dirty = self.is_dirty();
+        // Once on disk, the creation state no longer matters: only the saved file does.
+        self.pristine = None;
         self.file_revision += 1;
         self.created_by = Some(info.created_by);
         self.saved_revision = Some(self.revision);
@@ -540,6 +548,15 @@ impl DocumentSession {
 
     pub fn is_dirty(&self) -> bool {
         self.saved_score.as_ref() != Some(&self.score)
+    }
+
+    /// True when closing would lose work (ADR-030 section 3): the document is dirty,
+    /// except a new, never-saved document that still equals what it was created as.
+    /// Such a document is dirty (it is not on disk) but holds nothing to lose, so the
+    /// app does not ask "save changes?" for it. Opened and recovered documents have no
+    /// such exception.
+    pub fn has_unsaved_work(&self) -> bool {
+        self.is_dirty() && self.pristine.as_ref() != Some(&self.score)
     }
 
     /// Revision at the last save or open, if any.

@@ -9,6 +9,8 @@ export 'src/document_controller.dart'
         CursorOverlayBuilder,
         DocumentController,
         EditorState,
+        ReplaceGuard,
+        replaceGuardProvider,
         appPathsProvider,
         cursorOverlayProvider,
         documentFactoryProvider,

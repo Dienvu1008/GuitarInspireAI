@@ -247,6 +247,8 @@ final String kind;
 class DocumentSummaryDto  {
                 final PlatformInt64 revision;
 final bool dirty;
+/// Closing would lose work: dirty, except an untouched new document (ADR-030).
+final bool unsavedWork;
 final bool canUndo;
 final bool canRedo;
 /// File path of the document, `None` until saved.
@@ -257,14 +259,14 @@ final List<TrackSummaryDto> tracks;
 final List<MasterBarDto> masterBars;
 final List<DiagnosticDto> diagnostics;
 
-                const DocumentSummaryDto({required this.revision ,required this.dirty ,required this.canUndo ,required this.canRedo ,this.location ,required this.unknownContent ,required this.tracks ,required this.masterBars ,required this.diagnostics ,});
+                const DocumentSummaryDto({required this.revision ,required this.dirty ,required this.unsavedWork ,required this.canUndo ,required this.canRedo ,this.location ,required this.unknownContent ,required this.tracks ,required this.masterBars ,required this.diagnostics ,});
 
 
 
 
 
         @override
-        int get hashCode => revision.hashCode^dirty.hashCode^canUndo.hashCode^canRedo.hashCode^location.hashCode^unknownContent.hashCode^tracks.hashCode^masterBars.hashCode^diagnostics.hashCode;
+        int get hashCode => revision.hashCode^dirty.hashCode^unsavedWork.hashCode^canUndo.hashCode^canRedo.hashCode^location.hashCode^unknownContent.hashCode^tracks.hashCode^masterBars.hashCode^diagnostics.hashCode;
 
 
 
@@ -273,7 +275,7 @@ final List<DiagnosticDto> diagnostics;
             identical(this, other) ||
             other is DocumentSummaryDto &&
                 runtimeType == other.runtimeType
-                && revision == other.revision&& dirty == other.dirty&& canUndo == other.canUndo&& canRedo == other.canRedo&& location == other.location&& unknownContent == other.unknownContent&& tracks == other.tracks&& masterBars == other.masterBars&& diagnostics == other.diagnostics;
+                && revision == other.revision&& dirty == other.dirty&& unsavedWork == other.unsavedWork&& canUndo == other.canUndo&& canRedo == other.canRedo&& location == other.location&& unknownContent == other.unknownContent&& tracks == other.tracks&& masterBars == other.masterBars&& diagnostics == other.diagnostics;
 
             }
 
