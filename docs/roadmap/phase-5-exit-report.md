@@ -1,7 +1,7 @@
 # Phase 5 Exit Report (MVP, M5)
 
 Purpose: Evidence against the Phase 5 acceptance criteria (tuner, chord finder, fretboard; MVP close), the single-machine and synthetic-only scope of the tuner evidence, the MVP feature checklist, the crate-count and Web-priority (Q-14) review the roadmap asks for at M5, and open points.
-Status: Proposed for user acceptance. CI status in section 8. Read the "Known evidence gaps" block (after section 4) before relying on this report: the MVP has **not** been verified on real hardware beyond the single reference machine, and the tuner has **not** been measured on a real guitar. Evidence gaps (a) and (b) are conditions of acceptance, not post-acceptance debt; M5 is accepted with these gaps on the record.
+Status: Final. Phase 5 accepted by the user on 2026-10-31, with the evidence gaps below as conditions of acceptance. CI status in section 8. Read the "Known evidence gaps" block (after section 4) before relying on this report: the MVP has **not** been verified on real hardware beyond the single reference machine, and the tuner has **not** been measured on a real guitar. Evidence gaps (a) and (b) are conditions of acceptance, not post-acceptance debt; M5 is accepted with these gaps on the record.
 Related documents: [implementation-phases.md](implementation-phases.md), [milestones.md](milestones.md), [README.md](README.md), [mvp-known-limitations.md](mvp-known-limitations.md), [mvp-release-notes.md](mvp-release-notes.md), [phase-4-exit-report.md](phase-4-exit-report.md), [ADR-029](../architecture/decisions/ADR-029-tuner-pitch-detection.md), [ADR-025](../architecture/decisions/ADR-025-single-machine-evidence-accepted.md).
 
 ## 1. Outcome
@@ -89,7 +89,9 @@ step passed before push.
 
 ## 9. Closure
 
-Phase 5 closes with a merge of `phase-5-mvp` into `main` with CI passing. The MVP (M5) is
+Phase 5 was accepted by the user on 2026-10-31 and closes with a `--no-ff` merge of
+`phase-5-mvp` into `main` with CI passing. Acceptance is conditional: the Known evidence
+gaps (a) and (b) are conditions of acceptance, not post-acceptance debt. The MVP (M5) is
 reached with the documented limitations ([mvp-known-limitations.md](mvp-known-limitations.md)).
 ADR-029 remains Draft until the real-guitar tuner set is recorded. Next: Phase 6 (editor
 depth, post-MVP), sub-phases reorderable by user priority.
