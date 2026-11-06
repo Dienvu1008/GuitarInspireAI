@@ -602,6 +602,40 @@ impl DocumentSession {
         Some(crate::guitar::track_chord_voicings(&fretted, symbol, max))
     }
 
+    /// Copies a run of beats of one voice, `from` to `to` as `(bar, index)`, both
+    /// inclusive and possibly across bars, as plain values for the clipboard (ADR-030).
+    /// A query: no revision, history or event change. The music rules live in `Score`.
+    pub fn copy_beats(
+        &self,
+        track: TrackId,
+        voice: usize,
+        from: (usize, usize),
+        to: (usize, usize),
+    ) -> Result<Vec<crate::command::ClipBeat>, CommandError> {
+        let fragment = self.score.copy_beats(
+            track,
+            voice,
+            crate::handlers::slot(from),
+            crate::handlers::slot(to),
+        )?;
+        Ok(fragment
+            .into_iter()
+            .map(|b| crate::command::ClipBeat {
+                duration: crate::command::DurationSpec::from_value(b.value),
+                notes: b
+                    .notes
+                    .into_iter()
+                    .map(|n| crate::command::ClipNote {
+                        string: n.position.string.get(),
+                        fret: n.position.fret.0,
+                        tie: n.tie,
+                        effects: n.effects,
+                    })
+                    .collect(),
+            })
+            .collect())
+    }
+
     /// Maps a measured frequency to the nearest open string of `track` and the cents off,
     /// using that track's tuning and capo (ADR-029 T8). The reference-pitch rule lives in
     /// the Guitar context (`mc_guitar`, GR-05); this reads the track and delegates. When

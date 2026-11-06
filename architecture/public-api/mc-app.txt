@@ -643,8 +643,19 @@ pub mc_app::ScoreCommand::InsertMasterBars
 pub mc_app::ScoreCommand::InsertMasterBars::at: usize
 pub mc_app::ScoreCommand::InsertMasterBars::count: usize
 pub mc_app::ScoreCommand::InsertMasterBars::template: mc_score::model::MasterBar
+pub mc_app::ScoreCommand::PasteBeats
+pub mc_app::ScoreCommand::PasteBeats::bar: usize
+pub mc_app::ScoreCommand::PasteBeats::beats: alloc::vec::Vec<mc_app::ClipBeat>
+pub mc_app::ScoreCommand::PasteBeats::index: usize
+pub mc_app::ScoreCommand::PasteBeats::track: mc_score::ids::TrackId
+pub mc_app::ScoreCommand::PasteBeats::voice: usize
 pub mc_app::ScoreCommand::RemoveBeat
 pub mc_app::ScoreCommand::RemoveBeat::beat: mc_app::BeatAddress
+pub mc_app::ScoreCommand::RemoveBeats
+pub mc_app::ScoreCommand::RemoveBeats::from: (usize, usize)
+pub mc_app::ScoreCommand::RemoveBeats::to: (usize, usize)
+pub mc_app::ScoreCommand::RemoveBeats::track: mc_score::ids::TrackId
+pub mc_app::ScoreCommand::RemoveBeats::voice: usize
 pub mc_app::ScoreCommand::RemoveMasterBars
 pub mc_app::ScoreCommand::RemoveMasterBars::at: usize
 pub mc_app::ScoreCommand::RemoveMasterBars::count: usize
@@ -798,6 +809,45 @@ impl core::marker::Unpin for mc_app::BeatAddress
 impl core::marker::UnsafeUnpin for mc_app::BeatAddress
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::BeatAddress
 impl core::panic::unwind_safe::UnwindSafe for mc_app::BeatAddress
+pub struct mc_app::ClipBeat
+pub mc_app::ClipBeat::duration: mc_app::DurationSpec
+pub mc_app::ClipBeat::notes: alloc::vec::Vec<mc_app::ClipNote>
+impl core::clone::Clone for mc_app::ClipBeat
+pub fn mc_app::ClipBeat::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::ClipBeat
+impl core::cmp::PartialEq for mc_app::ClipBeat
+pub fn mc_app::ClipBeat::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::ClipBeat
+pub fn mc_app::ClipBeat::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::ClipBeat
+impl core::marker::Freeze for mc_app::ClipBeat
+impl core::marker::Send for mc_app::ClipBeat
+impl core::marker::Sync for mc_app::ClipBeat
+impl core::marker::Unpin for mc_app::ClipBeat
+impl core::marker::UnsafeUnpin for mc_app::ClipBeat
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::ClipBeat
+impl core::panic::unwind_safe::UnwindSafe for mc_app::ClipBeat
+pub struct mc_app::ClipNote
+pub mc_app::ClipNote::effects: mc_score::model::NoteEffects
+pub mc_app::ClipNote::fret: u8
+pub mc_app::ClipNote::string: u8
+pub mc_app::ClipNote::tie: bool
+impl core::clone::Clone for mc_app::ClipNote
+pub fn mc_app::ClipNote::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::ClipNote
+impl core::cmp::PartialEq for mc_app::ClipNote
+pub fn mc_app::ClipNote::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::ClipNote
+pub fn mc_app::ClipNote::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::ClipNote
+impl core::marker::StructuralPartialEq for mc_app::ClipNote
+impl core::marker::Freeze for mc_app::ClipNote
+impl core::marker::Send for mc_app::ClipNote
+impl core::marker::Sync for mc_app::ClipNote
+impl core::marker::Unpin for mc_app::ClipNote
+impl core::marker::UnsafeUnpin for mc_app::ClipNote
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::ClipNote
+impl core::panic::unwind_safe::UnwindSafe for mc_app::ClipNote
 pub struct mc_app::CollectingSink
 pub mc_app::CollectingSink::events: alloc::vec::Vec<mc_app::EventEnvelope>
 impl core::default::Default for mc_app::CollectingSink
@@ -929,6 +979,7 @@ pub fn mc_app::DocumentSession::autosave_due(&self, u64) -> bool
 pub fn mc_app::DocumentSession::can_redo(&self) -> bool
 pub fn mc_app::DocumentSession::can_undo(&self) -> bool
 pub fn mc_app::DocumentSession::chord_voicings(&self, mc_score::ids::TrackId, &str, usize) -> core::option::Option<core::result::Result<mc_app::guitar::ChordLookup, mc_app::guitar::QueryError>>
+pub fn mc_app::DocumentSession::copy_beats(&self, mc_score::ids::TrackId, usize, (usize, usize), (usize, usize)) -> core::result::Result<alloc::vec::Vec<mc_app::ClipBeat>, mc_app::CommandError>
 pub fn mc_app::DocumentSession::diagnostics(&self) -> alloc::vec::Vec<mc_score::diagnostics::Diagnostic>
 pub fn mc_app::DocumentSession::execute(&mut self, mc_app::CommandEnvelope) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::from_bytes(mc_app::DocumentId, &[u8], core::option::Option<std::path::PathBuf>, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
@@ -973,6 +1024,8 @@ pub struct mc_app::DurationSpec
 pub mc_app::DurationSpec::base: u8
 pub mc_app::DurationSpec::dots: u8
 pub mc_app::DurationSpec::tuplet: core::option::Option<(u8, u8)>
+impl mc_app::DurationSpec
+pub fn mc_app::DurationSpec::from_value(mc_theory::duration::NoteValue) -> Self
 impl mc_app::DurationSpec
 pub const fn mc_app::DurationSpec::plain(u8) -> Self
 impl core::clone::Clone for mc_app::DurationSpec

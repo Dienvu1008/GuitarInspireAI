@@ -19,8 +19,8 @@ pub mod transport;
 pub mod infra;
 
 pub use command::{
-    BeatAddress, Command, CommandEnvelope, CommandId, DurationSpec, GuitarCommand,
-    InstrumentSpecInput, Revision, ScoreCommand, TrackCommand,
+    BeatAddress, ClipBeat, ClipNote, Command, CommandEnvelope, CommandId, DurationSpec,
+    GuitarCommand, InstrumentSpecInput, Revision, ScoreCommand, TrackCommand,
 };
 pub use constraints::Constraints;
 pub use error::{CommandError, OpenError, SaveError};

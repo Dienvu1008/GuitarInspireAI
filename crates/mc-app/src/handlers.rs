@@ -1,8 +1,13 @@
 //! Command handlers, one module per context. The dispatcher in `session.rs` only routes.
 
-use crate::command::{BeatAddress, DurationSpec, InstrumentSpecInput, ScoreCommand, TrackCommand};
+use crate::command::{
+    BeatAddress, ClipBeat, DurationSpec, InstrumentSpecInput, ScoreCommand, TrackCommand,
+};
 use crate::{CommandError, Constraints};
-use mc_score::{BeatRef, DomainEvent, FrettedInstrument, InstrumentSpec, Score};
+use mc_score::{
+    BeatRef, BeatSlot, DomainEvent, FragmentBeat, FragmentNote, FrettedInstrument, InstrumentSpec,
+    Score,
+};
 use mc_theory::fretted::{Capo, Fret, FretPosition, StringIndex, Tuning};
 use mc_theory::{BaseValue, NoteValue, Rational, Tempo, Tuplet};
 
@@ -42,6 +47,31 @@ fn beat(a: BeatAddress) -> BeatRef {
         voice: a.voice,
         beat: a.beat,
     }
+}
+
+pub(crate) fn slot(s: (usize, usize)) -> BeatSlot {
+    BeatSlot {
+        bar: s.0,
+        index: s.1,
+    }
+}
+
+fn fragment_beat(b: &ClipBeat) -> Result<FragmentBeat, CommandError> {
+    let mut notes = Vec::with_capacity(b.notes.len());
+    for n in &b.notes {
+        notes.push(FragmentNote {
+            position: FretPosition {
+                string: StringIndex::new(n.string)?,
+                fret: Fret(n.fret),
+            },
+            tie: n.tie,
+            effects: n.effects,
+        });
+    }
+    Ok(FragmentBeat {
+        value: duration(b.duration)?,
+        notes,
+    })
 }
 
 fn rational(v: (i64, i64)) -> Result<Rational, CommandError> {
@@ -113,6 +143,25 @@ pub(crate) mod score_handlers {
             ScoreCommand::ShiftFrets { track, bars, delta } => {
                 score.shift_frets(track, bars.0..bars.1, delta)?
             }
+            ScoreCommand::PasteBeats {
+                track,
+                bar,
+                voice,
+                index,
+                beats,
+            } => {
+                let fragment = beats
+                    .iter()
+                    .map(fragment_beat)
+                    .collect::<Result<Vec<_>, _>>()?;
+                score.paste_beats(track, bar, voice, index, &fragment)?
+            }
+            ScoreCommand::RemoveBeats {
+                track,
+                voice,
+                from,
+                to,
+            } => score.remove_beats(track, voice, slot(from), slot(to))?,
         })
     }
 }
