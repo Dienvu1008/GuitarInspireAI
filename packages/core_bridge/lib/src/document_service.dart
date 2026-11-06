@@ -76,6 +76,20 @@ abstract interface class DocumentFactory {
 
   /// Removes all autosaves of [projectId] in [dir] (the user chose Discard).
   void discardRecovery(String dir, String projectId);
+
+  /// Starts an app session by writing the session marker in [dir]. Returns true when
+  /// the previous session did not end cleanly. Throws [ApiError] if the marker cannot
+  /// be written.
+  bool beginSession(String dir);
+
+  /// Ends the app session cleanly (removes the marker). Call only after every
+  /// document was saved or discarded (ADR-030 section 3).
+  void endSession(String dir);
+
+  /// The autosaves to offer on startup: none after a clean session; otherwise the
+  /// ones newer than their source file, untitled ones, and ones whose source is gone.
+  /// The rule is in the Rust core (ADR-030 section 2).
+  List<RecoveryEntryDto> offeredRecovery(String dir, {required bool unclean});
 }
 
 /// Line kind codes used in [SystemDto.lineKinds].

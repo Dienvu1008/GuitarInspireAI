@@ -72,6 +72,16 @@ final class _RustDocumentFactory implements DocumentFactory {
   @override
   void discardRecovery(String dir, String projectId) =>
       DocumentHandle.discardRecovery(dir: dir, projectId: projectId);
+
+  @override
+  bool beginSession(String dir) => DocumentHandle.beginSession(dir: dir);
+
+  @override
+  void endSession(String dir) => DocumentHandle.endSession(dir: dir);
+
+  @override
+  List<RecoveryEntryDto> offeredRecovery(String dir, {required bool unclean}) =>
+      DocumentHandle.offeredRecoveryEntries(dir: dir, unclean: unclean);
 }
 
 /// [DocumentService] backed by the Rust session in `mc-ffi`.

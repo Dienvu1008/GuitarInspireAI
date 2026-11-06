@@ -9,7 +9,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
 
-            // These functions are ignored because they are not marked as `pub`: `app_info`, `chord_result_dto`, `discard_own_recovery`, `event_dto`, `from_imported_score`, `lock_for_transport`, `lock`, `master_bar_dto`, `outcome_dto`, `playback_state_dto`, `recovery_dir`, `score_snapshot`, `summary_dto`, `to_command`, `with_session`, `wrap`
+            // These functions are ignored because they are not marked as `pub`: `app_info`, `chord_result_dto`, `discard_own_recovery`, `event_dto`, `from_imported_score`, `lock_for_transport`, `lock`, `master_bar_dto`, `outcome_dto`, `playback_state_dto`, `recovery_dir`, `recovery_entry_dto`, `score_snapshot`, `summary_dto`, `to_command`, `with_session`, `wrap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DartEventSink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `publish`
 
@@ -29,6 +29,11 @@ import 'types.dart';
  List<BeatDto>  beats({required PlatformInt64 track , required int bar , required int voice });
 
 
+/// Starts an app session: writes the session marker in `dir` and returns true if
+/// the previous session did not end cleanly (its marker was still there).
+static bool  beginSession({required String dir })=>RustLib.instance.api.crateApiDocumentDocumentHandleBeginSession(dir: dir);
+
+
 /// Chord voicings for `track` using its tuning and capo (ADR-029 T6/T8). `max` caps
 /// the results (the UI shows a handful). Returns the canonical symbol, the spelled
 /// tones and the voicings; a bad chord symbol is an `ApiError`, an unknown track is
@@ -45,13 +50,24 @@ static DocumentHandle  create({required int bars })=>RustLib.instance.api.crateA
 static void  discardRecovery({required String dir , required String projectId })=>RustLib.instance.api.crateApiDocumentDocumentHandleDiscardRecovery(dir: dir, projectId: projectId);
 
 
+/// Ends the app session cleanly: removes the session marker in `dir`. Called only
+/// after every document was saved or discarded (ADR-030 section 3).
+static void  endSession({required String dir })=>RustLib.instance.api.crateApiDocumentDocumentHandleEndSession(dir: dir);
+
+
 /// Applies one command. On error the document is unchanged.
  Future<OutcomeDto>  execute({required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision });
 
 
-/// Lists the newest autosave of every project in `dir`. The app shows these on
-/// startup; choosing one opens it with `open_from_recovery`.
+/// Lists the newest autosave of every project in `dir`, unfiltered. Startup uses
+/// [`Self::offered_recovery_entries`] instead.
 static List<RecoveryEntryDto>  listRecoveryEntries({required String dir })=>RustLib.instance.api.crateApiDocumentDocumentHandleListRecoveryEntries(dir: dir);
+
+
+/// The autosaves to offer on startup (ADR-030 section 2): none after a clean
+/// session; otherwise those newer than their source file, untitled documents, and
+/// documents whose source is gone. The rule is `mc_app::recovery::offered`.
+static List<RecoveryEntryDto>  offeredRecoveryEntries({required String dir , required bool unclean })=>RustLib.instance.api.crateApiDocumentDocumentHandleOfferedRecoveryEntries(dir: dir, unclean: unclean);
 
 
 /// Opens a project file. Unknown content is reported in the summary, not an error.

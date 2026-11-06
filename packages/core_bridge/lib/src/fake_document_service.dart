@@ -460,6 +460,34 @@ final class FakeDocumentFactory implements DocumentFactory {
   @override
   void discardRecovery(String dir, String projectId) =>
       recovery[dir]?.removeWhere((e) => e.projectId == projectId);
+
+  /// Directories whose session marker is present. Tests seed it to simulate a crash;
+  /// it starts empty, so a fresh fake behaves like a first, clean start.
+  final Set<String> sessionMarkers = {};
+
+  /// Modification time of source files in Unix millis, for the newer-than-source
+  /// rule. A source missing from the map counts as gone (always offered), as in core.
+  final Map<String, int> sourceModified = {};
+
+  @override
+  bool beginSession(String dir) => !sessionMarkers.add(dir);
+
+  @override
+  void endSession(String dir) => sessionMarkers.remove(dir);
+
+  /// Mirrors `mc_app::recovery::offered`; the Rust contract test checks the real one.
+  @override
+  List<RecoveryEntryDto> offeredRecovery(String dir, {required bool unclean}) {
+    if (!unclean) return const [];
+    return List.unmodifiable(
+      recoveryEntries(dir).where((e) {
+        final src = e.source;
+        if (src == null) return true;
+        final modified = sourceModified[src];
+        return modified == null || e.timestamp > modified;
+      }),
+    );
+  }
 }
 
 /// Remembers documents by save location so [FakeDocumentFactory.open] can return them.

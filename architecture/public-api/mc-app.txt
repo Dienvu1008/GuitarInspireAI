@@ -175,6 +175,7 @@ impl core::marker::UnsafeUnpin for mc_app::infra::SystemEntropy
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::infra::SystemEntropy
 impl core::panic::unwind_safe::UnwindSafe for mc_app::infra::SystemEntropy
 pub fn mc_app::infra::cleanup_temp_files(&std::path::Path) -> usize
+pub fn mc_app::infra::modified_unix_millis(&std::path::Path) -> core::option::Option<u64>
 pub mod mc_app::notation
 pub use mc_app::notation::BarLayout
 pub use mc_app::notation::Glyph
@@ -267,6 +268,8 @@ pub fn mc_app::infra::FsRecoveryStore::end_session(&self) -> core::result::Resul
 pub fn mc_app::infra::FsRecoveryStore::list(&self) -> core::result::Result<alloc::vec::Vec<mc_app::ports::RecoveryEntry>, mc_app::ports::StoreError>
 pub fn mc_app::infra::FsRecoveryStore::read(&self, &mc_app::ports::RecoveryEntry) -> core::result::Result<alloc::vec::Vec<u8>, mc_app::ports::StoreError>
 pub fn mc_app::infra::FsRecoveryStore::write_autosave(&self, &str, core::option::Option<&std::path::Path>, &[u8], u64) -> core::result::Result<std::path::PathBuf, mc_app::ports::StoreError>
+pub mod mc_app::recovery
+pub fn mc_app::recovery::offered(bool, alloc::vec::Vec<mc_app::ports::RecoveryEntry>, impl core::ops::function::Fn(&std::path::Path) -> core::option::Option<u64>) -> alloc::vec::Vec<mc_app::ports::RecoveryEntry>
 pub mod mc_app::transport
 pub enum mc_app::transport::PlaybackState
 pub mc_app::transport::PlaybackState::Failed

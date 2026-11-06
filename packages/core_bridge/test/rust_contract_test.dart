@@ -83,4 +83,36 @@ void main() {
       await dir.delete(recursive: true);
     },
   );
+
+  test('ADR-030 C7: session marker and offered recovery', () async {
+    await CoreBridge.init(libraryPath: _library());
+    final factory = CoreBridge.documents;
+    final dir = await Directory.systemTemp.createTemp('core_bridge_session');
+    final rec = '${dir.path}${Platform.pathSeparator}recovery';
+
+    expect(factory.beginSession(rec), isFalse, reason: 'first start is clean');
+    final d = factory.create(bars: 1);
+    await d.execute(
+      CommandDto.insertBeat(
+        track: d.summary().tracks.single.id,
+        bar: 0,
+        voice: 0,
+        index: 0,
+        duration: const DurationDto(base: 2, dots: 0),
+      ),
+    );
+    await d.writeAutosave(rec);
+    d.close();
+
+    // No endSession: the next start sees an unclean session and offers the untitled
+    // autosave; told the session was clean, the core offers nothing.
+    expect(factory.beginSession(rec), isTrue);
+    expect(factory.offeredRecovery(rec, unclean: true), hasLength(1));
+    expect(factory.offeredRecovery(rec, unclean: false), isEmpty);
+
+    factory.endSession(rec);
+    expect(factory.beginSession(rec), isFalse, reason: 'clean exit then start');
+    factory.endSession(rec);
+    await dir.delete(recursive: true);
+  });
 }

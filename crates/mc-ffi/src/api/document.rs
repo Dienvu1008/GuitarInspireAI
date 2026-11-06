@@ -30,6 +30,15 @@ pub struct RecoveryEntryDto {
     pub timestamp: i64,
 }
 
+fn recovery_entry_dto(e: mc_app::ports::RecoveryEntry) -> RecoveryEntryDto {
+    RecoveryEntryDto {
+        project_id: e.project_id,
+        path: e.path.to_string_lossy().into_owned(),
+        source: e.source.map(|p| p.to_string_lossy().into_owned()),
+        timestamp: e.written_unix_millis as i64,
+    }
+}
+
 static NEXT_DOCUMENT: AtomicU64 = AtomicU64::new(1);
 
 fn app_info() -> AppInfo {
@@ -224,23 +233,48 @@ impl DocumentHandle {
         Ok(())
     }
 
-    /// Lists the newest autosave of every project in `dir`. The app shows these on
-    /// startup; choosing one opens it with `open_from_recovery`.
+    /// Lists the newest autosave of every project in `dir`, unfiltered. Startup uses
+    /// [`Self::offered_recovery_entries`] instead.
     #[frb(sync)]
     pub fn list_recovery_entries(dir: String) -> Vec<RecoveryEntryDto> {
         let recovery = mc_app::infra::FsRecoveryStore::new(dir);
         match recovery.list() {
-            Ok(entries) => entries
-                .into_iter()
-                .map(|e| RecoveryEntryDto {
-                    project_id: e.project_id,
-                    path: e.path.to_string_lossy().into_owned(),
-                    source: e.source.map(|p| p.to_string_lossy().into_owned()),
-                    timestamp: e.written_unix_millis as i64,
-                })
-                .collect(),
+            Ok(entries) => entries.into_iter().map(recovery_entry_dto).collect(),
             Err(_) => Vec::new(),
         }
+    }
+
+    /// The autosaves to offer on startup (ADR-030 section 2): none after a clean
+    /// session; otherwise those newer than their source file, untitled documents, and
+    /// documents whose source is gone. The rule is `mc_app::recovery::offered`.
+    #[frb(sync)]
+    pub fn offered_recovery_entries(dir: String, unclean: bool) -> Vec<RecoveryEntryDto> {
+        let recovery = mc_app::infra::FsRecoveryStore::new(dir);
+        let Ok(entries) = recovery.list() else {
+            return Vec::new();
+        };
+        mc_app::recovery::offered(unclean, entries, mc_app::infra::modified_unix_millis)
+            .into_iter()
+            .map(recovery_entry_dto)
+            .collect()
+    }
+
+    /// Starts an app session: writes the session marker in `dir` and returns true if
+    /// the previous session did not end cleanly (its marker was still there).
+    #[frb(sync)]
+    pub fn begin_session(dir: String) -> Result<bool, ApiError> {
+        mc_app::infra::FsRecoveryStore::new(dir)
+            .begin_session()
+            .map_err(|e| ApiError::new("session", e.to_string()))
+    }
+
+    /// Ends the app session cleanly: removes the session marker in `dir`. Called only
+    /// after every document was saved or discarded (ADR-030 section 3).
+    #[frb(sync)]
+    pub fn end_session(dir: String) -> Result<(), ApiError> {
+        mc_app::infra::FsRecoveryStore::new(dir)
+            .end_session()
+            .map_err(|e| ApiError::new("session", e.to_string()))
     }
 
     /// Opens the newest autosave of `project_id` in `dir`. The document keeps the

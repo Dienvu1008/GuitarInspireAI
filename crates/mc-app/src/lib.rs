@@ -12,6 +12,7 @@ mod handlers;
 mod history;
 pub mod notation;
 pub mod ports;
+pub mod recovery;
 mod session;
 pub mod transport;
 
