@@ -1,6 +1,6 @@
 # ADR-030 Editor debt (Phase 6b-1): beat clipboard, close prompt and session marker
 
-Status: Draft (acceptance criteria fixed before any code, 2026-11-06). Becomes Accepted when the user approves the three open choices in section 5 and 6b-1 meets section 4.
+Status: Accepted (2026-11-06). Acceptance criteria were fixed before any code; the three user choices of section 5 were decided by the user on 2026-11-06. 6b-1 is done when it meets section 4.
 Date: 2026-11-06
 Related documents: [score-model-and-undo.md](../score-model-and-undo.md), [project-format.md](../project-format.md), [domain-invariants.md](../domain-invariants.md), [ADR-016](ADR-016-undo-structural-sharing-snapshots.md), [ADR-020](ADR-020-invariants-vs-diagnostics.md), [phase-3-exit-report.md](../../roadmap/phase-3-exit-report.md), [mvp-known-limitations.md](../../roadmap/mvp-known-limitations.md)
 
@@ -19,7 +19,9 @@ Findings from the code (not assumptions):
 ### 1. Clipboard: music rules in Rust, selection in Dart (GR-05)
 
 - The **selection** (an anchor and a cursor, in one track and one voice) is pure UI state in `editor_feature`. It is never stored in the document and never part of undo.
-- The **clipboard content** is a plain-value fragment: a sequence of beats, each with a `DurationSpec` and its notes (string, fret, tie flag, effects). Dart builds it from the beat data it already reads; it holds no ids.
+- The **clipboard content** is a plain-value fragment: a sequence of beats, each with a `DurationSpec` and its notes (string, fret, tie flag, effects). Dart builds it from the beat data it already reads; it holds no ids. It lives at **app level**, not per document, so a fragment copied in one document can be pasted into another document (or another track) in the same running app.
+- A fragment stores **strings and frets, not pitches**. Pasting into a track with a different tuning or capo keeps the same strings and frets, so the sounding pitch changes. This is intended and is stated in the user documentation.
+- The selection is a **contiguous run of beats in one voice, possibly across bars**. The fragment is a flat beat list: bar lines, time signatures and tempo marks are not copied, and paste never creates bars. Selecting whole bars (keeping bar structure) is **not** part of 6b-1 and is recorded as deferred on purpose.
 - **Paste is one new atomic core command** (`ScoreCommand::PasteBeats`), validated and applied in Rust. Dart never edits notes one by one to paste. A paste is exactly one undo step. A cut is copy plus one atomic range removal (`ScoreCommand::RemoveBeats`), also one undo step.
 - Paste **inserts** at the cursor; it does not overwrite. Bars that become underfull or overfull are diagnostics and never block (ADR-020, Q-09). Paste never creates or removes master bars.
 - A fragment note whose string number is higher than the target track's string count, or whose fret exceeds the target's fret count, makes the **whole paste fail** with a typed error and changes nothing.
@@ -61,13 +63,11 @@ Measured on the reference machine; single-machine evidence (ADR-025). These are 
 
 A real process kill and a real log-off are manual steps in the exit-report script; the automated tests cover the logic with fakes. The exit report states this limit.
 
-## 5. Choices that need the user's decision
+## 5. User decisions (2026-11-06)
 
-These affect behaviour the user will see, so they are proposed here and not assumed:
-
-1. **Selection scope.** Proposed: a contiguous run of beats in **one voice, possibly across bars**; the fragment is a flat beat list pasted into the cursor's bar (no bar structure kept). Alternative: whole bars only, keeping bar structure and inserting bars on paste (more useful for repeating sections, but it changes master bars and needs more rules).
-2. **Overwrite versus insert.** Proposed: insert only (section 1). Alternative: also offer overwrite later.
-3. **Clipboard location.** Proposed: in-app only (section 1). Alternative: a text form on the system clipboard, which needs its own format decision.
+1. **Selection scope: a contiguous run of beats in one voice, possibly across bars.** Flat beat list, no bar structure kept. Whole-bar selection is deferred on purpose: it changes master bars, which every track shares, and needs its own rules (a later slice or ADR).
+2. **Paste inserts.** No overwrite mode in 6b-1.
+3. **Clipboard is in-app only.** The user copies content inside the app, not from other programs. Nothing is written to the operating-system clipboard. Getting content in from other programs goes through MIDI import (Phase 4), and MusicXML import and Guitar Pro (6d) are not part of this slice.
 
 ## Alternatives
 
@@ -83,7 +83,7 @@ An in-app clipboard means no paste into other programs, which is acceptable for 
 
 - New `ScoreCommand` variants (`PasteBeats`, `RemoveBeats`), new `Score` methods, new DTOs in `mc-ffi`, regenerated bindings, updated public API snapshots (additions only).
 - `DocumentFactory` gains session methods; the app gains a close handler and the new recovery dialog.
-- `mvp-known-limitations.md` loses the recovery item and gains: loop selection (deferred on purpose), per-track SoundFont program (deferred, needs an ADR), and the in-app-only clipboard.
+- `mvp-known-limitations.md` loses the recovery item and gains: loop selection (deferred on purpose), per-track SoundFont program (deferred, needs an ADR), whole-bar selection (deferred on purpose), the in-app-only clipboard, and the strings-and-frets (not pitch) behaviour of paste across tunings.
 
 ## Related fitness functions
 
