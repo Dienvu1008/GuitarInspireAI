@@ -187,6 +187,9 @@ pub use mc_app::notation::Line
 pub use mc_app::notation::LineKind
 pub use mc_app::notation::NotationError
 pub use mc_app::notation::Rect
+pub use mc_app::notation::ScoreLayout
+pub use mc_app::notation::ScoreSystem
+pub use mc_app::notation::Stave
 pub use mc_app::notation::SystemLayout
 pub use mc_app::notation::TabLayout
 pub mod mc_app::playback
@@ -1014,6 +1017,7 @@ pub fn mc_app::DocumentSession::undo(&mut self) -> core::result::Result<mc_app::
 pub fn mc_app::DocumentSession::undo_depth(&self) -> usize
 pub fn mc_app::DocumentSession::unknown_content(&self) -> &[alloc::string::String]
 impl mc_app::DocumentSession
+pub fn mc_app::DocumentSession::score_layout(&self, &[mc_score::ids::TrackId], &mc_notation::metrics::LayoutMetrics) -> core::result::Result<mc_notation::display::ScoreLayout, mc_notation::error::NotationError>
 pub fn mc_app::DocumentSession::tab_layout(&self, mc_score::ids::TrackId, &mc_notation::metrics::LayoutMetrics) -> core::result::Result<mc_notation::display::TabLayout, mc_notation::error::NotationError>
 impl core::fmt::Debug for mc_app::DocumentSession
 pub fn mc_app::DocumentSession::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result

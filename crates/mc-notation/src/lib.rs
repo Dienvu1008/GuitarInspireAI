@@ -11,9 +11,9 @@ mod layout;
 mod metrics;
 
 pub use display::{
-    BarLayout, Glyph, GlyphKind, HitRegion, HitTarget, Line, LineKind, Rect, SystemLayout,
-    TabLayout,
+    BarLayout, Glyph, GlyphKind, HitRegion, HitTarget, Line, LineKind, Rect, ScoreLayout,
+    ScoreSystem, Stave, SystemLayout, TabLayout,
 };
 pub use error::NotationError;
-pub use layout::layout_tab;
+pub use layout::{layout_score, layout_tab};
 pub use metrics::LayoutMetrics;

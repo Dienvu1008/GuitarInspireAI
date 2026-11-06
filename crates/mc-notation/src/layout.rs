@@ -18,32 +18,77 @@ use mc_score::{Beat, MasterBar, Score, Track, TrackId};
 use mc_theory::Rational;
 use std::collections::BTreeSet;
 
-/// Lays out every bar of `track`.
+/// Lays out every bar of `track`. The same as the single stave of
+/// [`layout_score`] with only this track (ADR-031 M1).
 pub fn layout_tab(
     score: &Score,
     track: TrackId,
     metrics: &LayoutMetrics,
 ) -> Result<TabLayout, NotationError> {
-    metrics.validate()?;
-    let tr = score
+    let layout = layout_score(score, &[track], metrics)?;
+    let strings = score
         .track(track)
-        .ok_or(NotationError::UnknownTrack(track))?;
-    let count = score.master_bar_count();
-    let diagnostic_bars: BTreeSet<usize> = score
-        .track_diagnostics(track, 0..count)
-        .map_err(|_| NotationError::Overflow)?
-        .into_iter()
-        .map(|d| d.bar)
+        .expect("checked")
+        .fretted()
+        .tuning
+        .string_count();
+    Ok(TabLayout {
+        track,
+        strings,
+        width: layout.width,
+        height: layout.height,
+        systems: layout
+            .systems
+            .into_iter()
+            .map(|s| s.staves.into_iter().next().expect("one stave").layout)
+            .collect(),
+    })
+}
+
+/// Lays out every bar of the shown `tracks` together (ADR-031): each system has one
+/// stave per track, in score order (duplicates ignored). Bar lines and beats that
+/// start together line up across staves; bars are as wide as the busiest track needs.
+pub fn layout_score(
+    score: &Score,
+    tracks: &[TrackId],
+    metrics: &LayoutMetrics,
+) -> Result<ScoreLayout, NotationError> {
+    metrics.validate()?;
+    for &t in tracks {
+        score.track(t).ok_or(NotationError::UnknownTrack(t))?;
+    }
+    let shown: Vec<&Track> = score
+        .tracks()
+        .filter(|t| tracks.contains(&t.id()))
         .collect();
+    if shown.is_empty() {
+        return Err(NotationError::NoTracks);
+    }
+    let count = score.master_bar_count();
+    let mut diagnostics = Vec::with_capacity(shown.len());
+    for t in &shown {
+        let bars: BTreeSet<usize> = score
+            .track_diagnostics(t.id(), 0..count)
+            .map_err(|_| NotationError::Overflow)?
+            .into_iter()
+            .map(|d| d.bar)
+            .collect();
+        diagnostics.push(bars);
+    }
     let plans = (0..count)
-        .map(|b| plan_bar(score, tr, b, metrics))
+        .map(|b| plan_bar(score, &shown, b, metrics))
         .collect::<Result<Vec<_>, _>>()?;
-    let ctx = Ctx {
-        m: metrics,
-        track: tr,
-        strings: tr.fretted().tuning.string_count(),
-        master: score.master_bars(),
-    };
+    let ctxs: Vec<Ctx> = shown
+        .iter()
+        .enumerate()
+        .map(|(stave, track)| Ctx {
+            m: metrics,
+            track,
+            stave,
+            strings: track.fretted().tuning.string_count(),
+            master: score.master_bars(),
+        })
+        .collect();
 
     let available = metrics.content_width();
     let mut systems = Vec::new();
@@ -56,16 +101,29 @@ pub fn layout_tab(
             used += plans[end].natural();
             end += 1;
         }
-        let is_last = end == plans.len();
-        let system = ctx.emit_system(
-            systems.len(),
+        let group = &plans[start..end];
+        let scale = system_scale(group, end == plans.len(), metrics);
+        let index = systems.len();
+        let mut staves = Vec::with_capacity(ctxs.len());
+        let mut top = 0.0f32;
+        for (ctx, diag) in ctxs.iter().zip(&diagnostics) {
+            let layout = ctx.emit_system(index, y + top, group, scale, diag);
+            let height = layout.height;
+            staves.push(Stave {
+                track: ctx.track.id(),
+                strings: ctx.strings,
+                top,
+                layout,
+            });
+            top += height;
+        }
+        systems.push(ScoreSystem {
+            index,
             y,
-            &plans[start..end],
-            is_last,
-            &diagnostic_bars,
-        );
-        y += system.height + metrics.system_gap;
-        systems.push(system);
+            height: top,
+            staves,
+        });
+        y += top + metrics.system_gap;
         start = end;
     }
     let height = if systems.is_empty() {
@@ -73,27 +131,52 @@ pub fn layout_tab(
     } else {
         y - metrics.system_gap
     };
-    Ok(TabLayout {
-        track,
-        strings: ctx.strings,
+    Ok(ScoreLayout {
+        tracks: shown.iter().map(|t| t.id()).collect(),
         width: metrics.width,
         height,
         systems,
     })
 }
 
+/// Justification factor of a system's flexible width, shared by all its staves. The
+/// last system stays at natural width when it would stretch by more than a third.
+fn system_scale(plans: &[BarPlan], is_last: bool, m: &LayoutMetrics) -> f32 {
+    let fixed: f32 = plans.iter().map(|p| p.fixed_left + p.fixed_right).sum();
+    let flexible: f32 = plans.iter().map(|p| p.flexible).sum();
+    let target = m.content_width() - fixed;
+    let scale = if flexible > 0.0 {
+        target / flexible
+    } else {
+        1.0
+    };
+    if is_last && scale > 4.0 / 3.0 {
+        1.0
+    } else {
+        scale
+    }
+}
+
 fn to_f32(r: Rational) -> f32 {
     (r.numerator() as f64 / r.denominator() as f64) as f32
 }
 
-/// Measured bar before justification.
-struct BarPlan {
-    bar: usize,
+/// One track's beats in a measured bar.
+struct StavePlan {
     /// Onset of every beat, per voice.
     voice_onsets: Vec<Vec<Rational>>,
-    /// Column index of every beat, per voice (columns are distinct onsets, ascending).
+    /// Column index of every beat, per voice.
     voice_cols: Vec<Vec<usize>>,
-    /// Natural width per column (scaled during justification).
+}
+
+/// Measured bar before justification, shared by every stave of a system.
+struct BarPlan {
+    bar: usize,
+    /// Per shown track, in stave order.
+    staves: Vec<StavePlan>,
+    /// Natural width per column (scaled during justification). Columns are the
+    /// distinct onsets of all voices of all shown tracks, ascending (ADR-031 5.1), so
+    /// beats that start together line up across staves.
     columns: Vec<f32>,
     /// Width of the time signature, repeat start sign and left padding.
     fixed_left: f32,
@@ -111,47 +194,60 @@ impl BarPlan {
 
 fn plan_bar(
     score: &Score,
-    track: &Track,
+    tracks: &[&Track],
     b: usize,
     m: &LayoutMetrics,
 ) -> Result<BarPlan, NotationError> {
     let master = &score.master_bars()[b];
-    let content = track.bar(b).expect("H-02: bars aligned");
     let nominal = score.nominal_bar_duration(b).expect("bar exists");
-    // Onsets per voice, computed once (each rational addition reduces by gcd).
+    // Onsets per voice of every track, computed once (each rational addition reduces
+    // by gcd). With one track this is exactly the single-track plan.
     let mut end = nominal;
-    let mut voice_onsets = Vec::with_capacity(content.voices.len());
-    for voice in &content.voices {
-        let mut t = Rational::ZERO;
-        let mut list = Vec::with_capacity(voice.beats.len());
-        for beat in &voice.beats {
-            list.push(t);
-            t = t
-                .checked_add(beat.value.length())
-                .ok_or(NotationError::Overflow)?;
+    let mut track_onsets: Vec<Vec<Vec<Rational>>> = Vec::with_capacity(tracks.len());
+    for track in tracks {
+        let content = track.bar(b).expect("H-02: bars aligned");
+        let mut voice_onsets = Vec::with_capacity(content.voices.len());
+        for voice in &content.voices {
+            let mut t = Rational::ZERO;
+            let mut list = Vec::with_capacity(voice.beats.len());
+            for beat in &voice.beats {
+                list.push(t);
+                t = t
+                    .checked_add(beat.value.length())
+                    .ok_or(NotationError::Overflow)?;
+            }
+            end = end.max(t);
+            voice_onsets.push(list);
         }
-        end = end.max(t);
-        voice_onsets.push(list);
+        track_onsets.push(voice_onsets);
     }
-    let mut onsets: Vec<Rational> = voice_onsets.iter().flatten().copied().collect();
+    let mut onsets: Vec<Rational> = track_onsets.iter().flatten().flatten().copied().collect();
     onsets.sort_unstable();
     onsets.dedup();
-    let voice_cols: Vec<Vec<usize>> = voice_onsets
-        .iter()
-        .map(|list| {
-            list.iter()
-                .map(|t| onsets.binary_search(t).expect("collected above"))
-                .collect()
-        })
-        .collect();
     let mut widest = vec![0.0f32; onsets.len()];
-    for (voice, cols) in content.voices.iter().zip(&voice_cols) {
-        for (beat, &c) in voice.beats.iter().zip(cols) {
-            for n in &beat.notes {
-                let w = fret_glyph_width(n.position().fret.0, n.tie, n.effects.dead, m);
-                widest[c] = widest[c].max(w);
+    let mut staves = Vec::with_capacity(tracks.len());
+    for (track, voice_onsets) in tracks.iter().zip(track_onsets) {
+        let content = track.bar(b).expect("H-02: bars aligned");
+        let voice_cols: Vec<Vec<usize>> = voice_onsets
+            .iter()
+            .map(|list| {
+                list.iter()
+                    .map(|t| onsets.binary_search(t).expect("collected above"))
+                    .collect()
+            })
+            .collect();
+        for (voice, cols) in content.voices.iter().zip(&voice_cols) {
+            for (beat, &c) in voice.beats.iter().zip(cols) {
+                for n in &beat.notes {
+                    let w = fret_glyph_width(n.position().fret.0, n.tie, n.effects.dead, m);
+                    widest[c] = widest[c].max(w);
+                }
             }
         }
+        staves.push(StavePlan {
+            voice_onsets,
+            voice_cols,
+        });
     }
     let mut columns = Vec::with_capacity(onsets.len());
     for (i, onset) in onsets.iter().enumerate() {
@@ -186,8 +282,7 @@ fn plan_bar(
     };
     Ok(BarPlan {
         bar: b,
-        voice_onsets,
-        voice_cols,
+        staves,
         columns,
         fixed_left,
         fixed_right,
@@ -210,9 +305,11 @@ fn fret_glyph_width(fret: u8, tied: bool, dead: bool, m: &LayoutMetrics) -> f32 
     digits * m.digit_width + if tied { 1.2 * m.digit_width } else { 0.0 }
 }
 
+/// Emits one stave: `track` is the `stave`-th track of the bar plans.
 struct Ctx<'a> {
     m: &'a LayoutMetrics,
     track: &'a Track,
+    stave: usize,
     strings: u8,
     master: &'a [MasterBar],
 }
@@ -252,26 +349,17 @@ impl Ctx<'_> {
         self.string_y(self.strings)
     }
 
+    /// One stave of a system, in stave coordinates (`y` is the system's document y).
+    /// `scale` is shared by every stave of the system so bar lines line up.
     fn emit_system(
         &self,
         index: usize,
         y: f32,
         plans: &[BarPlan],
-        is_last: bool,
+        scale: f32,
         diagnostic_bars: &BTreeSet<usize>,
     ) -> SystemLayout {
         let m = self.m;
-        let fixed: f32 = plans.iter().map(|p| p.fixed_left + p.fixed_right).sum();
-        let flexible: f32 = plans.iter().map(|p| p.flexible).sum();
-        let target = m.content_width() - fixed;
-        let mut scale = if flexible > 0.0 {
-            target / flexible
-        } else {
-            1.0
-        };
-        if is_last && scale > 4.0 / 3.0 {
-            scale = 1.0;
-        }
         let mut out = Out {
             lines: Vec::new(),
             glyphs: Vec::new(),
@@ -477,11 +565,12 @@ impl Ctx<'_> {
             };
 
         let content = self.track.bar(plan.bar).expect("H-02");
+        let stave = &plan.staves[self.stave];
         for (v, voice) in content.voices.iter().enumerate() {
             let mut placed = Vec::with_capacity(voice.beats.len());
             for (k, beat) in voice.beats.iter().enumerate() {
-                let t = plan.voice_onsets[v][k];
-                let (bx, bw) = col_x[plan.voice_cols[v][k]];
+                let t = stave.voice_onsets[v][k];
+                let (bx, bw) = col_x[stave.voice_cols[v][k]];
                 let center = bx + bw / 2.0;
                 for note in &beat.notes {
                     let p = note.position();

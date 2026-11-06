@@ -218,6 +218,36 @@ fn notation_layout(c: &mut Criterion) {
             layout.systems.len()
         );
     }
+    // ADR-031 P1 to P3: a note edit plus multi-track relayout of the shown tracks.
+    for (name, shape, shown, budget) in [
+        ("P1 typical/all 4 tracks", TYPICAL, 4, "16 ms"),
+        ("P2 large/4 tracks", LARGE, 4, "33 ms"),
+        ("P3 large/all 20 tracks", LARGE, 20, "33 ms"),
+    ] {
+        let mut s = session(shape);
+        let b = middle_beat(&s);
+        let tracks: Vec<_> = s.score().tracks().map(|t| t.id()).take(shown).collect();
+        // The edited beat is on a shown track in every case.
+        let tracks = if tracks.contains(&b.track) {
+            tracks
+        } else {
+            let mut t = tracks;
+            t[0] = b.track;
+            t
+        };
+        let mut samples = Vec::with_capacity(100);
+        for i in 0..100 {
+            let t = Instant::now();
+            edit(&mut s, b, i);
+            black_box(s.score_layout(&tracks, &metrics).expect("layout"));
+            samples.push(t.elapsed().as_nanos());
+        }
+        percentiles(
+            &format!("edit_and_score_relayout/{name} (budget {budget})"),
+            samples,
+        );
+    }
+
     let s = session(LARGE);
     let track = s.score().track_at(0).unwrap().id();
     let mut group = c.benchmark_group("notation");

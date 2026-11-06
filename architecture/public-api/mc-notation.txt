@@ -94,6 +94,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::LineKind
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::LineKind
 pub enum mc_notation::NotationError
 pub mc_notation::NotationError::InvalidMetrics(alloc::string::String)
+pub mc_notation::NotationError::NoTracks
 pub mc_notation::NotationError::Overflow
 pub mc_notation::NotationError::UnknownTrack(mc_score::ids::TrackId)
 impl core::clone::Clone for mc_notation::NotationError
@@ -256,6 +257,63 @@ impl core::marker::Unpin for mc_notation::Rect
 impl core::marker::UnsafeUnpin for mc_notation::Rect
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Rect
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::Rect
+pub struct mc_notation::ScoreLayout
+pub mc_notation::ScoreLayout::height: f32
+pub mc_notation::ScoreLayout::systems: alloc::vec::Vec<mc_notation::ScoreSystem>
+pub mc_notation::ScoreLayout::tracks: alloc::vec::Vec<mc_score::ids::TrackId>
+pub mc_notation::ScoreLayout::width: f32
+impl core::clone::Clone for mc_notation::ScoreLayout
+pub fn mc_notation::ScoreLayout::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::ScoreLayout
+pub fn mc_notation::ScoreLayout::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::ScoreLayout
+pub fn mc_notation::ScoreLayout::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::ScoreLayout
+impl core::marker::Freeze for mc_notation::ScoreLayout
+impl core::marker::Send for mc_notation::ScoreLayout
+impl core::marker::Sync for mc_notation::ScoreLayout
+impl core::marker::Unpin for mc_notation::ScoreLayout
+impl core::marker::UnsafeUnpin for mc_notation::ScoreLayout
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::ScoreLayout
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::ScoreLayout
+pub struct mc_notation::ScoreSystem
+pub mc_notation::ScoreSystem::height: f32
+pub mc_notation::ScoreSystem::index: usize
+pub mc_notation::ScoreSystem::staves: alloc::vec::Vec<mc_notation::Stave>
+pub mc_notation::ScoreSystem::y: f32
+impl core::clone::Clone for mc_notation::ScoreSystem
+pub fn mc_notation::ScoreSystem::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::ScoreSystem
+pub fn mc_notation::ScoreSystem::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::ScoreSystem
+pub fn mc_notation::ScoreSystem::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::ScoreSystem
+impl core::marker::Freeze for mc_notation::ScoreSystem
+impl core::marker::Send for mc_notation::ScoreSystem
+impl core::marker::Sync for mc_notation::ScoreSystem
+impl core::marker::Unpin for mc_notation::ScoreSystem
+impl core::marker::UnsafeUnpin for mc_notation::ScoreSystem
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::ScoreSystem
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::ScoreSystem
+pub struct mc_notation::Stave
+pub mc_notation::Stave::layout: mc_notation::SystemLayout
+pub mc_notation::Stave::strings: u8
+pub mc_notation::Stave::top: f32
+pub mc_notation::Stave::track: mc_score::ids::TrackId
+impl core::clone::Clone for mc_notation::Stave
+pub fn mc_notation::Stave::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Stave
+pub fn mc_notation::Stave::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Stave
+pub fn mc_notation::Stave::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::Stave
+impl core::marker::Freeze for mc_notation::Stave
+impl core::marker::Send for mc_notation::Stave
+impl core::marker::Sync for mc_notation::Stave
+impl core::marker::Unpin for mc_notation::Stave
+impl core::marker::UnsafeUnpin for mc_notation::Stave
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Stave
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Stave
 pub struct mc_notation::SystemLayout
 pub mc_notation::SystemLayout::bars: alloc::vec::Vec<mc_notation::BarLayout>
 pub mc_notation::SystemLayout::glyphs: alloc::vec::Vec<mc_notation::Glyph>
@@ -307,4 +365,5 @@ impl core::marker::Unpin for mc_notation::TabLayout
 impl core::marker::UnsafeUnpin for mc_notation::TabLayout
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::TabLayout
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::TabLayout
+pub fn mc_notation::layout_score(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreLayout, mc_notation::NotationError>
 pub fn mc_notation::layout_tab(&mc_score::score::Score, mc_score::ids::TrackId, &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::TabLayout, mc_notation::NotationError>

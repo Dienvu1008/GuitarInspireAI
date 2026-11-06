@@ -6,7 +6,7 @@ use mc_score::TrackId;
 
 pub use mc_notation::{
     BarLayout, Glyph, GlyphKind, HitRegion, HitTarget, LayoutMetrics, Line, LineKind,
-    NotationError, Rect, SystemLayout, TabLayout,
+    NotationError, Rect, ScoreLayout, ScoreSystem, Stave, SystemLayout, TabLayout,
 };
 
 impl DocumentSession {
@@ -18,5 +18,16 @@ impl DocumentSession {
         metrics: &LayoutMetrics,
     ) -> Result<TabLayout, NotationError> {
         mc_notation::layout_tab(self.score(), track, metrics)
+    }
+
+    /// Layout of the shown `tracks` together, one stave per track per system, with bar
+    /// lines and simultaneous beats lined up (ADR-031). Which tracks are shown is UI
+    /// state the adapter passes in; it is not stored in the document.
+    pub fn score_layout(
+        &self,
+        tracks: &[TrackId],
+        metrics: &LayoutMetrics,
+    ) -> Result<ScoreLayout, NotationError> {
+        mc_notation::layout_score(self.score(), tracks, metrics)
     }
 }

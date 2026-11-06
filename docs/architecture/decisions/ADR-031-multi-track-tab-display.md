@@ -1,6 +1,6 @@
 # ADR-031 Simultaneous multi-track TAB display (Phase 6b-2)
 
-Status: Draft (acceptance criteria fixed before any code, 2026-11-06). Becomes Accepted when the user decides the open choices in section 5 and 6b-2 meets section 4.
+Status: Accepted (2026-11-06). The acceptance criteria were fixed before any code. The user accepted all four choices of section 5 as proposed on 2026-11-06. 6b-2 is done when it meets section 4.
 Date: 2026-11-06
 Related documents: [ADR-018](ADR-018-notation-layout-in-rust.md), [ADR-025](ADR-025-single-machine-evidence-accepted.md), [ADR-028](ADR-028-playback-transport-port-and-session-state.md), [ADR-030](ADR-030-editor-debt-clipboard-and-session-marker.md), [cross-platform-ui.md](../cross-platform-ui.md), [performance-requirements.md](../performance-requirements.md), [implementation-phases.md](../../roadmap/implementation-phases.md), [phase-3-exit-report.md](../../roadmap/phase-3-exit-report.md)
 
@@ -67,7 +67,9 @@ Measured on the reference machine (single machine, ADR-025). Thresholds are not 
 | P3 | LARGE, all 20 tracks shown: note edit plus relayout p99 <= 33 ms | Same bench |
 | P4 | TAB scroll with all TYPICAL tracks shown: frame p99 <= 16 ms, no frame over 33 ms | App frame-timing procedure from Phase 3 |
 
-## 5. Choices that need the user's decision
+## 5. User decisions (2026-11-06: all four as proposed)
+
+Decided: (1) align by onset across staves; (2) all tracks shown by default; (3) the active track cannot be hidden; (4) visibility is not remembered in 6b-2. The options considered are kept below.
 
 1. **Column alignment.**
    - Proposed: **align by onset across staves**. Columns are the union of onsets of all shown tracks in the bar, so notes played together sit in one vertical line, as in common multi-track TAB editors. Each column is as wide as the widest note in it, across tracks.
@@ -122,3 +124,24 @@ FF-03 and FF-04 (`mc-notation` purity and wasm), FF-12, FF-21 (benchmark regress
 
 - Standard notation (6c) adds staves of a different kind and density, which would revisit the stave model.
 - A second platform with small screens (Phase 7) may need a different default visibility.
+
+## Results so far (6b-2a, Rust core, 2026-11-06)
+
+Reference machine, release build, `mc-app` bench `edit_and_score_relayout` (note edit plus `score_layout`, Rust only; FFI and painting are measured later in the app). Single machine (ADR-025).
+
+| Id | Measured | Budget | Result |
+|---|---|---|---|
+| M1 | `layout_tab` output before and after the change compared by fingerprint on 14 track/width cases (SMALL, all 4 TYPICAL tracks, feature-rich; two widths): 14 of 14 identical. Existing goldens unchanged | identical | Pass |
+| M2, M3, M4, M6, M7 | 300 seeded random scores (1 to 4 tracks, random rhythms, random shown subsets, three widths); more than 1000 aligned onset pairs compared; new golden `score_two_tracks` reviewed by hand. A deliberate column offset on the second stave is caught by M3 and the golden | — | Pass |
+| P1 | TYPICAL, 4 tracks: p50 1.8 ms, p99 2.8 ms | 16 ms | Pass |
+| P2 | LARGE, 4 tracks: p50 9.0 ms, p99 13.1 ms | 33 ms | Pass (Rust only) |
+| P3 | LARGE, 20 tracks: p50 52.8 ms, p99 **62.1 ms** | 33 ms | **Fail** |
+
+**P3 breakdown.** Timing was added inside `layout_score` for a temporary run and then removed.
+
+| Part | Time | Share |
+|---|---|---|
+| Bar planning | 13 to 23 ms | about 25 to 30% |
+| Emitting lines, glyphs and hits for all 101 systems | 32 to 70 ms | about 70% |
+
+Fallback 1 (plan cache) alone therefore cannot meet P3: emission alone is at least 32 ms. The threshold is not changed. The next step is decided with the user.
