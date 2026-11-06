@@ -209,7 +209,8 @@ Future<ProviderContainer> _startExpectingRecovery(
     tester,
     () => find.text('Recover documents').evaluate().isNotEmpty,
   );
-  await tester.tap(find.byIcon(Icons.restore).first);
+  // ADR-030: each entry has explicit Restore / Open original / Discard buttons.
+  await tester.tap(find.widgetWithText(FilledButton, 'Restore').first);
   await _until(tester, () => find.byType(Shell).evaluate().isNotEmpty);
   final c = ProviderScope.containerOf(tester.element(find.byType(Shell)));
   await _until(tester, () => _hasNote(c));
