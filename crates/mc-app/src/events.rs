@@ -32,6 +32,16 @@ pub enum AppEvent {
         track: mc_score::TrackId,
         muted: bool,
     },
+    /// A track was soloed or unsoloed (session state, not saved; ADR-032).
+    SoloChanged {
+        track: mc_score::TrackId,
+        soloed: bool,
+    },
+    /// The volume or pan of a track changed (session state, not saved; ADR-032).
+    MixChanged {
+        track: mc_score::TrackId,
+        mix: mc_playback::TrackMix,
+    },
     /// The user tempo factor changed (session state, not saved).
     TempoFactorChanged {
         hundredths: u16,

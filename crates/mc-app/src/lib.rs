@@ -30,13 +30,13 @@ pub use history::HistoryLimits;
 pub use session::{CommandOutcome, DocumentSession, OpenReport, SessionConfig, TunerReference};
 pub use transport::{
     AudioPort, PlaybackState, PlayedBarInfo, PositionUpdate, TransportCommand, TransportError,
-    TransportState,
+    TransportState, effective_muted,
 };
 
 /// Playback value objects re-exported for adapters (so `mc-ffi` and `mc-cli` map DTOs
 /// without depending on `mc-playback` directly; dependency-rules section 1).
 pub mod playback {
-    pub use mc_playback::{PerformanceTimeline, TempoFactor, Tick};
+    pub use mc_playback::{Channel, Pan, PerformanceTimeline, TempoFactor, Tick, TrackMix, Volume};
 
     /// Compile a score for MIDI export: every track included, no mute (ADR-023 item 3,
     /// ADR-028). Compilation is an application decision (GR-05), so adapters call this

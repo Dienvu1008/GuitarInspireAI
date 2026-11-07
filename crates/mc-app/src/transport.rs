@@ -11,9 +11,9 @@
 //! to the project file.
 
 use crate::events::DocumentId;
-use mc_playback::{PerformanceTimeline, TempoFactor, Tick};
+use mc_playback::{Channel, Pan, PerformanceTimeline, TempoFactor, Tick, TrackMix, Volume};
 use mc_score::TrackId;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// What the engine is doing, mirrored into the session so the UI can query it without
 /// reaching into the audio adapter.
@@ -34,6 +34,11 @@ pub enum PlaybackState {
 pub struct TransportState {
     /// Tracks the user has muted. Compilation omits their notes but keeps timing (PB-04).
     muted: BTreeSet<TrackId>,
+    /// Tracks the user has soloed (ADR-032). When any existing track is soloed, every
+    /// other track is compiled as muted; see [effective_muted].
+    soloed: BTreeSet<TrackId>,
+    /// Per-track volume and pan (ADR-032). Only non-default values are stored.
+    mix: BTreeMap<TrackId, TrackMix>,
     /// User tempo factor (Q6). A render scalar, never recompiles the timeline.
     tempo_factor: TempoFactor,
     /// Last known engine state, mirrored from [`AudioPort`] status.
@@ -47,6 +52,19 @@ impl TransportState {
 
     pub fn is_muted(&self, track: TrackId) -> bool {
         self.muted.contains(&track)
+    }
+
+    pub fn soloed(&self) -> &BTreeSet<TrackId> {
+        &self.soloed
+    }
+
+    pub fn is_soloed(&self, track: TrackId) -> bool {
+        self.soloed.contains(&track)
+    }
+
+    /// The mix of `track`: the stored one, or the default (volume 100, pan centre).
+    pub fn mix_of(&self, track: TrackId) -> TrackMix {
+        self.mix.get(&track).copied().unwrap_or_default()
     }
 
     pub fn tempo_factor(&self) -> TempoFactor {
@@ -65,6 +83,32 @@ impl TransportState {
     /// Removes `track` from the muted set. Returns whether the set changed.
     pub(crate) fn set_muted_remove(&mut self, track: TrackId) -> bool {
         self.muted.remove(&track)
+    }
+
+    pub(crate) fn set_soloed_insert(&mut self, track: TrackId) -> bool {
+        self.soloed.insert(track)
+    }
+
+    pub(crate) fn set_soloed_remove(&mut self, track: TrackId) -> bool {
+        self.soloed.remove(&track)
+    }
+
+    /// Stores `mix` for `track`. Returns whether the effective mix changed.
+    pub(crate) fn set_mix(&mut self, track: TrackId, mix: TrackMix) -> bool {
+        let changed = self.mix_of(track) != mix;
+        if mix == TrackMix::default() {
+            self.mix.remove(&track);
+        } else {
+            self.mix.insert(track, mix);
+        }
+        changed
+    }
+
+    /// Drops mute, solo and mix entries of tracks that no longer exist (ADR-032).
+    pub(crate) fn prune(&mut self, existing: &[TrackId]) {
+        self.muted.retain(|t| existing.contains(t));
+        self.soloed.retain(|t| existing.contains(t));
+        self.mix.retain(|t, _| existing.contains(t));
     }
 
     pub(crate) fn set_tempo_factor(&mut self, factor: TempoFactor) {
@@ -102,10 +146,52 @@ pub enum TransportCommand {
         track: TrackId,
         muted: bool,
     },
+    /// Solo or unsolo a track (ADR-032). While any track is soloed, the others are
+    /// compiled as muted. Recompiles and swaps while playing, as a mute change does.
+    SetSoloed {
+        track: TrackId,
+        soloed: bool,
+    },
+    /// Set the volume and pan of a track (ADR-032). Never recompiles: the values go to
+    /// the audio port as they are. Build it from raw numbers with
+    /// [`TransportCommand::track_mix`], which rejects out-of-range values.
+    SetTrackMix {
+        track: TrackId,
+        volume: Volume,
+        pan: Pan,
+    },
     /// Change the user tempo factor (Q6). Sends a scalar; never recompiles.
     SetTempoFactor {
         factor: TempoFactor,
     },
+}
+
+impl TransportCommand {
+    /// A [`TransportCommand::SetTrackMix`] from raw numbers (volume 0..=127, pan
+    /// -63..=63). Out-of-range values are rejected, never clamped (ADR-032 X7).
+    pub fn track_mix(track: TrackId, volume: u8, pan: i16) -> Result<Self, TransportError> {
+        let volume =
+            Volume::try_new(volume).map_err(|e| TransportError::InvalidMix(e.to_string()))?;
+        let pan = Pan::try_new(pan).map_err(|e| TransportError::InvalidMix(e.to_string()))?;
+        Ok(TransportCommand::SetTrackMix { track, volume, pan })
+    }
+}
+
+/// The tracks compiled as muted: `muted` plus, when any existing track is soloed, every
+/// existing track that is not soloed (ADR-032 section 3). Mute always wins: a muted and
+/// soloed track stays silent. Entries for tracks that no longer exist are ignored, so a
+/// deleted soloed track no longer silences the others.
+pub fn effective_muted(
+    existing: &[TrackId],
+    muted: &BTreeSet<TrackId>,
+    soloed: &BTreeSet<TrackId>,
+) -> BTreeSet<TrackId> {
+    let any_solo = existing.iter().any(|t| soloed.contains(t));
+    existing
+        .iter()
+        .copied()
+        .filter(|t| muted.contains(t) || (any_solo && !soloed.contains(t)))
+        .collect()
 }
 
 /// Why a transport command could not be carried out.
@@ -117,6 +203,10 @@ pub enum TransportError {
     Audio(String),
     /// `from_master_bar` is past the end of the expanded playback order.
     BarOutOfRange { master_bar: usize },
+    /// A volume or pan outside its range (ADR-032 X7); the message names the value.
+    InvalidMix(String),
+    /// The track does not exist in the document.
+    UnknownTrack(TrackId),
 }
 
 impl std::fmt::Display for TransportError {
@@ -127,6 +217,8 @@ impl std::fmt::Display for TransportError {
             TransportError::BarOutOfRange { master_bar } => {
                 write!(f, "master bar {master_bar} is past the end of playback")
             }
+            TransportError::InvalidMix(m) => write!(f, "invalid mix: {m}"),
+            TransportError::UnknownTrack(t) => write!(f, "unknown track {t:?}"),
         }
     }
 }
@@ -147,6 +239,13 @@ pub trait AudioPort: Send {
     fn seek(&mut self, tick: Tick) -> Result<(), TransportError>;
     /// Apply the user tempo factor as a render scalar (no recompile).
     fn set_tempo_factor(&mut self, factor: TempoFactor) -> Result<(), TransportError>;
+    /// Set the volume and pan of a MIDI channel (ADR-032). No recompile, no swap.
+    fn set_channel_mix(
+        &mut self,
+        channel: Channel,
+        volume: Volume,
+        pan: Pan,
+    ) -> Result<(), TransportError>;
     /// Current engine state (polled after a command and by the position stream).
     fn state(&self) -> PlaybackState;
     /// The current playback position in ticks, for the UI cursor.

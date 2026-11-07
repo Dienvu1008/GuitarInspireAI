@@ -8,9 +8,12 @@ use crate::history::{History, HistoryLimits};
 use crate::ports::{Clock, Entropy, ProjectStore};
 use crate::transport::{
     AudioPort, PlaybackState, PlayedBarInfo, TransportCommand, TransportError, TransportState,
+    effective_muted,
 };
 use crate::{CommandError, CommandId, Constraints, OpenError, SaveError, diff};
-use mc_playback::{CompileOptions, PerformanceTimeline, TempoFactor, Tick, compile};
+use mc_playback::{
+    CompileOptions, PerformanceTimeline, TempoFactor, Tick, TrackMix, assign_channels, compile,
+};
 use mc_project::{AppInfo, LoadWarning, ProjectId, SaveInfo};
 use mc_score::{Diagnostic, DomainEvent, Score, TrackId};
 use std::path::{Path, PathBuf};
@@ -292,23 +295,40 @@ impl DocumentSession {
 
     // ------------------------------------------------------------ transport
 
-    /// Compiles the current snapshot for playback, applying the muted set (pruned to
-    /// tracks that still exist). Pure (PB-09); called when playback (re)starts and after
+    /// Compiles the current snapshot for playback, applying the muted set and the solo
+    /// rule ([effective_muted], over the tracks that still exist). Pure (PB-09); called when playback (re)starts and after
     /// an edit during playback. The user tempo factor is not part of the timeline; it is
     /// a render scalar sent through [`AudioPort::set_tempo_factor`].
     fn compile_timeline(&self) -> Result<PerformanceTimeline, TransportError> {
         let mut options = CompileOptions::new();
         let existing: Vec<TrackId> = self.score.tracks().map(|t| t.id()).collect();
-        options.muted = self
-            .transport
-            .muted()
-            .iter()
-            .copied()
-            .filter(|t| existing.contains(t))
-            .collect();
+        options.muted = effective_muted(&existing, self.transport.muted(), self.transport.soloed());
         compile(&self.score, &options)
             .map(|out| out.timeline)
             .map_err(|e| TransportError::Compile(e.to_string()))
+    }
+
+    /// Installs `timeline` and then sends the mix of every existing track (ADR-032 section
+    /// 4): channel assignment shifts when tracks are added or removed, and the engine must
+    /// hold the right value for each channel. Tracks that share a channel (16 and more)
+    /// share one mix; the later track in score order wins here.
+    fn install_timeline(
+        &self,
+        port: &mut dyn AudioPort,
+        timeline: PerformanceTimeline,
+    ) -> Result<(), TransportError> {
+        port.load_timeline(timeline)?;
+        for a in assign_channels(&self.score) {
+            let mix = self.transport.mix_of(a.track);
+            port.set_channel_mix(a.channel, mix.volume, mix.pan)?;
+        }
+        Ok(())
+    }
+
+    /// Forgets mute, solo and mix entries of deleted tracks (ADR-032 section 2).
+    fn prune_session_state(&mut self) {
+        let existing: Vec<TrackId> = self.score.tracks().map(|t| t.id()).collect();
+        self.transport.prune(&existing);
     }
 
     /// Carries out a transport command through `port`. Playback is session state: no
@@ -320,6 +340,7 @@ impl DocumentSession {
         port: &mut dyn AudioPort,
     ) -> Result<CommandOutcome, TransportError> {
         let mut payloads: Vec<EventPayload> = Vec::new();
+        self.prune_session_state();
         match cmd {
             TransportCommand::Play { from_master_bar } => {
                 let timeline = self.compile_timeline()?;
@@ -329,7 +350,7 @@ impl DocumentSession {
                         .ok_or(TransportError::BarOutOfRange { master_bar: bar })?,
                     None => Tick(port.position().0.max(0)),
                 };
-                port.load_timeline(timeline)?;
+                self.install_timeline(port, timeline)?;
                 port.set_tempo_factor(self.transport.tempo_factor())?;
                 port.play(start)?;
             }
@@ -343,7 +364,38 @@ impl DocumentSession {
                     // playing (Q8 releases held notes on swap).
                     if port.state() == PlaybackState::Playing {
                         let timeline = self.compile_timeline()?;
-                        port.load_timeline(timeline)?;
+                        self.install_timeline(port, timeline)?;
+                    }
+                }
+            }
+            TransportCommand::SetSoloed { track, soloed } => {
+                let changed = if soloed {
+                    self.transport.set_soloed_insert(track)
+                } else {
+                    self.transport.set_soloed_remove(track)
+                };
+                if changed {
+                    payloads.push(EventPayload::App(AppEvent::SoloChanged { track, soloed }));
+                    // Same as a mute change: recompile and swap once while playing.
+                    if port.state() == PlaybackState::Playing {
+                        let timeline = self.compile_timeline()?;
+                        self.install_timeline(port, timeline)?;
+                    }
+                }
+            }
+            TransportCommand::SetTrackMix { track, volume, pan } => {
+                let channel = assign_channels(&self.score)
+                    .into_iter()
+                    .find(|a| a.track == track)
+                    .map(|a| a.channel)
+                    .ok_or(TransportError::UnknownTrack(track))?;
+                let mix = TrackMix { volume, pan };
+                if self.transport.set_mix(track, mix) {
+                    payloads.push(EventPayload::App(AppEvent::MixChanged { track, mix }));
+                    // No recompile and no swap. While stopped nothing reaches the port:
+                    // the next play installs a timeline and sends every mix.
+                    if port.state() == PlaybackState::Playing {
+                        port.set_channel_mix(channel, volume, pan)?;
                     }
                 }
             }
@@ -367,9 +419,10 @@ impl DocumentSession {
         &mut self,
         port: &mut dyn AudioPort,
     ) -> Result<CommandOutcome, TransportError> {
+        self.prune_session_state();
         if port.state() == PlaybackState::Playing {
             let timeline = self.compile_timeline()?;
-            port.load_timeline(timeline)?;
+            self.install_timeline(port, timeline)?;
         }
         let payloads = self.sync_playback_state(port);
         Ok(self.emit(None, payloads))

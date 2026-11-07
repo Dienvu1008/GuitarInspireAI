@@ -196,9 +196,13 @@ pub use mc_app::notation::Stave
 pub use mc_app::notation::SystemLayout
 pub use mc_app::notation::TabLayout
 pub mod mc_app::playback
+pub use mc_app::playback::Channel
+pub use mc_app::playback::Pan
 pub use mc_app::playback::PerformanceTimeline
 pub use mc_app::playback::TempoFactor
 pub use mc_app::playback::Tick
+pub use mc_app::playback::TrackMix
+pub use mc_app::playback::Volume
 pub fn mc_app::playback::compile_for_export(&mc_score::score::Score) -> core::result::Result<mc_playback::timeline::PerformanceTimeline, alloc::string::String>
 pub mod mc_app::ports
 pub enum mc_app::ports::StoreError
@@ -307,9 +311,18 @@ pub mc_app::transport::TransportCommand::Seek::tick: mc_playback::types::Tick
 pub mc_app::transport::TransportCommand::SetMuted
 pub mc_app::transport::TransportCommand::SetMuted::muted: bool
 pub mc_app::transport::TransportCommand::SetMuted::track: mc_score::ids::TrackId
+pub mc_app::transport::TransportCommand::SetSoloed
+pub mc_app::transport::TransportCommand::SetSoloed::soloed: bool
+pub mc_app::transport::TransportCommand::SetSoloed::track: mc_score::ids::TrackId
 pub mc_app::transport::TransportCommand::SetTempoFactor
 pub mc_app::transport::TransportCommand::SetTempoFactor::factor: mc_playback::types::TempoFactor
+pub mc_app::transport::TransportCommand::SetTrackMix
+pub mc_app::transport::TransportCommand::SetTrackMix::pan: mc_playback::types::Pan
+pub mc_app::transport::TransportCommand::SetTrackMix::track: mc_score::ids::TrackId
+pub mc_app::transport::TransportCommand::SetTrackMix::volume: mc_playback::types::Volume
 pub mc_app::transport::TransportCommand::Stop
+impl mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::track_mix(mc_score::ids::TrackId, u8, i16) -> core::result::Result<Self, mc_app::transport::TransportError>
 impl core::clone::Clone for mc_app::transport::TransportCommand
 pub fn mc_app::transport::TransportCommand::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportCommand
@@ -331,6 +344,8 @@ pub mc_app::transport::TransportError::Audio(alloc::string::String)
 pub mc_app::transport::TransportError::BarOutOfRange
 pub mc_app::transport::TransportError::BarOutOfRange::master_bar: usize
 pub mc_app::transport::TransportError::Compile(alloc::string::String)
+pub mc_app::transport::TransportError::InvalidMix(alloc::string::String)
+pub mc_app::transport::TransportError::UnknownTrack(mc_score::ids::TrackId)
 impl core::clone::Clone for mc_app::transport::TransportError
 pub fn mc_app::transport::TransportError::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportError
@@ -393,7 +408,10 @@ impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PositionUpdate
 pub struct mc_app::transport::TransportState
 impl mc_app::transport::TransportState
 pub fn mc_app::transport::TransportState::is_muted(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::is_soloed(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::mix_of(&self, mc_score::ids::TrackId) -> mc_playback::types::TrackMix
 pub fn mc_app::transport::TransportState::muted(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
+pub fn mc_app::transport::TransportState::soloed(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
 pub fn mc_app::transport::TransportState::state(&self) -> mc_app::transport::PlaybackState
 pub fn mc_app::transport::TransportState::tempo_factor(&self) -> mc_playback::types::TempoFactor
 impl core::clone::Clone for mc_app::transport::TransportState
@@ -419,9 +437,11 @@ pub fn mc_app::transport::AudioPort::load_timeline(&mut self, mc_playback::timel
 pub fn mc_app::transport::AudioPort::play(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::transport::AudioPort::position(&self) -> mc_playback::types::Tick
 pub fn mc_app::transport::AudioPort::seek(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::transport::AudioPort::set_channel_mix(&mut self, mc_playback::types::Channel, mc_playback::types::Volume, mc_playback::types::Pan) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::transport::AudioPort::set_tempo_factor(&mut self, mc_playback::types::TempoFactor) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::transport::AudioPort::state(&self) -> mc_app::transport::PlaybackState
 pub fn mc_app::transport::AudioPort::stop(&mut self) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::transport::effective_muted(&[mc_score::ids::TrackId], &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>, &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>) -> alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
 pub mod mc_app::types
 pub use mc_app::types::AppInfo
 pub use mc_app::types::BarContent
@@ -454,11 +474,17 @@ pub mc_app::AppEvent::DirtyChanged::dirty: bool
 pub mc_app::AppEvent::DocumentSaved
 pub mc_app::AppEvent::DocumentSaved::revision: mc_app::Revision
 pub mc_app::AppEvent::HistoryApplied
+pub mc_app::AppEvent::MixChanged
+pub mc_app::AppEvent::MixChanged::mix: mc_playback::types::TrackMix
+pub mc_app::AppEvent::MixChanged::track: mc_score::ids::TrackId
 pub mc_app::AppEvent::MuteChanged
 pub mc_app::AppEvent::MuteChanged::muted: bool
 pub mc_app::AppEvent::MuteChanged::track: mc_score::ids::TrackId
 pub mc_app::AppEvent::PlaybackStateChanged
 pub mc_app::AppEvent::PlaybackStateChanged::state: mc_app::transport::PlaybackState
+pub mc_app::AppEvent::SoloChanged
+pub mc_app::AppEvent::SoloChanged::soloed: bool
+pub mc_app::AppEvent::SoloChanged::track: mc_score::ids::TrackId
 pub mc_app::AppEvent::TempoFactorChanged
 pub mc_app::AppEvent::TempoFactorChanged::hundredths: u16
 pub mc_app::AppEvent::UndoAvailabilityChanged
@@ -755,9 +781,18 @@ pub mc_app::TransportCommand::Seek::tick: mc_playback::types::Tick
 pub mc_app::TransportCommand::SetMuted
 pub mc_app::TransportCommand::SetMuted::muted: bool
 pub mc_app::TransportCommand::SetMuted::track: mc_score::ids::TrackId
+pub mc_app::TransportCommand::SetSoloed
+pub mc_app::TransportCommand::SetSoloed::soloed: bool
+pub mc_app::TransportCommand::SetSoloed::track: mc_score::ids::TrackId
 pub mc_app::TransportCommand::SetTempoFactor
 pub mc_app::TransportCommand::SetTempoFactor::factor: mc_playback::types::TempoFactor
+pub mc_app::TransportCommand::SetTrackMix
+pub mc_app::TransportCommand::SetTrackMix::pan: mc_playback::types::Pan
+pub mc_app::TransportCommand::SetTrackMix::track: mc_score::ids::TrackId
+pub mc_app::TransportCommand::SetTrackMix::volume: mc_playback::types::Volume
 pub mc_app::TransportCommand::Stop
+impl mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::track_mix(mc_score::ids::TrackId, u8, i16) -> core::result::Result<Self, mc_app::transport::TransportError>
 impl core::clone::Clone for mc_app::transport::TransportCommand
 pub fn mc_app::transport::TransportCommand::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportCommand
@@ -779,6 +814,8 @@ pub mc_app::TransportError::Audio(alloc::string::String)
 pub mc_app::TransportError::BarOutOfRange
 pub mc_app::TransportError::BarOutOfRange::master_bar: usize
 pub mc_app::TransportError::Compile(alloc::string::String)
+pub mc_app::TransportError::InvalidMix(alloc::string::String)
+pub mc_app::TransportError::UnknownTrack(mc_score::ids::TrackId)
 impl core::clone::Clone for mc_app::transport::TransportError
 pub fn mc_app::transport::TransportError::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportError
@@ -1232,7 +1269,10 @@ impl core::panic::unwind_safe::UnwindSafe for mc_app::SessionConfig
 pub struct mc_app::TransportState
 impl mc_app::transport::TransportState
 pub fn mc_app::transport::TransportState::is_muted(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::is_soloed(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::mix_of(&self, mc_score::ids::TrackId) -> mc_playback::types::TrackMix
 pub fn mc_app::transport::TransportState::muted(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
+pub fn mc_app::transport::TransportState::soloed(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
 pub fn mc_app::transport::TransportState::state(&self) -> mc_app::transport::PlaybackState
 pub fn mc_app::transport::TransportState::tempo_factor(&self) -> mc_playback::types::TempoFactor
 impl core::clone::Clone for mc_app::transport::TransportState
@@ -1277,6 +1317,7 @@ pub fn mc_app::AudioPort::load_timeline(&mut self, mc_playback::timeline::Perfor
 pub fn mc_app::AudioPort::play(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::AudioPort::position(&self) -> mc_playback::types::Tick
 pub fn mc_app::AudioPort::seek(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::AudioPort::set_channel_mix(&mut self, mc_playback::types::Channel, mc_playback::types::Volume, mc_playback::types::Pan) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::AudioPort::set_tempo_factor(&mut self, mc_playback::types::TempoFactor) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::AudioPort::state(&self) -> mc_app::transport::PlaybackState
 pub fn mc_app::AudioPort::stop(&mut self) -> core::result::Result<(), mc_app::transport::TransportError>
@@ -1284,4 +1325,5 @@ pub trait mc_app::EventSink: core::marker::Send
 pub fn mc_app::EventSink::publish(&mut self, &[mc_app::EventEnvelope])
 impl mc_app::EventSink for mc_app::CollectingSink
 pub fn mc_app::CollectingSink::publish(&mut self, &[mc_app::EventEnvelope])
+pub fn mc_app::effective_muted(&[mc_score::ids::TrackId], &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>, &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>) -> alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
 pub fn mc_app::new_score(&str, usize) -> core::result::Result<mc_score::score::Score, mc_score::error::DomainError>

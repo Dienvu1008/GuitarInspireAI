@@ -1996,7 +1996,7 @@ extension EventKindDtoPatterns on EventKindDto {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( EventKindDto_TrackAdded value)?  trackAdded,TResult Function( EventKindDto_TrackRemoved value)?  trackRemoved,TResult Function( EventKindDto_TrackChanged value)?  trackChanged,TResult Function( EventKindDto_TracksReordered value)?  tracksReordered,TResult Function( EventKindDto_MasterBarsInserted value)?  masterBarsInserted,TResult Function( EventKindDto_MasterBarsRemoved value)?  masterBarsRemoved,TResult Function( EventKindDto_MasterBarsChanged value)?  masterBarsChanged,TResult Function( EventKindDto_BarContentChanged value)?  barContentChanged,TResult Function( EventKindDto_TempoMapChanged value)?  tempoMapChanged,TResult Function( EventKindDto_TiesRemoved value)?  tiesRemoved,TResult Function( EventKindDto_DocumentSaved value)?  documentSaved,TResult Function( EventKindDto_DirtyChanged value)?  dirtyChanged,TResult Function( EventKindDto_UndoAvailabilityChanged value)?  undoAvailabilityChanged,TResult Function( EventKindDto_HistoryApplied value)?  historyApplied,TResult Function( EventKindDto_PlaybackStateChanged value)?  playbackStateChanged,TResult Function( EventKindDto_MuteChanged value)?  muteChanged,TResult Function( EventKindDto_TempoFactorChanged value)?  tempoFactorChanged,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( EventKindDto_TrackAdded value)?  trackAdded,TResult Function( EventKindDto_TrackRemoved value)?  trackRemoved,TResult Function( EventKindDto_TrackChanged value)?  trackChanged,TResult Function( EventKindDto_TracksReordered value)?  tracksReordered,TResult Function( EventKindDto_MasterBarsInserted value)?  masterBarsInserted,TResult Function( EventKindDto_MasterBarsRemoved value)?  masterBarsRemoved,TResult Function( EventKindDto_MasterBarsChanged value)?  masterBarsChanged,TResult Function( EventKindDto_BarContentChanged value)?  barContentChanged,TResult Function( EventKindDto_TempoMapChanged value)?  tempoMapChanged,TResult Function( EventKindDto_TiesRemoved value)?  tiesRemoved,TResult Function( EventKindDto_DocumentSaved value)?  documentSaved,TResult Function( EventKindDto_DirtyChanged value)?  dirtyChanged,TResult Function( EventKindDto_UndoAvailabilityChanged value)?  undoAvailabilityChanged,TResult Function( EventKindDto_HistoryApplied value)?  historyApplied,TResult Function( EventKindDto_PlaybackStateChanged value)?  playbackStateChanged,TResult Function( EventKindDto_SoloChanged value)?  soloChanged,TResult Function( EventKindDto_MixChanged value)?  mixChanged,TResult Function( EventKindDto_MuteChanged value)?  muteChanged,TResult Function( EventKindDto_TempoFactorChanged value)?  tempoFactorChanged,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded() when trackAdded != null:
@@ -2014,7 +2014,9 @@ return documentSaved(_that);case EventKindDto_DirtyChanged() when dirtyChanged !
 return dirtyChanged(_that);case EventKindDto_UndoAvailabilityChanged() when undoAvailabilityChanged != null:
 return undoAvailabilityChanged(_that);case EventKindDto_HistoryApplied() when historyApplied != null:
 return historyApplied(_that);case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
-return playbackStateChanged(_that);case EventKindDto_MuteChanged() when muteChanged != null:
+return playbackStateChanged(_that);case EventKindDto_SoloChanged() when soloChanged != null:
+return soloChanged(_that);case EventKindDto_MixChanged() when mixChanged != null:
+return mixChanged(_that);case EventKindDto_MuteChanged() when muteChanged != null:
 return muteChanged(_that);case EventKindDto_TempoFactorChanged() when tempoFactorChanged != null:
 return tempoFactorChanged(_that);case _:
   return orElse();
@@ -2034,7 +2036,7 @@ return tempoFactorChanged(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( EventKindDto_TrackAdded value)  trackAdded,required TResult Function( EventKindDto_TrackRemoved value)  trackRemoved,required TResult Function( EventKindDto_TrackChanged value)  trackChanged,required TResult Function( EventKindDto_TracksReordered value)  tracksReordered,required TResult Function( EventKindDto_MasterBarsInserted value)  masterBarsInserted,required TResult Function( EventKindDto_MasterBarsRemoved value)  masterBarsRemoved,required TResult Function( EventKindDto_MasterBarsChanged value)  masterBarsChanged,required TResult Function( EventKindDto_BarContentChanged value)  barContentChanged,required TResult Function( EventKindDto_TempoMapChanged value)  tempoMapChanged,required TResult Function( EventKindDto_TiesRemoved value)  tiesRemoved,required TResult Function( EventKindDto_DocumentSaved value)  documentSaved,required TResult Function( EventKindDto_DirtyChanged value)  dirtyChanged,required TResult Function( EventKindDto_UndoAvailabilityChanged value)  undoAvailabilityChanged,required TResult Function( EventKindDto_HistoryApplied value)  historyApplied,required TResult Function( EventKindDto_PlaybackStateChanged value)  playbackStateChanged,required TResult Function( EventKindDto_MuteChanged value)  muteChanged,required TResult Function( EventKindDto_TempoFactorChanged value)  tempoFactorChanged,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( EventKindDto_TrackAdded value)  trackAdded,required TResult Function( EventKindDto_TrackRemoved value)  trackRemoved,required TResult Function( EventKindDto_TrackChanged value)  trackChanged,required TResult Function( EventKindDto_TracksReordered value)  tracksReordered,required TResult Function( EventKindDto_MasterBarsInserted value)  masterBarsInserted,required TResult Function( EventKindDto_MasterBarsRemoved value)  masterBarsRemoved,required TResult Function( EventKindDto_MasterBarsChanged value)  masterBarsChanged,required TResult Function( EventKindDto_BarContentChanged value)  barContentChanged,required TResult Function( EventKindDto_TempoMapChanged value)  tempoMapChanged,required TResult Function( EventKindDto_TiesRemoved value)  tiesRemoved,required TResult Function( EventKindDto_DocumentSaved value)  documentSaved,required TResult Function( EventKindDto_DirtyChanged value)  dirtyChanged,required TResult Function( EventKindDto_UndoAvailabilityChanged value)  undoAvailabilityChanged,required TResult Function( EventKindDto_HistoryApplied value)  historyApplied,required TResult Function( EventKindDto_PlaybackStateChanged value)  playbackStateChanged,required TResult Function( EventKindDto_SoloChanged value)  soloChanged,required TResult Function( EventKindDto_MixChanged value)  mixChanged,required TResult Function( EventKindDto_MuteChanged value)  muteChanged,required TResult Function( EventKindDto_TempoFactorChanged value)  tempoFactorChanged,}){
 final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded():
@@ -2052,7 +2054,9 @@ return documentSaved(_that);case EventKindDto_DirtyChanged():
 return dirtyChanged(_that);case EventKindDto_UndoAvailabilityChanged():
 return undoAvailabilityChanged(_that);case EventKindDto_HistoryApplied():
 return historyApplied(_that);case EventKindDto_PlaybackStateChanged():
-return playbackStateChanged(_that);case EventKindDto_MuteChanged():
+return playbackStateChanged(_that);case EventKindDto_SoloChanged():
+return soloChanged(_that);case EventKindDto_MixChanged():
+return mixChanged(_that);case EventKindDto_MuteChanged():
 return muteChanged(_that);case EventKindDto_TempoFactorChanged():
 return tempoFactorChanged(_that);}
 }
@@ -2068,7 +2072,7 @@ return tempoFactorChanged(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( EventKindDto_TrackAdded value)?  trackAdded,TResult? Function( EventKindDto_TrackRemoved value)?  trackRemoved,TResult? Function( EventKindDto_TrackChanged value)?  trackChanged,TResult? Function( EventKindDto_TracksReordered value)?  tracksReordered,TResult? Function( EventKindDto_MasterBarsInserted value)?  masterBarsInserted,TResult? Function( EventKindDto_MasterBarsRemoved value)?  masterBarsRemoved,TResult? Function( EventKindDto_MasterBarsChanged value)?  masterBarsChanged,TResult? Function( EventKindDto_BarContentChanged value)?  barContentChanged,TResult? Function( EventKindDto_TempoMapChanged value)?  tempoMapChanged,TResult? Function( EventKindDto_TiesRemoved value)?  tiesRemoved,TResult? Function( EventKindDto_DocumentSaved value)?  documentSaved,TResult? Function( EventKindDto_DirtyChanged value)?  dirtyChanged,TResult? Function( EventKindDto_UndoAvailabilityChanged value)?  undoAvailabilityChanged,TResult? Function( EventKindDto_HistoryApplied value)?  historyApplied,TResult? Function( EventKindDto_PlaybackStateChanged value)?  playbackStateChanged,TResult? Function( EventKindDto_MuteChanged value)?  muteChanged,TResult? Function( EventKindDto_TempoFactorChanged value)?  tempoFactorChanged,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( EventKindDto_TrackAdded value)?  trackAdded,TResult? Function( EventKindDto_TrackRemoved value)?  trackRemoved,TResult? Function( EventKindDto_TrackChanged value)?  trackChanged,TResult? Function( EventKindDto_TracksReordered value)?  tracksReordered,TResult? Function( EventKindDto_MasterBarsInserted value)?  masterBarsInserted,TResult? Function( EventKindDto_MasterBarsRemoved value)?  masterBarsRemoved,TResult? Function( EventKindDto_MasterBarsChanged value)?  masterBarsChanged,TResult? Function( EventKindDto_BarContentChanged value)?  barContentChanged,TResult? Function( EventKindDto_TempoMapChanged value)?  tempoMapChanged,TResult? Function( EventKindDto_TiesRemoved value)?  tiesRemoved,TResult? Function( EventKindDto_DocumentSaved value)?  documentSaved,TResult? Function( EventKindDto_DirtyChanged value)?  dirtyChanged,TResult? Function( EventKindDto_UndoAvailabilityChanged value)?  undoAvailabilityChanged,TResult? Function( EventKindDto_HistoryApplied value)?  historyApplied,TResult? Function( EventKindDto_PlaybackStateChanged value)?  playbackStateChanged,TResult? Function( EventKindDto_SoloChanged value)?  soloChanged,TResult? Function( EventKindDto_MixChanged value)?  mixChanged,TResult? Function( EventKindDto_MuteChanged value)?  muteChanged,TResult? Function( EventKindDto_TempoFactorChanged value)?  tempoFactorChanged,}){
 final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded() when trackAdded != null:
@@ -2086,7 +2090,9 @@ return documentSaved(_that);case EventKindDto_DirtyChanged() when dirtyChanged !
 return dirtyChanged(_that);case EventKindDto_UndoAvailabilityChanged() when undoAvailabilityChanged != null:
 return undoAvailabilityChanged(_that);case EventKindDto_HistoryApplied() when historyApplied != null:
 return historyApplied(_that);case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
-return playbackStateChanged(_that);case EventKindDto_MuteChanged() when muteChanged != null:
+return playbackStateChanged(_that);case EventKindDto_SoloChanged() when soloChanged != null:
+return soloChanged(_that);case EventKindDto_MixChanged() when mixChanged != null:
+return mixChanged(_that);case EventKindDto_MuteChanged() when muteChanged != null:
 return muteChanged(_that);case EventKindDto_TempoFactorChanged() when tempoFactorChanged != null:
 return tempoFactorChanged(_that);case _:
   return null;
@@ -2105,7 +2111,7 @@ return tempoFactorChanged(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( PlatformInt64 track)?  trackAdded,TResult Function( PlatformInt64 track)?  trackRemoved,TResult Function( PlatformInt64 track)?  trackChanged,TResult Function()?  tracksReordered,TResult Function( int at,  int count)?  masterBarsInserted,TResult Function( int at,  int count)?  masterBarsRemoved,TResult Function( int start,  int end)?  masterBarsChanged,TResult Function( PlatformInt64 track,  int start,  int end)?  barContentChanged,TResult Function()?  tempoMapChanged,TResult Function( PlatformInt64 track,  Int64List notes)?  tiesRemoved,TResult Function()?  documentSaved,TResult Function( bool dirty)?  dirtyChanged,TResult Function( bool canUndo,  bool canRedo)?  undoAvailabilityChanged,TResult Function()?  historyApplied,TResult Function( PlaybackStateDto state)?  playbackStateChanged,TResult Function( PlatformInt64 track,  bool muted)?  muteChanged,TResult Function( int hundredths)?  tempoFactorChanged,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( PlatformInt64 track)?  trackAdded,TResult Function( PlatformInt64 track)?  trackRemoved,TResult Function( PlatformInt64 track)?  trackChanged,TResult Function()?  tracksReordered,TResult Function( int at,  int count)?  masterBarsInserted,TResult Function( int at,  int count)?  masterBarsRemoved,TResult Function( int start,  int end)?  masterBarsChanged,TResult Function( PlatformInt64 track,  int start,  int end)?  barContentChanged,TResult Function()?  tempoMapChanged,TResult Function( PlatformInt64 track,  Int64List notes)?  tiesRemoved,TResult Function()?  documentSaved,TResult Function( bool dirty)?  dirtyChanged,TResult Function( bool canUndo,  bool canRedo)?  undoAvailabilityChanged,TResult Function()?  historyApplied,TResult Function( PlaybackStateDto state)?  playbackStateChanged,TResult Function( PlatformInt64 track,  bool soloed)?  soloChanged,TResult Function( PlatformInt64 track,  int volume,  int pan)?  mixChanged,TResult Function( PlatformInt64 track,  bool muted)?  muteChanged,TResult Function( int hundredths)?  tempoFactorChanged,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded() when trackAdded != null:
 return trackAdded(_that.track);case EventKindDto_TrackRemoved() when trackRemoved != null:
@@ -2122,7 +2128,9 @@ return documentSaved();case EventKindDto_DirtyChanged() when dirtyChanged != nul
 return dirtyChanged(_that.dirty);case EventKindDto_UndoAvailabilityChanged() when undoAvailabilityChanged != null:
 return undoAvailabilityChanged(_that.canUndo,_that.canRedo);case EventKindDto_HistoryApplied() when historyApplied != null:
 return historyApplied();case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
-return playbackStateChanged(_that.state);case EventKindDto_MuteChanged() when muteChanged != null:
+return playbackStateChanged(_that.state);case EventKindDto_SoloChanged() when soloChanged != null:
+return soloChanged(_that.track,_that.soloed);case EventKindDto_MixChanged() when mixChanged != null:
+return mixChanged(_that.track,_that.volume,_that.pan);case EventKindDto_MuteChanged() when muteChanged != null:
 return muteChanged(_that.track,_that.muted);case EventKindDto_TempoFactorChanged() when tempoFactorChanged != null:
 return tempoFactorChanged(_that.hundredths);case _:
   return orElse();
@@ -2142,7 +2150,7 @@ return tempoFactorChanged(_that.hundredths);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( PlatformInt64 track)  trackAdded,required TResult Function( PlatformInt64 track)  trackRemoved,required TResult Function( PlatformInt64 track)  trackChanged,required TResult Function()  tracksReordered,required TResult Function( int at,  int count)  masterBarsInserted,required TResult Function( int at,  int count)  masterBarsRemoved,required TResult Function( int start,  int end)  masterBarsChanged,required TResult Function( PlatformInt64 track,  int start,  int end)  barContentChanged,required TResult Function()  tempoMapChanged,required TResult Function( PlatformInt64 track,  Int64List notes)  tiesRemoved,required TResult Function()  documentSaved,required TResult Function( bool dirty)  dirtyChanged,required TResult Function( bool canUndo,  bool canRedo)  undoAvailabilityChanged,required TResult Function()  historyApplied,required TResult Function( PlaybackStateDto state)  playbackStateChanged,required TResult Function( PlatformInt64 track,  bool muted)  muteChanged,required TResult Function( int hundredths)  tempoFactorChanged,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( PlatformInt64 track)  trackAdded,required TResult Function( PlatformInt64 track)  trackRemoved,required TResult Function( PlatformInt64 track)  trackChanged,required TResult Function()  tracksReordered,required TResult Function( int at,  int count)  masterBarsInserted,required TResult Function( int at,  int count)  masterBarsRemoved,required TResult Function( int start,  int end)  masterBarsChanged,required TResult Function( PlatformInt64 track,  int start,  int end)  barContentChanged,required TResult Function()  tempoMapChanged,required TResult Function( PlatformInt64 track,  Int64List notes)  tiesRemoved,required TResult Function()  documentSaved,required TResult Function( bool dirty)  dirtyChanged,required TResult Function( bool canUndo,  bool canRedo)  undoAvailabilityChanged,required TResult Function()  historyApplied,required TResult Function( PlaybackStateDto state)  playbackStateChanged,required TResult Function( PlatformInt64 track,  bool soloed)  soloChanged,required TResult Function( PlatformInt64 track,  int volume,  int pan)  mixChanged,required TResult Function( PlatformInt64 track,  bool muted)  muteChanged,required TResult Function( int hundredths)  tempoFactorChanged,}) {final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded():
 return trackAdded(_that.track);case EventKindDto_TrackRemoved():
@@ -2159,7 +2167,9 @@ return documentSaved();case EventKindDto_DirtyChanged():
 return dirtyChanged(_that.dirty);case EventKindDto_UndoAvailabilityChanged():
 return undoAvailabilityChanged(_that.canUndo,_that.canRedo);case EventKindDto_HistoryApplied():
 return historyApplied();case EventKindDto_PlaybackStateChanged():
-return playbackStateChanged(_that.state);case EventKindDto_MuteChanged():
+return playbackStateChanged(_that.state);case EventKindDto_SoloChanged():
+return soloChanged(_that.track,_that.soloed);case EventKindDto_MixChanged():
+return mixChanged(_that.track,_that.volume,_that.pan);case EventKindDto_MuteChanged():
 return muteChanged(_that.track,_that.muted);case EventKindDto_TempoFactorChanged():
 return tempoFactorChanged(_that.hundredths);}
 }
@@ -2175,7 +2185,7 @@ return tempoFactorChanged(_that.hundredths);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( PlatformInt64 track)?  trackAdded,TResult? Function( PlatformInt64 track)?  trackRemoved,TResult? Function( PlatformInt64 track)?  trackChanged,TResult? Function()?  tracksReordered,TResult? Function( int at,  int count)?  masterBarsInserted,TResult? Function( int at,  int count)?  masterBarsRemoved,TResult? Function( int start,  int end)?  masterBarsChanged,TResult? Function( PlatformInt64 track,  int start,  int end)?  barContentChanged,TResult? Function()?  tempoMapChanged,TResult? Function( PlatformInt64 track,  Int64List notes)?  tiesRemoved,TResult? Function()?  documentSaved,TResult? Function( bool dirty)?  dirtyChanged,TResult? Function( bool canUndo,  bool canRedo)?  undoAvailabilityChanged,TResult? Function()?  historyApplied,TResult? Function( PlaybackStateDto state)?  playbackStateChanged,TResult? Function( PlatformInt64 track,  bool muted)?  muteChanged,TResult? Function( int hundredths)?  tempoFactorChanged,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( PlatformInt64 track)?  trackAdded,TResult? Function( PlatformInt64 track)?  trackRemoved,TResult? Function( PlatformInt64 track)?  trackChanged,TResult? Function()?  tracksReordered,TResult? Function( int at,  int count)?  masterBarsInserted,TResult? Function( int at,  int count)?  masterBarsRemoved,TResult? Function( int start,  int end)?  masterBarsChanged,TResult? Function( PlatformInt64 track,  int start,  int end)?  barContentChanged,TResult? Function()?  tempoMapChanged,TResult? Function( PlatformInt64 track,  Int64List notes)?  tiesRemoved,TResult? Function()?  documentSaved,TResult? Function( bool dirty)?  dirtyChanged,TResult? Function( bool canUndo,  bool canRedo)?  undoAvailabilityChanged,TResult? Function()?  historyApplied,TResult? Function( PlaybackStateDto state)?  playbackStateChanged,TResult? Function( PlatformInt64 track,  bool soloed)?  soloChanged,TResult? Function( PlatformInt64 track,  int volume,  int pan)?  mixChanged,TResult? Function( PlatformInt64 track,  bool muted)?  muteChanged,TResult? Function( int hundredths)?  tempoFactorChanged,}) {final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded() when trackAdded != null:
 return trackAdded(_that.track);case EventKindDto_TrackRemoved() when trackRemoved != null:
@@ -2192,7 +2202,9 @@ return documentSaved();case EventKindDto_DirtyChanged() when dirtyChanged != nul
 return dirtyChanged(_that.dirty);case EventKindDto_UndoAvailabilityChanged() when undoAvailabilityChanged != null:
 return undoAvailabilityChanged(_that.canUndo,_that.canRedo);case EventKindDto_HistoryApplied() when historyApplied != null:
 return historyApplied();case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
-return playbackStateChanged(_that.state);case EventKindDto_MuteChanged() when muteChanged != null:
+return playbackStateChanged(_that.state);case EventKindDto_SoloChanged() when soloChanged != null:
+return soloChanged(_that.track,_that.soloed);case EventKindDto_MixChanged() when mixChanged != null:
+return mixChanged(_that.track,_that.volume,_that.pan);case EventKindDto_MuteChanged() when muteChanged != null:
 return muteChanged(_that.track,_that.muted);case EventKindDto_TempoFactorChanged() when tempoFactorChanged != null:
 return tempoFactorChanged(_that.hundredths);case _:
   return null;
@@ -3086,6 +3098,148 @@ class _$EventKindDto_PlaybackStateChangedCopyWithImpl<$Res>
   return _then(EventKindDto_PlaybackStateChanged(
 state: null == state ? _self.state : state // ignore: cast_nullable_to_non_nullable
 as PlaybackStateDto,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class EventKindDto_SoloChanged extends EventKindDto {
+  const EventKindDto_SoloChanged({required this.track, required this.soloed}): super._();
+  
+
+ final  PlatformInt64 track;
+ final  bool soloed;
+
+/// Create a copy of EventKindDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$EventKindDto_SoloChangedCopyWith<EventKindDto_SoloChanged> get copyWith => _$EventKindDto_SoloChangedCopyWithImpl<EventKindDto_SoloChanged>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EventKindDto_SoloChanged&&(identical(other.track, track) || other.track == track)&&(identical(other.soloed, soloed) || other.soloed == soloed));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,track,soloed);
+}
+
+@override
+String toString() {
+    return 'EventKindDto.soloChanged(track: $track, soloed: $soloed)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $EventKindDto_SoloChangedCopyWith<$Res> implements $EventKindDtoCopyWith<$Res> {
+  factory $EventKindDto_SoloChangedCopyWith(EventKindDto_SoloChanged value, $Res Function(EventKindDto_SoloChanged) _then) = _$EventKindDto_SoloChangedCopyWithImpl;
+@useResult
+$Res call({
+ PlatformInt64 track, bool soloed
+});
+
+
+
+
+}
+/// @nodoc
+class _$EventKindDto_SoloChangedCopyWithImpl<$Res>
+    implements $EventKindDto_SoloChangedCopyWith<$Res> {
+  _$EventKindDto_SoloChangedCopyWithImpl(this._self, this._then);
+
+  final EventKindDto_SoloChanged _self;
+  final $Res Function(EventKindDto_SoloChanged) _then;
+
+/// Create a copy of EventKindDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? track = null,Object? soloed = null,}) {
+  return _then(EventKindDto_SoloChanged(
+track: null == track ? _self.track : track // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,soloed: null == soloed ? _self.soloed : soloed // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class EventKindDto_MixChanged extends EventKindDto {
+  const EventKindDto_MixChanged({required this.track, required this.volume, required this.pan}): super._();
+  
+
+ final  PlatformInt64 track;
+ final  int volume;
+ final  int pan;
+
+/// Create a copy of EventKindDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$EventKindDto_MixChangedCopyWith<EventKindDto_MixChanged> get copyWith => _$EventKindDto_MixChangedCopyWithImpl<EventKindDto_MixChanged>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EventKindDto_MixChanged&&(identical(other.track, track) || other.track == track)&&(identical(other.volume, volume) || other.volume == volume)&&(identical(other.pan, pan) || other.pan == pan));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,track,volume,pan);
+}
+
+@override
+String toString() {
+    return 'EventKindDto.mixChanged(track: $track, volume: $volume, pan: $pan)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $EventKindDto_MixChangedCopyWith<$Res> implements $EventKindDtoCopyWith<$Res> {
+  factory $EventKindDto_MixChangedCopyWith(EventKindDto_MixChanged value, $Res Function(EventKindDto_MixChanged) _then) = _$EventKindDto_MixChangedCopyWithImpl;
+@useResult
+$Res call({
+ PlatformInt64 track, int volume, int pan
+});
+
+
+
+
+}
+/// @nodoc
+class _$EventKindDto_MixChangedCopyWithImpl<$Res>
+    implements $EventKindDto_MixChangedCopyWith<$Res> {
+  _$EventKindDto_MixChangedCopyWithImpl(this._self, this._then);
+
+  final EventKindDto_MixChanged _self;
+  final $Res Function(EventKindDto_MixChanged) _then;
+
+/// Create a copy of EventKindDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? track = null,Object? volume = null,Object? pan = null,}) {
+  return _then(EventKindDto_MixChanged(
+track: null == track ? _self.track : track // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,volume: null == volume ? _self.volume : volume // ignore: cast_nullable_to_non_nullable
+as int,pan: null == pan ? _self.pan : pan // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

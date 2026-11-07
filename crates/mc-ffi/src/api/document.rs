@@ -597,6 +597,15 @@ fn event_dto(e: &EventEnvelope) -> EventDto {
             AppEvent::PlaybackStateChanged { state } => EventKindDto::PlaybackStateChanged {
                 state: playback_state_dto(*state),
             },
+            AppEvent::SoloChanged { track, soloed } => EventKindDto::SoloChanged {
+                track: t(*track),
+                soloed: *soloed,
+            },
+            AppEvent::MixChanged { track, mix } => EventKindDto::MixChanged {
+                track: t(*track),
+                volume: mix.volume.get(),
+                pan: i16::from(mix.pan.get()),
+            },
             AppEvent::MuteChanged { track, muted } => EventKindDto::MuteChanged {
                 track: t(*track),
                 muted: *muted,

@@ -355,6 +355,10 @@ final EventKindDto kind;
  /// Playback transport state changed (session state, ADR-028). The revision is
 /// unchanged on the carrying event.
 const factory EventKindDto.playbackStateChanged({   required PlaybackStateDto state , }) = EventKindDto_PlaybackStateChanged;
+ /// A track was soloed or unsoloed (session state, ADR-032).
+const factory EventKindDto.soloChanged({   required PlatformInt64 track ,  required bool soloed , }) = EventKindDto_SoloChanged;
+ /// A track's volume (0..=127) or pan (-63..=63) changed (session state, ADR-032).
+const factory EventKindDto.mixChanged({   required PlatformInt64 track ,  required int volume ,  required int pan , }) = EventKindDto_MixChanged;
  /// A track was muted or unmuted (session state, ADR-028).
 const factory EventKindDto.muteChanged({   required PlatformInt64 track ,  required bool muted , }) = EventKindDto_MuteChanged;
  /// The user tempo factor changed (session state, ADR-028). Hundredths of normal

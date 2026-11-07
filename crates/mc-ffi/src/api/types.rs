@@ -370,6 +370,17 @@ pub enum EventKindDto {
     PlaybackStateChanged {
         state: PlaybackStateDto,
     },
+    /// A track was soloed or unsoloed (session state, ADR-032).
+    SoloChanged {
+        track: i64,
+        soloed: bool,
+    },
+    /// A track's volume (0..=127) or pan (-63..=63) changed (session state, ADR-032).
+    MixChanged {
+        track: i64,
+        volume: u8,
+        pan: i16,
+    },
     /// A track was muted or unmuted (session state, ADR-028).
     MuteChanged {
         track: i64,
