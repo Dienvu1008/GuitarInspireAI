@@ -7,7 +7,7 @@ use crate::error::AudioError;
 use crate::rt::{Retired, Rt, RtCommand};
 use crate::soundfont::{build_synth, parse_soundfont};
 use crate::status::{EngineStatus, Status};
-use mc_playback::{PerformanceTimeline, TempoFactor, Tick};
+use mc_playback::{Channel, Pan, PerformanceTimeline, TempoFactor, Tick, Volume};
 use rustysynth::SoundFont;
 use std::sync::Arc;
 
@@ -66,6 +66,30 @@ impl OfflineEngine {
 
     pub fn set_tempo_factor(&mut self, factor: TempoFactor) {
         self.send(RtCommand::SetFactor(factor));
+    }
+
+    /// Sets the volume and pan of a MIDI channel, as `AudioEngine::set_channel_mix`
+    /// does (ADR-032): two atomic writes, no command, no allocation.
+    pub fn set_channel_mix(&mut self, channel: Channel, volume: Volume, pan: Pan) {
+        self.ends
+            .status
+            .mix
+            .set(channel.get() as usize, volume.get(), pan.cc());
+    }
+
+    /// Simulates a device change as `Control::rebuild` handles it: a new callback core
+    /// on the same shared status, with the synthesizer installed again. The timeline
+    /// and the play state are not restored here; the caller sends them, as the control
+    /// thread does.
+    pub fn rebuild_device(&mut self) -> Result<(), AudioError> {
+        let (rt, ends) = build_rt(self.rate, self.ends.status.clone());
+        self.rt = rt;
+        self.ends = ends;
+        if let Some(font) = self.font.clone() {
+            let synth = build_synth(&font, self.rate)?;
+            self.send(RtCommand::InstallSynth(synth));
+        }
+        Ok(())
     }
 
     /// Run the callback core over `out` (interleaved, `channels` per frame).

@@ -74,4 +74,4 @@ Related documents: links
 | [ADR-029](ADR-029-tuner-pitch-detection.md) | Tuner pitch detection: owned MPM/YIN, S3 thresholds and results | Draft (thresholds fixed; S3 pending) |
 | [ADR-030](ADR-030-editor-debt-clipboard-and-session-marker.md) | Editor debt (Phase 6b-1): beat clipboard, close prompt, session marker | Accepted (2026-11-06) |
 | [ADR-031](ADR-031-multi-track-tab-display.md) | Simultaneous multi-track TAB display (Phase 6b-2) | Accepted (2026-11-06) |
-| [ADR-032](ADR-032-track-mixer-volume-pan-solo.md) | Track mixer basics: volume, pan, solo (Phase 6b-3) | Draft (criteria fixed; 4 user choices open) |
+| [ADR-032](ADR-032-track-mixer-volume-pan-solo.md) | Track mixer basics: volume, pan, solo (Phase 6b-3) | Accepted (2026-11-07) |

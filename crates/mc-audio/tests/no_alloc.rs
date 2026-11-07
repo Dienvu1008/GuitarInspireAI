@@ -7,7 +7,9 @@
 use assert_no_alloc::{AllocDisabler, assert_no_alloc};
 use mc_app::fixtures::{Shape, reference};
 use mc_audio::OfflineEngine;
-use mc_playback::{CompileOptions, PerformanceTimeline, TempoFactor, Tick, compile};
+use mc_playback::{
+    Channel, CompileOptions, Pan, PerformanceTimeline, TempoFactor, Tick, Volume, compile,
+};
 
 #[global_allocator]
 static ALLOCATOR: AllocDisabler = AllocDisabler;
@@ -45,6 +47,13 @@ fn the_callback_does_not_allocate_over_twenty_seconds_of_transport_activity() {
             72 => engine.play(),
             90 => engine.set_tempo_factor(TempoFactor::NORMAL),
             _ => {}
+        }
+        // X11 (ADR-032): the mix changes every few blocks, from the control side.
+        if block % 3 == 0 {
+            let ch = Channel::try_new((block % 3 + block / 3 % 3) as u8).unwrap();
+            let volume = Volume::try_new(((block * 37) % 128) as u8).unwrap();
+            let pan = Pan::try_new(((block * 11) % 127) as i16 - 63).unwrap();
+            engine.set_channel_mix(ch, volume, pan);
         }
         assert_no_alloc(|| engine.process(&mut out, 2));
         if out.iter().any(|&x| x.abs() > 1e-3) {

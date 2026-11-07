@@ -38,9 +38,55 @@ impl Promotion {
     }
 }
 
+/// Number of MIDI channels the mix table covers.
+pub const MIX_CHANNELS: usize = 16;
+
+/// Volume (CC 7) and pan (CC 10) per MIDI channel, written by the control side and
+/// polled by the callback (ADR-032 section 4). Wait-free: a slider drag only overwrites
+/// the last value, so nothing can fill up, and the callback allocates, locks and logs
+/// nothing to read it. Lives in [`Status`], which outlives the callback core, so the mix
+/// survives a device rebuild.
+#[derive(Debug)]
+pub struct MixTable {
+    volume: [AtomicU8; MIX_CHANNELS],
+    pan: [AtomicU8; MIX_CHANNELS],
+}
+
+impl Default for MixTable {
+    /// Volume 100 and pan centre (64): what the synthesizer starts with, so an
+    /// untouched table changes nothing (ADR-032 X1).
+    fn default() -> Self {
+        MixTable {
+            volume: std::array::from_fn(|_| AtomicU8::new(100)),
+            pan: std::array::from_fn(|_| AtomicU8::new(64)),
+        }
+    }
+}
+
+impl MixTable {
+    /// Sets the controller values of `channel`: `volume` is CC 7 and `pan` is CC 10
+    /// (both 0..=127). A channel outside 0..=15 is ignored.
+    pub fn set(&self, channel: usize, volume: u8, pan: u8) {
+        if channel < MIX_CHANNELS {
+            self.volume[channel].store(volume.min(127), Relaxed);
+            self.pan[channel].store(pan.min(127), Relaxed);
+        }
+    }
+
+    /// The current `(volume, pan)` controller values of `channel`.
+    pub fn get(&self, channel: usize) -> (u8, u8) {
+        (
+            self.volume[channel].load(Relaxed),
+            self.pan[channel].load(Relaxed),
+        )
+    }
+}
+
 /// Atomics written by the callback and the device error handler.
 #[derive(Debug, Default)]
 pub struct Status {
+    /// Per-channel volume and pan the callback applies to the synthesizer (ADR-032).
+    pub mix: MixTable,
     /// Current position in ticks of the loaded timeline.
     pub tick: AtomicI64,
     pub playing: AtomicBool,

@@ -256,6 +256,37 @@ impl core::marker::Unpin for mc_playback::OutOfRange
 impl core::marker::UnsafeUnpin for mc_playback::OutOfRange
 impl core::panic::unwind_safe::RefUnwindSafe for mc_playback::OutOfRange
 impl core::panic::unwind_safe::UnwindSafe for mc_playback::OutOfRange
+pub struct mc_playback::Pan(_)
+impl mc_playback::Pan
+pub const mc_playback::Pan::CENTRE: mc_playback::Pan
+pub const mc_playback::Pan::LIMIT: i8
+pub const fn mc_playback::Pan::cc(self) -> u8
+pub const fn mc_playback::Pan::get(self) -> i8
+pub fn mc_playback::Pan::try_new(i16) -> core::result::Result<Self, mc_playback::OutOfRange>
+impl core::clone::Clone for mc_playback::Pan
+pub fn mc_playback::Pan::clone(&self) -> Self
+impl core::cmp::Eq for mc_playback::Pan
+impl core::cmp::Ord for mc_playback::Pan
+pub fn mc_playback::Pan::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_playback::Pan
+pub fn mc_playback::Pan::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_playback::Pan
+pub fn mc_playback::Pan::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::default::Default for mc_playback::Pan
+pub fn mc_playback::Pan::default() -> Self
+impl core::fmt::Debug for mc_playback::Pan
+pub fn mc_playback::Pan::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_playback::Pan
+pub fn mc_playback::Pan::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_playback::Pan
+impl core::marker::StructuralPartialEq for mc_playback::Pan
+impl core::marker::Freeze for mc_playback::Pan
+impl core::marker::Send for mc_playback::Pan
+impl core::marker::Sync for mc_playback::Pan
+impl core::marker::Unpin for mc_playback::Pan
+impl core::marker::UnsafeUnpin for mc_playback::Pan
+impl core::panic::unwind_safe::RefUnwindSafe for mc_playback::Pan
+impl core::panic::unwind_safe::UnwindSafe for mc_playback::Pan
 pub struct mc_playback::PerformanceTimeline
 impl mc_playback::PerformanceTimeline
 pub fn mc_playback::PerformanceTimeline::canonical_text(&self) -> alloc::string::String
@@ -423,6 +454,29 @@ impl core::marker::Unpin for mc_playback::TimedEvent
 impl core::marker::UnsafeUnpin for mc_playback::TimedEvent
 impl core::panic::unwind_safe::RefUnwindSafe for mc_playback::TimedEvent
 impl core::panic::unwind_safe::UnwindSafe for mc_playback::TimedEvent
+pub struct mc_playback::TrackMix
+pub mc_playback::TrackMix::pan: mc_playback::Pan
+pub mc_playback::TrackMix::volume: mc_playback::Volume
+impl core::clone::Clone for mc_playback::TrackMix
+pub fn mc_playback::TrackMix::clone(&self) -> Self
+impl core::cmp::Eq for mc_playback::TrackMix
+impl core::cmp::PartialEq for mc_playback::TrackMix
+pub fn mc_playback::TrackMix::eq(&self, &Self) -> bool
+impl core::default::Default for mc_playback::TrackMix
+pub fn mc_playback::TrackMix::default() -> Self
+impl core::fmt::Debug for mc_playback::TrackMix
+pub fn mc_playback::TrackMix::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_playback::TrackMix
+pub fn mc_playback::TrackMix::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_playback::TrackMix
+impl core::marker::StructuralPartialEq for mc_playback::TrackMix
+impl core::marker::Freeze for mc_playback::TrackMix
+impl core::marker::Send for mc_playback::TrackMix
+impl core::marker::Sync for mc_playback::TrackMix
+impl core::marker::Unpin for mc_playback::TrackMix
+impl core::marker::UnsafeUnpin for mc_playback::TrackMix
+impl core::panic::unwind_safe::RefUnwindSafe for mc_playback::TrackMix
+impl core::panic::unwind_safe::UnwindSafe for mc_playback::TrackMix
 pub struct mc_playback::Velocity(_)
 impl mc_playback::Velocity
 pub const mc_playback::Velocity::DEAD: mc_playback::Velocity
@@ -451,4 +505,35 @@ impl core::marker::Unpin for mc_playback::Velocity
 impl core::marker::UnsafeUnpin for mc_playback::Velocity
 impl core::panic::unwind_safe::RefUnwindSafe for mc_playback::Velocity
 impl core::panic::unwind_safe::UnwindSafe for mc_playback::Velocity
+pub struct mc_playback::Volume(_)
+impl mc_playback::Volume
+pub const mc_playback::Volume::DEFAULT: mc_playback::Volume
+pub const mc_playback::Volume::MAX: u8
+pub const fn mc_playback::Volume::get(self) -> u8
+pub fn mc_playback::Volume::try_new(u8) -> core::result::Result<Self, mc_playback::OutOfRange>
+impl core::clone::Clone for mc_playback::Volume
+pub fn mc_playback::Volume::clone(&self) -> Self
+impl core::cmp::Eq for mc_playback::Volume
+impl core::cmp::Ord for mc_playback::Volume
+pub fn mc_playback::Volume::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_playback::Volume
+pub fn mc_playback::Volume::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_playback::Volume
+pub fn mc_playback::Volume::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::default::Default for mc_playback::Volume
+pub fn mc_playback::Volume::default() -> Self
+impl core::fmt::Debug for mc_playback::Volume
+pub fn mc_playback::Volume::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_playback::Volume
+pub fn mc_playback::Volume::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_playback::Volume
+impl core::marker::StructuralPartialEq for mc_playback::Volume
+impl core::marker::Freeze for mc_playback::Volume
+impl core::marker::Send for mc_playback::Volume
+impl core::marker::Sync for mc_playback::Volume
+impl core::marker::Unpin for mc_playback::Volume
+impl core::marker::UnsafeUnpin for mc_playback::Volume
+impl core::panic::unwind_safe::RefUnwindSafe for mc_playback::Volume
+impl core::panic::unwind_safe::UnwindSafe for mc_playback::Volume
+pub fn mc_playback::assign_channels(&mc_score::score::Score) -> alloc::vec::Vec<mc_playback::ChannelAssignment>
 pub fn mc_playback::compile(&mc_score::score::Score, &mc_playback::CompileOptions) -> core::result::Result<mc_playback::CompileOutput, mc_playback::CompileError>

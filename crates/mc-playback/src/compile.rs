@@ -82,6 +82,22 @@ pub struct CompileOutput {
     pub warnings: Vec<PlaybackWarning>,
 }
 
+/// The channel of every track, in score order (ADR-024 item 5): 0..=8 then 10..=15,
+/// never 9, reused cyclically beyond 15 tracks. Pure, and the same assignment that
+/// [`compile`] puts in its timeline, so a caller can find a track's channel without
+/// compiling (ADR-032).
+pub fn assign_channels(score: &Score) -> Vec<ChannelAssignment> {
+    score
+        .tracks()
+        .enumerate()
+        .map(|(i, t)| ChannelAssignment {
+            track: t.id(),
+            channel: Channel::try_new(CHANNEL_ORDER[i % CHANNEL_ORDER.len()])
+                .expect("CHANNEL_ORDER values are valid"),
+        })
+        .collect()
+}
+
 /// Compile `score` into a [`PerformanceTimeline`]. Pure and deterministic.
 pub fn compile(score: &Score, options: &CompileOptions) -> Result<CompileOutput, CompileError> {
     let mut warnings = Vec::new();
@@ -111,20 +127,12 @@ pub fn compile(score: &Score, options: &CompileOptions) -> Result<CompileOutput,
     };
 
     // 3. Channel assignment (item 5), deterministic in score order.
-    let track_ids: Vec<TrackId> = score.tracks().map(|t| t.id()).collect();
-    let mut channels = Vec::new();
-    let mut shared = Vec::new();
-    for (i, &tid) in track_ids.iter().enumerate() {
-        let ch = Channel::try_new(CHANNEL_ORDER[i % CHANNEL_ORDER.len()])
-            .expect("CHANNEL_ORDER values are valid");
-        channels.push(ChannelAssignment {
-            track: tid,
-            channel: ch,
-        });
-        if i >= CHANNEL_ORDER.len() {
-            shared.push(tid);
-        }
-    }
+    let channels = assign_channels(score);
+    let shared: Vec<TrackId> = channels
+        .iter()
+        .skip(CHANNEL_ORDER.len())
+        .map(|c| c.track)
+        .collect();
     if !shared.is_empty() {
         warnings.push(PlaybackWarning::ChannelShared { tracks: shared });
     }

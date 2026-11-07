@@ -129,6 +129,80 @@ impl GmProgram {
     }
 }
 
+/// Track volume, 0..=127 (MIDI CC 7). 100 is the default and the level playback has
+/// always had, so the default mix changes nothing (ADR-032 section 1).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Volume(u8);
+
+impl Volume {
+    pub const DEFAULT: Volume = Volume(100);
+    pub const MAX: u8 = 127;
+
+    pub fn try_new(v: u8) -> Result<Self, OutOfRange> {
+        if v <= Self::MAX {
+            Ok(Volume(v))
+        } else {
+            Err(OutOfRange {
+                kind: "Volume",
+                value: v as i64,
+            })
+        }
+    }
+
+    pub const fn get(self) -> u8 {
+        self.0
+    }
+}
+
+impl Default for Volume {
+    fn default() -> Self {
+        Volume::DEFAULT
+    }
+}
+
+/// Track pan, -63..=63 (0 is the centre). The MIDI controller value (CC 10) is
+/// `64 + pan`, so the range is symmetrical around the centre value 64 (ADR-032).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Pan(i8);
+
+impl Pan {
+    pub const CENTRE: Pan = Pan(0);
+    pub const LIMIT: i8 = 63;
+
+    pub fn try_new(v: i16) -> Result<Self, OutOfRange> {
+        if (-(Self::LIMIT as i16)..=Self::LIMIT as i16).contains(&v) {
+            Ok(Pan(v as i8))
+        } else {
+            Err(OutOfRange {
+                kind: "Pan",
+                value: v as i64,
+            })
+        }
+    }
+
+    pub const fn get(self) -> i8 {
+        self.0
+    }
+
+    /// The MIDI CC 10 value: 1..=127, 64 at the centre.
+    pub const fn cc(self) -> u8 {
+        (64 + self.0 as i16) as u8
+    }
+}
+
+impl Default for Pan {
+    fn default() -> Self {
+        Pan::CENTRE
+    }
+}
+
+/// The mix of one track: how loud it is and where it sits in the stereo field.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
+pub struct TrackMix {
+    pub volume: Volume,
+    pub pan: Pan,
+}
+
 /// User tempo factor in hundredths, 25..=200 in steps of 5 (Q6, 0.25x..=2.0x). It is a
 /// render-time scalar applied to tick-to-sample conversion, not part of the timeline,
 /// so changing it never recompiles (audio-dsp-architecture section 3 item 5).
