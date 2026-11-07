@@ -31,6 +31,10 @@ class _ManualService implements PlaybackService {
   @override
   Future<void> setMuted(int track, bool muted) async {}
   @override
+  Future<void> setSoloed(int track, bool soloed) async {}
+  @override
+  Future<void> setTrackMix(int track, {required int volume, required int pan}) async {}
+  @override
   Future<void> setTempoFactor(int hundredths) async {}
   @override
   Future<void> refreshAfterEdit() async {}

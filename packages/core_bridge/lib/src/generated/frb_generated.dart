@@ -1186,8 +1186,8 @@ sse_encode_u_16(hundredths, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(track, serializer);
-sse_encode_u_8(volume, serializer);
-sse_encode_i_16(pan, serializer);
+sse_encode_i_32(volume, serializer);
+sse_encode_i_32(pan, serializer);
             pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37, port: port_);
             
             },

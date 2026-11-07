@@ -42,6 +42,21 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   both playback and MIDI export. The playback cursor follows the
   engine position but does not correct for the ~33 ms output latency, so it leads the
   sound by under a frame.
+- **Mixer (Phase 6b-3, ADR-032).** The Mixer panel (Tools menu, open by default) has
+  Mute, Solo, a volume slider and a pan slider for each track. Before Phase 6b-3 the MVP
+  had per-track mute in the playback core and controller only: **no button for it was
+  placed on screen**, so the MVP release notes and the Phase 4 exit report overstated it
+  (corrected there). Limits of the mixer:
+  - Mute, solo, volume and pan are **session settings: they are not saved** with the
+    project and are lost on reopen. Saving them is a possible later slice with its own
+    format decision.
+  - A muted track stays silent even when soloed.
+  - **MIDI export does not carry the mix** (no volume or pan events), so an exported file
+    does not sound like the app.
+  - Tracks 16 and above share a MIDI channel with tracks 1 and above (channel 10 is
+    skipped), so they share one volume and pan. The last one set wins.
+  - The volume range tops out at 127 and the default is 100, so a track can be raised
+    by 27 points at most.
 - One bundled SoundFont (trimmed FluidR3, program 25). User-supplied SoundFonts are a
   future capability. If the SoundFont is missing, playback is disabled with a message (no
   sine fallback).

@@ -1,7 +1,8 @@
 // M3 acceptance flow against the real Rust core, in the built Windows app:
 //   flutter test integration_test -d windows        (from app/)
 // Covers: a 2-track song, switching the active TAB track, keyboard note entry,
-// undo/redo, save, reopen identically, and recovery after a lost session.
+// undo/redo, save, reopen identically, recovery after a lost session, and the Mixer
+// panel (ADR-032 X14).
 // Native dialogs and the per-user recovery folder are replaced by fakes that point
 // into a temporary directory; everything else is the production wiring.
 import 'dart:io';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:guitar_inspire/src/playback_wiring.dart';
 import 'package:guitar_inspire/src/shell.dart';
 import 'package:guitar_inspire/src/startup.dart';
 import 'package:integration_test/integration_test.dart';
@@ -31,8 +33,10 @@ final class _Dialogs implements FileDialogs {
   @override
   Future<List<int>?> pickMidiToImport() async => midiBytes;
   @override
-  Future<String?> saveMidi(List<int> bytes, {required String suggestedName}) async =>
-      midiSavePath;
+  Future<String?> saveMidi(
+    List<int> bytes, {
+    required String suggestedName,
+  }) async => midiSavePath;
 }
 
 final class _Paths implements AppPaths {
@@ -132,7 +136,10 @@ void main() {
     // Switch the active TAB track and enter a note there.
     // The track list entry (the stave label shows the name too, ADR-031).
     await tester.tap(
-      find.descendant(of: find.byType(TrackList), matching: find.text('Track 2')),
+      find.descendant(
+        of: find.byType(TrackList),
+        matching: find.text('Track 2'),
+      ),
     );
     await _until(tester, () => s().activeTrack == second);
     await tester.sendKeyEvent(LogicalKeyboardKey.digit5);
@@ -189,6 +196,82 @@ void main() {
     await _ctrl(tester, LogicalKeyboardKey.keyS);
     await _until(tester, () => !c2.read(editorProvider).summary.dirty);
     expect(CoreBridge.documents.recoveryEntries(recovery), isEmpty);
+  });
+
+  // ADR-032 X14: mute, solo, volume and pan from the Mixer panel, with the real core
+  // and the real audio engine. Kept in this file: on Windows a second integration test
+  // file has to relaunch the app, which fails to start in the same `flutter test` run.
+  // The engine needs an output device; without one (a CI runner) the test is skipped,
+  // and the local run is the evidence.
+  testWidgets('X14: mute, solo, volume and pan from the Mixer panel', (
+    tester,
+  ) async {
+    final PlaybackFactory playback;
+    try {
+      playback = await CoreBridge.startPlayback();
+    } on ApiError catch (e) {
+      markTestSkipped('no audio output device: ${e.message}');
+      return;
+    }
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          documentFactoryProvider.overrideWithValue(CoreBridge.documents),
+          fileDialogsProvider.overrideWithValue(_Dialogs()),
+          appPathsProvider.overrideWithValue(
+            _Paths('${tmp.path}/recovery-x14'),
+          ),
+          ...playbackOverrides(playback, CoreBridge.midi),
+        ],
+        child: const StartupGate(autosavePoll: Duration(hours: 1)),
+      ),
+    );
+    await _until(tester, () => find.byType(Shell).evaluate().isNotEmpty);
+    final c = ProviderScope.containerOf(tester.element(find.byType(Shell)));
+    expect(find.byType(MixerPanel), findsOneWidget, reason: 'open by default');
+
+    final id = c.read(editorProvider).summary.tracks.first.id;
+    TransportState s() => c.read(transportProvider);
+
+    await tester.tap(find.byKey(ValueKey('mixer-mute-$id')));
+    await _until(tester, () => s().isMuted(id));
+    expect(s().message, isNull, reason: 'the core accepted the mute');
+
+    await tester.tap(find.byKey(ValueKey('mixer-solo-$id')));
+    await _until(tester, () => s().isSoloed(id));
+    expect(s().message, isNull, reason: 'the core accepted the solo');
+
+    await tester.tap(find.byKey(ValueKey('mixer-mute-$id')));
+    await _until(tester, () => !s().isMuted(id));
+
+    final volume = tester.widget<Slider>(
+      find.byKey(ValueKey('mixer-volume-$id')),
+    );
+    // A burst, as a slider drag would send.
+    for (final v in [90, 80, 70, 60, 50]) {
+      volume.onChanged!(v.toDouble());
+      await tester.pump(const Duration(milliseconds: 5));
+    }
+    final pan = tester.widget<Slider>(find.byKey(ValueKey('mixer-pan-$id')));
+    pan.onChanged!(-30);
+    await _until(
+      tester,
+      () => s().mixOf(id) == const TrackMixView(volume: 50, pan: -30),
+    );
+    expect(s().message, isNull, reason: 'the core accepted the mix');
+
+    // The real core rejects values outside the ranges, with a typed error.
+    final service = c.read(playbackServiceProvider);
+    for (final (v, p) in [(128, 0), (256, 0), (-1, 0), (100, 64), (100, -64)]) {
+      await expectLater(
+        service.setTrackMix(id, volume: v, pan: p),
+        throwsA(isA<ApiError>()),
+        reason: 'volume $v pan $p',
+      );
+    }
+    // Reset returns to the defaults.
+    await tester.tap(find.byKey(ValueKey('mixer-reset-$id')));
+    await _until(tester, () => s().mixes.isEmpty);
   });
 }
 

@@ -450,11 +450,14 @@ mod mixer {
             port.mix_calls.len(),
         );
         for (v, p) in [
-            (128u8, 0i16),
+            (128, 0),
             (255, 0),
+            (256, 0),
+            (-1, 0),
             (100, 64),
             (100, -64),
-            (100, i16::MAX),
+            (100, i32::MAX),
+            (i32::MIN, 0),
         ] {
             assert!(
                 matches!(
@@ -497,9 +500,9 @@ mod mixer {
 
     proptest! {
         #[test]
-        fn x7_track_mix_accepts_exactly_the_ranges(v in any::<u8>(), p in any::<i16>()) {
+        fn x7_track_mix_accepts_exactly_the_ranges(v in any::<i32>(), p in any::<i32>()) {
             let ok = TransportCommand::track_mix(TrackId::from_raw(1), v, p).is_ok();
-            prop_assert_eq!(ok, v <= 127 && (-63..=63).contains(&p));
+            prop_assert_eq!(ok, (0..=127).contains(&v) && (-63..=63).contains(&p));
         }
 
         #[test]

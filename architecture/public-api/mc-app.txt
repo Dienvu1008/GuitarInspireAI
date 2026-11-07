@@ -322,7 +322,7 @@ pub mc_app::transport::TransportCommand::SetTrackMix::track: mc_score::ids::Trac
 pub mc_app::transport::TransportCommand::SetTrackMix::volume: mc_playback::types::Volume
 pub mc_app::transport::TransportCommand::Stop
 impl mc_app::transport::TransportCommand
-pub fn mc_app::transport::TransportCommand::track_mix(mc_score::ids::TrackId, u8, i16) -> core::result::Result<Self, mc_app::transport::TransportError>
+pub fn mc_app::transport::TransportCommand::track_mix(mc_score::ids::TrackId, i32, i32) -> core::result::Result<Self, mc_app::transport::TransportError>
 impl core::clone::Clone for mc_app::transport::TransportCommand
 pub fn mc_app::transport::TransportCommand::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportCommand
@@ -792,7 +792,7 @@ pub mc_app::TransportCommand::SetTrackMix::track: mc_score::ids::TrackId
 pub mc_app::TransportCommand::SetTrackMix::volume: mc_playback::types::Volume
 pub mc_app::TransportCommand::Stop
 impl mc_app::transport::TransportCommand
-pub fn mc_app::transport::TransportCommand::track_mix(mc_score::ids::TrackId, u8, i16) -> core::result::Result<Self, mc_app::transport::TransportError>
+pub fn mc_app::transport::TransportCommand::track_mix(mc_score::ids::TrackId, i32, i32) -> core::result::Result<Self, mc_app::transport::TransportError>
 impl core::clone::Clone for mc_app::transport::TransportCommand
 pub fn mc_app::transport::TransportCommand::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportCommand

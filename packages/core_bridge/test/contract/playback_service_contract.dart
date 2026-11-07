@@ -56,6 +56,36 @@ void playbackServiceContract(
       expect(p.position().tick, 0);
     });
 
+    test('solo is session state and does not move the position', () async {
+      await p.setSoloed(1, true);
+      await p.setSoloed(2, true);
+      await p.setSoloed(1, false);
+      expect(p.position().tick, 0);
+      expect(p.position().playing, isFalse);
+    });
+
+    test('a mix inside its ranges is accepted, at both ends', () async {
+      await p.setTrackMix(1, volume: MixRanges.volumeDefault, pan: 0);
+      await p.setTrackMix(1, volume: MixRanges.volumeMin, pan: MixRanges.panMin);
+      await p.setTrackMix(1, volume: MixRanges.volumeMax, pan: MixRanges.panMax);
+      expect(p.position().tick, 0);
+    });
+
+    test('a mix outside its ranges is rejected with a typed error', () async {
+      for (final (volume, pan) in [
+        (MixRanges.volumeMax + 1, 0),
+        (-1, 0),
+        (MixRanges.volumeDefault, MixRanges.panMax + 1),
+        (MixRanges.volumeDefault, MixRanges.panMin - 1),
+      ]) {
+        await expectLater(
+          p.setTrackMix(1, volume: volume, pan: pan),
+          throwsA(isA<ApiError>()),
+          reason: 'volume $volume pan $pan',
+        );
+      }
+    });
+
     test('seek moves the position in ticks without playing', () async {
       await p.seek(480);
       expect(p.position().tick, 480);

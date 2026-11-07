@@ -1869,8 +1869,8 @@ fn wire__crate__api__engine__EngineHandle_set_track_mix_impl(
                 flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
             >>::sse_decode(&mut deserializer);
             let api_track = <i64>::sse_decode(&mut deserializer);
-            let api_volume = <u8>::sse_decode(&mut deserializer);
-            let api_pan = <i16>::sse_decode(&mut deserializer);
+            let api_volume = <i32>::sse_decode(&mut deserializer);
+            let api_pan = <i32>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, crate::api::types::ApiError>((move || {

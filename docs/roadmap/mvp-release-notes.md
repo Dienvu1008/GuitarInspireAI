@@ -56,3 +56,7 @@ Bundled SoundFont: trimmed FluidR3 GM (MIT), provenance and license in
 `assets/soundfonts/`. Third-party dependency licenses are governed by ADR-015 and checked
 by cargo-deny. The project license itself (Q-10) is still open and is decided before any
 public distribution.
+
+## Correction (Phase 6b-3)
+
+The "Play it back" item above lists per-track mute. In the M5 build the mute control existed in the playback core but **had no button on screen**. It is on screen from Phase 6b-3, in the new Mixer panel, together with solo, volume and pan. See [mvp-known-limitations.md](mvp-known-limitations.md).

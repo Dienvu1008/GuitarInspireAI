@@ -37,3 +37,28 @@ WASAPI shared render, so a late callback is one arriving more than 1.5x the devi
 Zero underruns in 10 minutes: the A4 criterion holds on this machine. A second machine is
 deferred and R-21 stays open (ADR-025); this result does not generalize beyond the
 machine above.
+
+## ADR-032 X12 attempt (2026-11-07): not met, inconclusive
+
+Same procedure, same machine, after the mixer change (per-channel volume and pan polled once per callback). **X12 is not met by this attempt.** The criterion is unchanged: 0 late callbacks in 10 minutes, and the callback maximum may not grow by more than 5 µs p99.
+
+| Run | Code | Late callbacks | Max interval | Max callback | Device errors / rebuilds |
+|---|---|---|---|---|---|
+| 10 min | with mixer (`bc8cda4` + 6b-3c working tree) | **8** | 18.5 ms | 18.42 ms | 0 / 0 |
+
+Because the code from before the change might also fail on the machine in its present state, an interleaved A/B followed: 2-minute runs, alternating the pre-mixer build (`12f869e`, worktree) and the current build, three rounds each:
+
+| Round | Base (`12f869e`) late | Current late |
+|---|---|---|
+| 1 | 0 (max callback 10.18 ms at 90 s) | 3 |
+| 2 | 1 | 0 (max callback 13.29 ms at 90 s) |
+| 3 | 0 (max callback 11.27 ms at 90 s) | 5, with 2 device errors and 1 device rebuild |
+| Total in 6 min | **1** | **8** |
+
+What this shows and what it does not:
+- The base build also produced a late callback, so the machine was not in the state of the 2026-10-31 run (0 late, max callback 9.69 ms). The Kiro IDE was using a large share of CPU during the runs (total CPU 17 to 43 % in a spot check), and round 3 of the current build saw device errors.
+- The current build had more late callbacks than the base. With these few runs, that cannot be put down to load alone. **A regression is not ruled out.**
+- The procedure runs a debug build. In debug, the callback maximum was already 9.69 ms against a 10 ms period on 2026-10-31, so there is very little headroom.
+- An offline release-mode measurement of the mix polling itself (`mix_overhead_measurement`, 20 000 blocks of 480 frames, product synthesizer, the two engines timed alternately) found no measurable cost. p99 was 233.8 µs with the polling and 234.7 µs without. With a volume change on every block, the figures were 306.2 µs and 307.4 µs. The differences (−0.9 µs and −1.2 µs) are within noise. This measures the code path, not the device run, so it does not replace X12.
+
+Next step: repeat the 10-minute run and the interleaved A/B with the machine quiet (after a restart, no second IDE), and record the result here. Until then, X12 is an open evidence gap for 6b-3.

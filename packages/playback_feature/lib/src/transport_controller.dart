@@ -21,6 +21,28 @@ final playbackServiceProvider = Provider<PlaybackService>(
   (ref) => throw UnimplementedError('override playbackServiceProvider'),
 );
 
+/// The volume and pan the core holds for one track (ADR-032). Integers only: the core
+/// owns the ranges, the defaults and the conversion to MIDI values.
+final class TrackMixView {
+  const TrackMixView({
+    this.volume = MixRanges.volumeDefault,
+    this.pan = MixRanges.panDefault,
+  });
+
+  final int volume;
+  final int pan;
+
+  bool get isDefault =>
+      volume == MixRanges.volumeDefault && pan == MixRanges.panDefault;
+
+  @override
+  bool operator ==(Object other) =>
+      other is TrackMixView && other.volume == volume && other.pan == pan;
+
+  @override
+  int get hashCode => Object.hash(volume, pan);
+}
+
 /// What the transport bar and cursor show. Playback is session state (ADR-028): none of
 /// this edits the document or is saved. [tick] and [playing] come from the engine's
 /// position stream; [mutedTracks] and [tempoFactor] are the user's current settings.
@@ -37,6 +59,8 @@ final class TransportState {
     required this.tick,
     required this.tempoFactor,
     required this.mutedTracks,
+    this.soloedTracks = const {},
+    this.mixes = const {},
     required this.sampleTick,
     required this.sampleAtMicros,
     required this.prevSampleTick,
@@ -50,6 +74,8 @@ final class TransportState {
       tick = 0,
       tempoFactor = TempoFactorSteps.normal,
       mutedTracks = const {},
+      soloedTracks = const {},
+      mixes = const {},
       sampleTick = 0,
       sampleAtMicros = 0,
       prevSampleTick = 0,
@@ -68,6 +94,12 @@ final class TransportState {
   /// Tracks the user has muted (by track id).
   final Set<int> mutedTracks;
 
+  /// Tracks the user has soloed (by track id), ADR-032.
+  final Set<int> soloedTracks;
+
+  /// Volume and pan per track, only for tracks that differ from the default.
+  final Map<int, TrackMixView> mixes;
+
   /// Latest position sample and the monotonic microsecond timestamp it arrived at.
   final int sampleTick;
   final int sampleAtMicros;
@@ -80,6 +112,10 @@ final class TransportState {
   final String? message;
 
   bool isMuted(int track) => mutedTracks.contains(track);
+
+  bool isSoloed(int track) => soloedTracks.contains(track);
+
+  TrackMixView mixOf(int track) => mixes[track] ?? const TrackMixView();
 
   String get tempoLabel => TempoFactorSteps.label(tempoFactor);
 
@@ -108,6 +144,8 @@ final class TransportState {
     int? tick,
     int? tempoFactor,
     Set<int>? mutedTracks,
+    Set<int>? soloedTracks,
+    Map<int, TrackMixView>? mixes,
     int? sampleTick,
     int? sampleAtMicros,
     int? prevSampleTick,
@@ -120,6 +158,8 @@ final class TransportState {
     tick: tick ?? this.tick,
     tempoFactor: tempoFactor ?? this.tempoFactor,
     mutedTracks: mutedTracks ?? this.mutedTracks,
+    soloedTracks: soloedTracks ?? this.soloedTracks,
+    mixes: mixes ?? this.mixes,
     sampleTick: sampleTick ?? this.sampleTick,
     sampleAtMicros: sampleAtMicros ?? this.sampleAtMicros,
     prevSampleTick: prevSampleTick ?? this.prevSampleTick,
@@ -128,16 +168,23 @@ final class TransportState {
   );
 }
 
-final transportProvider =
-    NotifierProvider<TransportController, TransportState>(
-      TransportController.new,
-    );
+final transportProvider = NotifierProvider<TransportController, TransportState>(
+  TransportController.new,
+);
 
 /// Drives the playback engine for the active document. No musical rules here: it only
 /// forwards transport commands and mirrors engine position and state (GR-05, ADR-028).
 final class TransportController extends Notifier<TransportState> {
   PlaybackService? _service;
   StreamSubscription<PositionDto>? _positions;
+
+  // Volume and pan: the newest value wanted per track, the tracks with a send in flight,
+  // and the last value the core accepted. A slider drag changes many times a second; the
+  // calls cross to Rust asynchronously, so one send per track runs at a time and the
+  // newest value wins (ADR-032: last value wins, in order).
+  final Map<int, TrackMixView> _wantedMix = {};
+  final Set<int> _sendingMix = {};
+  final Map<int, TrackMixView> _acceptedMix = {};
 
   /// Monotonic clock for stamping position samples, in microseconds. A real stopwatch by
   /// default; tests override it to feed controlled timestamps. It measures elapsed real
@@ -151,6 +198,9 @@ final class TransportController extends Notifier<TransportState> {
   TransportState build() {
     final service = ref.watch(playbackServiceProvider);
     _service = service;
+    _wantedMix.clear();
+    _sendingMix.clear();
+    _acceptedMix.clear();
     _positions = service.positions.listen(_onPosition);
     ref.onDispose(() {
       unawaited(_positions?.cancel());
@@ -217,8 +267,80 @@ final class TransportController extends Notifier<TransportState> {
     return ok;
   }
 
-  Future<bool> toggleMute(int track) =>
-      setMuted(track, !state.isMuted(track));
+  Future<bool> toggleMute(int track) => setMuted(track, !state.isMuted(track));
+
+  Future<bool> setSoloed(int track, bool soloed) async {
+    final next = Set<int>.of(state.soloedTracks);
+    if (soloed) {
+      next.add(track);
+    } else {
+      next.remove(track);
+    }
+    final ok = await _guard(() => _s.setSoloed(track, soloed));
+    if (ok) state = state.copyWith(soloedTracks: next);
+    return ok;
+  }
+
+  Future<bool> toggleSolo(int track) =>
+      setSoloed(track, !state.isSoloed(track));
+
+  TransportState _withMix(int track, TrackMixView mix) {
+    final next = Map<int, TrackMixView>.of(state.mixes);
+    if (mix.isDefault) {
+      next.remove(track);
+    } else {
+      next[track] = mix;
+    }
+    return state.copyWith(mixes: next);
+  }
+
+  /// Set a track's volume and pan (ADR-032). The slider shows the new value at once; if
+  /// the core rejects it, the last accepted value comes back and the message is shown.
+  /// Returns `false` when the core rejected a value.
+  Future<bool> setTrackMix(
+    int track, {
+    required int volume,
+    required int pan,
+  }) async {
+    final want = TrackMixView(volume: volume, pan: pan);
+    _wantedMix[track] = want;
+    state = _withMix(track, want);
+    if (!_sendingMix.add(track)) {
+      return true; // the running send picks up the newest
+    }
+    var ok = true;
+    try {
+      while (true) {
+        final current = _wantedMix.remove(track);
+        if (current == null) break;
+        final sent = await _guard(
+          () => _s.setTrackMix(track, volume: current.volume, pan: current.pan),
+        );
+        if (sent) {
+          _acceptedMix[track] = current;
+        } else {
+          ok = false;
+          _wantedMix.remove(track);
+          final message = state.message;
+          state = _withMix(
+            track,
+            _acceptedMix[track] ?? const TrackMixView(),
+          ).copyWith(message: message);
+          break;
+        }
+      }
+    } finally {
+      _sendingMix.remove(track);
+    }
+    return ok;
+  }
+
+  /// Back to the default volume and pan of [track].
+  Future<bool> resetMix(int track) => setTrackMix(
+    track,
+    volume: MixRanges.volumeDefault,
+    pan: MixRanges.panDefault,
+  );
 
   /// Set the tempo factor in hundredths; snapped to the Q6 grid.
   Future<bool> setTempoFactor(int hundredths) async {

@@ -426,4 +426,63 @@ mod mix {
         e.render(480);
         assert!(peak(&e.render(RATE as usize / 2)) > 0.01);
     }
+
+    /// X12 (ADR-032): how much the mix polling adds to a callback. Not run by default;
+    /// run in release mode on the reference machine and record the numbers:
+    ///   cargo test --release -p mc-audio --lib -- --ignored mix_overhead --nocapture
+    /// Two engines render the same timeline, one with the mix polling and one without,
+    /// timed alternately block by block so drift hits both the same way. The "changing"
+    /// run also moves one channel's volume every block, so a controller message is sent
+    /// every callback (an upper bound for a slider drag).
+    #[test]
+    #[ignore = "measurement; run in release mode on the reference machine"]
+    fn mix_overhead_measurement() {
+        use std::time::Instant;
+        const BLOCKS: usize = 20_000;
+        let p = |v: &mut Vec<u64>, q: f64| {
+            v.sort_unstable();
+            v[((v.len() as f64 * q) as usize).min(v.len() - 1)]
+        };
+        for changing in [false, true] {
+            let mut with = engine_with(16);
+            let mut without = engine_with(16);
+            without.rt_mut().mix_disabled = true;
+            with.play();
+            without.play();
+            let mut buf = vec![0.0f32; 480 * 2];
+            // Warm both up past the first callbacks.
+            for _ in 0..200 {
+                with.process(&mut buf, 2);
+                without.process(&mut buf, 2);
+            }
+            let (mut a, mut b) = (Vec::with_capacity(BLOCKS), Vec::with_capacity(BLOCKS));
+            for i in 0..BLOCKS {
+                if changing {
+                    with.set_channel_mix(ch(0), vol((i % 100) as u8 + 1), Pan::CENTRE);
+                }
+                let time = |e: &mut OfflineEngine, buf: &mut Vec<f32>| {
+                    let t0 = Instant::now();
+                    e.process(buf, 2);
+                    t0.elapsed().as_nanos() as u64
+                };
+                if i % 2 == 0 {
+                    a.push(time(&mut with, &mut buf));
+                    b.push(time(&mut without, &mut buf));
+                } else {
+                    b.push(time(&mut without, &mut buf));
+                    a.push(time(&mut with, &mut buf));
+                }
+                with.drain_retired();
+            }
+            let (a50, b50) = (p(&mut a.clone(), 0.5), p(&mut b.clone(), 0.5));
+            let (a99, b99) = (p(&mut a, 0.99), p(&mut b, 0.99));
+            println!(
+                "changing={changing}: with mix p50 {a50} ns p99 {a99} ns max {} ns; \
+                 without p50 {b50} ns p99 {b99} ns max {} ns; p99 difference {} ns",
+                a.last().unwrap(),
+                b.last().unwrap(),
+                a99 as i64 - b99 as i64
+            );
+        }
+    }
 }

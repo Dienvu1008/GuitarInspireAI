@@ -201,8 +201,8 @@ impl EngineHandle {
         &self,
         document: &DocumentHandle,
         track: i64,
-        volume: u8,
-        pan: i16,
+        volume: i32,
+        pan: i32,
     ) -> Result<OutcomeDto, ApiError> {
         let cmd = TransportCommand::track_mix(
             mc_app::types::TrackId::from_raw(track as u64),

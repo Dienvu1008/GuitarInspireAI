@@ -169,10 +169,18 @@ pub enum TransportCommand {
 impl TransportCommand {
     /// A [`TransportCommand::SetTrackMix`] from raw numbers (volume 0..=127, pan
     /// -63..=63). Out-of-range values are rejected, never clamped (ADR-032 X7).
-    pub fn track_mix(track: TrackId, volume: u8, pan: i16) -> Result<Self, TransportError> {
-        let volume =
-            Volume::try_new(volume).map_err(|e| TransportError::InvalidMix(e.to_string()))?;
-        let pan = Pan::try_new(pan).map_err(|e| TransportError::InvalidMix(e.to_string()))?;
+    pub fn track_mix(track: TrackId, volume: i32, pan: i32) -> Result<Self, TransportError> {
+        // Any integer the UI sends is accepted as input; only the ranges decide.
+        let bad =
+            |name: &str, v: i32| TransportError::InvalidMix(format!("{name} out of range: {v}"));
+        let volume = u8::try_from(volume)
+            .ok()
+            .and_then(|v| Volume::try_new(v).ok())
+            .ok_or_else(|| bad("Volume", volume))?;
+        let pan = i16::try_from(pan)
+            .ok()
+            .and_then(|v| Pan::try_new(v).ok())
+            .ok_or_else(|| bad("Pan", pan))?;
         Ok(TransportCommand::SetTrackMix { track, volume, pan })
     }
 }

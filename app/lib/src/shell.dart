@@ -99,6 +99,15 @@ class _ShellState extends ConsumerState<Shell> {
                     const VerticalDivider(width: 1),
                     const Expanded(child: TabView()),
                     const VerticalDivider(width: 1),
+                    if (ref.watch(playbackAvailableProvider) &&
+                        ref.watch(mixerVisibleProvider)) ...[
+                      const SizedBox(
+                        key: ValueKey('mixer-panel'),
+                        width: 280,
+                        child: MixerPanel(),
+                      ),
+                      const VerticalDivider(width: 1),
+                    ],
                     if (ref.watch(tunerVisibleProvider)) ...[
                       const SizedBox(width: 240, child: TunerView()),
                       const VerticalDivider(width: 1),
@@ -208,6 +217,16 @@ class _MenuBar extends ConsumerWidget {
             ),
             SubmenuButton(
               menuChildren: [
+                MenuItemButton(
+                  key: const ValueKey('tools-mixer'),
+                  trailingIcon: ref.watch(mixerVisibleProvider)
+                      ? const Icon(Icons.check)
+                      : null,
+                  onPressed: ref.watch(playbackAvailableProvider)
+                      ? () => ref.read(mixerVisibleProvider.notifier).toggle()
+                      : null,
+                  child: const Text('Mixer'),
+                ),
                 MenuItemButton(
                   key: const ValueKey('tools-tuner'),
                   trailingIcon: ref.watch(tunerVisibleProvider)
