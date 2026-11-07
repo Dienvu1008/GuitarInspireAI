@@ -143,9 +143,10 @@ Future<void> main(List<String> args) async {
   }
 
   container.read(editorProvider.notifier).replace(doc);
-  // Hide the tracks beyond the first N, as a user would from the track list.
-  for (final t in doc.summary().tracks.skip(showCount)) {
-    container.read(editorProvider.notifier).toggleTrackShown(t.id);
+  // Show exactly the first N tracks, as a user would from the track list. The app
+  // caps what it shows on open (maxShownTracksOnOpen), so set every track explicitly.
+  for (final (i, t) in doc.summary().tracks.indexed) {
+    container.read(editorProvider.notifier).setTrackShown(t.id, i < showCount);
   }
   await WidgetsBinding.instance.endOfFrame;
   final editor = container.read(editorProvider.notifier);

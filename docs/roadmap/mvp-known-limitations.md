@@ -48,8 +48,22 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
 
 ## Editor and notation
 
-- One active TAB track is displayed and edited at a time (Q-17). Simultaneous multi-track
-  notation is deferred to Phase 6b. No standard notation, no PDF.
+- Several TAB tracks can be shown at once (Phase 6b-2, ADR-031): one stave per shown
+  track in each line of music, with bar lines and simultaneous notes lined up. Editing,
+  the cursor, the selection and the inspector act on the **active track** only; clicking
+  another stave makes it active. Which tracks are shown is not saved: it resets when a
+  document is opened.
+- A document opens with at most **16 tracks shown**; the others start hidden and are
+  shown from the track list (eye button). Showing all of them works, only slower.
+- **Large scores with many tracks may feel slow when editing; this is not yet
+  confirmed either way.**
+  - On one day the reference machine kept a note edit on the large test score (20 tracks
+    of 300 bars) within its 33 ms budget with up to 16 shown tracks, but not with 20.
+  - On the next day the same, unchanged code measured 42 to 50 ms with 16 tracks on the
+    same machine, for a reason not yet found (ADR-031).
+  - Typical scores (4 tracks) were within budget on both days. One machine only (ADR-025).
+- The active track cannot be hidden. Tracks added later are shown.
+- No standard notation, no PDF.
 - Effects are limited to tie, let ring and dead note. No lyrics. Repeat editing is limited
   to simple start and end markers.
 - A pickup bar round-trips through MIDI as a full-length bar with a trailing rest.

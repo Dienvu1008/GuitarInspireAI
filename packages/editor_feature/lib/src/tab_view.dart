@@ -172,43 +172,50 @@ class _TabViewState extends ConsumerState<TabView> {
         final width = constraints.maxWidth.clamp(320.0, 4000.0);
         final outline = _outlineFor(s, width);
         final gap = 16.0 * widget.zoom;
-        final labelled = _tracks.length > 1;
+        final staves = _tracks.length;
+        final labelled = staves > 1;
         return ColoredBox(
           color: colors.paper,
+          // One list item per stave, not per system (ADR-031 6b-2d): a system of
+          // many staves is taller than the screen, and only the staves in view are
+          // built and painted.
           child: ListView.builder(
             key: const ValueKey('tab-systems'),
-            itemCount: outline.systems.length,
+            itemCount: outline.systems.length * staves,
             itemBuilder: (context, i) {
-              final sys = _system(s, i);
+              final sys = _system(s, i ~/ staves);
+              final k = i % staves;
+              if (k >= sys.staves.length) return const SizedBox.shrink();
+              final stave = sys.staves[k];
+              final height = stave.system.height;
               return Padding(
-                padding: EdgeInsets.only(bottom: gap),
+                // The gap between systems follows the last stave.
+                padding: EdgeInsets.only(bottom: k == staves - 1 ? gap : 0),
                 child: SizedBox(
-                  key: ValueKey('system-${sys.index}'),
+                  // The top of the system is the top of its first stave.
+                  key: k == 0 ? ValueKey('system-${sys.index}') : null,
                   width: width,
-                  height: sys.height,
+                  height: height,
                   child: Stack(
                     children: [
-                      for (final stave in sys.staves)
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          top: stave.top,
-                          height: stave.system.height,
-                          child: _StaveView(
-                            index: sys.index,
-                            stave: stave,
-                            state: s,
-                            colors: colors,
-                            fontSize: fontSize,
-                            label: labelled ? names[stave.track] : null,
-                          ),
+                      Positioned.fill(
+                        child: _StaveView(
+                          index: sys.index,
+                          stave: stave,
+                          state: s,
+                          colors: colors,
+                          fontSize: fontSize,
+                          label: labelled ? names[stave.track] : null,
                         ),
-                      // One playback cursor across every stave of the system.
-                      if (cursorBuilder != null && sys.staves.isNotEmpty)
+                      ),
+                      // The playback cursor at the same x on every stave of the
+                      // system (bar x-positions are equal in every stave), so
+                      // together they span the system.
+                      if (cursorBuilder != null)
                         Positioned.fill(
                           child: cursorBuilder(
-                            _tickToX(sys.staves.first.system, played),
-                            sys.height,
+                            _tickToX(stave.system, played),
+                            height,
                           ),
                         ),
                     ],

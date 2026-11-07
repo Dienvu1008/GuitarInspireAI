@@ -43,6 +43,18 @@ class TrackList extends ConsumerWidget {
             ],
           ),
         ),
+        // ADR-031: say so when tracks are hidden, since a long score opens with only
+        // the first few shown.
+        if (tracks.length > s.shownTracks.length)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Text(
+              key: const ValueKey('hidden-tracks-note'),
+              '${tracks.length - s.shownTracks.length} of ${tracks.length} '
+              'tracks hidden. Use the eye buttons to show them.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.all(8),
           child: TextButton.icon(

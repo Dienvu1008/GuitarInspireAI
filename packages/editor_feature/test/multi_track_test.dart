@@ -129,16 +129,28 @@ void main() {
     },
   );
 
-  testWidgets('M5: one playback cursor spans every stave of a system', (
+  testWidgets('M5: the playback cursor spans every stave of a system', (
     tester,
   ) async {
-    await _threeTracks(tester);
-    final cursor = find.byKey(const ValueKey('play-cursor'));
-    expect(cursor, findsOneWidget);
-    expect(
-      tester.getSize(cursor).height,
-      tester.getSize(find.byKey(const ValueKey('system-0'))).height,
-    );
+    final (_, ids) = await _threeTracks(tester);
+    // One cursor segment per stave, each covering its stave; together they run
+    // from the top of the first stave to the bottom of the last, without gaps.
+    final segments = find
+        .byKey(const ValueKey('play-cursor'))
+        .evaluate()
+        .toList();
+    expect(segments, hasLength(ids.length));
+    final rects = [
+      for (final e in segments) tester.getRect(find.byWidget(e.widget)),
+    ]..sort((a, b) => a.top.compareTo(b.top));
+    for (final (k, t) in ids.indexed) {
+      final stave = tester.getRect(_stave(0, t));
+      expect(rects[k].top, closeTo(stave.top, 0.5));
+      expect(rects[k].height, closeTo(stave.height, 0.5));
+    }
+    for (var k = 1; k < rects.length; k++) {
+      expect(rects[k].top, closeTo(rects[k - 1].bottom, 0.5), reason: 'no gap');
+    }
   });
 
   testWidgets(
@@ -178,6 +190,51 @@ void main() {
         find.descendant(of: find.byType(TabView), matching: find.text('Bass')),
         findsNothing,
       );
+    },
+  );
+
+  testWidgets(
+    'ADR-031 scope: only the first maxShownTracksOnOpen tracks show on open',
+    (tester) async {
+      tester.view.physicalSize = const Size(1400, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final c = ProviderContainer(
+        overrides: [
+          documentFactoryProvider.overrideWithValue(FakeDocumentFactory()),
+        ],
+      );
+      addTearDown(c.dispose);
+      await tester.pumpWidget(_editor(c));
+      final editor = c.read(editorProvider.notifier);
+      final instrument = c
+          .read(editorProvider)
+          .summary
+          .tracks
+          .single
+          .instrument;
+      // One more than the cap.
+      for (var i = 1; i <= maxShownTracksOnOpen; i++) {
+        await editor.execute(
+          CommandDto.addTrack(name: 'T$i', instrument: instrument),
+        );
+      }
+      await tester.pump();
+      // Adding tracks does not hide them; the cap applies on open.
+      expect(
+        c.read(editorProvider).shownTracks.length,
+        maxShownTracksOnOpen + 1,
+      );
+
+      // Reopen via replace: now the cap hides the overflow.
+      final service = c.read(editorProvider).service;
+      editor.replace(service);
+      await tester.pump();
+      expect(c.read(editorProvider).shownTracks.length, maxShownTracksOnOpen);
+      expect(c.read(editorProvider).hiddenTracks, hasLength(1));
+      // The track list tells the user why one track is not on the page.
+      expect(find.byKey(const ValueKey('hidden-tracks-note')), findsOneWidget);
+      expect(find.textContaining('1 of 17 tracks hidden'), findsOneWidget);
     },
   );
 

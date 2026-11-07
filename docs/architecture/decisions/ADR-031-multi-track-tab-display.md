@@ -229,3 +229,46 @@ The cost does not grow linearly from 16 to 20 tracks; it roughly doubles for 25%
 - a 20-stave system is about 2480 px tall, more than 2048 px, a common GPU texture limit;
 - a 16-stave system is about 1984 px;
 - every stave of a system item is built and painted even when only a few are on screen.
+
+## Step A: build only the staves in view (6b-2d, user decision 2026-11-07)
+
+The user chose a timeboxed attempt (A) before the scope reduction (B).
+
+**Change.** The TAB list now has one item per stave instead of one per system, so the virtualized list builds and paints only the staves in view. A 20-stave system is about 2480 px tall, taller than the window.
+- The playback cursor is drawn on every stave at the same x, so together the segments span the system without gaps. M5 is now tested that way.
+- No API, Rust or threshold change.
+
+**Result: A alone does not pass P3.** 2026-11-07, protocol of the previous section. Runs where the window was minimized are marked TAINTED and discarded; there were 2 such runs.
+- LARGE with 20 tracks: 18.6, 47.9, 38.0, 38.1, 55.7 ms edit-to-frame p99. Median 38.1 ms, 1 of 5 within 33 ms.
+- TYPICAL: 15.1, 16.0, 17.0 ms; compute 10.4 to 12.6 ms. Still passes.
+
+**Step B applied (scope reduction).**
+- A document opens with at most `maxShownTracksOnOpen` = 16 tracks shown. The rest start hidden and can be shown with the eye button. Tracks added later are shown.
+- The track list says how many tracks are hidden.
+- 16 was taken from the 2026-11-06 sweep, where it was the largest count within budget.
+- Tests check the cap on open, and that adding tracks does not hide them.
+
+**Measurement drift, not resolved.** Later on 2026-11-07, the same machine measured much slower for the same code:
+
+| Build | LARGE shown | Edit to frame p99 | p50 | Raster p99 |
+|---|---|---|---|---|
+| A (per-stave items) | 16 | 42.0, 44.5, 45.3, 47.3 ms | 23 to 27 ms | 24 to 30 ms |
+| A | 20 | 38.5, 48.9 ms | 18 to 26 ms | 14 to 33 ms |
+| Unchanged code of `a1a59ef` (per-system items) | 16 | 45.8, 46.1, 50.4 ms | 28 to 29 ms | 23 to 31 ms |
+| Same code, 2026-11-06 | 16 | 17.0, 25.9 ms | 13.4 ms | 9 to 12 ms |
+
+The unchanged code moved from 17 to 26 ms to 46 to 50 ms, so the difference is the machine state, not the code.
+
+Not the cause, as checked:
+- CPU: no throttling ("% Processor Performance" 111 to 120%).
+- GPU: idle between runs.
+- Display: one 1920x1080 display at 74 Hz; at 74 Hz the 13.3 ms p50 is exactly one frame.
+- Power: desktop on the Balanced plan, no battery.
+
+The IDE and its Dart analysis server used 2 to 3 cores during some runs. The cause is **not found**.
+
+**Status of the performance criteria.**
+- **P1 and P4 (TYPICAL) pass on both days.**
+- **P2 and P3 are not established.** P2 passed on 2026-11-06 and did not on 2026-11-07 under the same code, and P3 did not pass on either day.
+- The 16-track cap is kept as the scope reduction the user approved. It is not claimed to meet the budget until P2 is re-measured under controlled conditions.
+- Thresholds are unchanged.

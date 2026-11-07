@@ -10,6 +10,7 @@ export 'src/document_controller.dart'
         DocumentController,
         EditorState,
         ReplaceGuard,
+        maxShownTracksOnOpen,
         replaceGuardProvider,
         appPathsProvider,
         cursorOverlayProvider,
