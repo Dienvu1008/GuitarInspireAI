@@ -37,12 +37,6 @@ final replaceGuardProvider = Provider<ReplaceGuard>(
       () async => true,
 );
 
-/// How many tracks are shown when a document opens (ADR-031 scope reduction). On the
-/// reference machine the large score stays within the 33 ms edit budget with 16
-/// shown tracks and not reliably with 20; tracks beyond this start hidden and can be
-/// shown from the track list. Tracks added later are shown.
-const int maxShownTracksOnOpen = 16;
-
 /// Per-user app data paths (recovery directory). Overridden in tests.
 final appPathsProvider = Provider<AppPaths>((ref) => const SystemAppPaths());
 
@@ -76,9 +70,9 @@ final class EditorState {
   /// undo (ADR-030 section 1).
   final BeatSlot? anchor;
 
-  /// Tracks hidden from the TAB view (ADR-031). UI state only, not saved. When a
-  /// document opens, the tracks after the first [maxShownTracksOnOpen] start hidden;
-  /// the user changes it from the track list. Ids of deleted tracks are ignored.
+  /// Tracks the user hid from the TAB view (ADR-031). UI state only: every track is
+  /// shown when a document opens (ADR-031 5.2), and the set is not saved. Ids of
+  /// deleted tracks are harmless and ignored.
   final Set<int> hiddenTracks;
 
   /// Track ids shown in the TAB view, in score order. The active track is always
@@ -167,11 +161,6 @@ final class DocumentController extends Notifier<EditorState> {
       summary: summary,
       activeTrack: summary.tracks.first.id,
       cursor: EditorCursor.start,
-      // ADR-031 scope reduction: on opening, at most [maxShownTracksOnOpen] tracks
-      // are shown; the rest can be shown from the track list.
-      hiddenTracks: {
-        for (final t in summary.tracks.skip(maxShownTracksOnOpen)) t.id,
-      },
     );
   }
 

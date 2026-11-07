@@ -242,8 +242,8 @@ The user chose a timeboxed attempt (A) before the scope reduction (B).
 - LARGE with 20 tracks: 18.6, 47.9, 38.0, 38.1, 55.7 ms edit-to-frame p99. Median 38.1 ms, 1 of 5 within 33 ms.
 - TYPICAL: 15.1, 16.0, 17.0 ms; compute 10.4 to 12.6 ms. Still passes.
 
-**Step B applied (scope reduction).**
-- A document opens with at most `maxShownTracksOnOpen` = 16 tracks shown. The rest start hidden and can be shown with the eye button. Tracks added later are shown.
+**Step B applied (scope reduction), later reversed (see the last section).**
+- A document opened with at most `maxShownTracksOnOpen` = 16 tracks shown. The rest started hidden and could be shown with the eye button. Tracks added later were shown.
 - The track list says how many tracks are hidden.
 - 16 was taken from the 2026-11-06 sweep, where it was the largest count within budget.
 - Tests check the cap on open, and that adding tracks does not hide them.
@@ -272,3 +272,51 @@ The IDE and its Dart analysis server used 2 to 3 cores during some runs. The cau
 - **P2 and P3 are not established.** P2 passed on 2026-11-06 and did not on 2026-11-07 under the same code, and P3 did not pass on either day.
 - The 16-track cap is kept as the scope reduction the user approved. It is not claimed to meet the budget until P2 is re-measured under controlled conditions.
 - Thresholds are unchanged.
+
+## Controlled re-measurement and reversal of the 16-track cap (6b-2e, 2026-11-07)
+
+The user restarted the PC after noting that it had been unusually slow all day. They suspected a second Kiro window that was running and debugging another Flutter app. The machine was then measured again with the same code (step A plus the cap, commit `21d1877`).
+
+**Observations before measuring.**
+- Two IDE windows were open.
+- A Kotlin compiler daemon (Gradle, from the other project) was using about 1.6 cores.
+- Two `flutter_tools` processes belonged to the other IDE.
+- None of these processes was stopped.
+
+**Protocol.**
+- The tool runs one instance at a time, with a distinct output per run.
+- It samples the CPU used by every other process during the run (`bg_cores`).
+- A run with a minimized window is marked tainted and dropped.
+- Counts were interleaved (4, 16, 20) so that drift would hit all of them equally.
+- For some runs it also sampled the GPU clock with `nvidia-smi`.
+
+**Results.** LARGE, edit-to-frame p99, budget 33 ms, 23 runs:
+
+| Shown tracks | Runs | Values (ms) | Median | Within 33 ms |
+|---|---|---|---|---|
+| 4 | 4 | 15.9, 15.1, 15.6, **39.9** | 15.8 | 3 of 4 |
+| 16 | 10 | 16.5, 18.2, **41.8**, **47.5**, 15.9, 16.4, 15.7, 15.2, **47.6**, 15.4 | 16.5 | 7 of 10 |
+| 20 | 9 | **45.2**, 19.2, 16.7, 17.4, 15.1, 19.4, 16.0, 15.0, 14.8 | 16.7 | 8 of 9 |
+
+TYPICAL, 4 tracks: 10 of 10 runs within 15.1 to 17.6 ms (budget 16 ms for the compute bound; compute 9.2 to 15.2 ms).
+
+**Reading.**
+- The runs fall into two states.
+  - **Fast:** p50 13.2 ms, which is exactly one frame at 74 Hz, p99 about 15 to 19 ms, nothing missed.
+  - **Slow:** p50 23 to 27 ms, which is two frames, p99 40 to 48 ms, raster about three times slower.
+- The slow state appears at every track count, including 4, and appeared with the unchanged code of `a1a59ef` on the previous day. It is **not caused by the number of tracks or by this feature.**
+- With step A, 20 shown tracks perform like 4 or 16. The per-stave list items did what the hypothesis predicted.
+- Background CPU does not separate the states.
+  - Slow runs had 0.40 to 0.46 cores of other processes; fast runs had 0.34 to 0.53.
+  - One fast run had 1.96 cores of other processes.
+  - So the other IDE's **CPU** use does not explain the slow state. Its **GPU** use was not measured, so the hypothesis is not ruled out.
+- In the one slow run with GPU sampling, the GPU SM clock was lower (median 1327 MHz, down to 720 MHz) than in the 7 fast runs (1387 to 1762 MHz, one at 480 MHz). That is one sample, and the lower clock may be an effect and not the cause. The cause is **not found.**
+
+**Decision.** The user's rule was step A first and step B only if A does not work. With controlled data A works: 20 tracks are no worse than 4. The 16-track cap is therefore removed, and every track is shown on open again (5.2). The note "N of M tracks hidden" stays, shown when the user has hidden tracks.
+
+**Status of the performance criteria.**
+- **P1, P4 (TYPICAL):** pass.
+- **P2, P3 (LARGE):** met in the fast state, 18 of 23 runs. They are not met in the slow state, 5 of 23 runs, and the slow state is an unexplained property of the machine, not of the feature.
+- The thresholds are unchanged.
+- This is recorded as an evidence gap for the 6b exit report, not as a pass.
+- Closing it needs a second machine or an explanation for the slow state (ADR-025, R-21).

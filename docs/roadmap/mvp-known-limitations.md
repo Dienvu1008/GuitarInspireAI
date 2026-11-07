@@ -53,16 +53,15 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   the cursor, the selection and the inspector act on the **active track** only; clicking
   another stave makes it active. Which tracks are shown is not saved: it resets when a
   document is opened.
-- A document opens with at most **16 tracks shown**; the others start hidden and are
-  shown from the track list (eye button). Showing all of them works, only slower.
-- **Large scores with many tracks may feel slow when editing; this is not yet
-  confirmed either way.**
-  - On one day the reference machine kept a note edit on the large test score (20 tracks
-    of 300 bars) within its 33 ms budget with up to 16 shown tracks, but not with 20.
-  - On the next day the same, unchanged code measured 42 to 50 ms with 16 tracks on the
-    same machine, for a reason not yet found (ADR-031).
-  - Typical scores (4 tracks) were within budget on both days. One machine only (ADR-025).
-- The active track cannot be hidden. Tracks added later are shown.
+- Every track is shown when a document opens; hide or show a track with the eye button
+  in the track list. The active track cannot be hidden.
+- **Editing can occasionally feel slow, on large scores and also on small ones.** On the
+  reference machine, a note edit on the large test score (20 tracks of 300 bars) took
+  about 15 to 19 ms (budget 33 ms) in 18 of 23 runs, with 4, 16 or 20 tracks shown.
+  In the other 5 runs it took 40 to 48 ms, at every track count including 4. The same
+  intermittent slow state was seen with code from before this feature, and its cause is
+  not yet found (ADR-031). Typical scores (4 tracks, 150 bars) were within budget in
+  every run of the last session. One machine only (ADR-025).
 - No standard notation, no PDF.
 - Effects are limited to tie, let ring and dead note. No lyrics. Repeat editing is limited
   to simple start and end markers.

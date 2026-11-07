@@ -143,8 +143,7 @@ Future<void> main(List<String> args) async {
   }
 
   container.read(editorProvider.notifier).replace(doc);
-  // Show exactly the first N tracks, as a user would from the track list. The app
-  // caps what it shows on open (maxShownTracksOnOpen), so set every track explicitly.
+  // Show exactly the first N tracks, as a user would from the track list.
   for (final (i, t) in doc.summary().tracks.indexed) {
     container.read(editorProvider.notifier).setTrackShown(t.id, i < showCount);
   }

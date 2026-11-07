@@ -193,51 +193,40 @@ void main() {
     },
   );
 
-  testWidgets(
-    'ADR-031 scope: only the first maxShownTracksOnOpen tracks show on open',
-    (tester) async {
-      tester.view.physicalSize = const Size(1400, 900);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      final c = ProviderContainer(
-        overrides: [
-          documentFactoryProvider.overrideWithValue(FakeDocumentFactory()),
-        ],
+  testWidgets('ADR-031 5.2: every track is shown on open, however many', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final c = ProviderContainer(
+      overrides: [
+        documentFactoryProvider.overrideWithValue(FakeDocumentFactory()),
+      ],
+    );
+    addTearDown(c.dispose);
+    await tester.pumpWidget(_editor(c));
+    final editor = c.read(editorProvider.notifier);
+    final instrument = c.read(editorProvider).summary.tracks.single.instrument;
+    for (var i = 1; i <= 20; i++) {
+      await editor.execute(
+        CommandDto.addTrack(name: 'T$i', instrument: instrument),
       );
-      addTearDown(c.dispose);
-      await tester.pumpWidget(_editor(c));
-      final editor = c.read(editorProvider.notifier);
-      final instrument = c
-          .read(editorProvider)
-          .summary
-          .tracks
-          .single
-          .instrument;
-      // One more than the cap.
-      for (var i = 1; i <= maxShownTracksOnOpen; i++) {
-        await editor.execute(
-          CommandDto.addTrack(name: 'T$i', instrument: instrument),
-        );
-      }
-      await tester.pump();
-      // Adding tracks does not hide them; the cap applies on open.
-      expect(
-        c.read(editorProvider).shownTracks.length,
-        maxShownTracksOnOpen + 1,
-      );
+    }
+    // Opening the document again (replace) shows all 21 tracks, with no note.
+    editor.replace(c.read(editorProvider).service);
+    await tester.pump();
+    expect(c.read(editorProvider).shownTracks, hasLength(21));
+    expect(c.read(editorProvider).hiddenTracks, isEmpty);
+    expect(find.byKey(const ValueKey('hidden-tracks-note')), findsNothing);
 
-      // Reopen via replace: now the cap hides the overflow.
-      final service = c.read(editorProvider).service;
-      editor.replace(service);
-      await tester.pump();
-      expect(c.read(editorProvider).shownTracks.length, maxShownTracksOnOpen);
-      expect(c.read(editorProvider).hiddenTracks, hasLength(1));
-      // The track list tells the user why one track is not on the page.
-      expect(find.byKey(const ValueKey('hidden-tracks-note')), findsOneWidget);
-      expect(find.textContaining('1 of 17 tracks hidden'), findsOneWidget);
-    },
-  );
-
+    // Hiding one tells the user how many are hidden.
+    final other = c.read(editorProvider).summary.tracks.last.id;
+    editor.setTrackShown(other, false);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('hidden-tracks-note')), findsOneWidget);
+    expect(find.textContaining('1 of 21 tracks hidden'), findsOneWidget);
+  });
   testWidgets(
     'a new document shows every track again (visibility is not kept)',
     (tester) async {
