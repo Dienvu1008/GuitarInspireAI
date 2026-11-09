@@ -54,6 +54,22 @@ done
 # The committed goldens too, so a golden can never drift from the schema.
 cp crates/mc-musicxml/tests/golden/*.musicxml "$OUT/"
 
-XML_CATALOG_FILES="$XSD/catalog.xml" xmllint --noout --nonet \
-  --schema "$XSD/musicxml.xsd" "$OUT"/*.musicxml
-echo "MusicXML 4.0 schema: all files valid"
+validate() {
+  XML_CATALOG_FILES="$XSD/catalog.xml" xmllint --noout --nonet \
+    --schema "$XSD/musicxml.xsd" "$@"
+}
+
+# Negative control: a copy with an element the schema does not allow must be
+# rejected, so a green run cannot come from a validator that checks nothing.
+mkdir -p "$WORK/negative"
+sed 's|<measure number="1">|<measure number="1"><not-musicxml/>|' \
+  "$OUT/feature-rich.musicxml" > "$WORK/negative/invalid.musicxml"
+grep -q '<not-musicxml/>' "$WORK/negative/invalid.musicxml"
+if validate "$WORK/negative/invalid.musicxml" 2>/dev/null; then
+  echo "negative control failed: an invalid file passed validation" >&2
+  exit 1
+fi
+echo "negative control: the invalid file was rejected"
+
+validate "$OUT"/*.musicxml
+echo "MusicXML 4.0 schema: all $(ls "$OUT"/*.musicxml | wc -l) files valid"
