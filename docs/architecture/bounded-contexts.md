@@ -70,18 +70,18 @@ Phase 2 implementation (2026-10-31): `TuningPreset` (standard, drop-d, dadgad, o
 9. Invariants: A voicing has at most one position per string; positions are within the fret range of the tuning used.
 10. Relationships: Customer of the shared kernel. Upstream of Pattern. Used by `mc-app` for chord finder queries and retune commands.
 
-## 4. Pattern Engine (`mc-pattern`, Phase 6a, Proposed)
+## 4. Pattern Engine (`mc-pattern`, Phase 6a, Proposed: follows [ADR-034](decisions/ADR-034-pattern-engine-ir-first.md) Draft)
 
-1. Responsibilities: Reusable picking and strumming templates, validation, binding to voicings to produce score fragments.
-2. Entities: `PatternDefinition` (id, name).
-3. Value objects: `Pattern`, `Step`, `StringSelector`, `Direction`, `Articulation`.
-4. Aggregates: `PatternDefinition` (small aggregate, stored in the project package).
-5. Domain services: `parse`, `validate`, `bind(pattern, voicing, tuning) -> ScoreFragment`.
-6. Domain events: `PatternDefined`, `PatternChanged`.
-7. Public interface: Parse and bind functions; IR types.
-8. Dependencies: `mc-guitar`, `mc-score` (fragment types), `mc-theory`.
-9. Invariants: See [guitar-pattern-engine.md](guitar-pattern-engine.md).
-10. Relationships: Emits fragments; the application layer applies them as score commands. Grammar not finalized.
+1. Responsibilities: Reusable picking and strumming patterns as a structured Pattern IR (the source of truth); semantic validation; user gestures; binding to a voicing; the text DSL as one front end (`mc_pattern::text`).
+2. Entities: `PatternDefinition` (id, name, length, optional meter, lanes, technique spans); `GestureDefinition` (id, name, strike template).
+3. Value objects: `Step` (onset, duration, action), `Action` (Strike, Gesture, Hold, Rest), `Strike`, `StringSelector` (Bass, Alt, Treble(n), Absolute, Strum, StrumRange), `Direction`, `TechniqueSet` (ADR-035), `TechniqueSpan`.
+4. Aggregates: the pattern library (patterns and gestures), stored in the project package from format 1.2.
+5. Domain services: `validate(pattern)`, `bind(pattern, voicing, chord, instrument) -> PatternFragment`, `place(fragment, bars, fit)`; the text front end `parse` and `print`.
+6. Domain events: `PatternDefined`, `PatternChanged`, `GestureDefined`, `GestureChanged`.
+7. Public interface: IR types, validation, binding and placement, the text front end.
+8. Dependencies: `mc-guitar` (voicings, chord tones), `mc-score` (fragment and technique types), `mc-theory`.
+9. Invariants: PT-01 to PT-09 in [domain-invariants.md](domain-invariants.md).
+10. Relationships: Customer of Guitar and Composition. It emits fragments; the application layer applies them with the atomic `ApplyPattern` command (voices 1 and 2, overwrite safeguard, explicit fit). The editors and the DSL are front ends of the same IR.
 
 ## 5. Project (`mc-project`, supporting)
 

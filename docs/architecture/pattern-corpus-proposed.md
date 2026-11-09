@@ -1,29 +1,43 @@
-# Pattern corpus: proposal for review (Phase 6a)
+# Pattern corpus (Phase 6a)
 
-Purpose: A first set of patterns for the pattern engine ([ADR-034](decisions/ADR-034-pattern-engine-ir-first.md)), each with its intended meaning and the TAB it should produce on one voicing. The user reviews it, and confirmed patterns become the golden fixtures of criterion PE-11.
-Status: **Proposed by the agent, NOT confirmed by the user.** Nothing here is a golden fixture until the user confirms it pattern by pattern. Pattern 10 is the user's own example, with the durations the user described; the other nine are the agent's proposals.
+Purpose: The reference patterns for the pattern engine ([ADR-034](decisions/ADR-034-pattern-engine-ir-first.md)). Each pattern states its intended meaning and the TAB it should produce on one voicing. The patterns the user has confirmed become the golden fixtures of criterion PE-11.
+Status: Reviewed by the user on 2026-11-09 (revision 2).
+- Confirmed: 1, 2, 3, 6, 8 and 10.
+- Confirmed with the user's corrections applied: 4, 5 and 9.
+- **Not confirmed:** 7, a deferred candidate that is not a golden.
+
+The final confirmation of this revision is part of the ADR-034 approval.
+
 Related documents: [ADR-034](decisions/ADR-034-pattern-engine-ir-first.md), [ADR-035](decisions/ADR-035-playing-techniques-in-the-score.md), [guitar-pattern-engine.md](guitar-pattern-engine.md).
+
+**Authorship and scope.**
+- Patterns 1 to 9 were proposed by the agent. The user reviewed them and confirmed or corrected their meaning.
+- Pattern 10 is the user's own example.
+- The confirmed patterns are reference fixtures for the semantics ADR-034 and ADR-035 define. They are not definitive representations of a musical genre.
 
 ## How to read this
 
-- **Voicings** (string 1 is the highest, Q-02; `x` = muted):
+- **Voicings** (string 1 is the highest, Q-02; `x` = muted). The regions follow ADR-034 section 5: Bass B, then the upper region U (the 3 highest sounded strings above B), then Alt.
 
-  | Chord | Voicing (strings 6 to 1) | Bass | Alt | Treble (3) |
+  | Chord | Voicing (strings 6 to 1) | Bass | Upper region U | Alt |
   |---|---|---|---|---|
-  | C | `x 3 2 0 1 0` | string 5, fret 3 (C) | string 4, fret 2 (E, the third; the fifth G is on string 3, which is in the treble group) | strings 3, 2, 1 |
-  | G | `3 2 0 0 0 3` | string 6, fret 3 (G) | string 4, open (D, the fifth) | strings 3, 2, 1 |
-  | Am | `x 0 2 2 1 0` | string 5, open (A) | string 4, fret 2 (E, the fifth) | strings 3, 2, 1 |
+  | C | `x 3 2 0 1 0` | string 5, fret 3 (C) | strings 3, 2, 1 | string 4, fret 2 (E, the third: the only candidate) |
+  | G | `3 2 0 0 0 3` | string 6, fret 3 (G) | strings 3, 2, 1 | string 4, open (D, the fifth; preferred over B on string 5) |
+  | Am | `x 0 2 2 1 0` | string 5, open (A) | strings 3, 2, 1 | string 4, fret 2 (E, the fifth) |
+  | D (binding fixture only) | `x x 0 2 3 2` | string 4, open (D) | strings 3, 2, 1 | none: `NoAlternateBass` |
 
-- **IR lines** use the DSL sketch of ADR-034 section 9, only to state the meaning. The grammar is not final.
+- **IR lines** use the DSL sketch of ADR-034 section 9 only to state the meaning; the grammar is not final.
   - Each step is `target:value`: `4` quarter, `8` eighth, `4.` dotted quarter.
-  - `-` is a rest, `+` strikes together, `>` accents, and `D` and `U` are strokes.
-  - `[pm ...]` is a palm-mute span, and `x(...)` is a percussive hit.
-  - `thumb:` and `fingers:` are the two lanes; `strum:` is a single strum lane.
-- **TAB tables:** the columns are the eighth-note positions of the bar, and the rows are strings 1 (e) to 6 (E). A number is the fret struck at that position, and an empty cell means nothing new is struck.
-  - The "Marks" row shows ↓ ↑ (stroke), `>` (accent), `PM` (palm mute) and `S` (percussive).
+  - `-` is a rest; `+` strikes together; `>` accents; `D` and `U` are strokes.
+  - `[pm ...]` is a palm-mute span; `sp(...)` is a string-percussive hit (ADR-035).
+  - `thumb:` and `fingers:` are the two lanes; `strum:` is the single strum lane.
+- **TAB tables:**
+  - The columns are the eighth-note positions of the bar, and the rows are strings 1 (e) to 6 (E).
+  - A number is the fret struck at that position, `x` is a string-percussive note on that string, and an empty cell means nothing new is struck.
+  - The "Marks" row shows ↓ ↑ (stroke), `>` (accent), `PM` (palm mute) and `S` (string-percussive).
   - The "Rings" row gives the written duration of long notes.
 
-## 1. Basic fingerpicking (Am, 4/4)
+## 1. Basic fingerpicking (Am, 4/4) — confirmed
 
 IR: `fingers: Bass:8 3:8 2:8 3:8 1:8 3:8 2:8 3:8` (one lane, every note one eighth)
 
@@ -36,7 +50,7 @@ IR: `fingers: Bass:8 3:8 2:8 3:8 1:8 3:8 2:8 3:8` (one lane, every note one eigh
 | A | 0 | | | | | | | |
 | E | | | | | | | | |
 
-## 2. Travis-style picking (G, 4/4)
+## 2. Travis-style picking (G, 4/4) — confirmed
 
 IR, two lanes:
 - `thumb: Bass:4 Alt:4 Bass:4 Alt:4`
@@ -52,7 +66,7 @@ IR, two lanes:
 | E | 3 | | | | 3 | | | |
 | Rings | thumb notes a quarter each, under the finger notes (voice 2) | | | | | | | |
 
-## 3. Alternating bass, "boom-chick" (C, 4/4)
+## 3. Alternating bass, "boom-chick" (C, 4/4) — confirmed
 
 IR: `strum: Bass:4 D Treble:4 Alt:4 D Treble:4`
 
@@ -66,9 +80,11 @@ IR: `strum: Bass:4 D Treble:4 Alt:4 D Treble:4`
 | E | | | | | | | | |
 | Marks | | | ↓ | | | | ↓ | |
 
-## 4. Folk strumming, "down, down-up, up-down-up" (C, 4/4)
+## 4. Folk strumming, "down, down-up, up-down-up" (C, 4/4) — confirmed with correction
 
-IR: `strum: D Strum:4 D Strum:8 U Strum:8 -:8 U Strum:8 D Strum:8 U Strum:8`
+Correction from the user: up-strokes play `Treble(4)`, not the full `Strum`.
+
+IR: `strum: D Strum:4 D Strum:8 U Treble(4):8 -:8 U Treble(4):8 D Strum:8 U Treble(4):8`
 
 | | 1 | & | 2 | & | 3 | & | 4 | & |
 |---|---|---|---|---|---|---|---|---|
@@ -76,15 +92,18 @@ IR: `strum: D Strum:4 D Strum:8 U Strum:8 -:8 U Strum:8 D Strum:8 U Strum:8`
 | B | 1 | | 1 | 1 | | 1 | 1 | 1 |
 | G | 0 | | 0 | 0 | | 0 | 0 | 0 |
 | D | 2 | | 2 | 2 | | 2 | 2 | 2 |
-| A | 3 | | 3 | 3 | | 3 | 3 | 3 |
+| A | 3 | | 3 | | | | 3 | |
 | E | | | | | | | | |
 | Marks | ↓ | | ↓ | ↑ | | ↑ | ↓ | ↑ |
 
-Question for review: should up-strokes hit every string, or only the treble strings (for example `U Treble(4)`)?
+- Beat 3 is a **true rest**: no attack and no motion. A silent stroke motion (a "ghost" strum) is not a rest. If it is needed later, it becomes the action `StrokeOnly(Direction)` (ADR-034 section 10), and it is not part of this pattern.
+- Each down-stroke is written as a quarter or an eighth, so its notes stop at the next attack. Let ring is not used here.
 
-## 5. Down and up strokes on eighths (G, 4/4)
+## 5. Down and up strokes on eighths (G, 4/4) — confirmed with correction
 
-IR: `strum: D Strum:8 U Strum:8 D Strum:8 U Strum:8 D Strum:8 U Strum:8 D Strum:8 U Strum:8`
+Correction from the user: up-strokes play `Treble(4)`.
+
+IR: `strum: D Strum:8 U Treble(4):8 D Strum:8 U Treble(4):8 D Strum:8 U Treble(4):8 D Strum:8 U Treble(4):8`
 
 | | 1 | & | 2 | & | 3 | & | 4 | & |
 |---|---|---|---|---|---|---|---|---|
@@ -92,11 +111,11 @@ IR: `strum: D Strum:8 U Strum:8 D Strum:8 U Strum:8 D Strum:8 U Strum:8 D Strum:
 | B | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | G | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
 | D | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| A | 2 | 2 | 2 | 2 | 2 | 2 | 2 | 2 |
-| E | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 |
+| A | 2 | | 2 | | 2 | | 2 | |
+| E | 3 | | 3 | | 3 | | 3 | |
 | Marks | ↓ | ↑ | ↓ | ↑ | ↓ | ↑ | ↓ | ↑ |
 
-## 6. Waltz, "boom-chick-chick" (G, 3/4)
+## 6. Waltz, "boom-chick-chick" (G, 3/4) — confirmed
 
 IR: `strum: Bass:4 D Treble:4 D Treble:4` (meter 3/4)
 
@@ -110,7 +129,9 @@ IR: `strum: Bass:4 D Treble:4 D Treble:4` (meter 3/4)
 | E | 3 | | | | | |
 | Marks | | | ↓ | | ↓ | |
 
-## 7. Bossa-style (Am, 4/4)
+## 7. Bossa-style candidate (Am, 4/4) — NOT CONFIRMED (deferred)
+
+This is a deferred candidate kept for later discussion. **It is not a golden fixture** (PE-11).
 
 IR, two lanes:
 - `thumb: Bass:4. Alt:8 Bass:4. Alt:8`
@@ -124,13 +145,12 @@ IR, two lanes:
 | D | | | | 2 | | | | 2 |
 | A | 0 | | | | 0 | | | |
 | E | | | | | | | | |
-| Rings | bass: dotted quarter on 1 and on 3, eighth on 2& and on 4& | | | | | | | |
 
-Question for review: bossa right-hand figures vary a lot (often written in 2/4 with a different finger rhythm). Please replace this one with the figure you play.
+Right-hand figures for this style vary a lot. This one waits for the user's own figure.
 
-## 8. Palm-muted rhythm (G, 4/4)
+## 8. Palm-muted bass ostinato (G, 4/4) — confirmed (renamed)
 
-IR: `strum: [pm >Bass:8 Bass:8 Bass:8 Bass:8 >Bass:8 Bass:8 Bass:8 Bass:8]` (one span over all eight steps)
+IR: `strum: [pm >Bass:8 Bass:8 Bass:8 Bass:8 >Bass:8 Bass:8 Bass:8 Bass:8]` (one palm-mute span over all eight steps)
 
 | | 1 | & | 2 | & | 3 | & | 4 | & |
 |---|---|---|---|---|---|---|---|---|
@@ -142,11 +162,18 @@ IR: `strum: [pm >Bass:8 Bass:8 Bass:8 Bass:8 >Bass:8 Bass:8 Bass:8 Bass:8]` (one
 | E | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 |
 | Marks | PM > | PM | PM | PM | PM > | PM | PM | PM |
 
-The TAB shows one "P.M." line over the whole bar (ADR-035 section 5); the table repeats PM per step only for clarity.
+The TAB shows one "P.M." line over the whole bar (ADR-035 section 5). The table repeats PM per step only for clarity.
 
-## 9. Percussive "boom-chuck" (C, 4/4)
+Playback (ADR-035 section 4): every note is at velocity 80 and 1/16 long, so it stops before the next eighth. The accented notes are at velocity 104.
 
-IR: `strum: D Strum:4 D >x(Strum):4 D Strum:8 U Strum:8 D >x(Strum):4`
+## 9. String-percussive boom-chuck (C, 4/4) — confirmed with correction
+
+Correction from the user:
+- The "chuck" is a string-percussive (deadened) chord hit on the **sounded** strings of the voicing, not a body slap.
+- Each such note keeps its fretted position and pitch (ADR-035 `string_percussive`).
+- No muted string is added: string 6, muted in C, stays empty.
+
+IR: `strum: D Strum:4 D >sp(Strum):4 D Strum:8 U Strum:8 D >sp(Strum):4`
 
 | | 1 | & | 2 | & | 3 | & | 4 | & |
 |---|---|---|---|---|---|---|---|---|
@@ -158,11 +185,13 @@ IR: `strum: D Strum:4 D >x(Strum):4 D Strum:8 U Strum:8 D >x(Strum):4`
 | E | | | | | | | | |
 | Marks | ↓ | | ↓ > S | | ↓ | ↑ | ↓ > S | |
 
-Under choice 13.4 of ADR-034, a percussive hit may also strike the muted string 6. `Strum` resolves to the sounded strings only, so string 6 stays empty here.
+- The `x` notes are on the frets of the voicing, so the stored note is string 1 fret 0, string 2 fret 1, and so on, each with `string_percussive`. TAB draws them as `x`.
+- Playback: velocity 70 + 24 = 94, 1/64 long.
+- Open question for the user: the review corrected the up-strokes of patterns 4 and 5 to `Treble(4)` but did not mention the up-stroke on 3& here. It is kept as the full `Strum` of the reviewed version. Should it also be `Treble(4)`?
 
-## 10. The user's example: `Bass treb | Bass treb treb` (C, 2/4, two bars)
+## 10. The user's example: `Bass treb | Bass treb treb` (C, 2/4, two bars) — confirmed
 
-Source: the user, 2026-11-09, with these durations: bar 1 is Bass 1/4 and Treble 1/4; bar 2 is Bass 1/4, Treble 1/8 and Treble 1/8.
+Source: the user, 2026-11-09, with exactly these durations: bar 1 is Bass 1/4 and Treble 1/4; bar 2 is Bass 1/4, Treble 1/8 and Treble 1/8.
 
 IR: `strum: Bass:4 Treble:4 | Bass:4 Treble:8 Treble:8` (meter 2/4, length 2 bars)
 
@@ -175,8 +204,4 @@ IR: `strum: Bass:4 Treble:4 | Bass:4 Treble:8 Treble:8` (meter 2/4, length 2 bar
 | A | 3 | | | | 3 | | | |
 | E | | | | | | | | |
 
-If the three notes of the second bar were meant as equal parts of one beat, that would be a triplet. It would be written with tuplet values, never inferred from the step count (Q-03).
-
-## What the user should send back
-
-For each pattern 1 to 9: **confirm**, **correct** (the meaning, the IR, or the TAB), or **drop** it. Also add any pattern you play that is missing. Only confirmed patterns become goldens.
+If the three notes of bar 2 were meant as equal parts of one beat, that would be a triplet. It would be written with tuplet values, never inferred from the step count (Q-03).
