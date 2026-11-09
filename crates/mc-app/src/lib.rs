@@ -54,8 +54,8 @@ pub mod types {
     pub use mc_project::{AppInfo, FORMAT_VERSION, FormatVersion, LoadError};
     pub use mc_score::{
         BarContent, Beat, BeatId, Diagnostic, DiagnosticKind, DomainError, DomainEvent,
-        InstrumentSpec, MasterBar, Note, NoteEffects, NoteId, Score, Track, TrackId, Violation,
-        Voice,
+        InstrumentSpec, MasterBar, Note, NoteEffects, NoteId, Score, Stroke, Track, TrackId,
+        Violation, Voice,
     };
     pub use mc_theory::{KeySignature, Mode, Rational, TimeSignature};
 }
@@ -77,5 +77,7 @@ pub fn new_score(track_name: &str, bars: usize) -> Result<mc_score::Score, mc_sc
 
 #[cfg(feature = "fixtures")]
 pub mod fixtures {
-    pub use mc_score::fixtures::{LARGE, SMALL, Shape, TYPICAL, feature_rich, reference};
+    pub use mc_score::fixtures::{
+        LARGE, SMALL, Shape, TYPICAL, feature_rich, reference, techniques,
+    };
 }

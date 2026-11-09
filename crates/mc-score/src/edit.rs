@@ -3,8 +3,8 @@
 //! (`Arc::make_mut`): only the edited track spine and bars are copied.
 
 use crate::model::{
-    BarContent, Beat, InstrumentSpec, MasterBar, Note, NoteEffects, NoteKind, TempoChange, Track,
-    Voice,
+    BarContent, Beat, InstrumentSpec, MasterBar, Note, NoteEffects, NoteKind, Stroke, TempoChange,
+    Track, Voice,
 };
 use crate::validate::{check_instrument, check_note, tempo_offset_valid, tie_is_valid};
 use crate::{BeatId, DomainError, DomainEvent, NoteId, Score, TrackId, repeats};
@@ -37,11 +37,12 @@ pub struct FragmentNote {
     pub effects: NoteEffects,
 }
 
-/// A beat of a clipboard fragment: its written value and its notes, no ids.
+/// A beat of a clipboard fragment: its written value, its notes and its stroke, no ids.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FragmentBeat {
     pub value: NoteValue,
     pub notes: Vec<FragmentNote>,
+    pub stroke: Option<Stroke>,
 }
 
 struct Located {
@@ -421,6 +422,7 @@ impl Score {
                 id,
                 value,
                 notes: Vec::new(),
+                stroke: None,
             },
         );
         Ok((id, self.content_events(t, bar..bar + 1)))
@@ -437,6 +439,18 @@ impl Score {
     pub fn set_beat_value(&mut self, r: BeatRef, value: NoteValue) -> Result<Events, DomainError> {
         let l = self.locate(r)?;
         self.bar_mut(l.track, l.bar).voices[l.voice].beats[l.beat].value = value;
+        Ok(self.content_events(l.track, l.bar..l.bar + 1))
+    }
+
+    /// Sets or clears the stroke direction of a beat (ADR-035). Allowed on any beat,
+    /// rests included; it changes no timing.
+    pub fn set_beat_stroke(
+        &mut self,
+        r: BeatRef,
+        stroke: Option<Stroke>,
+    ) -> Result<Events, DomainError> {
+        let l = self.locate(r)?;
+        self.bar_mut(l.track, l.bar).voices[l.voice].beats[l.beat].stroke = stroke;
         Ok(self.content_events(l.track, l.bar..l.bar + 1))
     }
 
@@ -639,6 +653,7 @@ impl Score {
                             effects: n.effects,
                         })
                         .collect(),
+                    stroke: beat.stroke,
                 });
             }
         }
@@ -711,6 +726,7 @@ impl Score {
                 id,
                 value: beat.value,
                 notes,
+                stroke: beat.stroke,
             });
         }
         let target = &mut self.bar_mut(t, bar).voices[voice].beats;

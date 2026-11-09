@@ -14,6 +14,7 @@ mc-playback.workspace = true
 midly.workspace = true
 
 [dev-dependencies]
+mc-score = { workspace = true, features = ["fixtures"] }
 proptest.workspace = true
 
 [lints]

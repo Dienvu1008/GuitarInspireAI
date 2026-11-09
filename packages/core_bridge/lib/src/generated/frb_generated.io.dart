@@ -96,6 +96,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected MetricsDto dco_decode_box_autoadd_metrics_dto(dynamic raw);
 
+@protected StrokeDto dco_decode_box_autoadd_stroke_dto(dynamic raw);
+
 @protected TupletDto dco_decode_box_autoadd_tuplet_dto(dynamic raw);
 
 @protected int dco_decode_box_autoadd_u_32(dynamic raw);
@@ -206,6 +208,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
 
+@protected StrokeDto? dco_decode_opt_box_autoadd_stroke_dto(dynamic raw);
+
 @protected TupletDto? dco_decode_opt_box_autoadd_tuplet_dto(dynamic raw);
 
 @protected int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
@@ -229,6 +233,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected ScoreSystemDto dco_decode_score_system_dto(dynamic raw);
 
 @protected StaveDto dco_decode_stave_dto(dynamic raw);
+
+@protected StrokeDto dco_decode_stroke_dto(dynamic raw);
 
 @protected SystemDto dco_decode_system_dto(dynamic raw);
 
@@ -309,6 +315,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected MasterBarDto sse_decode_box_autoadd_master_bar_dto(SseDeserializer deserializer);
 
 @protected MetricsDto sse_decode_box_autoadd_metrics_dto(SseDeserializer deserializer);
+
+@protected StrokeDto sse_decode_box_autoadd_stroke_dto(SseDeserializer deserializer);
 
 @protected TupletDto sse_decode_box_autoadd_tuplet_dto(SseDeserializer deserializer);
 
@@ -420,6 +428,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
 
+@protected StrokeDto? sse_decode_opt_box_autoadd_stroke_dto(SseDeserializer deserializer);
+
 @protected TupletDto? sse_decode_opt_box_autoadd_tuplet_dto(SseDeserializer deserializer);
 
 @protected int? sse_decode_opt_box_autoadd_u_32(SseDeserializer deserializer);
@@ -443,6 +453,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected ScoreSystemDto sse_decode_score_system_dto(SseDeserializer deserializer);
 
 @protected StaveDto sse_decode_stave_dto(SseDeserializer deserializer);
+
+@protected StrokeDto sse_decode_stroke_dto(SseDeserializer deserializer);
 
 @protected SystemDto sse_decode_system_dto(SseDeserializer deserializer);
 
@@ -523,6 +535,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_box_autoadd_master_bar_dto(MasterBarDto self, SseSerializer serializer);
 
 @protected void sse_encode_box_autoadd_metrics_dto(MetricsDto self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_stroke_dto(StrokeDto self, SseSerializer serializer);
 
 @protected void sse_encode_box_autoadd_tuplet_dto(TupletDto self, SseSerializer serializer);
 
@@ -634,6 +648,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_opt_box_autoadd_i_64(PlatformInt64? self, SseSerializer serializer);
 
+@protected void sse_encode_opt_box_autoadd_stroke_dto(StrokeDto? self, SseSerializer serializer);
+
 @protected void sse_encode_opt_box_autoadd_tuplet_dto(TupletDto? self, SseSerializer serializer);
 
 @protected void sse_encode_opt_box_autoadd_u_32(int? self, SseSerializer serializer);
@@ -657,6 +673,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_score_system_dto(ScoreSystemDto self, SseSerializer serializer);
 
 @protected void sse_encode_stave_dto(StaveDto self, SseSerializer serializer);
+
+@protected void sse_encode_stroke_dto(StrokeDto self, SseSerializer serializer);
 
 @protected void sse_encode_system_dto(SystemDto self, SseSerializer serializer);
 

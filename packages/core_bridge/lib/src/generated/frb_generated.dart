@@ -1710,10 +1710,11 @@ beat: dco_decode_i_64(arr[3]),); }
 
 @protected BeatDto dco_decode_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
                 return BeatDto(id: dco_decode_i_64(arr[0]),
 duration: dco_decode_duration_dto(arr[1]),
-notes: dco_decode_list_note_dto(arr[2]),); }
+notes: dco_decode_list_note_dto(arr[2]),
+stroke: dco_decode_opt_box_autoadd_stroke_dto(arr[3]),); }
 
 @protected bool dco_decode_bool(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw as bool; }
@@ -1739,6 +1740,9 @@ return dco_decode_master_bar_dto(raw); }
 @protected MetricsDto dco_decode_box_autoadd_metrics_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_metrics_dto(raw); }
 
+@protected StrokeDto dco_decode_box_autoadd_stroke_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_stroke_dto(raw); }
+
 @protected TupletDto dco_decode_box_autoadd_tuplet_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_tuplet_dto(raw); }
 
@@ -1757,18 +1761,22 @@ voicings: dco_decode_list_voicing_dto(arr[2]),); }
 
 @protected ClipBeatDto dco_decode_clip_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
                 return ClipBeatDto(duration: dco_decode_duration_dto(arr[0]),
-notes: dco_decode_list_clip_note_dto(arr[1]),); }
+notes: dco_decode_list_clip_note_dto(arr[1]),
+stroke: dco_decode_opt_box_autoadd_stroke_dto(arr[2]),); }
 
 @protected ClipNoteDto dco_decode_clip_note_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+                if (arr.length != 8) throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
                 return ClipNoteDto(string: dco_decode_u_8(arr[0]),
 fret: dco_decode_u_8(arr[1]),
 tie: dco_decode_bool(arr[2]),
 letRing: dco_decode_bool(arr[3]),
-dead: dco_decode_bool(arr[4]),); }
+dead: dco_decode_bool(arr[4]),
+accent: dco_decode_bool(arr[5]),
+palmMute: dco_decode_bool(arr[6]),
+stringPercussive: dco_decode_bool(arr[7]),); }
 
 @protected CommandDto dco_decode_command_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 switch (raw[0]) {
@@ -1783,18 +1791,19 @@ case 7: return CommandDto_SetBeatDuration(beat: dco_decode_box_autoadd_beat_addr
 case 8: return CommandDto_SetNote(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),string: dco_decode_u_8(raw[2]),fret: dco_decode_u_8(raw[3]),);
 case 9: return CommandDto_RemoveNote(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),note: dco_decode_i_64(raw[2]),);
 case 10: return CommandDto_SetTie(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),note: dco_decode_i_64(raw[2]),tie: dco_decode_bool(raw[3]),);
-case 11: return CommandDto_SetNoteEffects(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),note: dco_decode_i_64(raw[2]),letRing: dco_decode_bool(raw[3]),dead: dco_decode_bool(raw[4]),);
-case 12: return CommandDto_AddVoice(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),);
-case 13: return CommandDto_RemoveVoice(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),);
-case 14: return CommandDto_ShiftFrets(track: dco_decode_i_64(raw[1]),fromBar: dco_decode_u_32(raw[2]),toBar: dco_decode_u_32(raw[3]),delta: dco_decode_i_16(raw[4]),);
-case 15: return CommandDto_AddTrack(name: dco_decode_String(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),);
-case 16: return CommandDto_RemoveTrack(track: dco_decode_i_64(raw[1]),);
-case 17: return CommandDto_RenameTrack(track: dco_decode_i_64(raw[1]),name: dco_decode_String(raw[2]),);
-case 18: return CommandDto_SetInstrument(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),);
-case 19: return CommandDto_MoveTrack(track: dco_decode_i_64(raw[1]),to: dco_decode_u_32(raw[2]),);
-case 20: return CommandDto_Retune(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),keepPitches: dco_decode_bool(raw[3]),);
-case 21: return CommandDto_PasteBeats(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),index: dco_decode_u_32(raw[4]),beats: dco_decode_list_clip_beat_dto(raw[5]),);
-case 22: return CommandDto_RemoveBeats(track: dco_decode_i_64(raw[1]),voice: dco_decode_u_32(raw[2]),fromBar: dco_decode_u_32(raw[3]),fromIndex: dco_decode_u_32(raw[4]),toBar: dco_decode_u_32(raw[5]),toIndex: dco_decode_u_32(raw[6]),);
+case 11: return CommandDto_SetNoteEffects(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),note: dco_decode_i_64(raw[2]),letRing: dco_decode_bool(raw[3]),dead: dco_decode_bool(raw[4]),accent: dco_decode_bool(raw[5]),palmMute: dco_decode_bool(raw[6]),stringPercussive: dco_decode_bool(raw[7]),);
+case 12: return CommandDto_SetBeatStroke(beat: dco_decode_box_autoadd_beat_address_dto(raw[1]),stroke: dco_decode_opt_box_autoadd_stroke_dto(raw[2]),);
+case 13: return CommandDto_AddVoice(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),);
+case 14: return CommandDto_RemoveVoice(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),);
+case 15: return CommandDto_ShiftFrets(track: dco_decode_i_64(raw[1]),fromBar: dco_decode_u_32(raw[2]),toBar: dco_decode_u_32(raw[3]),delta: dco_decode_i_16(raw[4]),);
+case 16: return CommandDto_AddTrack(name: dco_decode_String(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),);
+case 17: return CommandDto_RemoveTrack(track: dco_decode_i_64(raw[1]),);
+case 18: return CommandDto_RenameTrack(track: dco_decode_i_64(raw[1]),name: dco_decode_String(raw[2]),);
+case 19: return CommandDto_SetInstrument(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),);
+case 20: return CommandDto_MoveTrack(track: dco_decode_i_64(raw[1]),to: dco_decode_u_32(raw[2]),);
+case 21: return CommandDto_Retune(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),keepPitches: dco_decode_bool(raw[3]),);
+case 22: return CommandDto_PasteBeats(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),index: dco_decode_u_32(raw[4]),beats: dco_decode_list_clip_beat_dto(raw[5]),);
+case 23: return CommandDto_RemoveBeats(track: dco_decode_i_64(raw[1]),voice: dco_decode_u_32(raw[2]),fromBar: dco_decode_u_32(raw[3]),fromIndex: dco_decode_u_32(raw[4]),toBar: dco_decode_u_32(raw[5]),toIndex: dco_decode_u_32(raw[6]),);
                 default: throw Exception("unreachable");
             } }
 
@@ -1903,6 +1912,10 @@ case 8: return GlyphKindDto_Marker(text: dco_decode_String(raw[1]),);
 case 9: return GlyphKindDto_BarNumber(number: dco_decode_u_32(raw[1]),);
 case 10: return GlyphKindDto_TabClef();
 case 11: return GlyphKindDto_StringName(string: dco_decode_u_8(raw[1]),name: dco_decode_String(raw[2]),);
+case 12: return GlyphKindDto_Accent();
+case 13: return GlyphKindDto_Stroke(up: dco_decode_bool(raw[1]),);
+case 14: return GlyphKindDto_StringPercussive();
+case 15: return GlyphKindDto_PalmMute(run: dco_decode_bool(raw[1]),);
                 default: throw Exception("unreachable");
             } }
 
@@ -2052,7 +2065,7 @@ report: dco_decode_music_xml_report_dto(arr[1]),); }
 
 @protected MusicXmlReportDto dco_decode_music_xml_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 8) throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+                if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
                 return MusicXmlReportDto(parts: dco_decode_u_32(arr[0]),
 measures: dco_decode_u_32(arr[1]),
 notes: dco_decode_u_32(arr[2]),
@@ -2060,23 +2073,30 @@ paddedVoices: dco_decode_u_32(arr[3]),
 overfullMeasures: dco_decode_u_32(arr[4]),
 tupletsWithoutBracket: dco_decode_u_32(arr[5]),
 tempoRounded: dco_decode_u_32(arr[6]),
-charactersRemoved: dco_decode_u_32(arr[7]),); }
+charactersRemoved: dco_decode_u_32(arr[7]),
+techniquesApproximated: dco_decode_u_32(arr[8]),); }
 
 @protected NoteDto dco_decode_note_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+                if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
                 return NoteDto(id: dco_decode_i_64(arr[0]),
 string: dco_decode_u_8(arr[1]),
 fret: dco_decode_u_8(arr[2]),
 tie: dco_decode_bool(arr[3]),
 letRing: dco_decode_bool(arr[4]),
-dead: dco_decode_bool(arr[5]),); }
+dead: dco_decode_bool(arr[5]),
+accent: dco_decode_bool(arr[6]),
+palmMute: dco_decode_bool(arr[7]),
+stringPercussive: dco_decode_bool(arr[8]),); }
 
 @protected String? dco_decode_opt_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_String(raw); }
 
 @protected PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_box_autoadd_i_64(raw); }
+
+@protected StrokeDto? dco_decode_opt_box_autoadd_stroke_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_stroke_dto(raw); }
 
 @protected TupletDto? dco_decode_opt_box_autoadd_tuplet_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_box_autoadd_tuplet_dto(raw); }
@@ -2151,6 +2171,9 @@ final arr = raw as List<dynamic>;
 strings: dco_decode_u_8(arr[1]),
 top: dco_decode_f_32(arr[2]),
 system: dco_decode_system_dto(arr[3]),); }
+
+@protected StrokeDto dco_decode_stroke_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return StrokeDto.values[raw as int]; }
 
 @protected SystemDto dco_decode_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2300,7 +2323,8 @@ return BeatAddressDto(track: var_track, bar: var_bar, voice: var_voice, beat: va
 var var_id = sse_decode_i_64(deserializer);
 var var_duration = sse_decode_duration_dto(deserializer);
 var var_notes = sse_decode_list_note_dto(deserializer);
-return BeatDto(id: var_id, duration: var_duration, notes: var_notes); }
+var var_stroke = sse_decode_opt_box_autoadd_stroke_dto(deserializer);
+return BeatDto(id: var_id, duration: var_duration, notes: var_notes, stroke: var_stroke); }
 
 @protected bool sse_decode_bool(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return deserializer.buffer.getUint8() != 0; }
@@ -2326,6 +2350,9 @@ return (sse_decode_master_bar_dto(deserializer)); }
 @protected MetricsDto sse_decode_box_autoadd_metrics_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_metrics_dto(deserializer)); }
 
+@protected StrokeDto sse_decode_box_autoadd_stroke_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_stroke_dto(deserializer)); }
+
 @protected TupletDto sse_decode_box_autoadd_tuplet_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_tuplet_dto(deserializer)); }
 
@@ -2344,7 +2371,8 @@ return ChordResultDto(symbol: var_symbol, tones: var_tones, voicings: var_voicin
 @protected ClipBeatDto sse_decode_clip_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_duration = sse_decode_duration_dto(deserializer);
 var var_notes = sse_decode_list_clip_note_dto(deserializer);
-return ClipBeatDto(duration: var_duration, notes: var_notes); }
+var var_stroke = sse_decode_opt_box_autoadd_stroke_dto(deserializer);
+return ClipBeatDto(duration: var_duration, notes: var_notes, stroke: var_stroke); }
 
 @protected ClipNoteDto sse_decode_clip_note_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_string = sse_decode_u_8(deserializer);
@@ -2352,7 +2380,10 @@ var var_fret = sse_decode_u_8(deserializer);
 var var_tie = sse_decode_bool(deserializer);
 var var_letRing = sse_decode_bool(deserializer);
 var var_dead = sse_decode_bool(deserializer);
-return ClipNoteDto(string: var_string, fret: var_fret, tie: var_tie, letRing: var_letRing, dead: var_dead); }
+var var_accent = sse_decode_bool(deserializer);
+var var_palmMute = sse_decode_bool(deserializer);
+var var_stringPercussive = sse_decode_bool(deserializer);
+return ClipNoteDto(string: var_string, fret: var_fret, tie: var_tie, letRing: var_letRing, dead: var_dead, accent: var_accent, palmMute: var_palmMute, stringPercussive: var_stringPercussive); }
 
 @protected CommandDto sse_decode_command_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -2390,33 +2421,38 @@ return CommandDto_SetTie(beat: var_beat, note: var_note, tie: var_tie);case 11: 
 var var_note = sse_decode_i_64(deserializer);
 var var_letRing = sse_decode_bool(deserializer);
 var var_dead = sse_decode_bool(deserializer);
-return CommandDto_SetNoteEffects(beat: var_beat, note: var_note, letRing: var_letRing, dead: var_dead);case 12: var var_track = sse_decode_i_64(deserializer);
+var var_accent = sse_decode_bool(deserializer);
+var var_palmMute = sse_decode_bool(deserializer);
+var var_stringPercussive = sse_decode_bool(deserializer);
+return CommandDto_SetNoteEffects(beat: var_beat, note: var_note, letRing: var_letRing, dead: var_dead, accent: var_accent, palmMute: var_palmMute, stringPercussive: var_stringPercussive);case 12: var var_beat = sse_decode_box_autoadd_beat_address_dto(deserializer);
+var var_stroke = sse_decode_opt_box_autoadd_stroke_dto(deserializer);
+return CommandDto_SetBeatStroke(beat: var_beat, stroke: var_stroke);case 13: var var_track = sse_decode_i_64(deserializer);
 var var_bar = sse_decode_u_32(deserializer);
-return CommandDto_AddVoice(track: var_track, bar: var_bar);case 13: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_AddVoice(track: var_track, bar: var_bar);case 14: var var_track = sse_decode_i_64(deserializer);
 var var_bar = sse_decode_u_32(deserializer);
 var var_voice = sse_decode_u_32(deserializer);
-return CommandDto_RemoveVoice(track: var_track, bar: var_bar, voice: var_voice);case 14: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_RemoveVoice(track: var_track, bar: var_bar, voice: var_voice);case 15: var var_track = sse_decode_i_64(deserializer);
 var var_fromBar = sse_decode_u_32(deserializer);
 var var_toBar = sse_decode_u_32(deserializer);
 var var_delta = sse_decode_i_16(deserializer);
-return CommandDto_ShiftFrets(track: var_track, fromBar: var_fromBar, toBar: var_toBar, delta: var_delta);case 15: var var_name = sse_decode_String(deserializer);
+return CommandDto_ShiftFrets(track: var_track, fromBar: var_fromBar, toBar: var_toBar, delta: var_delta);case 16: var var_name = sse_decode_String(deserializer);
 var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
-return CommandDto_AddTrack(name: var_name, instrument: var_instrument);case 16: var var_track = sse_decode_i_64(deserializer);
-return CommandDto_RemoveTrack(track: var_track);case 17: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_AddTrack(name: var_name, instrument: var_instrument);case 17: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_RemoveTrack(track: var_track);case 18: var var_track = sse_decode_i_64(deserializer);
 var var_name = sse_decode_String(deserializer);
-return CommandDto_RenameTrack(track: var_track, name: var_name);case 18: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_RenameTrack(track: var_track, name: var_name);case 19: var var_track = sse_decode_i_64(deserializer);
 var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
-return CommandDto_SetInstrument(track: var_track, instrument: var_instrument);case 19: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_SetInstrument(track: var_track, instrument: var_instrument);case 20: var var_track = sse_decode_i_64(deserializer);
 var var_to = sse_decode_u_32(deserializer);
-return CommandDto_MoveTrack(track: var_track, to: var_to);case 20: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_MoveTrack(track: var_track, to: var_to);case 21: var var_track = sse_decode_i_64(deserializer);
 var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
 var var_keepPitches = sse_decode_bool(deserializer);
-return CommandDto_Retune(track: var_track, instrument: var_instrument, keepPitches: var_keepPitches);case 21: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_Retune(track: var_track, instrument: var_instrument, keepPitches: var_keepPitches);case 22: var var_track = sse_decode_i_64(deserializer);
 var var_bar = sse_decode_u_32(deserializer);
 var var_voice = sse_decode_u_32(deserializer);
 var var_index = sse_decode_u_32(deserializer);
 var var_beats = sse_decode_list_clip_beat_dto(deserializer);
-return CommandDto_PasteBeats(track: var_track, bar: var_bar, voice: var_voice, index: var_index, beats: var_beats);case 22: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_PasteBeats(track: var_track, bar: var_bar, voice: var_voice, index: var_index, beats: var_beats);case 23: var var_track = sse_decode_i_64(deserializer);
 var var_voice = sse_decode_u_32(deserializer);
 var var_fromBar = sse_decode_u_32(deserializer);
 var var_fromIndex = sse_decode_u_32(deserializer);
@@ -2535,7 +2571,9 @@ return GlyphKindDto_Volta(endings: var_endings);case 8: var var_text = sse_decod
 return GlyphKindDto_Marker(text: var_text);case 9: var var_number = sse_decode_u_32(deserializer);
 return GlyphKindDto_BarNumber(number: var_number);case 10: return GlyphKindDto_TabClef();case 11: var var_string = sse_decode_u_8(deserializer);
 var var_name = sse_decode_String(deserializer);
-return GlyphKindDto_StringName(string: var_string, name: var_name); default: throw UnimplementedError(''); }
+return GlyphKindDto_StringName(string: var_string, name: var_name);case 12: return GlyphKindDto_Accent();case 13: var var_up = sse_decode_bool(deserializer);
+return GlyphKindDto_Stroke(up: var_up);case 14: return GlyphKindDto_StringPercussive();case 15: var var_run = sse_decode_bool(deserializer);
+return GlyphKindDto_PalmMute(run: var_run); default: throw UnimplementedError(''); }
              }
 
 @protected HitBeatDto sse_decode_hit_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2785,7 +2823,8 @@ var var_overfullMeasures = sse_decode_u_32(deserializer);
 var var_tupletsWithoutBracket = sse_decode_u_32(deserializer);
 var var_tempoRounded = sse_decode_u_32(deserializer);
 var var_charactersRemoved = sse_decode_u_32(deserializer);
-return MusicXmlReportDto(parts: var_parts, measures: var_measures, notes: var_notes, paddedVoices: var_paddedVoices, overfullMeasures: var_overfullMeasures, tupletsWithoutBracket: var_tupletsWithoutBracket, tempoRounded: var_tempoRounded, charactersRemoved: var_charactersRemoved); }
+var var_techniquesApproximated = sse_decode_u_32(deserializer);
+return MusicXmlReportDto(parts: var_parts, measures: var_measures, notes: var_notes, paddedVoices: var_paddedVoices, overfullMeasures: var_overfullMeasures, tupletsWithoutBracket: var_tupletsWithoutBracket, tempoRounded: var_tempoRounded, charactersRemoved: var_charactersRemoved, techniquesApproximated: var_techniquesApproximated); }
 
 @protected NoteDto sse_decode_note_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_id = sse_decode_i_64(deserializer);
@@ -2794,7 +2833,10 @@ var var_fret = sse_decode_u_8(deserializer);
 var var_tie = sse_decode_bool(deserializer);
 var var_letRing = sse_decode_bool(deserializer);
 var var_dead = sse_decode_bool(deserializer);
-return NoteDto(id: var_id, string: var_string, fret: var_fret, tie: var_tie, letRing: var_letRing, dead: var_dead); }
+var var_accent = sse_decode_bool(deserializer);
+var var_palmMute = sse_decode_bool(deserializer);
+var var_stringPercussive = sse_decode_bool(deserializer);
+return NoteDto(id: var_id, string: var_string, fret: var_fret, tie: var_tie, letRing: var_letRing, dead: var_dead, accent: var_accent, palmMute: var_palmMute, stringPercussive: var_stringPercussive); }
 
 @protected String? sse_decode_opt_String(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -2809,6 +2851,15 @@ return NoteDto(id: var_id, string: var_string, fret: var_fret, tie: var_tie, let
 
             if (sse_decode_bool(deserializer)) {
                 return (sse_decode_box_autoadd_i_64(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected StrokeDto? sse_decode_opt_box_autoadd_stroke_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_stroke_dto(deserializer));
             } else {
                 return null;
             }
@@ -2898,6 +2949,10 @@ var var_strings = sse_decode_u_8(deserializer);
 var var_top = sse_decode_f_32(deserializer);
 var var_system = sse_decode_system_dto(deserializer);
 return StaveDto(track: var_track, strings: var_strings, top: var_top, system: var_system); }
+
+@protected StrokeDto sse_decode_stroke_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return StrokeDto.values[inner]; }
 
 @protected SystemDto sse_decode_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_index = sse_decode_u_32(deserializer);
@@ -3045,6 +3100,7 @@ sse_encode_i_64(self.beat, serializer);
 sse_encode_i_64(self.id, serializer);
 sse_encode_duration_dto(self.duration, serializer);
 sse_encode_list_note_dto(self.notes, serializer);
+sse_encode_opt_box_autoadd_stroke_dto(self.stroke, serializer);
  }
 
 @protected void sse_encode_bool(bool self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3071,6 +3127,9 @@ sse_encode_master_bar_dto(self, serializer); }
 @protected void sse_encode_box_autoadd_metrics_dto(MetricsDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_metrics_dto(self, serializer); }
 
+@protected void sse_encode_box_autoadd_stroke_dto(StrokeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_stroke_dto(self, serializer); }
+
 @protected void sse_encode_box_autoadd_tuplet_dto(TupletDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_tuplet_dto(self, serializer); }
 
@@ -3089,6 +3148,7 @@ sse_encode_list_voicing_dto(self.voicings, serializer);
 @protected void sse_encode_clip_beat_dto(ClipBeatDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_duration_dto(self.duration, serializer);
 sse_encode_list_clip_note_dto(self.notes, serializer);
+sse_encode_opt_box_autoadd_stroke_dto(self.stroke, serializer);
  }
 
 @protected void sse_encode_clip_note_dto(ClipNoteDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3097,6 +3157,9 @@ sse_encode_u_8(self.fret, serializer);
 sse_encode_bool(self.tie, serializer);
 sse_encode_bool(self.letRing, serializer);
 sse_encode_bool(self.dead, serializer);
+sse_encode_bool(self.accent, serializer);
+sse_encode_bool(self.palmMute, serializer);
+sse_encode_bool(self.stringPercussive, serializer);
  }
 
 @protected void sse_encode_command_dto(CommandDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3129,37 +3192,42 @@ sse_encode_i_64(note, serializer);
 case CommandDto_SetTie(beat: final beat,note: final note,tie: final tie): sse_encode_i_32(10, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
 sse_encode_i_64(note, serializer);
 sse_encode_bool(tie, serializer);
-case CommandDto_SetNoteEffects(beat: final beat,note: final note,letRing: final letRing,dead: final dead): sse_encode_i_32(11, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
+case CommandDto_SetNoteEffects(beat: final beat,note: final note,letRing: final letRing,dead: final dead,accent: final accent,palmMute: final palmMute,stringPercussive: final stringPercussive): sse_encode_i_32(11, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
 sse_encode_i_64(note, serializer);
 sse_encode_bool(letRing, serializer);
 sse_encode_bool(dead, serializer);
-case CommandDto_AddVoice(track: final track,bar: final bar): sse_encode_i_32(12, serializer); sse_encode_i_64(track, serializer);
+sse_encode_bool(accent, serializer);
+sse_encode_bool(palmMute, serializer);
+sse_encode_bool(stringPercussive, serializer);
+case CommandDto_SetBeatStroke(beat: final beat,stroke: final stroke): sse_encode_i_32(12, serializer); sse_encode_box_autoadd_beat_address_dto(beat, serializer);
+sse_encode_opt_box_autoadd_stroke_dto(stroke, serializer);
+case CommandDto_AddVoice(track: final track,bar: final bar): sse_encode_i_32(13, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(bar, serializer);
-case CommandDto_RemoveVoice(track: final track,bar: final bar,voice: final voice): sse_encode_i_32(13, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_RemoveVoice(track: final track,bar: final bar,voice: final voice): sse_encode_i_32(14, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(bar, serializer);
 sse_encode_u_32(voice, serializer);
-case CommandDto_ShiftFrets(track: final track,fromBar: final fromBar,toBar: final toBar,delta: final delta): sse_encode_i_32(14, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_ShiftFrets(track: final track,fromBar: final fromBar,toBar: final toBar,delta: final delta): sse_encode_i_32(15, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(fromBar, serializer);
 sse_encode_u_32(toBar, serializer);
 sse_encode_i_16(delta, serializer);
-case CommandDto_AddTrack(name: final name,instrument: final instrument): sse_encode_i_32(15, serializer); sse_encode_String(name, serializer);
+case CommandDto_AddTrack(name: final name,instrument: final instrument): sse_encode_i_32(16, serializer); sse_encode_String(name, serializer);
 sse_encode_box_autoadd_instrument_dto(instrument, serializer);
-case CommandDto_RemoveTrack(track: final track): sse_encode_i_32(16, serializer); sse_encode_i_64(track, serializer);
-case CommandDto_RenameTrack(track: final track,name: final name): sse_encode_i_32(17, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_RemoveTrack(track: final track): sse_encode_i_32(17, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_RenameTrack(track: final track,name: final name): sse_encode_i_32(18, serializer); sse_encode_i_64(track, serializer);
 sse_encode_String(name, serializer);
-case CommandDto_SetInstrument(track: final track,instrument: final instrument): sse_encode_i_32(18, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_SetInstrument(track: final track,instrument: final instrument): sse_encode_i_32(19, serializer); sse_encode_i_64(track, serializer);
 sse_encode_box_autoadd_instrument_dto(instrument, serializer);
-case CommandDto_MoveTrack(track: final track,to: final to): sse_encode_i_32(19, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_MoveTrack(track: final track,to: final to): sse_encode_i_32(20, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(to, serializer);
-case CommandDto_Retune(track: final track,instrument: final instrument,keepPitches: final keepPitches): sse_encode_i_32(20, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_Retune(track: final track,instrument: final instrument,keepPitches: final keepPitches): sse_encode_i_32(21, serializer); sse_encode_i_64(track, serializer);
 sse_encode_box_autoadd_instrument_dto(instrument, serializer);
 sse_encode_bool(keepPitches, serializer);
-case CommandDto_PasteBeats(track: final track,bar: final bar,voice: final voice,index: final index,beats: final beats): sse_encode_i_32(21, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_PasteBeats(track: final track,bar: final bar,voice: final voice,index: final index,beats: final beats): sse_encode_i_32(22, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(bar, serializer);
 sse_encode_u_32(voice, serializer);
 sse_encode_u_32(index, serializer);
 sse_encode_list_clip_beat_dto(beats, serializer);
-case CommandDto_RemoveBeats(track: final track,voice: final voice,fromBar: final fromBar,fromIndex: final fromIndex,toBar: final toBar,toIndex: final toIndex): sse_encode_i_32(22, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_RemoveBeats(track: final track,voice: final voice,fromBar: final fromBar,fromIndex: final fromIndex,toBar: final toBar,toIndex: final toIndex): sse_encode_i_32(23, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(voice, serializer);
 sse_encode_u_32(fromBar, serializer);
 sse_encode_u_32(fromIndex, serializer);
@@ -3272,6 +3340,8 @@ case GlyphKindDto_Marker(text: final text): sse_encode_i_32(8, serializer); sse_
 case GlyphKindDto_BarNumber(number: final number): sse_encode_i_32(9, serializer); sse_encode_u_32(number, serializer);
 case GlyphKindDto_TabClef(): sse_encode_i_32(10, serializer); case GlyphKindDto_StringName(string: final string,name: final name): sse_encode_i_32(11, serializer); sse_encode_u_8(string, serializer);
 sse_encode_String(name, serializer);
+case GlyphKindDto_Accent(): sse_encode_i_32(12, serializer); case GlyphKindDto_Stroke(up: final up): sse_encode_i_32(13, serializer); sse_encode_bool(up, serializer);
+case GlyphKindDto_StringPercussive(): sse_encode_i_32(14, serializer); case GlyphKindDto_PalmMute(run: final run): sse_encode_i_32(15, serializer); sse_encode_bool(run, serializer);
   } }
 
 @protected void sse_encode_hit_beat_dto(HitBeatDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3445,6 +3515,7 @@ sse_encode_u_32(self.overfullMeasures, serializer);
 sse_encode_u_32(self.tupletsWithoutBracket, serializer);
 sse_encode_u_32(self.tempoRounded, serializer);
 sse_encode_u_32(self.charactersRemoved, serializer);
+sse_encode_u_32(self.techniquesApproximated, serializer);
  }
 
 @protected void sse_encode_note_dto(NoteDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3454,6 +3525,9 @@ sse_encode_u_8(self.fret, serializer);
 sse_encode_bool(self.tie, serializer);
 sse_encode_bool(self.letRing, serializer);
 sse_encode_bool(self.dead, serializer);
+sse_encode_bool(self.accent, serializer);
+sse_encode_bool(self.palmMute, serializer);
+sse_encode_bool(self.stringPercussive, serializer);
  }
 
 @protected void sse_encode_opt_String(String? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3469,6 +3543,14 @@ sse_encode_bool(self.dead, serializer);
                 sse_encode_bool(self != null, serializer);
                 if (self != null) {
                     sse_encode_box_autoadd_i_64(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_opt_box_autoadd_stroke_dto(StrokeDto? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_stroke_dto(self, serializer);
                 }
                  }
 
@@ -3552,6 +3634,9 @@ sse_encode_u_8(self.strings, serializer);
 sse_encode_f_32(self.top, serializer);
 sse_encode_system_dto(self.system, serializer);
  }
+
+@protected void sse_encode_stroke_dto(StrokeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
 
 @protected void sse_encode_system_dto(SystemDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_u_32(self.index, serializer);

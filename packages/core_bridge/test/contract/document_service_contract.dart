@@ -247,6 +247,87 @@ void documentServiceContract(
       );
     });
 
+    test('ADR-035: technique flags and the stroke are set, undone, redone and copied', () async {
+      final a = await insertBeat(0);
+      await d.execute(CommandDto.setNote(beat: a, string: 1, fret: 5));
+      final id = d.beats(track, 0, 0).single.notes.single.id;
+      final rev = d.summary().revision;
+      await d.execute(
+        CommandDto.setNoteEffects(
+          beat: a,
+          note: id,
+          letRing: false,
+          dead: false,
+          accent: true,
+          palmMute: true,
+          stringPercussive: true,
+        ),
+      );
+      expect(
+        d.summary().revision,
+        rev + 1,
+        reason: 'one command, one revision',
+      );
+      await d.execute(CommandDto.setBeatStroke(beat: a, stroke: StrokeDto.up));
+      expect(d.summary().revision, rev + 2);
+      (StrokeDto?, bool, bool, bool, bool, bool) facts(BeatDto b) {
+        final n = b.notes.single;
+        return (
+          b.stroke,
+          n.accent,
+          n.palmMute,
+          n.stringPercussive,
+          n.dead,
+          n.letRing,
+        );
+      }
+
+      const on = (StrokeDto.up, true, true, true, false, false);
+      expect(facts(d.beats(track, 0, 0).single), on);
+      final clip = d.copyBeats(
+        track,
+        0,
+        fromBar: 0,
+        fromIndex: 0,
+        toBar: 0,
+        toIndex: 0,
+      );
+      expect(clip.single.stroke, StrokeDto.up);
+      final cn = clip.single.notes.single;
+      expect((cn.accent, cn.palmMute, cn.stringPercussive), (true, true, true));
+      await d.execute(
+        CommandDto.pasteBeats(
+          track: track,
+          bar: 1,
+          voice: 0,
+          index: 0,
+          beats: clip,
+        ),
+      );
+      expect(
+        facts(d.beats(track, 1, 0).single),
+        on,
+        reason: 'paste keeps them',
+      );
+      await d.undo(); // paste
+      await d.undo(); // stroke
+      expect(d.beats(track, 0, 0).single.stroke, isNull);
+      await d.undo(); // flags
+      expect(facts(d.beats(track, 0, 0).single), (
+        null,
+        false,
+        false,
+        false,
+        false,
+        false,
+      ));
+      await d.redo();
+      await d.redo();
+      expect(facts(d.beats(track, 0, 0).single), on);
+      await d.execute(CommandDto.setBeatStroke(beat: a));
+      expect(d.beats(track, 0, 0).single.stroke, isNull, reason: 'cleared');
+    });
+
     test('ADR-030: an invalid paste is rejected and changes nothing', () async {
       await insertBeat(0);
       final before = d.summary().revision;
@@ -259,6 +340,9 @@ void documentServiceContract(
             tie: false,
             letRing: false,
             dead: false,
+            accent: false,
+            palmMute: false,
+            stringPercussive: false,
           ),
         ],
       );

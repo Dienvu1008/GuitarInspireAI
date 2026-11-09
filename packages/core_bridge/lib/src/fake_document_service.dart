@@ -162,15 +162,7 @@ final class FakeDocumentService implements DocumentService {
         final b = _beat(beat);
         final i = b.notes.indexWhere((n) => n.string == string);
         if (i >= 0) {
-          final n = b.notes[i];
-          b.notes[i] = NoteDto(
-            id: n.id,
-            string: n.string,
-            fret: fret,
-            tie: n.tie,
-            letRing: n.letRing,
-            dead: n.dead,
-          );
+          b.notes[i] = _note(b.notes[i], fret: fret);
         } else {
           b.notes.add(
             NoteDto(
@@ -180,10 +172,42 @@ final class FakeDocumentService implements DocumentService {
               tie: false,
               letRing: false,
               dead: false,
+              accent: false,
+              palmMute: false,
+              stringPercussive: false,
             ),
           );
           b.notes.sort((x, y) => x.string.compareTo(y.string));
         }
+        return [_changed(beat)];
+      // ADR-035: stores the flags as given; the core owns what they mean.
+      case CommandDto_SetNoteEffects(
+        :final beat,
+        :final note,
+        :final letRing,
+        :final dead,
+        :final accent,
+        :final palmMute,
+        :final stringPercussive,
+      ):
+        final b = _beat(beat);
+        final i = b.notes.indexWhere((n) => n.id == note);
+        if (i < 0) throw ApiError(rule: 'not-found', message: 'note $note');
+        final n = b.notes[i];
+        b.notes[i] = NoteDto(
+          id: n.id,
+          string: n.string,
+          fret: n.fret,
+          tie: n.tie,
+          letRing: letRing,
+          dead: dead,
+          accent: accent,
+          palmMute: palmMute,
+          stringPercussive: stringPercussive,
+        );
+        return [_changed(beat)];
+      case CommandDto_SetBeatStroke(:final beat, :final stroke):
+        _beat(beat).stroke = stroke;
         return [_changed(beat)];
       case CommandDto_RemoveNote(:final beat, :final note):
         final b = _beat(beat);
@@ -251,8 +275,11 @@ final class FakeDocumentService implements DocumentService {
                   tie: n.tie,
                   letRing: n.letRing,
                   dead: n.dead,
+                  accent: n.accent,
+                  palmMute: n.palmMute,
+                  stringPercussive: n.stringPercussive,
                 ),
-            ]),
+            ], b.stroke),
         ]);
         return [
           EventKindDto.barContentChanged(
@@ -290,6 +317,18 @@ final class FakeDocumentService implements DocumentService {
         throw ApiError(rule: 'unsupported', message: 'FakeDocumentService: $c');
     }
   }
+
+  static NoteDto _note(NoteDto n, {required int fret}) => NoteDto(
+    id: n.id,
+    string: n.string,
+    fret: fret,
+    tie: n.tie,
+    letRing: n.letRing,
+    dead: n.dead,
+    accent: n.accent,
+    palmMute: n.palmMute,
+    stringPercussive: n.stringPercussive,
+  );
 
   EventKindDto _changed(BeatAddressDto a) => EventKindDto.barContentChanged(
     track: a.track,
@@ -351,7 +390,12 @@ final class FakeDocumentService implements DocumentService {
   @override
   List<BeatDto> beats(int track, int bar, int voice) => [
     for (final b in _voice(track, bar, voice))
-      BeatDto(id: b.id, duration: b.duration, notes: List.of(b.notes)),
+      BeatDto(
+        id: b.id,
+        duration: b.duration,
+        notes: List.of(b.notes),
+        stroke: b.stroke,
+      ),
   ];
 
   @override
@@ -403,6 +447,7 @@ final class FakeDocumentService implements DocumentService {
       for (final b in _voice(track, bar, voice).sublist(from, to))
         ClipBeatDto(
           duration: b.duration,
+          stroke: b.stroke,
           notes: [
             for (final n in b.notes)
               ClipNoteDto(
@@ -411,6 +456,9 @@ final class FakeDocumentService implements DocumentService {
                 tie: n.tie,
                 letRing: n.letRing,
                 dead: n.dead,
+                accent: n.accent,
+                palmMute: n.palmMute,
+                stringPercussive: n.stringPercussive,
               ),
           ],
         ),
@@ -798,11 +846,12 @@ final class _Tracked implements DocumentService {
 }
 
 final class _Beat {
-  _Beat(this.id, this.duration, this.notes);
+  _Beat(this.id, this.duration, this.notes, [this.stroke]);
   final int id;
   final DurationDto duration;
   final List<NoteDto> notes;
-  _Beat copy() => _Beat(id, duration, List.of(notes));
+  StrokeDto? stroke;
+  _Beat copy() => _Beat(id, duration, List.of(notes), stroke);
 }
 
 final class _Track {
@@ -844,12 +893,22 @@ final class _State {
           if (x.length != y.length) return false;
           for (var k = 0; k < x.length; k++) {
             if (x[k].id != y[k].id ||
-                x[k].notes.toString() != y[k].notes.toString()) {
+                x[k].stroke != y[k].stroke ||
+                !_sameNotes(x[k].notes, y[k].notes)) {
               return false;
             }
           }
         }
       }
+    }
+    return true;
+  }
+
+  // NoteDto has value equality but no toString, so compare element by element.
+  static bool _sameNotes(List<NoteDto> a, List<NoteDto> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
     }
     return true;
   }

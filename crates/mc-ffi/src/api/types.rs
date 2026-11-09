@@ -3,7 +3,7 @@
 //! amendment 2). Conversions into application types live here; every musical rule is
 //! checked by the core, never by this module.
 
-use mc_app::types::{BeatId, NoteEffects, NoteId, TrackId};
+use mc_app::types::{BeatId, NoteEffects, NoteId, Stroke, TrackId};
 use mc_app::{
     BeatAddress, ClipBeat, ClipNote, CommandError, DurationSpec, InstrumentSpecInput, OpenError,
     SaveError,
@@ -191,11 +191,20 @@ pub enum CommandDto {
         note: i64,
         tie: bool,
     },
+    /// Every flag of the note (ADR-035): send them all, the ones not changed included.
     SetNoteEffects {
         beat: BeatAddressDto,
         note: i64,
         let_ring: bool,
         dead: bool,
+        accent: bool,
+        palm_mute: bool,
+        string_percussive: bool,
+    },
+    /// Sets (`Some`) or clears (`None`) the stroke direction of a beat (ADR-035).
+    SetBeatStroke {
+        beat: BeatAddressDto,
+        stroke: Option<StrokeDto>,
     },
     AddVoice {
         track: i64,
@@ -259,6 +268,29 @@ pub enum CommandDto {
     },
 }
 
+/// Stroke direction of a beat (ADR-035).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum StrokeDto {
+    Down,
+    Up,
+}
+
+impl StrokeDto {
+    pub(crate) fn to_app(self) -> Stroke {
+        match self {
+            StrokeDto::Down => Stroke::Down,
+            StrokeDto::Up => Stroke::Up,
+        }
+    }
+
+    pub(crate) fn from_app(s: Stroke) -> Self {
+        match s {
+            Stroke::Down => StrokeDto::Down,
+            Stroke::Up => StrokeDto::Up,
+        }
+    }
+}
+
 /// A note of a clipboard fragment: strings and frets, not pitches; no ids (ADR-030).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ClipNoteDto {
@@ -267,13 +299,18 @@ pub struct ClipNoteDto {
     pub tie: bool,
     pub let_ring: bool,
     pub dead: bool,
+    pub accent: bool,
+    pub palm_mute: bool,
+    pub string_percussive: bool,
 }
 
-/// A beat of a clipboard fragment: written duration and notes; no ids (ADR-030).
+/// A beat of a clipboard fragment: written duration, notes and stroke; no ids
+/// (ADR-030, ADR-035).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ClipBeatDto {
     pub duration: DurationDto,
     pub notes: Vec<ClipNoteDto>,
+    pub stroke: Option<StrokeDto>,
 }
 
 impl ClipBeatDto {
@@ -290,9 +327,13 @@ impl ClipBeatDto {
                     effects: NoteEffects {
                         let_ring: n.let_ring,
                         dead: n.dead,
+                        accent: n.accent,
+                        palm_mute: n.palm_mute,
+                        string_percussive: n.string_percussive,
                     },
                 })
                 .collect(),
+            stroke: self.stroke.map(StrokeDto::to_app),
         }
     }
 
@@ -315,8 +356,12 @@ impl ClipBeatDto {
                     tie: n.tie,
                     let_ring: n.effects.let_ring,
                     dead: n.effects.dead,
+                    accent: n.effects.accent,
+                    palm_mute: n.effects.palm_mute,
+                    string_percussive: n.effects.string_percussive,
                 })
                 .collect(),
+            stroke: b.stroke.map(StrokeDto::from_app),
         }
     }
 }
@@ -524,12 +569,16 @@ pub struct NoteDto {
     pub tie: bool,
     pub let_ring: bool,
     pub dead: bool,
+    pub accent: bool,
+    pub palm_mute: bool,
+    pub string_percussive: bool,
 }
 
-/// One beat with its notes (inspector and editor queries).
+/// One beat with its notes and stroke (inspector and editor queries).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BeatDto {
     pub id: i64,
     pub duration: DurationDto,
     pub notes: Vec<NoteDto>,
+    pub stroke: Option<StrokeDto>,
 }

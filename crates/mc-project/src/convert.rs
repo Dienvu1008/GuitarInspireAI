@@ -4,7 +4,7 @@
 use crate::dto::*;
 use mc_score::{
     BarContent, Beat, BeatId, FrettedInstrument, InstrumentSpec, MasterBar, Note, NoteEffects,
-    NoteId, NoteKind, Score, ScoreParts, TempoChange, TrackData, TrackId, Violation, Voice,
+    NoteId, NoteKind, Score, ScoreParts, Stroke, TempoChange, TrackData, TrackId, Violation, Voice,
 };
 use mc_theory::fretted::{Capo, Fret, FretPosition, StringIndex, Tuning};
 use mc_theory::{BaseValue, KeySignature, Mode, NoteValue, Rational, Tempo, TimeSignature, Tuplet};
@@ -103,10 +103,17 @@ fn beat_dto(b: &Beat) -> BeatDto {
                     tie: n.tie,
                     let_ring: n.effects.let_ring,
                     dead: n.effects.dead,
+                    accent: n.effects.accent,
+                    palm_mute: n.effects.palm_mute,
+                    string_percussive: n.effects.string_percussive,
                     extra: Extra::new(),
                 }
             })
             .collect(),
+        stroke: b.stroke.map(|s| match s {
+            Stroke::Down => StrokeDto::Down,
+            Stroke::Up => StrokeDto::Up,
+        }),
         extra: Extra::new(),
     }
 }
@@ -281,6 +288,9 @@ fn beat_from(cx: &mut Ctx, path: &str, b: &BeatDto) -> Option<Beat> {
                 effects: NoteEffects {
                     let_ring: n.let_ring,
                     dead: n.dead,
+                    accent: n.accent,
+                    palm_mute: n.palm_mute,
+                    string_percussive: n.string_percussive,
                 },
             })
         })
@@ -289,5 +299,9 @@ fn beat_from(cx: &mut Ctx, path: &str, b: &BeatDto) -> Option<Beat> {
         id: BeatId::from_raw(b.id),
         value,
         notes,
+        stroke: b.stroke.map(|s| match s {
+            StrokeDto::Down => Stroke::Down,
+            StrokeDto::Up => Stroke::Up,
+        }),
     })
 }

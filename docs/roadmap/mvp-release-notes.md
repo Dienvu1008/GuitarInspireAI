@@ -68,3 +68,15 @@ The "Play it back" item above lists per-track mute. In the M5 build the mute con
   - Export only.
   - Checked with MuseScore 4.7.5 on one machine. MuseScore ignores the capo, so a track with a capo is re-fingered there.
   - See [mvp-known-limitations.md](mvp-known-limitations.md).
+
+## Added in Phase 6a-1
+
+- **Playing techniques** (ADR-035): accent, palm mute and string-percussive per note, and a
+  down or up stroke per beat, set in the inspector with the mouse or the keyboard (Tab,
+  Space, Enter).
+  - Playback and MIDI export: accent is louder; palm mute, dead and string-percussive
+    notes are short and softer.
+  - TAB: `>`, "P.M." with a dashed line, stroke arrows, and `x` with `S`.
+  - MusicXML export: written as MusicXML 4.0 defines, where it can.
+  - Project files that use these are format 1.1; older builds open them read-only (Save As).
+  - See [mvp-known-limitations.md](mvp-known-limitations.md).

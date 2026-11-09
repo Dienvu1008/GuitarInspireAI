@@ -2,7 +2,7 @@
 
 use crate::xml::Xml;
 use crate::{MusicXmlError, MusicXmlReport};
-use mc_score::{Beat, MasterBar, Note, Score, Track, Voice};
+use mc_score::{Beat, MasterBar, Note, Score, Stroke, Track, Voice};
 use mc_theory::fretted::pitch_at;
 use mc_theory::{KeySignature, Letter, Mode, NoteValue, Rational, Tuplet};
 
@@ -512,6 +512,25 @@ fn write_time_modification(x: &mut Xml, t: Tuplet) {
     x.close();
 }
 
+/// A stroke as `<down-bow/>` or `<up-bow/>`, which MusicXML 4.0 defines as the symbol
+/// for a down-stroke or up-stroke on plucked instruments (ADR-035).
+fn write_stroke_marks(x: &mut Xml, stroke: Option<Stroke>) {
+    match stroke {
+        Some(Stroke::Down) => x.empty("down-bow", &[]),
+        Some(Stroke::Up) => x.empty("up-bow", &[]),
+        None => {}
+    }
+}
+
+/// The stroke of a rest, in its own `<technical>`.
+fn write_stroke(x: &mut Xml, stroke: Option<Stroke>) {
+    if stroke.is_some() {
+        x.open("technical", &[]);
+        write_stroke_marks(x, stroke);
+        x.close();
+    }
+}
+
 fn write_tuplet_marks(x: &mut Xml, mark: Bracket) {
     match mark {
         Bracket::None => {}
@@ -555,9 +574,10 @@ fn write_beat(
         x.empty("rest", &[]);
         x.text("duration", &[], &d);
         common(x);
-        if mark != Bracket::None {
+        if mark != Bracket::None || beat.stroke.is_some() {
             x.open("notations", &[]);
             write_tuplet_marks(x, mark);
+            write_stroke(x, beat.stroke);
             x.close();
         }
         x.close();
@@ -591,7 +611,8 @@ fn write_beat(
             x.empty("tie", &[("type", "start")]);
         }
         common(x);
-        if note.effects.dead {
+        // Dead and string-percussive notes both have an x notehead (ADR-035).
+        if note.effects.dead || note.effects.string_percussive {
             x.text("notehead", &[], "x");
         }
         x.open("notations", &[]);
@@ -607,9 +628,28 @@ fn write_beat(
         if i == 0 {
             write_tuplet_marks(x, mark);
         }
+        if note.effects.accent {
+            x.open("articulations", &[]);
+            x.empty("accent", &[]);
+            x.close();
+        }
         x.open("technical", &[]);
+        // The stroke belongs to the whole beat: once, on its first note.
+        if i == 0 {
+            write_stroke_marks(x, beat.stroke);
+        }
         x.text("string", &[], &position.string.get().to_string());
         x.text("fret", &[], &position.fret.0.to_string());
+        // MusicXML 4.0 has no element for these two (ADR-035): written as
+        // <other-technical> and counted. String-percussive is never <golpe/>.
+        if note.effects.palm_mute {
+            x.text("other-technical", &[], "palm mute");
+            report.techniques_approximated += 1;
+        }
+        if note.effects.string_percussive {
+            x.text("other-technical", &[], "string percussive");
+            report.techniques_approximated += 1;
+        }
         x.close();
         x.close();
         x.close();

@@ -463,6 +463,7 @@ pub use mc_app::types::NoteEffects
 pub use mc_app::types::NoteId
 pub use mc_app::types::Rational
 pub use mc_app::types::Score
+pub use mc_app::types::Stroke
 pub use mc_app::types::TimeSignature
 pub use mc_app::types::Track
 pub use mc_app::types::TrackId
@@ -707,6 +708,9 @@ pub mc_app::ScoreCommand::RemoveVoice::voice: usize
 pub mc_app::ScoreCommand::SetBeatDuration
 pub mc_app::ScoreCommand::SetBeatDuration::beat: mc_app::BeatAddress
 pub mc_app::ScoreCommand::SetBeatDuration::duration: mc_app::DurationSpec
+pub mc_app::ScoreCommand::SetBeatStroke
+pub mc_app::ScoreCommand::SetBeatStroke::beat: mc_app::BeatAddress
+pub mc_app::ScoreCommand::SetBeatStroke::stroke: core::option::Option<mc_score::model::Stroke>
 pub mc_app::ScoreCommand::SetMasterBar
 pub mc_app::ScoreCommand::SetMasterBar::bar: mc_score::model::MasterBar
 pub mc_app::ScoreCommand::SetMasterBar::index: usize
@@ -858,6 +862,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_app::BeatAddress
 pub struct mc_app::ClipBeat
 pub mc_app::ClipBeat::duration: mc_app::DurationSpec
 pub mc_app::ClipBeat::notes: alloc::vec::Vec<mc_app::ClipNote>
+pub mc_app::ClipBeat::stroke: core::option::Option<mc_score::model::Stroke>
 impl core::clone::Clone for mc_app::ClipBeat
 pub fn mc_app::ClipBeat::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::ClipBeat

@@ -56,7 +56,7 @@ extension GlyphKindDtoPatterns on GlyphKindDto {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( GlyphKindDto_Fret value)?  fret,TResult Function( GlyphKindDto_Rest value)?  rest,TResult Function( GlyphKindDto_Dot value)?  dot,TResult Function( GlyphKindDto_Tuplet value)?  tuplet,TResult Function( GlyphKindDto_TimeSignature value)?  timeSignature,TResult Function( GlyphKindDto_RepeatDots value)?  repeatDots,TResult Function( GlyphKindDto_RepeatCount value)?  repeatCount,TResult Function( GlyphKindDto_Volta value)?  volta,TResult Function( GlyphKindDto_Marker value)?  marker,TResult Function( GlyphKindDto_BarNumber value)?  barNumber,TResult Function( GlyphKindDto_TabClef value)?  tabClef,TResult Function( GlyphKindDto_StringName value)?  stringName,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( GlyphKindDto_Fret value)?  fret,TResult Function( GlyphKindDto_Rest value)?  rest,TResult Function( GlyphKindDto_Dot value)?  dot,TResult Function( GlyphKindDto_Tuplet value)?  tuplet,TResult Function( GlyphKindDto_TimeSignature value)?  timeSignature,TResult Function( GlyphKindDto_RepeatDots value)?  repeatDots,TResult Function( GlyphKindDto_RepeatCount value)?  repeatCount,TResult Function( GlyphKindDto_Volta value)?  volta,TResult Function( GlyphKindDto_Marker value)?  marker,TResult Function( GlyphKindDto_BarNumber value)?  barNumber,TResult Function( GlyphKindDto_TabClef value)?  tabClef,TResult Function( GlyphKindDto_StringName value)?  stringName,TResult Function( GlyphKindDto_Accent value)?  accent,TResult Function( GlyphKindDto_Stroke value)?  stroke,TResult Function( GlyphKindDto_StringPercussive value)?  stringPercussive,TResult Function( GlyphKindDto_PalmMute value)?  palmMute,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case GlyphKindDto_Fret() when fret != null:
@@ -71,7 +71,11 @@ return volta(_that);case GlyphKindDto_Marker() when marker != null:
 return marker(_that);case GlyphKindDto_BarNumber() when barNumber != null:
 return barNumber(_that);case GlyphKindDto_TabClef() when tabClef != null:
 return tabClef(_that);case GlyphKindDto_StringName() when stringName != null:
-return stringName(_that);case _:
+return stringName(_that);case GlyphKindDto_Accent() when accent != null:
+return accent(_that);case GlyphKindDto_Stroke() when stroke != null:
+return stroke(_that);case GlyphKindDto_StringPercussive() when stringPercussive != null:
+return stringPercussive(_that);case GlyphKindDto_PalmMute() when palmMute != null:
+return palmMute(_that);case _:
   return orElse();
 
 }
@@ -89,7 +93,7 @@ return stringName(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( GlyphKindDto_Fret value)  fret,required TResult Function( GlyphKindDto_Rest value)  rest,required TResult Function( GlyphKindDto_Dot value)  dot,required TResult Function( GlyphKindDto_Tuplet value)  tuplet,required TResult Function( GlyphKindDto_TimeSignature value)  timeSignature,required TResult Function( GlyphKindDto_RepeatDots value)  repeatDots,required TResult Function( GlyphKindDto_RepeatCount value)  repeatCount,required TResult Function( GlyphKindDto_Volta value)  volta,required TResult Function( GlyphKindDto_Marker value)  marker,required TResult Function( GlyphKindDto_BarNumber value)  barNumber,required TResult Function( GlyphKindDto_TabClef value)  tabClef,required TResult Function( GlyphKindDto_StringName value)  stringName,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( GlyphKindDto_Fret value)  fret,required TResult Function( GlyphKindDto_Rest value)  rest,required TResult Function( GlyphKindDto_Dot value)  dot,required TResult Function( GlyphKindDto_Tuplet value)  tuplet,required TResult Function( GlyphKindDto_TimeSignature value)  timeSignature,required TResult Function( GlyphKindDto_RepeatDots value)  repeatDots,required TResult Function( GlyphKindDto_RepeatCount value)  repeatCount,required TResult Function( GlyphKindDto_Volta value)  volta,required TResult Function( GlyphKindDto_Marker value)  marker,required TResult Function( GlyphKindDto_BarNumber value)  barNumber,required TResult Function( GlyphKindDto_TabClef value)  tabClef,required TResult Function( GlyphKindDto_StringName value)  stringName,required TResult Function( GlyphKindDto_Accent value)  accent,required TResult Function( GlyphKindDto_Stroke value)  stroke,required TResult Function( GlyphKindDto_StringPercussive value)  stringPercussive,required TResult Function( GlyphKindDto_PalmMute value)  palmMute,}){
 final _that = this;
 switch (_that) {
 case GlyphKindDto_Fret():
@@ -104,7 +108,11 @@ return volta(_that);case GlyphKindDto_Marker():
 return marker(_that);case GlyphKindDto_BarNumber():
 return barNumber(_that);case GlyphKindDto_TabClef():
 return tabClef(_that);case GlyphKindDto_StringName():
-return stringName(_that);}
+return stringName(_that);case GlyphKindDto_Accent():
+return accent(_that);case GlyphKindDto_Stroke():
+return stroke(_that);case GlyphKindDto_StringPercussive():
+return stringPercussive(_that);case GlyphKindDto_PalmMute():
+return palmMute(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -118,7 +126,7 @@ return stringName(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( GlyphKindDto_Fret value)?  fret,TResult? Function( GlyphKindDto_Rest value)?  rest,TResult? Function( GlyphKindDto_Dot value)?  dot,TResult? Function( GlyphKindDto_Tuplet value)?  tuplet,TResult? Function( GlyphKindDto_TimeSignature value)?  timeSignature,TResult? Function( GlyphKindDto_RepeatDots value)?  repeatDots,TResult? Function( GlyphKindDto_RepeatCount value)?  repeatCount,TResult? Function( GlyphKindDto_Volta value)?  volta,TResult? Function( GlyphKindDto_Marker value)?  marker,TResult? Function( GlyphKindDto_BarNumber value)?  barNumber,TResult? Function( GlyphKindDto_TabClef value)?  tabClef,TResult? Function( GlyphKindDto_StringName value)?  stringName,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( GlyphKindDto_Fret value)?  fret,TResult? Function( GlyphKindDto_Rest value)?  rest,TResult? Function( GlyphKindDto_Dot value)?  dot,TResult? Function( GlyphKindDto_Tuplet value)?  tuplet,TResult? Function( GlyphKindDto_TimeSignature value)?  timeSignature,TResult? Function( GlyphKindDto_RepeatDots value)?  repeatDots,TResult? Function( GlyphKindDto_RepeatCount value)?  repeatCount,TResult? Function( GlyphKindDto_Volta value)?  volta,TResult? Function( GlyphKindDto_Marker value)?  marker,TResult? Function( GlyphKindDto_BarNumber value)?  barNumber,TResult? Function( GlyphKindDto_TabClef value)?  tabClef,TResult? Function( GlyphKindDto_StringName value)?  stringName,TResult? Function( GlyphKindDto_Accent value)?  accent,TResult? Function( GlyphKindDto_Stroke value)?  stroke,TResult? Function( GlyphKindDto_StringPercussive value)?  stringPercussive,TResult? Function( GlyphKindDto_PalmMute value)?  palmMute,}){
 final _that = this;
 switch (_that) {
 case GlyphKindDto_Fret() when fret != null:
@@ -133,7 +141,11 @@ return volta(_that);case GlyphKindDto_Marker() when marker != null:
 return marker(_that);case GlyphKindDto_BarNumber() when barNumber != null:
 return barNumber(_that);case GlyphKindDto_TabClef() when tabClef != null:
 return tabClef(_that);case GlyphKindDto_StringName() when stringName != null:
-return stringName(_that);case _:
+return stringName(_that);case GlyphKindDto_Accent() when accent != null:
+return accent(_that);case GlyphKindDto_Stroke() when stroke != null:
+return stroke(_that);case GlyphKindDto_StringPercussive() when stringPercussive != null:
+return stringPercussive(_that);case GlyphKindDto_PalmMute() when palmMute != null:
+return palmMute(_that);case _:
   return null;
 
 }
@@ -150,7 +162,7 @@ return stringName(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int fret,  bool tied,  bool dead,  bool letRing)?  fret,TResult Function( int exponent,  int dots)?  rest,TResult Function()?  dot,TResult Function( int actual)?  tuplet,TResult Function( int numerator,  int denominator)?  timeSignature,TResult Function()?  repeatDots,TResult Function( int count)?  repeatCount,TResult Function( Uint8List endings)?  volta,TResult Function( String text)?  marker,TResult Function( int number)?  barNumber,TResult Function()?  tabClef,TResult Function( int string,  String name)?  stringName,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int fret,  bool tied,  bool dead,  bool letRing)?  fret,TResult Function( int exponent,  int dots)?  rest,TResult Function()?  dot,TResult Function( int actual)?  tuplet,TResult Function( int numerator,  int denominator)?  timeSignature,TResult Function()?  repeatDots,TResult Function( int count)?  repeatCount,TResult Function( Uint8List endings)?  volta,TResult Function( String text)?  marker,TResult Function( int number)?  barNumber,TResult Function()?  tabClef,TResult Function( int string,  String name)?  stringName,TResult Function()?  accent,TResult Function( bool up)?  stroke,TResult Function()?  stringPercussive,TResult Function( bool run)?  palmMute,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case GlyphKindDto_Fret() when fret != null:
 return fret(_that.fret,_that.tied,_that.dead,_that.letRing);case GlyphKindDto_Rest() when rest != null:
@@ -164,7 +176,11 @@ return volta(_that.endings);case GlyphKindDto_Marker() when marker != null:
 return marker(_that.text);case GlyphKindDto_BarNumber() when barNumber != null:
 return barNumber(_that.number);case GlyphKindDto_TabClef() when tabClef != null:
 return tabClef();case GlyphKindDto_StringName() when stringName != null:
-return stringName(_that.string,_that.name);case _:
+return stringName(_that.string,_that.name);case GlyphKindDto_Accent() when accent != null:
+return accent();case GlyphKindDto_Stroke() when stroke != null:
+return stroke(_that.up);case GlyphKindDto_StringPercussive() when stringPercussive != null:
+return stringPercussive();case GlyphKindDto_PalmMute() when palmMute != null:
+return palmMute(_that.run);case _:
   return orElse();
 
 }
@@ -182,7 +198,7 @@ return stringName(_that.string,_that.name);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int fret,  bool tied,  bool dead,  bool letRing)  fret,required TResult Function( int exponent,  int dots)  rest,required TResult Function()  dot,required TResult Function( int actual)  tuplet,required TResult Function( int numerator,  int denominator)  timeSignature,required TResult Function()  repeatDots,required TResult Function( int count)  repeatCount,required TResult Function( Uint8List endings)  volta,required TResult Function( String text)  marker,required TResult Function( int number)  barNumber,required TResult Function()  tabClef,required TResult Function( int string,  String name)  stringName,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int fret,  bool tied,  bool dead,  bool letRing)  fret,required TResult Function( int exponent,  int dots)  rest,required TResult Function()  dot,required TResult Function( int actual)  tuplet,required TResult Function( int numerator,  int denominator)  timeSignature,required TResult Function()  repeatDots,required TResult Function( int count)  repeatCount,required TResult Function( Uint8List endings)  volta,required TResult Function( String text)  marker,required TResult Function( int number)  barNumber,required TResult Function()  tabClef,required TResult Function( int string,  String name)  stringName,required TResult Function()  accent,required TResult Function( bool up)  stroke,required TResult Function()  stringPercussive,required TResult Function( bool run)  palmMute,}) {final _that = this;
 switch (_that) {
 case GlyphKindDto_Fret():
 return fret(_that.fret,_that.tied,_that.dead,_that.letRing);case GlyphKindDto_Rest():
@@ -196,7 +212,11 @@ return volta(_that.endings);case GlyphKindDto_Marker():
 return marker(_that.text);case GlyphKindDto_BarNumber():
 return barNumber(_that.number);case GlyphKindDto_TabClef():
 return tabClef();case GlyphKindDto_StringName():
-return stringName(_that.string,_that.name);}
+return stringName(_that.string,_that.name);case GlyphKindDto_Accent():
+return accent();case GlyphKindDto_Stroke():
+return stroke(_that.up);case GlyphKindDto_StringPercussive():
+return stringPercussive();case GlyphKindDto_PalmMute():
+return palmMute(_that.run);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -210,7 +230,7 @@ return stringName(_that.string,_that.name);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int fret,  bool tied,  bool dead,  bool letRing)?  fret,TResult? Function( int exponent,  int dots)?  rest,TResult? Function()?  dot,TResult? Function( int actual)?  tuplet,TResult? Function( int numerator,  int denominator)?  timeSignature,TResult? Function()?  repeatDots,TResult? Function( int count)?  repeatCount,TResult? Function( Uint8List endings)?  volta,TResult? Function( String text)?  marker,TResult? Function( int number)?  barNumber,TResult? Function()?  tabClef,TResult? Function( int string,  String name)?  stringName,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int fret,  bool tied,  bool dead,  bool letRing)?  fret,TResult? Function( int exponent,  int dots)?  rest,TResult? Function()?  dot,TResult? Function( int actual)?  tuplet,TResult? Function( int numerator,  int denominator)?  timeSignature,TResult? Function()?  repeatDots,TResult? Function( int count)?  repeatCount,TResult? Function( Uint8List endings)?  volta,TResult? Function( String text)?  marker,TResult? Function( int number)?  barNumber,TResult? Function()?  tabClef,TResult? Function( int string,  String name)?  stringName,TResult? Function()?  accent,TResult? Function( bool up)?  stroke,TResult? Function()?  stringPercussive,TResult? Function( bool run)?  palmMute,}) {final _that = this;
 switch (_that) {
 case GlyphKindDto_Fret() when fret != null:
 return fret(_that.fret,_that.tied,_that.dead,_that.letRing);case GlyphKindDto_Rest() when rest != null:
@@ -224,7 +244,11 @@ return volta(_that.endings);case GlyphKindDto_Marker() when marker != null:
 return marker(_that.text);case GlyphKindDto_BarNumber() when barNumber != null:
 return barNumber(_that.number);case GlyphKindDto_TabClef() when tabClef != null:
 return tabClef();case GlyphKindDto_StringName() when stringName != null:
-return stringName(_that.string,_that.name);case _:
+return stringName(_that.string,_that.name);case GlyphKindDto_Accent() when accent != null:
+return accent();case GlyphKindDto_Stroke() when stroke != null:
+return stroke(_that.up);case GlyphKindDto_StringPercussive() when stringPercussive != null:
+return stringPercussive();case GlyphKindDto_PalmMute() when palmMute != null:
+return palmMute(_that.run);case _:
   return null;
 
 }
@@ -946,6 +970,206 @@ class _$GlyphKindDto_StringNameCopyWithImpl<$Res>
 string: null == string ? _self.string : string // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class GlyphKindDto_Accent extends GlyphKindDto {
+  const GlyphKindDto_Accent(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GlyphKindDto_Accent);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'GlyphKindDto.accent()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class GlyphKindDto_Stroke extends GlyphKindDto {
+  const GlyphKindDto_Stroke({required this.up}): super._();
+  
+
+ final  bool up;
+
+/// Create a copy of GlyphKindDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GlyphKindDto_StrokeCopyWith<GlyphKindDto_Stroke> get copyWith => _$GlyphKindDto_StrokeCopyWithImpl<GlyphKindDto_Stroke>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GlyphKindDto_Stroke&&(identical(other.up, up) || other.up == up));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,up);
+}
+
+@override
+String toString() {
+    return 'GlyphKindDto.stroke(up: $up)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $GlyphKindDto_StrokeCopyWith<$Res> implements $GlyphKindDtoCopyWith<$Res> {
+  factory $GlyphKindDto_StrokeCopyWith(GlyphKindDto_Stroke value, $Res Function(GlyphKindDto_Stroke) _then) = _$GlyphKindDto_StrokeCopyWithImpl;
+@useResult
+$Res call({
+ bool up
+});
+
+
+
+
+}
+/// @nodoc
+class _$GlyphKindDto_StrokeCopyWithImpl<$Res>
+    implements $GlyphKindDto_StrokeCopyWith<$Res> {
+  _$GlyphKindDto_StrokeCopyWithImpl(this._self, this._then);
+
+  final GlyphKindDto_Stroke _self;
+  final $Res Function(GlyphKindDto_Stroke) _then;
+
+/// Create a copy of GlyphKindDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? up = null,}) {
+  return _then(GlyphKindDto_Stroke(
+up: null == up ? _self.up : up // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class GlyphKindDto_StringPercussive extends GlyphKindDto {
+  const GlyphKindDto_StringPercussive(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GlyphKindDto_StringPercussive);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'GlyphKindDto.stringPercussive()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class GlyphKindDto_PalmMute extends GlyphKindDto {
+  const GlyphKindDto_PalmMute({required this.run}): super._();
+  
+
+ final  bool run;
+
+/// Create a copy of GlyphKindDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GlyphKindDto_PalmMuteCopyWith<GlyphKindDto_PalmMute> get copyWith => _$GlyphKindDto_PalmMuteCopyWithImpl<GlyphKindDto_PalmMute>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is GlyphKindDto_PalmMute&&(identical(other.run, run) || other.run == run));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,run);
+}
+
+@override
+String toString() {
+    return 'GlyphKindDto.palmMute(run: $run)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $GlyphKindDto_PalmMuteCopyWith<$Res> implements $GlyphKindDtoCopyWith<$Res> {
+  factory $GlyphKindDto_PalmMuteCopyWith(GlyphKindDto_PalmMute value, $Res Function(GlyphKindDto_PalmMute) _then) = _$GlyphKindDto_PalmMuteCopyWithImpl;
+@useResult
+$Res call({
+ bool run
+});
+
+
+
+
+}
+/// @nodoc
+class _$GlyphKindDto_PalmMuteCopyWithImpl<$Res>
+    implements $GlyphKindDto_PalmMuteCopyWith<$Res> {
+  _$GlyphKindDto_PalmMuteCopyWithImpl(this._self, this._then);
+
+  final GlyphKindDto_PalmMute _self;
+  final $Res Function(GlyphKindDto_PalmMute) _then;
+
+/// Create a copy of GlyphKindDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? run = null,}) {
+  return _then(GlyphKindDto_PalmMute(
+run: null == run ? _self.run : run // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

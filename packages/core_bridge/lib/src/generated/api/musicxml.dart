@@ -57,15 +57,18 @@ final int tupletsWithoutBracket;
 final int tempoRounded;
 /// Characters removed from names and markers (not allowed in XML).
 final int charactersRemoved;
+/// Note techniques written as `<other-technical>` text because MusicXML 4.0 has no
+/// element for them: palm mute and string-percussive (ADR-035).
+final int techniquesApproximated;
 
-                const MusicXmlReportDto({required this.parts ,required this.measures ,required this.notes ,required this.paddedVoices ,required this.overfullMeasures ,required this.tupletsWithoutBracket ,required this.tempoRounded ,required this.charactersRemoved ,});
+                const MusicXmlReportDto({required this.parts ,required this.measures ,required this.notes ,required this.paddedVoices ,required this.overfullMeasures ,required this.tupletsWithoutBracket ,required this.tempoRounded ,required this.charactersRemoved ,required this.techniquesApproximated ,});
 
 
 
 
 
         @override
-        int get hashCode => parts.hashCode^measures.hashCode^notes.hashCode^paddedVoices.hashCode^overfullMeasures.hashCode^tupletsWithoutBracket.hashCode^tempoRounded.hashCode^charactersRemoved.hashCode;
+        int get hashCode => parts.hashCode^measures.hashCode^notes.hashCode^paddedVoices.hashCode^overfullMeasures.hashCode^tupletsWithoutBracket.hashCode^tempoRounded.hashCode^charactersRemoved.hashCode^techniquesApproximated.hashCode;
 
 
 
@@ -74,7 +77,7 @@ final int charactersRemoved;
             identical(this, other) ||
             other is MusicXmlReportDto &&
                 runtimeType == other.runtimeType
-                && parts == other.parts&& measures == other.measures&& notes == other.notes&& paddedVoices == other.paddedVoices&& overfullMeasures == other.overfullMeasures&& tupletsWithoutBracket == other.tupletsWithoutBracket&& tempoRounded == other.tempoRounded&& charactersRemoved == other.charactersRemoved;
+                && parts == other.parts&& measures == other.measures&& notes == other.notes&& paddedVoices == other.paddedVoices&& overfullMeasures == other.overfullMeasures&& tupletsWithoutBracket == other.tupletsWithoutBracket&& tempoRounded == other.tempoRounded&& charactersRemoved == other.charactersRemoved&& techniquesApproximated == other.techniquesApproximated;
 
             }
             

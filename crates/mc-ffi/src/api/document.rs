@@ -430,8 +430,12 @@ impl DocumentHandle {
                         tie: n.tie,
                         let_ring: n.effects.let_ring,
                         dead: n.effects.dead,
+                        accent: n.effects.accent,
+                        palm_mute: n.effects.palm_mute,
+                        string_percussive: n.effects.string_percussive,
                     })
                     .collect(),
+                stroke: b.stroke.map(crate::api::types::StrokeDto::from_app),
             })
             .collect())
     }
@@ -725,10 +729,23 @@ fn to_command(s: &DocumentSession, c: CommandDto) -> Result<Command, ApiError> {
             note,
             let_ring,
             dead,
+            accent,
+            palm_mute,
+            string_percussive,
         } => sc(ScoreCommand::SetNoteEffects {
             beat: beat.to_app(),
             note: note_id(note),
-            effects: mc_app::types::NoteEffects { let_ring, dead },
+            effects: mc_app::types::NoteEffects {
+                let_ring,
+                dead,
+                accent,
+                palm_mute,
+                string_percussive,
+            },
+        }),
+        CommandDto::SetBeatStroke { beat, stroke } => sc(ScoreCommand::SetBeatStroke {
+            beat: beat.to_app(),
+            stroke: stroke.map(crate::api::types::StrokeDto::to_app),
         }),
         CommandDto::AddVoice { track, bar } => sc(ScoreCommand::AddVoice {
             track: track_id(track),

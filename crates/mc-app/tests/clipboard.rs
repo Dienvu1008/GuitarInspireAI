@@ -27,6 +27,7 @@ fn paste(track: mc_app::types::TrackId, bar: usize, index: usize, beats: Vec<Cli
 fn clip(string: u8, fret: u8) -> ClipBeat {
     ClipBeat {
         duration: DurationSpec::plain(2),
+        stroke: None,
         notes: vec![ClipNote {
             string,
             fret,
@@ -123,6 +124,7 @@ fn c2_a_failed_paste_changes_nothing() {
             "two notes on one string",
             vec![ClipBeat {
                 duration: DurationSpec::plain(2),
+                stroke: None,
                 notes: vec![clip(1, 1).notes[0], clip(1, 2).notes[0]],
             }],
             0,
@@ -231,6 +233,7 @@ fn reproduces(pasted: &[ClipBeat], copied: &[ClipBeat]) -> bool {
                 return p == c;
             }
             p.duration == c.duration
+                && p.stroke == c.stroke
                 && p.notes.len() == c.notes.len()
                 && p.notes.iter().zip(&c.notes).all(|(pn, cn)| {
                     (pn.string, pn.fret, pn.effects) == (cn.string, cn.fret, cn.effects)
@@ -239,8 +242,26 @@ fn reproduces(pasted: &[ClipBeat], copied: &[ClipBeat]) -> bool {
         })
 }
 
-/// One note to place: string, fret and whether to try to tie it to the previous beat.
-type Seed = (u8, u8, bool);
+/// One note to place: string, fret, whether to try to tie it to the previous beat, and
+/// technique bits (ADR-035, TQ-2): bits 0 to 4 are the note flags, bits 5 and 6 the
+/// beat stroke (0 none, 1 down, 2 up, 3 none).
+type Seed = (u8, u8, bool, u8);
+
+fn techniques_of(bits: u8) -> (mc_app::types::NoteEffects, Option<mc_app::types::Stroke>) {
+    let effects = mc_app::types::NoteEffects {
+        let_ring: bits & 1 != 0,
+        dead: bits & 2 != 0,
+        accent: bits & 4 != 0,
+        palm_mute: bits & 8 != 0,
+        string_percussive: bits & 16 != 0,
+    };
+    let stroke = match (bits >> 5) & 3 {
+        1 => Some(mc_app::types::Stroke::Down),
+        2 => Some(mc_app::types::Stroke::Up),
+        _ => None,
+    };
+    (effects, stroke)
+}
 
 /// Applies random structure first, then appends seeded beats to the first track, so the
 /// properties always have real content to copy (random edits alone rarely leave a beat
@@ -255,7 +276,7 @@ fn populated(ops: &[Op], seeds: &[Vec<Seed>]) -> (mc_app::DocumentSession, mc_ap
     let bars = s.score().master_bar_count();
     for (bar, notes) in seeds.iter().enumerate().take(bars) {
         let mut prev: Option<(u8, u8)> = None;
-        for &(string, fret, tie) in notes {
+        for &(string, fret, tie, bits) in notes {
             // A tied note repeats the previous beat's string and fret, so the tie is
             // valid (H-06) and fragments really carry ties.
             let (string, fret) = if tie {
@@ -268,6 +289,28 @@ fn populated(ops: &[Op], seeds: &[Vec<Seed>]) -> (mc_app::DocumentSession, mc_ap
             if s.execute(cmd(7, set_note(b, string, fret))).is_err() {
                 continue;
             }
+            let (effects, stroke) = techniques_of(bits);
+            let placed = s.score().track(t).unwrap().bar(bar).unwrap().voices[0]
+                .beats
+                .last()
+                .and_then(|x| x.notes.first())
+                .map(|n| n.id);
+            if let Some(note) = placed {
+                s.execute(cmd(
+                    9,
+                    Command::Score(ScoreCommand::SetNoteEffects {
+                        beat: b,
+                        note,
+                        effects,
+                    }),
+                ))
+                .unwrap();
+            }
+            s.execute(cmd(
+                10,
+                Command::Score(ScoreCommand::SetBeatStroke { beat: b, stroke }),
+            ))
+            .unwrap();
             if tie {
                 let last = s.score().track(t).unwrap().bar(bar).unwrap().voices[0]
                     .beats
@@ -317,7 +360,7 @@ fn pick_run(
 
 fn seeds() -> impl Strategy<Value = Vec<Vec<Seed>>> {
     proptest::collection::vec(
-        proptest::collection::vec((1u8..7, 0u8..13, any::<bool>()), 0..5),
+        proptest::collection::vec((1u8..7, 0u8..13, any::<bool>(), any::<u8>()), 0..5),
         4,
     )
 }

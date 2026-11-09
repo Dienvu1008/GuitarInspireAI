@@ -28,6 +28,34 @@ impl core::marker::Unpin for mc_project::dto::ModeDto
 impl core::marker::UnsafeUnpin for mc_project::dto::ModeDto
 impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::ModeDto
 impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::ModeDto
+pub enum mc_project::dto::StrokeDto
+pub mc_project::dto::StrokeDto::Down
+pub mc_project::dto::StrokeDto::Up
+impl core::clone::Clone for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::dto::StrokeDto
+impl core::cmp::PartialEq for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::dto::StrokeDto
+impl core::marker::StructuralPartialEq for mc_project::dto::StrokeDto
+impl schemars::JsonSchema for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::inline_schema() -> bool
+pub fn mc_project::dto::StrokeDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::StrokeDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::StrokeDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::StrokeDto
+impl core::marker::Send for mc_project::dto::StrokeDto
+impl core::marker::Sync for mc_project::dto::StrokeDto
+impl core::marker::Unpin for mc_project::dto::StrokeDto
+impl core::marker::UnsafeUnpin for mc_project::dto::StrokeDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::StrokeDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::StrokeDto
 pub struct mc_project::dto::AppDto
 pub mc_project::dto::AppDto::app: alloc::string::String
 pub mc_project::dto::AppDto::extra: mc_project::dto::Extra
@@ -89,6 +117,7 @@ pub struct mc_project::dto::BeatDto
 pub mc_project::dto::BeatDto::extra: mc_project::dto::Extra
 pub mc_project::dto::BeatDto::id: u64
 pub mc_project::dto::BeatDto::notes: alloc::vec::Vec<mc_project::dto::NoteDto>
+pub mc_project::dto::BeatDto::stroke: core::option::Option<mc_project::dto::StrokeDto>
 pub mc_project::dto::BeatDto::value: mc_project::dto::ValueDto
 impl core::clone::Clone for mc_project::dto::BeatDto
 pub fn mc_project::dto::BeatDto::clone(&self) -> Self
@@ -275,12 +304,15 @@ impl core::marker::UnsafeUnpin for mc_project::dto::MasterBarDto
 impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::MasterBarDto
 impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::MasterBarDto
 pub struct mc_project::dto::NoteDto
+pub mc_project::dto::NoteDto::accent: bool
 pub mc_project::dto::NoteDto::dead: bool
 pub mc_project::dto::NoteDto::extra: mc_project::dto::Extra
 pub mc_project::dto::NoteDto::fret: u8
 pub mc_project::dto::NoteDto::id: u64
 pub mc_project::dto::NoteDto::let_ring: bool
+pub mc_project::dto::NoteDto::palm_mute: bool
 pub mc_project::dto::NoteDto::string: u8
+pub mc_project::dto::NoteDto::string_percussive: bool
 pub mc_project::dto::NoteDto::tie: bool
 impl core::clone::Clone for mc_project::dto::NoteDto
 pub fn mc_project::dto::NoteDto::clone(&self) -> Self

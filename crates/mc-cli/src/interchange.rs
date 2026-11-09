@@ -19,6 +19,7 @@ fn source(spec: &str) -> Result<Score, String> {
             "typical" => mc_app::fixtures::reference(mc_app::fixtures::TYPICAL),
             "large" => mc_app::fixtures::reference(mc_app::fixtures::LARGE),
             "feature-rich" => mc_app::fixtures::feature_rich(),
+            "techniques" => mc_app::fixtures::techniques(),
             "empty" => mc_app::new_score("Track 1", 4).map_err(|e| e.to_string())?,
             other => return Err(format!("unknown fixture '{other}'")),
         });
@@ -45,7 +46,8 @@ pub fn export_musicxml(spec: &str, out: &str) -> Result<(), String> {
     std::fs::write(out, xml.as_bytes()).map_err(|e| format!("{out}: {e}"))?;
     println!(
         "wrote {out}: {} part(s), {} measure(s), {} note(s) in {:.1} ms; padded voices {}, \
-         overfull measures {}, tuplets without bracket {}, tempo rounded {}, characters removed {}",
+         overfull measures {}, tuplets without bracket {}, tempo rounded {}, characters removed {}, \
+         techniques approximated {}",
         r.parts,
         r.measures,
         r.notes,
@@ -54,7 +56,8 @@ pub fn export_musicxml(spec: &str, out: &str) -> Result<(), String> {
         r.overfull_measures,
         r.tuplets_without_bracket,
         r.tempo_rounded,
-        r.characters_removed
+        r.characters_removed,
+        r.techniques_approximated
     );
     Ok(())
 }

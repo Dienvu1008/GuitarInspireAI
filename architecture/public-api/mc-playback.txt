@@ -479,8 +479,12 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_playback::TrackMix
 impl core::panic::unwind_safe::UnwindSafe for mc_playback::TrackMix
 pub struct mc_playback::Velocity(_)
 impl mc_playback::Velocity
+pub const mc_playback::Velocity::ACCENT_BOOST: u8
 pub const mc_playback::Velocity::DEAD: mc_playback::Velocity
 pub const mc_playback::Velocity::NORMAL: mc_playback::Velocity
+pub const mc_playback::Velocity::PALM_MUTE: mc_playback::Velocity
+pub const mc_playback::Velocity::STRING_PERCUSSIVE: mc_playback::Velocity
+pub const fn mc_playback::Velocity::accented(self) -> mc_playback::Velocity
 pub const fn mc_playback::Velocity::get(self) -> u8
 pub fn mc_playback::Velocity::try_new(u8) -> core::result::Result<Self, mc_playback::OutOfRange>
 impl core::clone::Clone for mc_playback::Velocity

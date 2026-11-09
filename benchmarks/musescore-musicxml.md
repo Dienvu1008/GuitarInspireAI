@@ -101,3 +101,25 @@ No collision hides a note. Seen in the rendering, and both explained above: the 
 | `reference(LARGE)` (20 tracks, 300 bars, 288 000 notes, a 100.2 MB file) | 154.9 ms | 164.7 ms | ≤ 2 s |
 
 **E11: met** on this machine.
+
+## ADR-035 TQ-8: playing techniques through MuseScore (6a-1, 2026-11-09)
+
+The procedure now also exports the `techniques` fixture (ADR-035: every technique and combination, two bars of 4/4, open C shape). MuseScore converts it to MusicXML and to PNG, and `compare.py techniques` checks, note by note, which marks MuseScore's re-export still has. Full output: [musescore/summary-6a1-2026-11-09.txt](musescore/summary-6a1-2026-11-09.txt). In the same run, E8 and E9 gave exactly the results above.
+
+MuseScore 4.7.5 opened the file and converted it (exit 0). All 19 notes and rests come back at the same place, string and fret.
+
+| Technique (our encoding) | Ours | In MuseScore's re-export | Result |
+|---|---|---|---|
+| Accent (`<articulations><accent/>`) | 11 notes on 3 beats | 3: one per beat, on the chord's first note | Kept per beat. MuseScore stores articulations per chord, so a chord where only some notes are accented cannot be told apart from a fully accented one |
+| Down-stroke (`<technical><down-bow/>`) on notes | 2 | 2 | Kept; drawn as the down-bow symbol |
+| Down-stroke on a rest | 1 | 0 | **Lost** |
+| Up-stroke (`<technical><up-bow/>`) | 1 | 1 | Kept; drawn as the up-bow symbol |
+| `x` notehead (dead or string-percussive) | 7 | 7 | Kept in the file. On TAB MuseScore draws fret digits, not `x` (as for dead notes in E10) |
+| Palm mute (`<other-technical>palm mute</other-technical>`) | 4 | 0 | **Lost**: not drawn, not re-exported |
+| String-percussive (`<other-technical>string percussive</other-technical>`) | 6 | 0 | **Lost**: not drawn, not re-exported. The `x` notehead stays, so MuseScore sees it as a dead note |
+
+![MuseScore rendering of the techniques fixture](musescore/techniques-preview.png)
+
+The rendering shows the accents, the down-bow and up-bow symbols and the let-ring ties. It shows no palm-mute or string-percussive text and no mark on the rest.
+
+**TQ-8: MuseScore opens the file, and the result for each technique is recorded. Palm mute, string-percussive and a stroke on a rest are lost in MuseScore. Per-note accents in a chord collapse to one accent per chord. This is an evidence gap, not a pass.** Our file follows MusicXML 4.0 (ADR-035 section 9), so the encoding is not changed to suit MuseScore.

@@ -72,7 +72,7 @@ pub fn reference(shape: Shape) -> Score {
                                         tie: false,
                                         effects: NoteEffects {
                                             let_ring: (b + k) % 17 == 0,
-                                            dead: false,
+                                            ..NoteEffects::default()
                                         },
                                     }
                                 })
@@ -81,6 +81,7 @@ pub fn reference(shape: Shape) -> Score {
                                 id: BeatId::from_raw(id()),
                                 value,
                                 notes,
+                                stroke: None,
                             }
                         })
                         .collect();
@@ -241,7 +242,7 @@ pub fn feature_rich() -> Score {
                 n,
                 NoteEffects {
                     let_ring: true,
-                    dead: false,
+                    ..NoteEffects::default()
                 },
             )
             .unwrap();
@@ -273,8 +274,8 @@ pub fn feature_rich() -> Score {
         },
         dead,
         NoteEffects {
-            let_ring: false,
             dead: true,
+            ..NoteEffects::default()
         },
     )
     .unwrap();
@@ -301,6 +302,140 @@ pub fn feature_rich() -> Score {
     s
 }
 
+/// A score that uses every playing technique of ADR-035: accent, palm mute (whole and
+/// partial chords), string-percussive, stroke directions (also on a rest), and the
+/// precedence combinations (dead with let ring, palm mute with let ring, string-
+/// percussive with dead). One standard-tuned track, two bars of 4/4, open C shape
+/// (`x32010`). Built with aggregate operations, so ids follow allocation order.
+pub fn techniques() -> Score {
+    use crate::Stroke;
+    let mut s = crate::Score::new(
+        "Techniques",
+        InstrumentSpec::Fretted(FrettedInstrument::standard_guitar()),
+        MasterBar::default(),
+        Tempo::from_bpm(100).unwrap(),
+    )
+    .unwrap();
+    s.insert_master_bars(1, 1, MasterBar::default()).unwrap();
+    let t = s.track_at(0).unwrap().id();
+    let q = NoteValue::plain(BaseValue::QUARTER);
+    let e = NoteValue::plain(BaseValue::EIGHTH);
+    let pos = |string: u8, fret: u8| FretPosition {
+        string: StringIndex::new(string).unwrap(),
+        fret: Fret(fret),
+    };
+    let chord = [(1, 0), (2, 1), (3, 0), (4, 2), (5, 3)];
+    let fx = |accent, palm_mute, string_percussive, dead, let_ring| NoteEffects {
+        accent,
+        palm_mute,
+        string_percussive,
+        dead,
+        let_ring,
+    };
+    // One beat: notes with their effects, an optional stroke.
+    let put = |s: &mut Score,
+               bar: usize,
+               index: usize,
+               value: NoteValue,
+               notes: &[((u8, u8), NoteEffects)],
+               stroke: Option<Stroke>| {
+        let (b, _) = s.insert_beat(t, bar, 0, index, value).unwrap();
+        let r = BeatRef {
+            track: t,
+            bar,
+            voice: 0,
+            beat: b,
+        };
+        for &((string, fret), effects) in notes {
+            let (n, _) = s.set_note(r, pos(string, fret)).unwrap();
+            s.set_note_effects(r, n, effects).unwrap();
+        }
+        s.set_beat_stroke(r, stroke).unwrap();
+    };
+    let all = |e: NoteEffects| chord.map(|p| (p, e));
+    // Bar 0: accented down-stroke chord; two palm-muted eighths (the second accented);
+    // accented string-percussive up-stroke chord; dead + let ring (dead wins).
+    put(
+        &mut s,
+        0,
+        0,
+        q,
+        &all(fx(true, false, false, false, false)),
+        Some(Stroke::Down),
+    );
+    put(
+        &mut s,
+        0,
+        1,
+        e,
+        &[((5, 3), fx(false, true, false, false, false))],
+        None,
+    );
+    put(
+        &mut s,
+        0,
+        2,
+        e,
+        &[((5, 3), fx(true, true, false, false, false))],
+        None,
+    );
+    put(
+        &mut s,
+        0,
+        3,
+        q,
+        &all(fx(true, false, true, false, false)),
+        Some(Stroke::Up),
+    );
+    put(
+        &mut s,
+        0,
+        4,
+        q,
+        &[((1, 0), fx(false, false, false, true, true))],
+        None,
+    );
+    // Bar 1: palm mute + let ring (palm mute wins); a down-stroke on a rest; a partly
+    // palm-muted chord; string-percussive + dead (string-percussive wins); let ring.
+    put(
+        &mut s,
+        1,
+        0,
+        q,
+        &[((5, 3), fx(false, true, false, false, true))],
+        None,
+    );
+    put(&mut s, 1, 1, e, &[], Some(Stroke::Down));
+    put(
+        &mut s,
+        1,
+        2,
+        e,
+        &[
+            ((4, 2), fx(false, true, false, false, false)),
+            ((5, 3), fx(false, false, false, false, false)),
+        ],
+        Some(Stroke::Down),
+    );
+    put(
+        &mut s,
+        1,
+        3,
+        q,
+        &[((2, 1), fx(false, false, true, true, false))],
+        None,
+    );
+    put(
+        &mut s,
+        1,
+        4,
+        q,
+        &[((3, 0), fx(false, false, false, false, true))],
+        None,
+    );
+    assert!(s.validate().is_empty());
+    s
+}
 #[cfg(test)]
 mod tests {
     use super::*;

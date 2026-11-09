@@ -53,6 +53,19 @@ foreach ($f in 'feature-rich', 'typical', 'from-midi') {
     python tools/musescore-check/compare.py strings "$out/$f.musicxml" "$out/$f.musescore.musicxml" 2>&1 | ForEach-Object { Say $_ }
 }
 
+# ADR-035 TQ-8: the techniques fixture through MuseScore, technique by technique.
+& $cli export-musicxml fixture:techniques "$out/techniques.musicxml" | Out-Null
+$target = "$out/techniques.musescore.musicxml"
+Remove-Item $target -ErrorAction SilentlyContinue
+$p = Start-Process -FilePath $MuseScore -ArgumentList @('-o', $target, "$out/techniques.musicxml") `
+    -NoNewWindow -Wait -PassThru -RedirectStandardError "$out/techniques.musicxml.stderr.txt"
+Say ("TQ-8 open+convert techniques -> musicxml: exit {0}, output {1}" -f $p.ExitCode, $(if (Test-Path $target) { 'written' } else { 'MISSING' }))
+Say "--- TQ-8 techniques (ours vs MuseScore re-export)"
+python tools/musescore-check/compare.py techniques "$out/techniques.musicxml" $target 2>&1 | ForEach-Object { Say $_ }
+Remove-Item "$out/techniques*.png" -ErrorAction SilentlyContinue
+$p = Start-Process -FilePath $MuseScore -ArgumentList @('-o', "$out/techniques.png", "$out/techniques.musicxml") `
+    -NoNewWindow -Wait -PassThru
+Say ("TQ-8 PNG: exit {0}, files {1}" -f $p.ExitCode, ((Get-ChildItem "$out/techniques*.png" | ForEach-Object Name) -join ', '))
 # E10: a PNG rendering of feature_rich for review.
 Remove-Item "$out/feature-rich*.png" -ErrorAction SilentlyContinue
 $p = Start-Process -FilePath $MuseScore -ArgumentList @('-o', "$out/feature-rich.png", "$out/feature-rich.musicxml") `

@@ -1,0 +1,75 @@
+layout strings=6 width=1000.0 height=124.0
+system 0 y=0.0 h=124.0 staff_top=28.0 bars=[0@52.0+179.6 1@231.6+163.6]
+  line String 24.0,28.0 -> 395.2,28.0
+  line String 24.0,40.0 -> 395.2,40.0
+  line String 24.0,52.0 -> 395.2,52.0
+  line String 24.0,64.0 -> 395.2,64.0
+  line String 24.0,76.0 -> 395.2,76.0
+  line String 24.0,88.0 -> 395.2,88.0
+  line BarLine 52.0,28.0 -> 52.0,88.0
+  line Stem 92.2,92.8 -> 92.2,112.8
+  line Stem 121.0,92.8 -> 121.0,112.8
+  line Stem 146.2,92.8 -> 146.2,112.8
+  line Stem 175.0,92.8 -> 175.0,112.8
+  line Stem 207.4,92.8 -> 207.4,112.8
+  line Beam 121.0,112.8 -> 146.2,112.8
+  line BarLine 231.6,28.0 -> 231.6,88.0
+  line BarLine 391.2,28.0 -> 391.2,88.0
+  line ThickBarLine 394.2,28.0 -> 394.2,88.0
+  line Stem 255.8,92.8 -> 255.8,112.8
+  line Stem 309.8,92.8 -> 309.8,112.8
+  line Stem 338.6,92.8 -> 338.6,112.8
+  line Stem 371.0,92.8 -> 371.0,112.8
+  line Beam 309.8,112.8 -> 318.2,112.8
+  glyph TabClef 42.2,58.0 w=14.0
+  glyph StringName { string: 1, name: "E" } 28.2,28.0 w=7.0
+  glyph StringName { string: 2, name: "B" } 28.2,40.0 w=7.0
+  glyph StringName { string: 3, name: "G" } 28.2,52.0 w=7.0
+  glyph StringName { string: 4, name: "D" } 28.2,64.0 w=7.0
+  glyph StringName { string: 5, name: "A" } 28.2,76.0 w=7.0
+  glyph StringName { string: 6, name: "E" } 28.2,88.0 w=7.0
+  glyph TimeSignature { numerator: 4, denominator: 4 } 64.0,58.0 w=16.0
+  glyph Fret { fret: 0, tied: false, dead: false, let_ring: false } 92.2,28.0 w=7.0
+  glyph Fret { fret: 1, tied: false, dead: false, let_ring: false } 92.2,40.0 w=7.0
+  glyph Fret { fret: 0, tied: false, dead: false, let_ring: false } 92.2,52.0 w=7.0
+  glyph Fret { fret: 2, tied: false, dead: false, let_ring: false } 92.2,64.0 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: false } 92.2,76.0 w=7.0
+  glyph Stroke { up: false } 85.2,19.6 w=7.0
+  glyph Accent 92.2,19.6 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: false } 121.0,76.0 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: false } 146.2,76.0 w=7.0
+  glyph Accent 146.2,19.6 w=7.0
+  glyph Fret { fret: 0, tied: false, dead: true, let_ring: false } 175.0,28.0 w=7.0
+  glyph Fret { fret: 1, tied: false, dead: true, let_ring: false } 175.0,40.0 w=7.0
+  glyph Fret { fret: 0, tied: false, dead: true, let_ring: false } 175.0,52.0 w=7.0
+  glyph Fret { fret: 2, tied: false, dead: true, let_ring: false } 175.0,64.0 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: true, let_ring: false } 175.0,76.0 w=7.0
+  glyph Stroke { up: true } 168.0,19.6 w=7.0
+  glyph Accent 175.0,19.6 w=7.0
+  glyph StringPercussive 182.0,19.6 w=7.0
+  glyph Fret { fret: 0, tied: false, dead: true, let_ring: true } 207.4,28.0 w=7.0
+  glyph BarNumber { number: 1 } 59.0,18.2 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: true } 255.8,76.0 w=7.0
+  glyph Stroke { up: false } 277.6,19.6 w=7.0
+  glyph Fret { fret: 2, tied: false, dead: false, let_ring: false } 309.8,64.0 w=7.0
+  glyph Fret { fret: 3, tied: false, dead: false, let_ring: false } 309.8,76.0 w=7.0
+  glyph Stroke { up: false } 302.8,19.6 w=7.0
+  glyph Fret { fret: 1, tied: false, dead: true, let_ring: false } 338.6,40.0 w=7.0
+  glyph StringPercussive 345.6,19.6 w=7.0
+  glyph Fret { fret: 0, tied: false, dead: false, let_ring: true } 371.0,52.0 w=7.0
+  glyph Rest { exponent: 3, dots: 0 } 284.6,104.8 w=7.0
+  glyph PalmMute { run: true } 133.6,11.2 w=46.2
+  glyph PalmMute { run: true } 255.8,11.2 w=21.0
+  glyph PalmMute { run: false } 309.8,11.2 w=21.0
+  hit bar=0 beat v0 #0 x=76.0 w=32.4
+  hit bar=0 beat v0 #1 x=108.4 w=25.2
+  hit bar=0 beat v0 #2 x=133.6 w=25.2
+  hit bar=0 beat v0 #3 x=158.8 w=32.4
+  hit bar=0 beat v0 #4 x=191.2 w=32.4
+  hit bar=0 append v0 x=223.6 w=8.0
+  hit bar=1 beat v0 #0 x=239.6 w=32.4
+  hit bar=1 beat v0 #1 x=272.0 w=25.2
+  hit bar=1 beat v0 #2 x=297.2 w=25.2
+  hit bar=1 beat v0 #3 x=322.4 w=32.4
+  hit bar=1 beat v0 #4 x=354.8 w=32.4
+  hit bar=1 append v0 x=387.2 w=8.0

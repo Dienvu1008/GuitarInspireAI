@@ -164,9 +164,10 @@ fn run(args: &[String]) -> Result<(), String> {
                 "typical" => mc_app::fixtures::reference(mc_app::fixtures::TYPICAL),
                 "large" => mc_app::fixtures::reference(mc_app::fixtures::LARGE),
                 "feature-rich" => mc_app::fixtures::feature_rich(),
+                "techniques" => mc_app::fixtures::techniques(),
                 other => {
                     return Err(format!(
-                        "unknown fixture '{other}' (small, typical, large, feature-rich)"
+                        "unknown fixture '{other}' (small, typical, large, feature-rich, techniques)"
                     ));
                 }
             };
@@ -339,6 +340,7 @@ fn format_fixtures(crate_dir: &Path) -> Result<(), String> {
             mc_app::fixtures::reference(mc_app::fixtures::SMALL),
         ),
         ("feature-rich", mc_app::fixtures::feature_rich()),
+        ("techniques", mc_app::fixtures::techniques()),
     ] {
         let package = dir.join(format!("{name}.package"));
         if write_new(&package, &mc_project::save(&score, &info))? {

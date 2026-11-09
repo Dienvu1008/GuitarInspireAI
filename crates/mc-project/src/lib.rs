@@ -25,7 +25,9 @@ use sha2::{Digest, Sha256};
 pub const FORMAT: &str = "guitarinspire.project";
 /// Version written by this build. Bump minor for additive changes, major for
 /// incompatible ones (project-format section 5; FF-32 enforces it).
-pub const FORMAT_VERSION: FormatVersion = FormatVersion { major: 1, minor: 0 };
+/// 1.1 (ADR-035): optional note techniques (accent, palm mute, string-percussive) and
+/// beat stroke direction.
+pub const FORMAT_VERSION: FormatVersion = FormatVersion { major: 1, minor: 1 };
 /// Required features this build understands. Unknown ones refuse the file (P-03).
 pub const KNOWN_REQUIRED_FEATURES: &[&str] = &[];
 /// Optional features this build understands. Unknown ones are unknown content (U1).

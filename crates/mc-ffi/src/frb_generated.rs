@@ -2799,10 +2799,12 @@ impl SseDecode for crate::api::types::BeatDto {
         let mut var_id = <i64>::sse_decode(deserializer);
         let mut var_duration = <crate::api::types::DurationDto>::sse_decode(deserializer);
         let mut var_notes = <Vec<crate::api::types::NoteDto>>::sse_decode(deserializer);
+        let mut var_stroke = <Option<crate::api::types::StrokeDto>>::sse_decode(deserializer);
         return crate::api::types::BeatDto {
             id: var_id,
             duration: var_duration,
             notes: var_notes,
+            stroke: var_stroke,
         };
     }
 }
@@ -2833,9 +2835,11 @@ impl SseDecode for crate::api::types::ClipBeatDto {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_duration = <crate::api::types::DurationDto>::sse_decode(deserializer);
         let mut var_notes = <Vec<crate::api::types::ClipNoteDto>>::sse_decode(deserializer);
+        let mut var_stroke = <Option<crate::api::types::StrokeDto>>::sse_decode(deserializer);
         return crate::api::types::ClipBeatDto {
             duration: var_duration,
             notes: var_notes,
+            stroke: var_stroke,
         };
     }
 }
@@ -2848,12 +2852,18 @@ impl SseDecode for crate::api::types::ClipNoteDto {
         let mut var_tie = <bool>::sse_decode(deserializer);
         let mut var_letRing = <bool>::sse_decode(deserializer);
         let mut var_dead = <bool>::sse_decode(deserializer);
+        let mut var_accent = <bool>::sse_decode(deserializer);
+        let mut var_palmMute = <bool>::sse_decode(deserializer);
+        let mut var_stringPercussive = <bool>::sse_decode(deserializer);
         return crate::api::types::ClipNoteDto {
             string: var_string,
             fret: var_fret,
             tie: var_tie,
             let_ring: var_letRing,
             dead: var_dead,
+            accent: var_accent,
+            palm_mute: var_palmMute,
+            string_percussive: var_stringPercussive,
         };
     }
 }
@@ -2968,14 +2978,29 @@ impl SseDecode for crate::api::types::CommandDto {
                 let mut var_note = <i64>::sse_decode(deserializer);
                 let mut var_letRing = <bool>::sse_decode(deserializer);
                 let mut var_dead = <bool>::sse_decode(deserializer);
+                let mut var_accent = <bool>::sse_decode(deserializer);
+                let mut var_palmMute = <bool>::sse_decode(deserializer);
+                let mut var_stringPercussive = <bool>::sse_decode(deserializer);
                 return crate::api::types::CommandDto::SetNoteEffects {
                     beat: var_beat,
                     note: var_note,
                     let_ring: var_letRing,
                     dead: var_dead,
+                    accent: var_accent,
+                    palm_mute: var_palmMute,
+                    string_percussive: var_stringPercussive,
                 };
             }
             12 => {
+                let mut var_beat = <crate::api::types::BeatAddressDto>::sse_decode(deserializer);
+                let mut var_stroke =
+                    <Option<crate::api::types::StrokeDto>>::sse_decode(deserializer);
+                return crate::api::types::CommandDto::SetBeatStroke {
+                    beat: var_beat,
+                    stroke: var_stroke,
+                };
+            }
+            13 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_bar = <u32>::sse_decode(deserializer);
                 return crate::api::types::CommandDto::AddVoice {
@@ -2983,7 +3008,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     bar: var_bar,
                 };
             }
-            13 => {
+            14 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_bar = <u32>::sse_decode(deserializer);
                 let mut var_voice = <u32>::sse_decode(deserializer);
@@ -2993,7 +3018,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     voice: var_voice,
                 };
             }
-            14 => {
+            15 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_fromBar = <u32>::sse_decode(deserializer);
                 let mut var_toBar = <u32>::sse_decode(deserializer);
@@ -3005,7 +3030,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     delta: var_delta,
                 };
             }
-            15 => {
+            16 => {
                 let mut var_name = <String>::sse_decode(deserializer);
                 let mut var_instrument =
                     <crate::api::types::InstrumentDto>::sse_decode(deserializer);
@@ -3014,11 +3039,11 @@ impl SseDecode for crate::api::types::CommandDto {
                     instrument: var_instrument,
                 };
             }
-            16 => {
+            17 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 return crate::api::types::CommandDto::RemoveTrack { track: var_track };
             }
-            17 => {
+            18 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_name = <String>::sse_decode(deserializer);
                 return crate::api::types::CommandDto::RenameTrack {
@@ -3026,7 +3051,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     name: var_name,
                 };
             }
-            18 => {
+            19 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_instrument =
                     <crate::api::types::InstrumentDto>::sse_decode(deserializer);
@@ -3035,7 +3060,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     instrument: var_instrument,
                 };
             }
-            19 => {
+            20 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_to = <u32>::sse_decode(deserializer);
                 return crate::api::types::CommandDto::MoveTrack {
@@ -3043,7 +3068,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     to: var_to,
                 };
             }
-            20 => {
+            21 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_instrument =
                     <crate::api::types::InstrumentDto>::sse_decode(deserializer);
@@ -3054,7 +3079,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     keep_pitches: var_keepPitches,
                 };
             }
-            21 => {
+            22 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_bar = <u32>::sse_decode(deserializer);
                 let mut var_voice = <u32>::sse_decode(deserializer);
@@ -3068,7 +3093,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     beats: var_beats,
                 };
             }
-            22 => {
+            23 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_voice = <u32>::sse_decode(deserializer);
                 let mut var_fromBar = <u32>::sse_decode(deserializer);
@@ -3424,6 +3449,20 @@ impl SseDecode for crate::api::layout::GlyphKindDto {
                     string: var_string,
                     name: var_name,
                 };
+            }
+            12 => {
+                return crate::api::layout::GlyphKindDto::Accent;
+            }
+            13 => {
+                let mut var_up = <bool>::sse_decode(deserializer);
+                return crate::api::layout::GlyphKindDto::Stroke { up: var_up };
+            }
+            14 => {
+                return crate::api::layout::GlyphKindDto::StringPercussive;
+            }
+            15 => {
+                let mut var_run = <bool>::sse_decode(deserializer);
+                return crate::api::layout::GlyphKindDto::PalmMute { run: var_run };
             }
             _ => {
                 unimplemented!("");
@@ -3874,6 +3913,7 @@ impl SseDecode for crate::api::musicxml::MusicXmlReportDto {
         let mut var_tupletsWithoutBracket = <u32>::sse_decode(deserializer);
         let mut var_tempoRounded = <u32>::sse_decode(deserializer);
         let mut var_charactersRemoved = <u32>::sse_decode(deserializer);
+        let mut var_techniquesApproximated = <u32>::sse_decode(deserializer);
         return crate::api::musicxml::MusicXmlReportDto {
             parts: var_parts,
             measures: var_measures,
@@ -3883,6 +3923,7 @@ impl SseDecode for crate::api::musicxml::MusicXmlReportDto {
             tuplets_without_bracket: var_tupletsWithoutBracket,
             tempo_rounded: var_tempoRounded,
             characters_removed: var_charactersRemoved,
+            techniques_approximated: var_techniquesApproximated,
         };
     }
 }
@@ -3896,6 +3937,9 @@ impl SseDecode for crate::api::types::NoteDto {
         let mut var_tie = <bool>::sse_decode(deserializer);
         let mut var_letRing = <bool>::sse_decode(deserializer);
         let mut var_dead = <bool>::sse_decode(deserializer);
+        let mut var_accent = <bool>::sse_decode(deserializer);
+        let mut var_palmMute = <bool>::sse_decode(deserializer);
+        let mut var_stringPercussive = <bool>::sse_decode(deserializer);
         return crate::api::types::NoteDto {
             id: var_id,
             string: var_string,
@@ -3903,6 +3947,9 @@ impl SseDecode for crate::api::types::NoteDto {
             tie: var_tie,
             let_ring: var_letRing,
             dead: var_dead,
+            accent: var_accent,
+            palm_mute: var_palmMute,
+            string_percussive: var_stringPercussive,
         };
     }
 }
@@ -3923,6 +3970,17 @@ impl SseDecode for Option<i64> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<i64>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::types::StrokeDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::types::StrokeDto>::sse_decode(deserializer));
         } else {
             return None;
         }
@@ -4095,6 +4153,18 @@ impl SseDecode for crate::api::layout::StaveDto {
             strings: var_strings,
             top: var_top,
             system: var_system,
+        };
+    }
+}
+
+impl SseDecode for crate::api::types::StrokeDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::types::StrokeDto::Down,
+            1 => crate::api::types::StrokeDto::Up,
+            _ => unreachable!("Invalid variant for StrokeDto: {}", inner),
         };
     }
 }
@@ -4580,6 +4650,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::BeatDto {
             self.id.into_into_dart().into_dart(),
             self.duration.into_into_dart().into_dart(),
             self.notes.into_into_dart().into_dart(),
+            self.stroke.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4618,6 +4689,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::ClipBeatDto {
         [
             self.duration.into_into_dart().into_dart(),
             self.notes.into_into_dart().into_dart(),
+            self.stroke.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4642,6 +4714,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::ClipNoteDto {
             self.tie.into_into_dart().into_dart(),
             self.let_ring.into_into_dart().into_dart(),
             self.dead.into_into_dart().into_dart(),
+            self.accent.into_into_dart().into_dart(),
+            self.palm_mute.into_into_dart().into_dart(),
+            self.string_percussive.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -4752,22 +4827,34 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::CommandDto {
                 note,
                 let_ring,
                 dead,
+                accent,
+                palm_mute,
+                string_percussive,
             } => [
                 11.into_dart(),
                 beat.into_into_dart().into_dart(),
                 note.into_into_dart().into_dart(),
                 let_ring.into_into_dart().into_dart(),
                 dead.into_into_dart().into_dart(),
+                accent.into_into_dart().into_dart(),
+                palm_mute.into_into_dart().into_dart(),
+                string_percussive.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::types::CommandDto::SetBeatStroke { beat, stroke } => [
+                12.into_dart(),
+                beat.into_into_dart().into_dart(),
+                stroke.into_into_dart().into_dart(),
             ]
             .into_dart(),
             crate::api::types::CommandDto::AddVoice { track, bar } => [
-                12.into_dart(),
+                13.into_dart(),
                 track.into_into_dart().into_dart(),
                 bar.into_into_dart().into_dart(),
             ]
             .into_dart(),
             crate::api::types::CommandDto::RemoveVoice { track, bar, voice } => [
-                13.into_dart(),
+                14.into_dart(),
                 track.into_into_dart().into_dart(),
                 bar.into_into_dart().into_dart(),
                 voice.into_into_dart().into_dart(),
@@ -4779,7 +4866,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::CommandDto {
                 to_bar,
                 delta,
             } => [
-                14.into_dart(),
+                15.into_dart(),
                 track.into_into_dart().into_dart(),
                 from_bar.into_into_dart().into_dart(),
                 to_bar.into_into_dart().into_dart(),
@@ -4787,28 +4874,28 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::CommandDto {
             ]
             .into_dart(),
             crate::api::types::CommandDto::AddTrack { name, instrument } => [
-                15.into_dart(),
+                16.into_dart(),
                 name.into_into_dart().into_dart(),
                 instrument.into_into_dart().into_dart(),
             ]
             .into_dart(),
             crate::api::types::CommandDto::RemoveTrack { track } => {
-                [16.into_dart(), track.into_into_dart().into_dart()].into_dart()
+                [17.into_dart(), track.into_into_dart().into_dart()].into_dart()
             }
             crate::api::types::CommandDto::RenameTrack { track, name } => [
-                17.into_dart(),
+                18.into_dart(),
                 track.into_into_dart().into_dart(),
                 name.into_into_dart().into_dart(),
             ]
             .into_dart(),
             crate::api::types::CommandDto::SetInstrument { track, instrument } => [
-                18.into_dart(),
+                19.into_dart(),
                 track.into_into_dart().into_dart(),
                 instrument.into_into_dart().into_dart(),
             ]
             .into_dart(),
             crate::api::types::CommandDto::MoveTrack { track, to } => [
-                19.into_dart(),
+                20.into_dart(),
                 track.into_into_dart().into_dart(),
                 to.into_into_dart().into_dart(),
             ]
@@ -4818,7 +4905,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::CommandDto {
                 instrument,
                 keep_pitches,
             } => [
-                20.into_dart(),
+                21.into_dart(),
                 track.into_into_dart().into_dart(),
                 instrument.into_into_dart().into_dart(),
                 keep_pitches.into_into_dart().into_dart(),
@@ -4831,7 +4918,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::CommandDto {
                 index,
                 beats,
             } => [
-                21.into_dart(),
+                22.into_dart(),
                 track.into_into_dart().into_dart(),
                 bar.into_into_dart().into_dart(),
                 voice.into_into_dart().into_dart(),
@@ -4847,7 +4934,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::CommandDto {
                 to_bar,
                 to_index,
             } => [
-                22.into_dart(),
+                23.into_dart(),
                 track.into_into_dart().into_dart(),
                 voice.into_into_dart().into_dart(),
                 from_bar.into_into_dart().into_dart(),
@@ -5185,6 +5272,14 @@ impl flutter_rust_bridge::IntoDart for crate::api::layout::GlyphKindDto {
                 name.into_into_dart().into_dart(),
             ]
             .into_dart(),
+            crate::api::layout::GlyphKindDto::Accent => [12.into_dart()].into_dart(),
+            crate::api::layout::GlyphKindDto::Stroke { up } => {
+                [13.into_dart(), up.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::layout::GlyphKindDto::StringPercussive => [14.into_dart()].into_dart(),
+            crate::api::layout::GlyphKindDto::PalmMute { run } => {
+                [15.into_dart(), run.into_into_dart().into_dart()].into_dart()
+            }
             _ => {
                 unimplemented!("");
             }
@@ -5367,6 +5462,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::musicxml::MusicXmlReportDto {
             self.tuplets_without_bracket.into_into_dart().into_dart(),
             self.tempo_rounded.into_into_dart().into_dart(),
             self.characters_removed.into_into_dart().into_dart(),
+            self.techniques_approximated.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -5392,6 +5488,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::NoteDto {
             self.tie.into_into_dart().into_dart(),
             self.let_ring.into_into_dart().into_dart(),
             self.dead.into_into_dart().into_dart(),
+            self.accent.into_into_dart().into_dart(),
+            self.palm_mute.into_into_dart().into_dart(),
+            self.string_percussive.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -5597,6 +5696,24 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::StaveDto>
     for crate::api::layout::StaveDto
 {
     fn into_into_dart(self) -> crate::api::layout::StaveDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::types::StrokeDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Down => 0.into_dart(),
+            Self::Up => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::types::StrokeDto {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::types::StrokeDto>
+    for crate::api::types::StrokeDto
+{
+    fn into_into_dart(self) -> crate::api::types::StrokeDto {
         self
     }
 }
@@ -5877,6 +5994,7 @@ impl SseEncode for crate::api::types::BeatDto {
         <i64>::sse_encode(self.id, serializer);
         <crate::api::types::DurationDto>::sse_encode(self.duration, serializer);
         <Vec<crate::api::types::NoteDto>>::sse_encode(self.notes, serializer);
+        <Option<crate::api::types::StrokeDto>>::sse_encode(self.stroke, serializer);
     }
 }
 
@@ -5901,6 +6019,7 @@ impl SseEncode for crate::api::types::ClipBeatDto {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <crate::api::types::DurationDto>::sse_encode(self.duration, serializer);
         <Vec<crate::api::types::ClipNoteDto>>::sse_encode(self.notes, serializer);
+        <Option<crate::api::types::StrokeDto>>::sse_encode(self.stroke, serializer);
     }
 }
 
@@ -5912,6 +6031,9 @@ impl SseEncode for crate::api::types::ClipNoteDto {
         <bool>::sse_encode(self.tie, serializer);
         <bool>::sse_encode(self.let_ring, serializer);
         <bool>::sse_encode(self.dead, serializer);
+        <bool>::sse_encode(self.accent, serializer);
+        <bool>::sse_encode(self.palm_mute, serializer);
+        <bool>::sse_encode(self.string_percussive, serializer);
     }
 }
 
@@ -6001,20 +6123,31 @@ impl SseEncode for crate::api::types::CommandDto {
                 note,
                 let_ring,
                 dead,
+                accent,
+                palm_mute,
+                string_percussive,
             } => {
                 <i32>::sse_encode(11, serializer);
                 <crate::api::types::BeatAddressDto>::sse_encode(beat, serializer);
                 <i64>::sse_encode(note, serializer);
                 <bool>::sse_encode(let_ring, serializer);
                 <bool>::sse_encode(dead, serializer);
+                <bool>::sse_encode(accent, serializer);
+                <bool>::sse_encode(palm_mute, serializer);
+                <bool>::sse_encode(string_percussive, serializer);
+            }
+            crate::api::types::CommandDto::SetBeatStroke { beat, stroke } => {
+                <i32>::sse_encode(12, serializer);
+                <crate::api::types::BeatAddressDto>::sse_encode(beat, serializer);
+                <Option<crate::api::types::StrokeDto>>::sse_encode(stroke, serializer);
             }
             crate::api::types::CommandDto::AddVoice { track, bar } => {
-                <i32>::sse_encode(12, serializer);
+                <i32>::sse_encode(13, serializer);
                 <i64>::sse_encode(track, serializer);
                 <u32>::sse_encode(bar, serializer);
             }
             crate::api::types::CommandDto::RemoveVoice { track, bar, voice } => {
-                <i32>::sse_encode(13, serializer);
+                <i32>::sse_encode(14, serializer);
                 <i64>::sse_encode(track, serializer);
                 <u32>::sse_encode(bar, serializer);
                 <u32>::sse_encode(voice, serializer);
@@ -6025,33 +6158,33 @@ impl SseEncode for crate::api::types::CommandDto {
                 to_bar,
                 delta,
             } => {
-                <i32>::sse_encode(14, serializer);
+                <i32>::sse_encode(15, serializer);
                 <i64>::sse_encode(track, serializer);
                 <u32>::sse_encode(from_bar, serializer);
                 <u32>::sse_encode(to_bar, serializer);
                 <i16>::sse_encode(delta, serializer);
             }
             crate::api::types::CommandDto::AddTrack { name, instrument } => {
-                <i32>::sse_encode(15, serializer);
+                <i32>::sse_encode(16, serializer);
                 <String>::sse_encode(name, serializer);
                 <crate::api::types::InstrumentDto>::sse_encode(instrument, serializer);
             }
             crate::api::types::CommandDto::RemoveTrack { track } => {
-                <i32>::sse_encode(16, serializer);
+                <i32>::sse_encode(17, serializer);
                 <i64>::sse_encode(track, serializer);
             }
             crate::api::types::CommandDto::RenameTrack { track, name } => {
-                <i32>::sse_encode(17, serializer);
+                <i32>::sse_encode(18, serializer);
                 <i64>::sse_encode(track, serializer);
                 <String>::sse_encode(name, serializer);
             }
             crate::api::types::CommandDto::SetInstrument { track, instrument } => {
-                <i32>::sse_encode(18, serializer);
+                <i32>::sse_encode(19, serializer);
                 <i64>::sse_encode(track, serializer);
                 <crate::api::types::InstrumentDto>::sse_encode(instrument, serializer);
             }
             crate::api::types::CommandDto::MoveTrack { track, to } => {
-                <i32>::sse_encode(19, serializer);
+                <i32>::sse_encode(20, serializer);
                 <i64>::sse_encode(track, serializer);
                 <u32>::sse_encode(to, serializer);
             }
@@ -6060,7 +6193,7 @@ impl SseEncode for crate::api::types::CommandDto {
                 instrument,
                 keep_pitches,
             } => {
-                <i32>::sse_encode(20, serializer);
+                <i32>::sse_encode(21, serializer);
                 <i64>::sse_encode(track, serializer);
                 <crate::api::types::InstrumentDto>::sse_encode(instrument, serializer);
                 <bool>::sse_encode(keep_pitches, serializer);
@@ -6072,7 +6205,7 @@ impl SseEncode for crate::api::types::CommandDto {
                 index,
                 beats,
             } => {
-                <i32>::sse_encode(21, serializer);
+                <i32>::sse_encode(22, serializer);
                 <i64>::sse_encode(track, serializer);
                 <u32>::sse_encode(bar, serializer);
                 <u32>::sse_encode(voice, serializer);
@@ -6087,7 +6220,7 @@ impl SseEncode for crate::api::types::CommandDto {
                 to_bar,
                 to_index,
             } => {
-                <i32>::sse_encode(22, serializer);
+                <i32>::sse_encode(23, serializer);
                 <i64>::sse_encode(track, serializer);
                 <u32>::sse_encode(voice, serializer);
                 <u32>::sse_encode(from_bar, serializer);
@@ -6347,6 +6480,20 @@ impl SseEncode for crate::api::layout::GlyphKindDto {
                 <i32>::sse_encode(11, serializer);
                 <u8>::sse_encode(string, serializer);
                 <String>::sse_encode(name, serializer);
+            }
+            crate::api::layout::GlyphKindDto::Accent => {
+                <i32>::sse_encode(12, serializer);
+            }
+            crate::api::layout::GlyphKindDto::Stroke { up } => {
+                <i32>::sse_encode(13, serializer);
+                <bool>::sse_encode(up, serializer);
+            }
+            crate::api::layout::GlyphKindDto::StringPercussive => {
+                <i32>::sse_encode(14, serializer);
+            }
+            crate::api::layout::GlyphKindDto::PalmMute { run } => {
+                <i32>::sse_encode(15, serializer);
+                <bool>::sse_encode(run, serializer);
             }
             _ => {
                 unimplemented!("");
@@ -6692,6 +6839,7 @@ impl SseEncode for crate::api::musicxml::MusicXmlReportDto {
         <u32>::sse_encode(self.tuplets_without_bracket, serializer);
         <u32>::sse_encode(self.tempo_rounded, serializer);
         <u32>::sse_encode(self.characters_removed, serializer);
+        <u32>::sse_encode(self.techniques_approximated, serializer);
     }
 }
 
@@ -6704,6 +6852,9 @@ impl SseEncode for crate::api::types::NoteDto {
         <bool>::sse_encode(self.tie, serializer);
         <bool>::sse_encode(self.let_ring, serializer);
         <bool>::sse_encode(self.dead, serializer);
+        <bool>::sse_encode(self.accent, serializer);
+        <bool>::sse_encode(self.palm_mute, serializer);
+        <bool>::sse_encode(self.string_percussive, serializer);
     }
 }
 
@@ -6723,6 +6874,16 @@ impl SseEncode for Option<i64> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <i64>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::types::StrokeDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::types::StrokeDto>::sse_encode(value, serializer);
         }
     }
 }
@@ -6849,6 +7010,22 @@ impl SseEncode for crate::api::layout::StaveDto {
         <u8>::sse_encode(self.strings, serializer);
         <f32>::sse_encode(self.top, serializer);
         <crate::api::layout::SystemDto>::sse_encode(self.system, serializer);
+    }
+}
+
+impl SseEncode for crate::api::types::StrokeDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::types::StrokeDto::Down => 0,
+                crate::api::types::StrokeDto::Up => 1,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
     }
 }
 

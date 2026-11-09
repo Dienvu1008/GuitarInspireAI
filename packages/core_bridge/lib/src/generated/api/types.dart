@@ -8,8 +8,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'types.freezed.dart';
 
-            // These functions are ignored because they are not marked as `pub`: `from_app`, `new`, `note_id`, `to_app`, `to_app`, `to_app`, `to_app`, `track_id`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
+            // These functions are ignored because they are not marked as `pub`: `from_app`, `from_app`, `new`, `note_id`, `to_app`, `to_app`, `to_app`, `to_app`, `to_app`, `track_id`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
 
 
             
@@ -67,20 +67,21 @@ final PlatformInt64 beat;
 
             }
 
-/// One beat with its notes (inspector and editor queries).
+/// One beat with its notes and stroke (inspector and editor queries).
 class BeatDto  {
                 final PlatformInt64 id;
 final DurationDto duration;
 final List<NoteDto> notes;
+final StrokeDto? stroke;
 
-                const BeatDto({required this.id ,required this.duration ,required this.notes ,});
+                const BeatDto({required this.id ,required this.duration ,required this.notes ,this.stroke ,});
 
 
 
 
 
         @override
-        int get hashCode => id.hashCode^duration.hashCode^notes.hashCode;
+        int get hashCode => id.hashCode^duration.hashCode^notes.hashCode^stroke.hashCode;
 
 
 
@@ -89,7 +90,7 @@ final List<NoteDto> notes;
             identical(this, other) ||
             other is BeatDto &&
                 runtimeType == other.runtimeType
-                && id == other.id&& duration == other.duration&& notes == other.notes;
+                && id == other.id&& duration == other.duration&& notes == other.notes&& stroke == other.stroke;
 
             }
 
@@ -122,19 +123,21 @@ final List<VoicingDto> voicings;
 
             }
 
-/// A beat of a clipboard fragment: written duration and notes; no ids (ADR-030).
+/// A beat of a clipboard fragment: written duration, notes and stroke; no ids
+/// (ADR-030, ADR-035).
 class ClipBeatDto  {
                 final DurationDto duration;
 final List<ClipNoteDto> notes;
+final StrokeDto? stroke;
 
-                const ClipBeatDto({required this.duration ,required this.notes ,});
+                const ClipBeatDto({required this.duration ,required this.notes ,this.stroke ,});
 
 
 
 
 
         @override
-        int get hashCode => duration.hashCode^notes.hashCode;
+        int get hashCode => duration.hashCode^notes.hashCode^stroke.hashCode;
 
 
 
@@ -143,7 +146,7 @@ final List<ClipNoteDto> notes;
             identical(this, other) ||
             other is ClipBeatDto &&
                 runtimeType == other.runtimeType
-                && duration == other.duration&& notes == other.notes;
+                && duration == other.duration&& notes == other.notes&& stroke == other.stroke;
 
             }
 
@@ -154,15 +157,18 @@ final int fret;
 final bool tie;
 final bool letRing;
 final bool dead;
+final bool accent;
+final bool palmMute;
+final bool stringPercussive;
 
-                const ClipNoteDto({required this.string ,required this.fret ,required this.tie ,required this.letRing ,required this.dead ,});
+                const ClipNoteDto({required this.string ,required this.fret ,required this.tie ,required this.letRing ,required this.dead ,required this.accent ,required this.palmMute ,required this.stringPercussive ,});
 
 
 
 
 
         @override
-        int get hashCode => string.hashCode^fret.hashCode^tie.hashCode^letRing.hashCode^dead.hashCode;
+        int get hashCode => string.hashCode^fret.hashCode^tie.hashCode^letRing.hashCode^dead.hashCode^accent.hashCode^palmMute.hashCode^stringPercussive.hashCode;
 
 
 
@@ -171,7 +177,7 @@ final bool dead;
             identical(this, other) ||
             other is ClipNoteDto &&
                 runtimeType == other.runtimeType
-                && string == other.string&& fret == other.fret&& tie == other.tie&& letRing == other.letRing&& dead == other.dead;
+                && string == other.string&& fret == other.fret&& tie == other.tie&& letRing == other.letRing&& dead == other.dead&& accent == other.accent&& palmMute == other.palmMute&& stringPercussive == other.stringPercussive;
 
             }
 
@@ -191,7 +197,10 @@ const factory CommandDto.setTempo({   required int bar ,  required PlatformInt64
  const factory CommandDto.setNote({   required BeatAddressDto beat ,  required int string ,  required int fret , }) = CommandDto_SetNote;
  const factory CommandDto.removeNote({   required BeatAddressDto beat ,  required PlatformInt64 note , }) = CommandDto_RemoveNote;
  const factory CommandDto.setTie({   required BeatAddressDto beat ,  required PlatformInt64 note ,  required bool tie , }) = CommandDto_SetTie;
- const factory CommandDto.setNoteEffects({   required BeatAddressDto beat ,  required PlatformInt64 note ,  required bool letRing ,  required bool dead , }) = CommandDto_SetNoteEffects;
+ /// Every flag of the note (ADR-035): send them all, the ones not changed included.
+const factory CommandDto.setNoteEffects({   required BeatAddressDto beat ,  required PlatformInt64 note ,  required bool letRing ,  required bool dead ,  required bool accent ,  required bool palmMute ,  required bool stringPercussive , }) = CommandDto_SetNoteEffects;
+ /// Sets (`Some`) or clears (`None`) the stroke direction of a beat (ADR-035).
+const factory CommandDto.setBeatStroke({   required BeatAddressDto beat ,  StrokeDto? stroke , }) = CommandDto_SetBeatStroke;
  const factory CommandDto.addVoice({   required PlatformInt64 track ,  required int bar , }) = CommandDto_AddVoice;
  const factory CommandDto.removeVoice({   required PlatformInt64 track ,  required int bar ,  required int voice , }) = CommandDto_RemoveVoice;
  /// Moves notes in bars `from_bar..=to_bar` by `delta` frets.
@@ -433,15 +442,18 @@ final int fret;
 final bool tie;
 final bool letRing;
 final bool dead;
+final bool accent;
+final bool palmMute;
+final bool stringPercussive;
 
-                const NoteDto({required this.id ,required this.string ,required this.fret ,required this.tie ,required this.letRing ,required this.dead ,});
+                const NoteDto({required this.id ,required this.string ,required this.fret ,required this.tie ,required this.letRing ,required this.dead ,required this.accent ,required this.palmMute ,required this.stringPercussive ,});
 
 
 
 
 
         @override
-        int get hashCode => id.hashCode^string.hashCode^fret.hashCode^tie.hashCode^letRing.hashCode^dead.hashCode;
+        int get hashCode => id.hashCode^string.hashCode^fret.hashCode^tie.hashCode^letRing.hashCode^dead.hashCode^accent.hashCode^palmMute.hashCode^stringPercussive.hashCode;
 
 
 
@@ -450,7 +462,7 @@ final bool dead;
             identical(this, other) ||
             other is NoteDto &&
                 runtimeType == other.runtimeType
-                && id == other.id&& string == other.string&& fret == other.fret&& tie == other.tie&& letRing == other.letRing&& dead == other.dead;
+                && id == other.id&& string == other.string&& fret == other.fret&& tie == other.tie&& letRing == other.letRing&& dead == other.dead&& accent == other.accent&& palmMute == other.palmMute&& stringPercussive == other.stringPercussive;
 
             }
 
@@ -544,6 +556,14 @@ final PlaybackStateDto state;
                 && tick == other.tick&& playing == other.playing&& state == other.state;
 
             }
+
+/// Stroke direction of a beat (ADR-035).
+enum StrokeDto {
+                    down,
+up,
+                    ;
+                    
+                }
 
 class TrackSummaryDto  {
                 final PlatformInt64 id;

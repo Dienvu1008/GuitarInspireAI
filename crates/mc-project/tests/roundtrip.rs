@@ -11,7 +11,7 @@ use mc_project::{
     load_with_limits, save, schemas, score_json, sha256_hex, write_entries,
 };
 use mc_score::Score;
-use mc_score::fixtures::{SMALL, feature_rich, reference};
+use mc_score::fixtures::{SMALL, feature_rich, reference, techniques};
 
 /// (format version, fixture name, package bytes, golden score.json bytes) for every
 /// released version. Append when a new version is released; never edit entries.
@@ -28,6 +28,24 @@ const FIXTURES: &[(&str, &str, &[u8], &[u8])] = &[
         include_bytes!("fixtures/v1.0/feature-rich.package"),
         include_bytes!("fixtures/v1.0/feature-rich.score.json"),
     ),
+    (
+        "1.1",
+        "small",
+        include_bytes!("fixtures/v1.1/small.package"),
+        include_bytes!("fixtures/v1.1/small.score.json"),
+    ),
+    (
+        "1.1",
+        "feature-rich",
+        include_bytes!("fixtures/v1.1/feature-rich.package"),
+        include_bytes!("fixtures/v1.1/feature-rich.score.json"),
+    ),
+    (
+        "1.1",
+        "techniques",
+        include_bytes!("fixtures/v1.1/techniques.package"),
+        include_bytes!("fixtures/v1.1/techniques.score.json"),
+    ),
 ];
 
 /// (format version, schema name, snapshot) for every released version.
@@ -41,6 +59,16 @@ const SCHEMAS: &[(&str, &str, &str)] = &[
         "1.0",
         "manifest",
         include_str!("../schema/manifest-1.0.schema.json"),
+    ),
+    (
+        "1.1",
+        "score",
+        include_str!("../schema/score-1.1.schema.json"),
+    ),
+    (
+        "1.1",
+        "manifest",
+        include_str!("../schema/manifest-1.1.schema.json"),
     ),
 ];
 
@@ -68,6 +96,7 @@ fn builders() -> Vec<(&'static str, Score)> {
     vec![
         ("small", reference(SMALL)),
         ("feature-rich", feature_rich()),
+        ("techniques", techniques()),
     ]
 }
 
@@ -244,10 +273,11 @@ fn rt4a_newer_minor_version_loads_with_a_warning() {
     );
 }
 
-// 5. Migration chain: format 1.0 is the first released version, so there is nothing to
-//    migrate yet. The existing policy part is checked: major 0 is refused.
+// 5. Migration chain. 1.1 (ADR-035) only adds optional fields, so the 1.0 to 1.1
+//    migration is the identity: a 1.0 file loads to the same score as the 1.1 file of
+//    the same name, with every technique flag off. Major 0 is refused.
 #[test]
-fn rt5_no_older_versions_exist_and_major_zero_is_refused() {
+fn rt5_no_older_major_versions_exist_and_major_zero_is_refused() {
     let pkg = repackage(&dto_value(), |m| m["format_version"]["major"] = 0.into());
     assert!(matches!(
         load(&pkg),
@@ -257,9 +287,60 @@ fn rt5_no_older_versions_exist_and_major_zero_is_refused() {
     versions.dedup();
     assert_eq!(
         versions,
-        ["1.0"],
-        "when a second version exists, add migration fixtures and tests here"
+        ["1.0", "1.1"],
+        "when another version exists, add migration fixtures and tests here"
     );
+}
+
+#[test]
+fn rt5_tq3_v1_0_fixtures_load_unchanged_in_1_1_with_every_technique_off() {
+    for (_, name, package, golden) in FIXTURES.iter().filter(|f| f.0 == "1.0") {
+        let old = load(package).unwrap().score;
+        let (_, _, new_package, new_golden) = FIXTURES
+            .iter()
+            .find(|f| f.0 == "1.1" && f.1 == *name)
+            .expect("same fixture in 1.1");
+        assert_eq!(old, load(new_package).unwrap().score, "{name}");
+        // Additive minor version: the score entry did not change by one byte.
+        assert_eq!(
+            golden, new_golden,
+            "{name}: score.json identical in 1.0 and 1.1"
+        );
+        for t in old.tracks() {
+            for bar in t.bars() {
+                for b in bar.voices.iter().flat_map(|v| &v.beats) {
+                    assert_eq!(b.stroke, None, "{name}");
+                    for n in &b.notes {
+                        let e = n.effects;
+                        assert!(!e.accent && !e.palm_mute && !e.string_percussive, "{name}");
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// TQ-3: every stored technique flag and stroke survives save and load, and only the
+/// flags that are set are written (absent means off).
+#[test]
+fn tq3_every_technique_flag_and_stroke_round_trips() {
+    let score = techniques();
+    let loaded = load(&save(&score, &info())).unwrap().score;
+    assert_eq!(loaded, score);
+    let json = String::from_utf8(score_json(&score)).unwrap();
+    for (key, want) in [
+        ("\"accent\":true", 11),
+        ("\"palm_mute\":true", 4),
+        ("\"string_percussive\":true", 6),
+        ("\"dead\":true", 2),
+        ("\"let_ring\":true", 3),
+        ("\"stroke\":\"down\"", 3),
+        ("\"stroke\":\"up\"", 1),
+    ] {
+        assert_eq!(json.matches(key).count(), want, "{key}");
+    }
+    assert!(!json.contains(":false"), "off flags are omitted");
+    assert!(!json.contains("\"stroke\":null"));
 }
 
 // 6. Newer major and unknown required features are refused.

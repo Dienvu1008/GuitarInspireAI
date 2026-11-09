@@ -119,6 +119,19 @@ pub enum GlyphKindDto {
         string: u8,
         name: String,
     },
+    /// Accent mark above the staff (ADR-035).
+    Accent,
+    /// Stroke arrow above the staff: down or up (ADR-035).
+    Stroke {
+        up: bool,
+    },
+    /// "S" mark of a string-percussive beat (ADR-035).
+    StringPercussive,
+    /// "P.M." label; `run` means a dashed line over the glyph width follows the label
+    /// (ADR-035).
+    PalmMute {
+        run: bool,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -415,6 +428,10 @@ fn glyph_dto(g: mc_app::notation::Glyph) -> GlyphDto {
         },
         GlyphKind::TabClef => GlyphKindDto::TabClef,
         GlyphKind::StringName { string, name } => GlyphKindDto::StringName { string, name },
+        GlyphKind::Accent => GlyphKindDto::Accent,
+        GlyphKind::Stroke { up } => GlyphKindDto::Stroke { up },
+        GlyphKind::StringPercussive => GlyphKindDto::StringPercussive,
+        GlyphKind::PalmMute { run } => GlyphKindDto::PalmMute { run },
     };
     GlyphDto {
         kind,

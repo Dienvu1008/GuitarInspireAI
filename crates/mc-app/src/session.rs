@@ -717,6 +717,7 @@ impl DocumentSession {
                         effects: n.effects,
                     })
                     .collect(),
+                stroke: b.stroke,
             })
             .collect())
     }

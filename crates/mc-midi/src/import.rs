@@ -563,7 +563,12 @@ pub fn import_smf(bytes: &[u8]) -> Result<(Score, ImportReport), ImportError> {
                     }
                     let id = BeatId::from_raw(next_id);
                     next_id += 1;
-                    bar_beats[b].push(Beat { id, value, notes });
+                    bar_beats[b].push(Beat {
+                        id,
+                        value,
+                        notes,
+                        stroke: None,
+                    });
                 }
                 first_part = false;
                 pos = part_end;

@@ -42,10 +42,11 @@ cat > "$XSD/catalog.xml" <<EOF
 </catalog>
 EOF
 
-# The E1 inputs: three reference scores, an empty document, and a MIDI-imported score.
+# The E1 inputs: three reference scores, an empty document, the ADR-035 techniques
+# score (TQ-7), and a MIDI-imported score.
 cargo build -p mc-cli --locked --quiet
 CLI=target/debug/mc-cli
-for f in feature-rich small typical empty; do
+for f in feature-rich small typical empty techniques; do
   "$CLI" export-musicxml "fixture:$f" "$OUT/$f.musicxml"
 done
 "$CLI" export-midi fixture:feature-rich "$OUT/feature-rich.mid"

@@ -2,7 +2,7 @@
 //! send them. Handlers convert them into value objects; the domain validates the rest.
 
 use mc_guitar::RetuneMode;
-use mc_score::{BeatId, MasterBar, NoteEffects, NoteId, TrackId};
+use mc_score::{BeatId, MasterBar, NoteEffects, NoteId, Stroke, TrackId};
 use mc_theory::NoteValue;
 
 /// Opaque id chosen by the caller; copied into every event as the correlation id.
@@ -94,11 +94,14 @@ pub struct ClipNote {
     pub effects: NoteEffects,
 }
 
-/// A beat of a clipboard fragment: its written duration and its notes, no ids.
+/// A beat of a clipboard fragment: its written duration, its notes and its stroke, no
+/// ids.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ClipBeat {
     pub duration: DurationSpec,
     pub notes: Vec<ClipNote>,
+    /// Stroke direction (ADR-035), kept by copy and paste.
+    pub stroke: Option<Stroke>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -166,6 +169,11 @@ pub enum ScoreCommand {
         beat: BeatAddress,
         note: NoteId,
         effects: NoteEffects,
+    },
+    /// Sets or clears the stroke direction of a beat (ADR-035).
+    SetBeatStroke {
+        beat: BeatAddress,
+        stroke: Option<Stroke>,
     },
     AddVoice {
         track: TrackId,

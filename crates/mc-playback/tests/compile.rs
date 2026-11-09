@@ -33,6 +33,7 @@ fn beat(id: u64, value: NoteValue, notes: Vec<Note>) -> Beat {
         id: BeatId::from_raw(id),
         value,
         notes,
+        stroke: None,
     }
 }
 
@@ -79,7 +80,11 @@ fn bar(voices: Vec<Vec<Beat>>) -> BarContent {
 }
 
 fn eff(let_ring: bool, dead: bool) -> NoteEffects {
-    NoteEffects { let_ring, dead }
+    NoteEffects {
+        let_ring,
+        dead,
+        ..NoteEffects::default()
+    }
 }
 
 // ---------------------------------------------------------------- PB-09

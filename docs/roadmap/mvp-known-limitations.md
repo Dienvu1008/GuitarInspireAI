@@ -83,7 +83,19 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   not yet found (ADR-031). Typical scores (4 tracks, 150 bars) were within budget in
   every run of the last session. One machine only (ADR-025).
 - No standard notation, no PDF.
-- Effects are limited to tie, let ring and dead note. No lyrics. Repeat editing is limited
+- Effects are tie, let ring, dead note and, from Phase 6a-1 (ADR-035), accent, palm mute,
+  string-percussive and a down or up stroke per beat. They are set in the inspector; there
+  are no keyboard shortcuts for them yet. No lyrics.
+- **Playing techniques (Phase 6a-1, ADR-035).** Limits:
+  - The sound uses fixed values (for example accent +24 velocity, palm mute 80); there is no
+    setting. When several techniques are on one note, one wins (string-percussive, dead, palm
+    mute, let ring); all stay stored and shown.
+  - A stroke changes no timing: the notes of a chord still start together (no strum
+    spread), and MIDI export carries no stroke.
+  - The TAB marks above the staff (arrow, `>`, `S`, "P.M.") can overlap volta brackets and
+    the stems of an upper voice.
+  - Files that use them are format 1.1. An older build opens them but cannot save over
+    them (use Save As); it loses the techniques. Repeat editing is limited
   to simple start and end markers.
 - A pickup bar round-trips through MIDI as a full-length bar with a trailing rest.
 - Copy and paste (Phase 6b-1, ADR-030) work on a run of beats in one voice, possibly
@@ -117,6 +129,11 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   - **Checked with MuseScore 4.7.5 only, on one machine.** Finale, Dorico and Guitar Pro were not checked, and layout quality was not judged. Known MuseScore behaviour (`benchmarks/musescore-musicxml.md`):
     - **MuseScore ignores the capo.** A track with a capo is re-fingered in MuseScore (frets shifted, notes moved to other strings), although the file follows the MusicXML definition.
     - Dead notes show as fret numbers, not X.
+    - Playing techniques (ADR-035): accents and strokes on notes are kept (one accent per
+      chord); **palm mute, string-percussive and a stroke on a rest are lost** in MuseScore.
+      They are written as MusicXML 4.0 defines (palm mute and string-percussive as
+      `<other-technical>` text, because 4.0 has no element for them; the export message
+      counts them).
     - A tie into a repeated section is not played again on the second pass.
     - MuseScore's own MIDI playback does not sustain let ring, although the let-ring marks are read and kept.
 - Resolved in Phase 6b-1 (ADR-030): the session marker, the "save changes?" prompt on

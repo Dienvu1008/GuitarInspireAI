@@ -56,7 +56,7 @@ extension CommandDtoPatterns on CommandDto {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CommandDto_InsertMasterBars value)?  insertMasterBars,TResult Function( CommandDto_RemoveMasterBars value)?  removeMasterBars,TResult Function( CommandDto_SetMasterBar value)?  setMasterBar,TResult Function( CommandDto_SetTempo value)?  setTempo,TResult Function( CommandDto_RemoveTempo value)?  removeTempo,TResult Function( CommandDto_InsertBeat value)?  insertBeat,TResult Function( CommandDto_RemoveBeat value)?  removeBeat,TResult Function( CommandDto_SetBeatDuration value)?  setBeatDuration,TResult Function( CommandDto_SetNote value)?  setNote,TResult Function( CommandDto_RemoveNote value)?  removeNote,TResult Function( CommandDto_SetTie value)?  setTie,TResult Function( CommandDto_SetNoteEffects value)?  setNoteEffects,TResult Function( CommandDto_AddVoice value)?  addVoice,TResult Function( CommandDto_RemoveVoice value)?  removeVoice,TResult Function( CommandDto_ShiftFrets value)?  shiftFrets,TResult Function( CommandDto_AddTrack value)?  addTrack,TResult Function( CommandDto_RemoveTrack value)?  removeTrack,TResult Function( CommandDto_RenameTrack value)?  renameTrack,TResult Function( CommandDto_SetInstrument value)?  setInstrument,TResult Function( CommandDto_MoveTrack value)?  moveTrack,TResult Function( CommandDto_Retune value)?  retune,TResult Function( CommandDto_PasteBeats value)?  pasteBeats,TResult Function( CommandDto_RemoveBeats value)?  removeBeats,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CommandDto_InsertMasterBars value)?  insertMasterBars,TResult Function( CommandDto_RemoveMasterBars value)?  removeMasterBars,TResult Function( CommandDto_SetMasterBar value)?  setMasterBar,TResult Function( CommandDto_SetTempo value)?  setTempo,TResult Function( CommandDto_RemoveTempo value)?  removeTempo,TResult Function( CommandDto_InsertBeat value)?  insertBeat,TResult Function( CommandDto_RemoveBeat value)?  removeBeat,TResult Function( CommandDto_SetBeatDuration value)?  setBeatDuration,TResult Function( CommandDto_SetNote value)?  setNote,TResult Function( CommandDto_RemoveNote value)?  removeNote,TResult Function( CommandDto_SetTie value)?  setTie,TResult Function( CommandDto_SetNoteEffects value)?  setNoteEffects,TResult Function( CommandDto_SetBeatStroke value)?  setBeatStroke,TResult Function( CommandDto_AddVoice value)?  addVoice,TResult Function( CommandDto_RemoveVoice value)?  removeVoice,TResult Function( CommandDto_ShiftFrets value)?  shiftFrets,TResult Function( CommandDto_AddTrack value)?  addTrack,TResult Function( CommandDto_RemoveTrack value)?  removeTrack,TResult Function( CommandDto_RenameTrack value)?  renameTrack,TResult Function( CommandDto_SetInstrument value)?  setInstrument,TResult Function( CommandDto_MoveTrack value)?  moveTrack,TResult Function( CommandDto_Retune value)?  retune,TResult Function( CommandDto_PasteBeats value)?  pasteBeats,TResult Function( CommandDto_RemoveBeats value)?  removeBeats,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars() when insertMasterBars != null:
@@ -71,7 +71,8 @@ return setBeatDuration(_that);case CommandDto_SetNote() when setNote != null:
 return setNote(_that);case CommandDto_RemoveNote() when removeNote != null:
 return removeNote(_that);case CommandDto_SetTie() when setTie != null:
 return setTie(_that);case CommandDto_SetNoteEffects() when setNoteEffects != null:
-return setNoteEffects(_that);case CommandDto_AddVoice() when addVoice != null:
+return setNoteEffects(_that);case CommandDto_SetBeatStroke() when setBeatStroke != null:
+return setBeatStroke(_that);case CommandDto_AddVoice() when addVoice != null:
 return addVoice(_that);case CommandDto_RemoveVoice() when removeVoice != null:
 return removeVoice(_that);case CommandDto_ShiftFrets() when shiftFrets != null:
 return shiftFrets(_that);case CommandDto_AddTrack() when addTrack != null:
@@ -100,7 +101,7 @@ return removeBeats(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CommandDto_InsertMasterBars value)  insertMasterBars,required TResult Function( CommandDto_RemoveMasterBars value)  removeMasterBars,required TResult Function( CommandDto_SetMasterBar value)  setMasterBar,required TResult Function( CommandDto_SetTempo value)  setTempo,required TResult Function( CommandDto_RemoveTempo value)  removeTempo,required TResult Function( CommandDto_InsertBeat value)  insertBeat,required TResult Function( CommandDto_RemoveBeat value)  removeBeat,required TResult Function( CommandDto_SetBeatDuration value)  setBeatDuration,required TResult Function( CommandDto_SetNote value)  setNote,required TResult Function( CommandDto_RemoveNote value)  removeNote,required TResult Function( CommandDto_SetTie value)  setTie,required TResult Function( CommandDto_SetNoteEffects value)  setNoteEffects,required TResult Function( CommandDto_AddVoice value)  addVoice,required TResult Function( CommandDto_RemoveVoice value)  removeVoice,required TResult Function( CommandDto_ShiftFrets value)  shiftFrets,required TResult Function( CommandDto_AddTrack value)  addTrack,required TResult Function( CommandDto_RemoveTrack value)  removeTrack,required TResult Function( CommandDto_RenameTrack value)  renameTrack,required TResult Function( CommandDto_SetInstrument value)  setInstrument,required TResult Function( CommandDto_MoveTrack value)  moveTrack,required TResult Function( CommandDto_Retune value)  retune,required TResult Function( CommandDto_PasteBeats value)  pasteBeats,required TResult Function( CommandDto_RemoveBeats value)  removeBeats,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CommandDto_InsertMasterBars value)  insertMasterBars,required TResult Function( CommandDto_RemoveMasterBars value)  removeMasterBars,required TResult Function( CommandDto_SetMasterBar value)  setMasterBar,required TResult Function( CommandDto_SetTempo value)  setTempo,required TResult Function( CommandDto_RemoveTempo value)  removeTempo,required TResult Function( CommandDto_InsertBeat value)  insertBeat,required TResult Function( CommandDto_RemoveBeat value)  removeBeat,required TResult Function( CommandDto_SetBeatDuration value)  setBeatDuration,required TResult Function( CommandDto_SetNote value)  setNote,required TResult Function( CommandDto_RemoveNote value)  removeNote,required TResult Function( CommandDto_SetTie value)  setTie,required TResult Function( CommandDto_SetNoteEffects value)  setNoteEffects,required TResult Function( CommandDto_SetBeatStroke value)  setBeatStroke,required TResult Function( CommandDto_AddVoice value)  addVoice,required TResult Function( CommandDto_RemoveVoice value)  removeVoice,required TResult Function( CommandDto_ShiftFrets value)  shiftFrets,required TResult Function( CommandDto_AddTrack value)  addTrack,required TResult Function( CommandDto_RemoveTrack value)  removeTrack,required TResult Function( CommandDto_RenameTrack value)  renameTrack,required TResult Function( CommandDto_SetInstrument value)  setInstrument,required TResult Function( CommandDto_MoveTrack value)  moveTrack,required TResult Function( CommandDto_Retune value)  retune,required TResult Function( CommandDto_PasteBeats value)  pasteBeats,required TResult Function( CommandDto_RemoveBeats value)  removeBeats,}){
 final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars():
@@ -115,7 +116,8 @@ return setBeatDuration(_that);case CommandDto_SetNote():
 return setNote(_that);case CommandDto_RemoveNote():
 return removeNote(_that);case CommandDto_SetTie():
 return setTie(_that);case CommandDto_SetNoteEffects():
-return setNoteEffects(_that);case CommandDto_AddVoice():
+return setNoteEffects(_that);case CommandDto_SetBeatStroke():
+return setBeatStroke(_that);case CommandDto_AddVoice():
 return addVoice(_that);case CommandDto_RemoveVoice():
 return removeVoice(_that);case CommandDto_ShiftFrets():
 return shiftFrets(_that);case CommandDto_AddTrack():
@@ -140,7 +142,7 @@ return removeBeats(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CommandDto_InsertMasterBars value)?  insertMasterBars,TResult? Function( CommandDto_RemoveMasterBars value)?  removeMasterBars,TResult? Function( CommandDto_SetMasterBar value)?  setMasterBar,TResult? Function( CommandDto_SetTempo value)?  setTempo,TResult? Function( CommandDto_RemoveTempo value)?  removeTempo,TResult? Function( CommandDto_InsertBeat value)?  insertBeat,TResult? Function( CommandDto_RemoveBeat value)?  removeBeat,TResult? Function( CommandDto_SetBeatDuration value)?  setBeatDuration,TResult? Function( CommandDto_SetNote value)?  setNote,TResult? Function( CommandDto_RemoveNote value)?  removeNote,TResult? Function( CommandDto_SetTie value)?  setTie,TResult? Function( CommandDto_SetNoteEffects value)?  setNoteEffects,TResult? Function( CommandDto_AddVoice value)?  addVoice,TResult? Function( CommandDto_RemoveVoice value)?  removeVoice,TResult? Function( CommandDto_ShiftFrets value)?  shiftFrets,TResult? Function( CommandDto_AddTrack value)?  addTrack,TResult? Function( CommandDto_RemoveTrack value)?  removeTrack,TResult? Function( CommandDto_RenameTrack value)?  renameTrack,TResult? Function( CommandDto_SetInstrument value)?  setInstrument,TResult? Function( CommandDto_MoveTrack value)?  moveTrack,TResult? Function( CommandDto_Retune value)?  retune,TResult? Function( CommandDto_PasteBeats value)?  pasteBeats,TResult? Function( CommandDto_RemoveBeats value)?  removeBeats,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CommandDto_InsertMasterBars value)?  insertMasterBars,TResult? Function( CommandDto_RemoveMasterBars value)?  removeMasterBars,TResult? Function( CommandDto_SetMasterBar value)?  setMasterBar,TResult? Function( CommandDto_SetTempo value)?  setTempo,TResult? Function( CommandDto_RemoveTempo value)?  removeTempo,TResult? Function( CommandDto_InsertBeat value)?  insertBeat,TResult? Function( CommandDto_RemoveBeat value)?  removeBeat,TResult? Function( CommandDto_SetBeatDuration value)?  setBeatDuration,TResult? Function( CommandDto_SetNote value)?  setNote,TResult? Function( CommandDto_RemoveNote value)?  removeNote,TResult? Function( CommandDto_SetTie value)?  setTie,TResult? Function( CommandDto_SetNoteEffects value)?  setNoteEffects,TResult? Function( CommandDto_SetBeatStroke value)?  setBeatStroke,TResult? Function( CommandDto_AddVoice value)?  addVoice,TResult? Function( CommandDto_RemoveVoice value)?  removeVoice,TResult? Function( CommandDto_ShiftFrets value)?  shiftFrets,TResult? Function( CommandDto_AddTrack value)?  addTrack,TResult? Function( CommandDto_RemoveTrack value)?  removeTrack,TResult? Function( CommandDto_RenameTrack value)?  renameTrack,TResult? Function( CommandDto_SetInstrument value)?  setInstrument,TResult? Function( CommandDto_MoveTrack value)?  moveTrack,TResult? Function( CommandDto_Retune value)?  retune,TResult? Function( CommandDto_PasteBeats value)?  pasteBeats,TResult? Function( CommandDto_RemoveBeats value)?  removeBeats,}){
 final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars() when insertMasterBars != null:
@@ -155,7 +157,8 @@ return setBeatDuration(_that);case CommandDto_SetNote() when setNote != null:
 return setNote(_that);case CommandDto_RemoveNote() when removeNote != null:
 return removeNote(_that);case CommandDto_SetTie() when setTie != null:
 return setTie(_that);case CommandDto_SetNoteEffects() when setNoteEffects != null:
-return setNoteEffects(_that);case CommandDto_AddVoice() when addVoice != null:
+return setNoteEffects(_that);case CommandDto_SetBeatStroke() when setBeatStroke != null:
+return setBeatStroke(_that);case CommandDto_AddVoice() when addVoice != null:
 return addVoice(_that);case CommandDto_RemoveVoice() when removeVoice != null:
 return removeVoice(_that);case CommandDto_ShiftFrets() when shiftFrets != null:
 return shiftFrets(_that);case CommandDto_AddTrack() when addTrack != null:
@@ -183,7 +186,7 @@ return removeBeats(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int at,  int count)?  insertMasterBars,TResult Function( int at,  int count)?  removeMasterBars,TResult Function( int index,  MasterBarDto bar)?  setMasterBar,TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)?  setTempo,TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)?  removeTempo,TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)?  insertBeat,TResult Function( BeatAddressDto beat)?  removeBeat,TResult Function( BeatAddressDto beat,  DurationDto duration)?  setBeatDuration,TResult Function( BeatAddressDto beat,  int string,  int fret)?  setNote,TResult Function( BeatAddressDto beat,  PlatformInt64 note)?  removeNote,TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)?  setTie,TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead)?  setNoteEffects,TResult Function( PlatformInt64 track,  int bar)?  addVoice,TResult Function( PlatformInt64 track,  int bar,  int voice)?  removeVoice,TResult Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)?  shiftFrets,TResult Function( String name,  InstrumentDto instrument)?  addTrack,TResult Function( PlatformInt64 track)?  removeTrack,TResult Function( PlatformInt64 track,  String name)?  renameTrack,TResult Function( PlatformInt64 track,  InstrumentDto instrument)?  setInstrument,TResult Function( PlatformInt64 track,  int to)?  moveTrack,TResult Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)?  retune,TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)?  pasteBeats,TResult Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)?  removeBeats,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int at,  int count)?  insertMasterBars,TResult Function( int at,  int count)?  removeMasterBars,TResult Function( int index,  MasterBarDto bar)?  setMasterBar,TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)?  setTempo,TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)?  removeTempo,TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)?  insertBeat,TResult Function( BeatAddressDto beat)?  removeBeat,TResult Function( BeatAddressDto beat,  DurationDto duration)?  setBeatDuration,TResult Function( BeatAddressDto beat,  int string,  int fret)?  setNote,TResult Function( BeatAddressDto beat,  PlatformInt64 note)?  removeNote,TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)?  setTie,TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead,  bool accent,  bool palmMute,  bool stringPercussive)?  setNoteEffects,TResult Function( BeatAddressDto beat,  StrokeDto? stroke)?  setBeatStroke,TResult Function( PlatformInt64 track,  int bar)?  addVoice,TResult Function( PlatformInt64 track,  int bar,  int voice)?  removeVoice,TResult Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)?  shiftFrets,TResult Function( String name,  InstrumentDto instrument)?  addTrack,TResult Function( PlatformInt64 track)?  removeTrack,TResult Function( PlatformInt64 track,  String name)?  renameTrack,TResult Function( PlatformInt64 track,  InstrumentDto instrument)?  setInstrument,TResult Function( PlatformInt64 track,  int to)?  moveTrack,TResult Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)?  retune,TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)?  pasteBeats,TResult Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)?  removeBeats,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars() when insertMasterBars != null:
 return insertMasterBars(_that.at,_that.count);case CommandDto_RemoveMasterBars() when removeMasterBars != null:
@@ -197,7 +200,8 @@ return setBeatDuration(_that.beat,_that.duration);case CommandDto_SetNote() when
 return setNote(_that.beat,_that.string,_that.fret);case CommandDto_RemoveNote() when removeNote != null:
 return removeNote(_that.beat,_that.note);case CommandDto_SetTie() when setTie != null:
 return setTie(_that.beat,_that.note,_that.tie);case CommandDto_SetNoteEffects() when setNoteEffects != null:
-return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead);case CommandDto_AddVoice() when addVoice != null:
+return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead,_that.accent,_that.palmMute,_that.stringPercussive);case CommandDto_SetBeatStroke() when setBeatStroke != null:
+return setBeatStroke(_that.beat,_that.stroke);case CommandDto_AddVoice() when addVoice != null:
 return addVoice(_that.track,_that.bar);case CommandDto_RemoveVoice() when removeVoice != null:
 return removeVoice(_that.track,_that.bar,_that.voice);case CommandDto_ShiftFrets() when shiftFrets != null:
 return shiftFrets(_that.track,_that.fromBar,_that.toBar,_that.delta);case CommandDto_AddTrack() when addTrack != null:
@@ -226,7 +230,7 @@ return removeBeats(_that.track,_that.voice,_that.fromBar,_that.fromIndex,_that.t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int at,  int count)  insertMasterBars,required TResult Function( int at,  int count)  removeMasterBars,required TResult Function( int index,  MasterBarDto bar)  setMasterBar,required TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)  setTempo,required TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)  removeTempo,required TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)  insertBeat,required TResult Function( BeatAddressDto beat)  removeBeat,required TResult Function( BeatAddressDto beat,  DurationDto duration)  setBeatDuration,required TResult Function( BeatAddressDto beat,  int string,  int fret)  setNote,required TResult Function( BeatAddressDto beat,  PlatformInt64 note)  removeNote,required TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)  setTie,required TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead)  setNoteEffects,required TResult Function( PlatformInt64 track,  int bar)  addVoice,required TResult Function( PlatformInt64 track,  int bar,  int voice)  removeVoice,required TResult Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)  shiftFrets,required TResult Function( String name,  InstrumentDto instrument)  addTrack,required TResult Function( PlatformInt64 track)  removeTrack,required TResult Function( PlatformInt64 track,  String name)  renameTrack,required TResult Function( PlatformInt64 track,  InstrumentDto instrument)  setInstrument,required TResult Function( PlatformInt64 track,  int to)  moveTrack,required TResult Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)  retune,required TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)  pasteBeats,required TResult Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)  removeBeats,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int at,  int count)  insertMasterBars,required TResult Function( int at,  int count)  removeMasterBars,required TResult Function( int index,  MasterBarDto bar)  setMasterBar,required TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)  setTempo,required TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)  removeTempo,required TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)  insertBeat,required TResult Function( BeatAddressDto beat)  removeBeat,required TResult Function( BeatAddressDto beat,  DurationDto duration)  setBeatDuration,required TResult Function( BeatAddressDto beat,  int string,  int fret)  setNote,required TResult Function( BeatAddressDto beat,  PlatformInt64 note)  removeNote,required TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)  setTie,required TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead,  bool accent,  bool palmMute,  bool stringPercussive)  setNoteEffects,required TResult Function( BeatAddressDto beat,  StrokeDto? stroke)  setBeatStroke,required TResult Function( PlatformInt64 track,  int bar)  addVoice,required TResult Function( PlatformInt64 track,  int bar,  int voice)  removeVoice,required TResult Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)  shiftFrets,required TResult Function( String name,  InstrumentDto instrument)  addTrack,required TResult Function( PlatformInt64 track)  removeTrack,required TResult Function( PlatformInt64 track,  String name)  renameTrack,required TResult Function( PlatformInt64 track,  InstrumentDto instrument)  setInstrument,required TResult Function( PlatformInt64 track,  int to)  moveTrack,required TResult Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)  retune,required TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)  pasteBeats,required TResult Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)  removeBeats,}) {final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars():
 return insertMasterBars(_that.at,_that.count);case CommandDto_RemoveMasterBars():
@@ -240,7 +244,8 @@ return setBeatDuration(_that.beat,_that.duration);case CommandDto_SetNote():
 return setNote(_that.beat,_that.string,_that.fret);case CommandDto_RemoveNote():
 return removeNote(_that.beat,_that.note);case CommandDto_SetTie():
 return setTie(_that.beat,_that.note,_that.tie);case CommandDto_SetNoteEffects():
-return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead);case CommandDto_AddVoice():
+return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead,_that.accent,_that.palmMute,_that.stringPercussive);case CommandDto_SetBeatStroke():
+return setBeatStroke(_that.beat,_that.stroke);case CommandDto_AddVoice():
 return addVoice(_that.track,_that.bar);case CommandDto_RemoveVoice():
 return removeVoice(_that.track,_that.bar,_that.voice);case CommandDto_ShiftFrets():
 return shiftFrets(_that.track,_that.fromBar,_that.toBar,_that.delta);case CommandDto_AddTrack():
@@ -265,7 +270,7 @@ return removeBeats(_that.track,_that.voice,_that.fromBar,_that.fromIndex,_that.t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int at,  int count)?  insertMasterBars,TResult? Function( int at,  int count)?  removeMasterBars,TResult? Function( int index,  MasterBarDto bar)?  setMasterBar,TResult? Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)?  setTempo,TResult? Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)?  removeTempo,TResult? Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)?  insertBeat,TResult? Function( BeatAddressDto beat)?  removeBeat,TResult? Function( BeatAddressDto beat,  DurationDto duration)?  setBeatDuration,TResult? Function( BeatAddressDto beat,  int string,  int fret)?  setNote,TResult? Function( BeatAddressDto beat,  PlatformInt64 note)?  removeNote,TResult? Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)?  setTie,TResult? Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead)?  setNoteEffects,TResult? Function( PlatformInt64 track,  int bar)?  addVoice,TResult? Function( PlatformInt64 track,  int bar,  int voice)?  removeVoice,TResult? Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)?  shiftFrets,TResult? Function( String name,  InstrumentDto instrument)?  addTrack,TResult? Function( PlatformInt64 track)?  removeTrack,TResult? Function( PlatformInt64 track,  String name)?  renameTrack,TResult? Function( PlatformInt64 track,  InstrumentDto instrument)?  setInstrument,TResult? Function( PlatformInt64 track,  int to)?  moveTrack,TResult? Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)?  retune,TResult? Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)?  pasteBeats,TResult? Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)?  removeBeats,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int at,  int count)?  insertMasterBars,TResult? Function( int at,  int count)?  removeMasterBars,TResult? Function( int index,  MasterBarDto bar)?  setMasterBar,TResult? Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)?  setTempo,TResult? Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)?  removeTempo,TResult? Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)?  insertBeat,TResult? Function( BeatAddressDto beat)?  removeBeat,TResult? Function( BeatAddressDto beat,  DurationDto duration)?  setBeatDuration,TResult? Function( BeatAddressDto beat,  int string,  int fret)?  setNote,TResult? Function( BeatAddressDto beat,  PlatformInt64 note)?  removeNote,TResult? Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)?  setTie,TResult? Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead,  bool accent,  bool palmMute,  bool stringPercussive)?  setNoteEffects,TResult? Function( BeatAddressDto beat,  StrokeDto? stroke)?  setBeatStroke,TResult? Function( PlatformInt64 track,  int bar)?  addVoice,TResult? Function( PlatformInt64 track,  int bar,  int voice)?  removeVoice,TResult? Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)?  shiftFrets,TResult? Function( String name,  InstrumentDto instrument)?  addTrack,TResult? Function( PlatformInt64 track)?  removeTrack,TResult? Function( PlatformInt64 track,  String name)?  renameTrack,TResult? Function( PlatformInt64 track,  InstrumentDto instrument)?  setInstrument,TResult? Function( PlatformInt64 track,  int to)?  moveTrack,TResult? Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)?  retune,TResult? Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)?  pasteBeats,TResult? Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)?  removeBeats,}) {final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars() when insertMasterBars != null:
 return insertMasterBars(_that.at,_that.count);case CommandDto_RemoveMasterBars() when removeMasterBars != null:
@@ -279,7 +284,8 @@ return setBeatDuration(_that.beat,_that.duration);case CommandDto_SetNote() when
 return setNote(_that.beat,_that.string,_that.fret);case CommandDto_RemoveNote() when removeNote != null:
 return removeNote(_that.beat,_that.note);case CommandDto_SetTie() when setTie != null:
 return setTie(_that.beat,_that.note,_that.tie);case CommandDto_SetNoteEffects() when setNoteEffects != null:
-return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead);case CommandDto_AddVoice() when addVoice != null:
+return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead,_that.accent,_that.palmMute,_that.stringPercussive);case CommandDto_SetBeatStroke() when setBeatStroke != null:
+return setBeatStroke(_that.beat,_that.stroke);case CommandDto_AddVoice() when addVoice != null:
 return addVoice(_that.track,_that.bar);case CommandDto_RemoveVoice() when removeVoice != null:
 return removeVoice(_that.track,_that.bar,_that.voice);case CommandDto_ShiftFrets() when shiftFrets != null:
 return shiftFrets(_that.track,_that.fromBar,_that.toBar,_that.delta);case CommandDto_AddTrack() when addTrack != null:
@@ -1086,13 +1092,16 @@ as bool,
 
 
 class CommandDto_SetNoteEffects extends CommandDto {
-  const CommandDto_SetNoteEffects({required this.beat, required this.note, required this.letRing, required this.dead}): super._();
+  const CommandDto_SetNoteEffects({required this.beat, required this.note, required this.letRing, required this.dead, required this.accent, required this.palmMute, required this.stringPercussive}): super._();
   
 
  final  BeatAddressDto beat;
  final  PlatformInt64 note;
  final  bool letRing;
  final  bool dead;
+ final  bool accent;
+ final  bool palmMute;
+ final  bool stringPercussive;
 
 /// Create a copy of CommandDto
 /// with the given fields replaced by the non-null parameter values.
@@ -1104,18 +1113,18 @@ $CommandDto_SetNoteEffectsCopyWith<CommandDto_SetNoteEffects> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_SetNoteEffects&&(identical(other.beat, beat) || other.beat == beat)&&(identical(other.note, note) || other.note == note)&&(identical(other.letRing, letRing) || other.letRing == letRing)&&(identical(other.dead, dead) || other.dead == dead));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_SetNoteEffects&&(identical(other.beat, beat) || other.beat == beat)&&(identical(other.note, note) || other.note == note)&&(identical(other.letRing, letRing) || other.letRing == letRing)&&(identical(other.dead, dead) || other.dead == dead)&&(identical(other.accent, accent) || other.accent == accent)&&(identical(other.palmMute, palmMute) || other.palmMute == palmMute)&&(identical(other.stringPercussive, stringPercussive) || other.stringPercussive == stringPercussive));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,beat,note,letRing,dead);
+    return Object.hash(runtimeType,beat,note,letRing,dead,accent,palmMute,stringPercussive);
 }
 
 @override
 String toString() {
-    return 'CommandDto.setNoteEffects(beat: $beat, note: $note, letRing: $letRing, dead: $dead)';
+    return 'CommandDto.setNoteEffects(beat: $beat, note: $note, letRing: $letRing, dead: $dead, accent: $accent, palmMute: $palmMute, stringPercussive: $stringPercussive)';
 }
 
 
@@ -1126,7 +1135,7 @@ abstract mixin class $CommandDto_SetNoteEffectsCopyWith<$Res> implements $Comman
   factory $CommandDto_SetNoteEffectsCopyWith(CommandDto_SetNoteEffects value, $Res Function(CommandDto_SetNoteEffects) _then) = _$CommandDto_SetNoteEffectsCopyWithImpl;
 @useResult
 $Res call({
- BeatAddressDto beat, PlatformInt64 note, bool letRing, bool dead
+ BeatAddressDto beat, PlatformInt64 note, bool letRing, bool dead, bool accent, bool palmMute, bool stringPercussive
 });
 
 
@@ -1143,13 +1152,86 @@ class _$CommandDto_SetNoteEffectsCopyWithImpl<$Res>
 
 /// Create a copy of CommandDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? beat = null,Object? note = null,Object? letRing = null,Object? dead = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? beat = null,Object? note = null,Object? letRing = null,Object? dead = null,Object? accent = null,Object? palmMute = null,Object? stringPercussive = null,}) {
   return _then(CommandDto_SetNoteEffects(
 beat: null == beat ? _self.beat : beat // ignore: cast_nullable_to_non_nullable
 as BeatAddressDto,note: null == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
 as PlatformInt64,letRing: null == letRing ? _self.letRing : letRing // ignore: cast_nullable_to_non_nullable
 as bool,dead: null == dead ? _self.dead : dead // ignore: cast_nullable_to_non_nullable
+as bool,accent: null == accent ? _self.accent : accent // ignore: cast_nullable_to_non_nullable
+as bool,palmMute: null == palmMute ? _self.palmMute : palmMute // ignore: cast_nullable_to_non_nullable
+as bool,stringPercussive: null == stringPercussive ? _self.stringPercussive : stringPercussive // ignore: cast_nullable_to_non_nullable
 as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CommandDto_SetBeatStroke extends CommandDto {
+  const CommandDto_SetBeatStroke({required this.beat, this.stroke}): super._();
+  
+
+ final  BeatAddressDto beat;
+ final  StrokeDto? stroke;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_SetBeatStrokeCopyWith<CommandDto_SetBeatStroke> get copyWith => _$CommandDto_SetBeatStrokeCopyWithImpl<CommandDto_SetBeatStroke>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_SetBeatStroke&&(identical(other.beat, beat) || other.beat == beat)&&(identical(other.stroke, stroke) || other.stroke == stroke));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,beat,stroke);
+}
+
+@override
+String toString() {
+    return 'CommandDto.setBeatStroke(beat: $beat, stroke: $stroke)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_SetBeatStrokeCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_SetBeatStrokeCopyWith(CommandDto_SetBeatStroke value, $Res Function(CommandDto_SetBeatStroke) _then) = _$CommandDto_SetBeatStrokeCopyWithImpl;
+@useResult
+$Res call({
+ BeatAddressDto beat, StrokeDto? stroke
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_SetBeatStrokeCopyWithImpl<$Res>
+    implements $CommandDto_SetBeatStrokeCopyWith<$Res> {
+  _$CommandDto_SetBeatStrokeCopyWithImpl(this._self, this._then);
+
+  final CommandDto_SetBeatStroke _self;
+  final $Res Function(CommandDto_SetBeatStroke) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? beat = null,Object? stroke = freezed,}) {
+  return _then(CommandDto_SetBeatStroke(
+beat: null == beat ? _self.beat : beat // ignore: cast_nullable_to_non_nullable
+as BeatAddressDto,stroke: freezed == stroke ? _self.stroke : stroke // ignore: cast_nullable_to_non_nullable
+as StrokeDto?,
   ));
 }
 
