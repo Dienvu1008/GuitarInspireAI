@@ -1,6 +1,6 @@
 # ADR-033 MusicXML export adapter (Phase 6b-4)
 
-Status: Draft (2026-11-07). The acceptance criteria in section 4 are fixed before any code. Six choices in section 5 wait for the user.
+Status: Accepted (2026-11-07). The acceptance criteria in section 4 were fixed before any code. The user decided the six choices of section 5 on 2026-11-07, with additions recorded there.
 Date: 2026-11-07
 Related documents: [ADR-012](ADR-012-interchange-formats-as-adapters.md), [ADR-015](ADR-015-dependency-license-policy.md), [ADR-019](ADR-019-fretted-instrument-shared-kernel.md), [ADR-020](ADR-020-invariants-vs-diagnostics.md), [ADR-023](ADR-023-midi-adapter-crate.md), [ADR-025](ADR-025-single-machine-evidence-accepted.md), [data-architecture.md](../data-architecture.md), [dependency-rules.md](../dependency-rules.md), [implementation-phases.md](../../roadmap/implementation-phases.md)
 
@@ -28,7 +28,8 @@ Findings from the code and the specification (not assumptions):
   - Tablature uses a `TAB` clef with `<staff-details>`: lines, `<staff-tuning>` per string and `<capo>`.
   - Each note carries `<technical><string>/<fret>`.
   - A dead note is `<notehead>x</notehead>`.
-  - I found no element named for "let ring" in the 4.0 index. This is to be confirmed against the specification during implementation.
+  - Let ring has its own form: a single `<tied type="let-ring"/>` on the note, not a start and stop pair. Per the tied-type data type in the 4.0 reference, it indicates the instrument should be undamped. The schema at tag `v4.0` lists `let-ring` in that type. The user pointed this out; the draft had missed it.
+  - MuseScore has a known, still open issue: it does not export let ring correctly (reported in 2019). A correct export may therefore not show or round-trip in MuseScore.
   - The specification and schemas are under the W3C Community Final Specification Agreement. The exporter is written from the specification (clean-room); the schema file is not copied into the repository without a licence check (R-16).
 - **No XML crate** is in `Cargo.lock`. Writing MusicXML needs only escaping and nesting.
 - **Validation tooling.** There is no `xmllint` or Java on the reference machine. The GitHub Ubuntu runners used by the `cargo-deny` job can install `libxml2-utils`.
@@ -37,7 +38,11 @@ Findings from the code and the specification (not assumptions):
 
 ### 1. A new adapter crate `mc-musicxml`
 
-- Adapter layer, phase 6. Internal dependencies are `mc-theory` and `mc-score`; there are no external dependencies. The dev dependency is `proptest`, plus `roxmltree` (MIT/Apache-2.0) to parse the output in tests only.
+- Adapter layer, phase 6. Internal dependencies are `mc-theory` and `mc-score`; there are no external dependencies.
+- Dev dependencies are `proptest` and `roxmltree =0.21.2`, used to parse the output in tests only.
+  - `roxmltree` is MIT OR Apache-2.0, current on crates.io on 2026-11-07.
+  - Its one dependency, `memchr` (MIT OR Unlicense), is already in `Cargo.lock`.
+  - Both licences are on the ADR-015 allow-list. `allowed-deps.toml` lists it under `dev_external` with the reason "test-only XML parsing".
 - It is called by `mc-ffi` and `mc-cli`, the same as `mc-midi`. `allowed-deps.toml` and the dependency-rules matrix gain the row and the two edges.
 - There is one crate per format, not a shared `mc-interchange`. MIDI and MusicXML share no code: one exports a performance and the other exports the written score.
 - The XML writer is our own: about 100 lines with escaping and indentation. No XML library is used in the product code.
@@ -66,7 +71,7 @@ Findings from the code and the specification (not assumptions):
 | Voices | `<voice>` numbers, `<backup>` between voices |
 | Tie (flag on the destination) | `<tie type="stop">` on it and `<tie type="start">` on the source note, also across bar lines; `<tied>` for display |
 | Dead note | `<notehead>x</notehead>` |
-| Let ring | choice 5.5 |
+| Let ring | a single `<tied type="let-ring"/>` in `<notations>` (choice 5.5) |
 | Tuplet brackets | `<tuplet type="start/stop">` around consecutive beats with the same ratio that fill a whole group. An incomplete group keeps its `<time-modification>` without a bracket and is counted in the report. |
 
 `<divisions>` per measure is the least common multiple needed for every beat of every voice in that measure, so all durations are exact integers.
@@ -76,7 +81,7 @@ Findings from the code and the specification (not assumptions):
 - `export_musicxml(score) -> Result<(String, MusicXmlReport), MusicXmlError>`.
 - The report counts: parts, measures, notes written, and each approximation:
   - underfull and overfull bars (choice 5.4)
-  - let ring notes approximated or dropped (choice 5.5)
+  - underfull voices padded with a rest, and overfull measures kept whole (choice 5.4)
   - tuplets without a bracket
   - characters removed from names and markers because XML 1.0 forbids them
 - Nothing is dropped without being counted.
@@ -84,7 +89,7 @@ Findings from the code and the specification (not assumptions):
 
 ### 5. App
 
-- The File menu gains "Export MusicXML...". It uses a save dialog with the file type of choice 5.2 and shows the report summary as the MIDI export does. Errors show as "Export failed: rule: message".
+- The File menu gains "Export MusicXML...". It uses a save dialog for `.musicxml` (choice 5.2) and shows the report summary as the MIDI export does. Errors show as "Export failed: rule: message".
 - `MusicXmlService` (or a method next to `MidiService`) has a real and a fake implementation with one shared contract.
 - Dart decides nothing about the content.
 - `mc-cli export-musicxml <project> <out>` is added for the CI schema check and the MuseScore procedure.
@@ -97,29 +102,46 @@ Measured on the reference machine (single machine, ADR-025). Thresholds are not 
 |---|---|---|
 | E1 | Every export is well-formed XML and **validates against the MusicXML 4.0 partwise XSD**. Inputs: `feature_rich`, `reference(SMALL)`, `reference(TYPICAL)`, a new empty document, and a MIDI-imported score | CI job with `xmllint --schema` on `mc-cli` output (choice 5.6) |
 | E2 | Structure: one part per track in score order with its name; one measure per master bar in every part; key, time and clef at the start and at each change; the pickup is implicit; repeats, play counts, endings, markers and tempo changes (including mid-bar ones at their offset) are present | Parse the output in tests (`roxmltree`) and compare with the score |
-| E3 | Every note round-trips its facts: string and fret equal; the semitone of `<pitch>` equals `pitch_at`; each voice's durations sum to the voice length; dots, tuplet ratio, rests, chords and voices are as in the score; every tie has a matching start and stop, also across bars; dead notes have the x notehead | Property test over random edit sequences (the existing `mc-app` command strategy) plus `feature_rich` |
+| E3 | Every note round-trips its facts: string and fret equal; the semitone of `<pitch>` equals `pitch_at`; each voice's durations sum to the voice length; dots, tuplet ratio, rests, chords and voices are as in the score; every tie has a matching start and stop, also across bars; dead notes have the x notehead; every let ring note has exactly one `<tied type="let-ring"/>` and no other note has one | Property test over random edit sequences (the existing `mc-app` command strategy) plus `feature_rich` |
 | E4 | TAB staff: TAB clef, line count = string count, one `<staff-tuning>` per string matching the tuning (drop D included), `<capo>` when the capo is not 0 | Tests on `feature_rich` (drop D, capo 2) |
 | E5 | Nothing is lost silently: notes in the file plus notes counted as dropped equals `Score::note_count`; every approximation in section 4 is counted | Tests, including on the overfull and underfull bars of `feature_rich` |
 | E6 | Deterministic: the same score gives byte-identical output; golden files for `feature_rich` and one small score are reviewed and committed | Golden tests |
 | E7 | Names and markers with `< > & " '`, non-ASCII text and control characters give valid XML; forbidden characters are removed and counted | Property test with arbitrary strings, then parsed |
 | E8 | **MuseScore 4.7.5 opens every E1 input headless without error.** Its MIDI export of `feature_rich` and `reference(TYPICAL)` has the same notes as our own `export_smf` (pitch, onset and length, with repeats expanded), except notes in bars counted by the report as approximated | Local procedure, result file committed |
-| E9 | MuseScore's own MusicXML re-export of our file keeps the string and fret of every note | Local procedure, compare by parsing |
+| E9 | MuseScore's own MusicXML re-export of our file keeps the string and fret of every note. Let ring after the MuseScore round trip is recorded as observed. Because of the known MuseScore issue, a loss there is an evidence gap, not a pass, and it does not change E3 | Local procedure, compare by parsing |
 | E10 | A PNG rendering of `feature_rich` by MuseScore is committed and reviewed: TAB shown, repeats and endings shown, no collisions that hide notes. This is a check that it reads, not a layout-quality judgement | Local procedure, image in the result file |
 | E11 | Export time in release mode: `reference(TYPICAL)` ≤ 200 ms and `reference(LARGE)` ≤ 2 s | Benchmark on the reference machine |
-| E12 | The spelling rule lives in `mc-theory` with its own tests (GR-05); the exporter and Dart contain no music rule | Code review, FF-05, tests |
+| E12 | The spelling rule lives in `mc-theory` with its own tests for the three cases (no accidentals in the key, sharp keys, flat keys) (GR-05); the exporter and Dart contain no music rule | Code review, FF-05, tests |
 | E13 | The menu item writes a file and shows the report; a failure shows the error; fake and core pass one contract; the Windows integration test exports and re-reads the file through the core | Widget test, contract, integration test |
 | E14 | FF-01 passes with the new rows only; cargo-deny passes; no `unsafe` (FF-34); bindings by codegen only (FF-12); snapshot additions only (FF-22, `mc-theory`); `.giproj` unchanged | Fitness functions and CI |
-| E15 | Known limitations and release notes state the scope: export only; TAB subset; checked with MuseScore 4.7.5 on one machine; Finale, Dorico and Guitar Pro not checked; layout quality not judged | Docs review |
+| E15 | Known limitations and release notes state the scope: export only; TAB subset; `.musicxml` only (no `.mxl`); checked with MuseScore 4.7.5 on one machine; Finale, Dorico and Guitar Pro not checked; layout quality not judged; let ring in MuseScore limited by its known issue | Docs review |
 
-## 5. Choices for the user
+## 5. User decisions (2026-11-07)
 
-1. **Staves per track.** Proposed: **TAB only**, as the app shows it today (standard notation is Phase 6c). Alternative: two staves per part (notation above TAB), which MuseScore shows as linked staves. This doubles the size, and the notation spelling becomes visible.
-2. **File type.** Proposed: **uncompressed `.musicxml`** only. Alternative: also compressed `.mxl`, which needs a ZIP writer in the crate (a new edge to the `zip` crate that `mc-project` already uses).
-3. **Pitch spelling** (only visible in the notation that a reader may generate). Proposed: **sharps in keys with 0 or more sharps, flats in flat keys**, as a small rule in `mc-theory`. Alternative: always sharps, using the existing function, with no new rule.
-4. **Underfull and overfull bars (D-01).** Proposed: **write the content as it is**. An underfull voice is padded with a rest up to the bar length (counted); an overfull bar keeps all its notes and is counted, and MuseScore may mark it as irregular. No note is ever cut. Alternative: truncate overfull bars to the time signature and count the dropped notes.
-5. **Let ring.** Proposed: write it as `<other-technical>let ring</other-technical>` on the note, counted as approximated, unless the specification check finds a dedicated element. Alternative: leave it out and count it.
-6. **Schema check.** Proposed: a **new CI job** on Ubuntu that installs `libxml2-utils`, downloads the MusicXML 4.0 XSD files from the `w3c/musicxml` repository at a pinned commit with SHA-256 checks, and validates the `mc-cli` outputs. No schema file is stored in this repository. This changes the CI workflow (protected path, this ADR). Alternatives: store the XSD in the repository after a licence check (R-16), or validate only locally.
+1. **Staves: TAB only.** No standard-notation staff in Phase 6. It belongs to 6c, and adding it now would bring decisions on clef, displayed key and beaming that are outside 6b-4.
+2. **File type: uncompressed `.musicxml` only.** No `.mxl`, so no `zip` dependency just to compress. The goal of 6b-4 is correct content, not packaging. `.mxl` is recorded for a later roadmap slot.
+3. **Spelling: sharps when the key has no accidentals or has sharps, flats when it has flats.** "Always sharps" would give enharmonic spellings that are hard to read. The rule lives in `mc-theory`, tested for the three cases.
+4. **Underfull and overfull bars: written as they are, reported.**
+   - An underfull voice is padded with a rest, and the padding is counted.
+   - An overfull measure keeps all its notes. The report names it as overfull, so the user knows no data was lost.
+   - No note is ever cut. Truncation, if ever asked for, becomes a separate option and is never the default.
+5. **Let ring: `<tied type="let-ring"/>`**, as in the specification.
+   - `<other-technical>let ring</other-technical>` is a fallback only if the MuseScore test shows the specified form does not round-trip at all, and then it needs a recorded decision.
+   - Leaving let ring out and only reporting it is the last resort, only if tests prove a correct export impossible. The specification makes it possible, so it is not done.
+   - **Evidence gap, recorded in advance:** let ring is exported according to the specification. A MuseScore round trip may not confirm it because of MuseScore's known let-ring export issue. That is a MuseScore limitation; E3 and E9 are not changed to match it.
+6. **Schema check: a new CI job on Ubuntu.** It installs `libxml2-utils`, downloads the XSD files, checks their SHA-256 and runs `xmllint --schema` on the `mc-cli` outputs.
+   - **The XSD is fetched at the `v4.0` tag of `w3c/musicxml`, commit `799e2defb2ece0ae7bafe08dcbcac25b2c631d53`, path `schema/`, and checked in CI. It is not stored in this repository, because of the licence:** the W3C Community Final Specification Agreement has not been reviewed, and storing the file is an unnecessary legal risk.
+   - SHA-256 at that commit:
 
+     | File | Size | SHA-256 |
+     |---|---|---|
+     | `musicxml.xsd` | 379 505 | `BFE37ED25A9EC00E6F2591D53DF260B84EFE12AED209BA3AC0A76F9287665A99` |
+     | `xml.xsd` | 5 695 | `616A3077DF5CFC954AC74A75ABE9697B95EEF7A85DBE09367D995A483E840EB5` |
+     | `xlink.xsd` | 2 280 | `6E601F8EEB41618B50E4C7F944DFF754E57EA43B602755470DDA24C9C2F6DF92` |
+
+   - `musicxml.xsd` imports `xml.xsd` and `xlink.xsd` from `http://www.musicxml.org/xsd/`. The job maps those two locations to the verified local copies (an XML catalog), so nothing unverified is fetched during validation.
+   - The job changes the CI workflow, a protected path; its commit carries `Architecture-Change: ADR-033`.
+   - The latest `gh-pages` schema (commit `5666459`, 2026-10-15) has changes after 4.0. It is not used.
 ## Alternatives
 
 - **Export through the playback timeline**, as MIDI does. Rejected: the timeline has repeats expanded and no written durations, ties, voices or strings.
@@ -136,11 +158,12 @@ Measured on the reference machine (single machine, ADR-025). Thresholds are not 
 ## Consequences
 
 - New crate `mc-musicxml`, new `allowed-deps.toml` row and edges from `mc-ffi` and `mc-cli`, and a dependency-rules row.
-- `mc-theory`: a spelling function (if choice 5.3 is as proposed) and its public API snapshot.
+- `mc-theory`: a key-aware spelling function and its public API snapshot.
 - `mc-ffi`: `export_musicxml` and a report DTO; bindings regenerated.
 - `mc-cli`: `export-musicxml`.
 - Dart: service methods (real and fake), contract cases, a menu item, a `FileDialogs` method.
 - CI: the schema job (choice 5.6).
+- Roadmap: `.mxl` export and optional truncation of overfull bars recorded as possible later items.
 - Docs: known limitations, release notes, a MuseScore result file in `benchmarks/`.
 
 ## Related fitness functions
