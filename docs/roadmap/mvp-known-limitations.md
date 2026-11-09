@@ -57,6 +57,11 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
     skipped), so they share one volume and pan. The last one set wins.
   - The volume range tops out at 127 and the default is 100, so a track can be raised
     by 27 points at most.
+  - **Glitch-free playback is not re-confirmed after this change.** The 10-minute glitch
+    run (FF-18) now shows a few late callbacks on the reference machine, and so does the
+    build from before the mixer. The zero-underrun result of Phase 4 no longer
+    reproduces, and the cause is not yet found (ADR-032 section 6,
+    `benchmarks/ff18-glitch.md`).
 - One bundled SoundFont (trimmed FluidR3, program 25). User-supplied SoundFonts are a
   future capability. If the SoundFont is missing, playback is disabled with a message (no
   sine fallback).
