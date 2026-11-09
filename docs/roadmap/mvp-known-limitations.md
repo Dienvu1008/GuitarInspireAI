@@ -107,12 +107,23 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
 
 ## Interchange and storage
 
-- MIDI import and export only. No MusicXML or Guitar Pro. No SQLite library index.
+- MIDI import and export. No Guitar Pro. No SQLite library index.
+- **MusicXML export** (Phase 6b-4, [ADR-033](../architecture/decisions/ADR-033-musicxml-export-adapter.md)): File > Export MusicXML... writes MusicXML 4.0 as an uncompressed `.musicxml` file. Its limits:
+  - **Export only**: MusicXML files cannot be opened or imported.
+  - **TAB staves only**, one per track, as the app shows them. No standard-notation staff; standard notation is Phase 6c.
+  - Compressed `.mxl` is not offered.
+  - Bars with too few or too many beats are written as they are, and the export message says so. A short voice is filled with a rest; an overfull bar keeps all its notes, and some readers may mark it as irregular. No note is ever cut.
+  - The mixer settings (volume, pan, solo, mute) and the tempo factor are not exported. Every track is written.
+  - **Checked with MuseScore 4.7.5 only, on one machine.** Finale, Dorico and Guitar Pro were not checked, and layout quality was not judged. Known MuseScore behaviour (`benchmarks/musescore-musicxml.md`):
+    - **MuseScore ignores the capo.** A track with a capo is re-fingered in MuseScore (frets shifted, notes moved to other strings), although the file follows the MusicXML definition.
+    - Dead notes show as fret numbers, not X.
+    - A tie into a repeated section is not played again on the second pass.
+    - MuseScore's own MIDI playback does not sustain let ring, although the let-ring marks are read and kept.
 - Resolved in Phase 6b-1 (ADR-030): the session marker, the "save changes?" prompt on
   window close, New, Open and MIDI import, "Open original", and offering only autosaves
   newer than their source. Kept here as a record; it is no longer a limitation.
 
 ## Not in the MVP at all
 
-Standard notation, PDF, MusicXML, Guitar Pro, mixer, audio tracks, recording, vocal
+Standard notation, PDF, MusicXML (export added in Phase 6b-4), Guitar Pro, mixer (added in Phase 6b-3), audio tracks, recording, vocal
 analysis, any AI or ML feature, plugins, SDK, mobile and Web.

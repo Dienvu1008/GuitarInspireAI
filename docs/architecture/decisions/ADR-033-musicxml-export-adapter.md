@@ -1,6 +1,6 @@
 # ADR-033 MusicXML export adapter (Phase 6b-4)
 
-Status: Accepted (2026-11-07). The acceptance criteria in section 4 were fixed before any code. The user decided the six choices of section 5 on 2026-11-07, with additions recorded there.
+Status: Accepted (2026-11-07); results in section 6 (2026-11-09). The acceptance criteria in section 4 were fixed before any code. The user decided the six choices of section 5 on 2026-11-07, with additions recorded there.
 Date: 2026-11-07
 Related documents: [ADR-012](ADR-012-interchange-formats-as-adapters.md), [ADR-015](ADR-015-dependency-license-policy.md), [ADR-019](ADR-019-fretted-instrument-shared-kernel.md), [ADR-020](ADR-020-invariants-vs-diagnostics.md), [ADR-023](ADR-023-midi-adapter-crate.md), [ADR-025](ADR-025-single-machine-evidence-accepted.md), [data-architecture.md](../data-architecture.md), [dependency-rules.md](../dependency-rules.md), [implementation-phases.md](../../roadmap/implementation-phases.md)
 
@@ -34,7 +34,7 @@ Findings from the code and the specification (not assumptions):
 - **No XML crate** is in `Cargo.lock`. Writing MusicXML needs only escaping and nesting.
 - **Validation tooling.** There is no `xmllint` or Java on the reference machine. The GitHub Ubuntu runners used by the `cargo-deny` job can install `libxml2-utils`.
 
-## Decision (proposed)
+## Decision
 
 ### 1. A new adapter crate `mc-musicxml`
 
@@ -142,6 +142,40 @@ Measured on the reference machine (single machine, ADR-025). Thresholds are not 
    - `musicxml.xsd` imports `xml.xsd` and `xlink.xsd` from `http://www.musicxml.org/xsd/`. The job maps those two locations to the verified local copies (an XML catalog), so nothing unverified is fetched during validation.
    - The job changes the CI workflow, a protected path; its commit carries `Architecture-Change: ADR-033`.
    - The latest `gh-pages` schema (commit `5666459`, 2026-10-15) has changes after 4.0. It is not used.
+## 6. Results (2026-11-09)
+
+Implemented in:
+- `27fe2a3` (6b-4a): crate and spelling
+- `c23df07` and `6a09ca1` (6b-4b): CLI and schema job
+- `9a7cdb1` (6b-4c): app
+- the 6b-4d commit: MuseScore procedure and docs
+
+Single machine (ADR-025). Details and numbers: [benchmarks/musescore-musicxml.md](../../../benchmarks/musescore-musicxml.md).
+
+| Id | Result | Evidence |
+|---|---|---|
+| E1 | Met: the CI job `musicxml-schema` validates 7 files with `xmllint` against the pinned XSD: five exports, including a MIDI-imported score, plus both goldens. A negative control (a file with an element the schema forbids) is rejected in the same run. | CI run of `6a09ca1` |
+| E2 | Met | `e2_*` tests (parsed with `roxmltree`) |
+| E3 | Met: a checker compares every note fact, voice length, key-aware spelling and tie and let-ring marks with the score, over `feature_rich` and 200 random valid scores. The random scores contain ties (including across bar lines), let ring, dead notes, tuplets, second voices, and underfull and overfull bars; a coverage test asserts this. 8 deliberate breakages of the exporter are each caught. | `e3_*`, `random_scores_cover_*` |
+| E4 | Met | `e4_tab_staff_with_drop_d_and_capo` |
+| E5 | Met: notes written equal `note_count`; `feature_rich` reports 1 padded voice and 1 overfull measure, which keeps its 5 notes | `e5_*` |
+| E6 | Met: byte-identical output; goldens reviewed | `e6_*`, `tests/golden/` |
+| E7 | Met | `e7_*` (property test with arbitrary strings) |
+| E8 | **Not met as written.** MuseScore opens and converts all 5 inputs. In TYPICAL, all 9 856 notes match in pitch and onset; 480 let-ring notes differ in length only because our MIDI rendering rings to the end of the bar (ADR-024). In `feature_rich`: 2 dead notes and 2 let-ring notes differ in length for the same reason, and 1 note differs for real: a tie from the pickup into a repeated section is played again on the second pass by our playback but not by MuseScore, and MusicXML cannot express "tied on the first pass only". | benchmarks file, E8 |
+| E9 | **Met for tracks without a capo; evidence gap for a capo.** String and fret are unchanged for TYPICAL (9 600 notes) and the MIDI-imported score, and let ring round-trips (552 of 552). MuseScore ignores `<capo>` (its own open issue), so it re-fingers the capo-2 chord of `feature_rich`. Our encoding follows the 4.0 definition of `<capo>` and is not changed. | benchmarks file, E9 |
+| E10 | Met: TAB, repeats, endings, tuplet, tie, let ring, markers and tempo are all shown, and no collision hides a note | `benchmarks/musescore/feature-rich-preview.png` |
+| E11 | Met: TYPICAL median 6.3 ms (max 8.7); LARGE median 154.9 ms (max 164.7), release | benchmarks file, E11 |
+| E12 | Met: `KeySignature::spell` in `mc-theory`, tested for keys without accidentals, sharp keys and flat keys; the exporter calls it, and Dart only formats the report | `mc-theory` key tests |
+| E13 | Met, with one clarification. The menu item, the error path and cancel have widget tests. Fake and core pass one contract. The Windows integration test exports from the File menu and compares the written file with the core's bytes for the same document. The core has no MusicXML import, so "re-reads the file through the core" became "compares with the core's output". | `musicxml_menu_test.dart`, contract, `acceptance_test.dart` |
+| E14 | Met: FF-01 with the new row and edges, cargo-deny, FF-34, FF-12 (a second codegen run is identical), FF-22 (`mc-theory` gains two functions and loses nothing), `.giproj` unchanged | fitness functions, CI |
+| E15 | Met: known limitations and release notes updated | docs |
+
+Clarifications and observations:
+- **E3 generator.** E3 named the existing `mc-app` command strategy. `mc-musicxml` may not depend on `mc-app`, so the property test uses its own generator, built on the same validated `Score` aggregate operations.
+- **Let ring in MuseScore.** The gap recorded in advance in choice 5.5 did not occur for MusicXML: MuseScore 4.7.5 reads and re-writes `<tied type="let-ring"/>`. Its MIDI export does not sustain let-ring notes, which is a rendering difference.
+- **Dead notes in MuseScore** keep their x notehead in MuseScore's MusicXML export, but show as a fret number on TAB and play at full length.
+- **Integration test.** In one of three local runs of the Windows integration tests, the first test (M3) timed out waiting for its first key press. That was the first run after a rebuild; the other two runs passed 4 of 4. This is recorded as a possible timing flake in the existing M3 test, not caused by this slice; it was not investigated further.
+
 ## Alternatives
 
 - **Export through the playback timeline**, as MIDI does. Rejected: the timeline has repeats expanded and no written durations, ties, voices or strings.

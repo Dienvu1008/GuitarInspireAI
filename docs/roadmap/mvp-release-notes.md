@@ -60,3 +60,11 @@ public distribution.
 ## Correction (Phase 6b-3)
 
 The "Play it back" item above lists per-track mute. In the M5 build the mute control existed in the playback core but **had no button on screen**. It is on screen from Phase 6b-3, in the new Mixer panel, together with solo, volume and pan. See [mvp-known-limitations.md](mvp-known-limitations.md).
+
+## Added after M5 (Phase 6b)
+
+- **Mixer** (6b-3): the Mixer panel has Mute, Solo, volume and pan for each track. These are session settings and are not saved.
+- **MusicXML export** (6b-4): File > Export MusicXML... writes the song as MusicXML 4.0 with TAB staves, so other notation programs can open it. It carries repeats, endings, markers, tempo changes, several voices, ties, tuplets, dead notes and let ring.
+  - Export only.
+  - Checked with MuseScore 4.7.5 on one machine. MuseScore ignores the capo, so a track with a capo is re-fingered there.
+  - See [mvp-known-limitations.md](mvp-known-limitations.md).
