@@ -1,12 +1,12 @@
 # Pattern corpus (Phase 6a)
 
 Purpose: The reference patterns for the pattern engine ([ADR-034](decisions/ADR-034-pattern-engine-ir-first.md)). Each pattern states its intended meaning and the TAB it should produce on one voicing. The patterns the user has confirmed become the golden fixtures of criterion PE-11.
-Status: Reviewed by the user on 2026-11-09 (revision 2).
+Status: Reviewed and approved by the user on 2026-11-09, with ADR-034.
 - Confirmed: 1, 2, 3, 6, 8 and 10.
-- Confirmed with the user's corrections applied: 4, 5 and 9.
+- Confirmed with the user's corrections applied: 4, 5 and 9 (9 with amendment B).
 - **Not confirmed:** 7, a deferred candidate that is not a golden.
 
-The final confirmation of this revision is part of the ADR-034 approval.
+
 
 Related documents: [ADR-034](decisions/ADR-034-pattern-engine-ir-first.md), [ADR-035](decisions/ADR-035-playing-techniques-in-the-score.md), [guitar-pattern-engine.md](guitar-pattern-engine.md).
 
@@ -173,7 +173,7 @@ Correction from the user:
 - Each such note keeps its fretted position and pitch (ADR-035 `string_percussive`).
 - No muted string is added: string 6, muted in C, stays empty.
 
-IR: `strum: D Strum:4 D >sp(Strum):4 D Strum:8 U Strum:8 D >sp(Strum):4`
+IR: `strum: D Strum:4 D >sp(Strum):4 D Strum:8 U Treble(4):8 D >sp(Strum):4`
 
 | | 1 | & | 2 | & | 3 | & | 4 | & |
 |---|---|---|---|---|---|---|---|---|
@@ -181,13 +181,13 @@ IR: `strum: D Strum:4 D >sp(Strum):4 D Strum:8 U Strum:8 D >sp(Strum):4`
 | B | 1 | | x | | 1 | 1 | x | |
 | G | 0 | | x | | 0 | 0 | x | |
 | D | 2 | | x | | 2 | 2 | x | |
-| A | 3 | | x | | 3 | 3 | x | |
+| A | 3 | | x | | 3 | | x | |
 | E | | | | | | | | |
 | Marks | ↓ | | ↓ > S | | ↓ | ↑ | ↓ > S | |
 
 - The `x` notes are on the frets of the voicing, so the stored note is string 1 fret 0, string 2 fret 1, and so on, each with `string_percussive`. TAB draws them as `x`.
 - Playback: velocity 70 + 24 = 94, 1/64 long.
-- Open question for the user: the review corrected the up-strokes of patterns 4 and 5 to `Treble(4)` but did not mention the up-stroke on 3& here. It is kept as the full `Strum` of the reviewed version. Should it also be `Treble(4)`?
+- The up-stroke on 3& is `U Treble(4)`, consistent with patterns 4 and 5 (user amendment B, 2026-11-09). The bass string 5 is not struck on it.
 
 ## 10. The user's example: `Bass treb | Bass treb treb` (C, 2/4, two bars) — confirmed
 

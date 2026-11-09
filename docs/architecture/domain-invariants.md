@@ -119,15 +119,15 @@ Guitar constraint definitions (Phase 2 decisions; configurable defaults, not inv
 - Display spelling without key or harmonic context: C, C#, D, Eb, E, F, F#, G, Ab, A, Bb, B for chord roots and slash basses (C#m, Eaug/C). It is a display convention; pitch identity is the pitch class, and chord-tone spellings from the root (Cdim7: C Eb Gb Bbb) are unchanged. Contextual spelling can replace it later.
 
 These are Phase 2 domain and search conventions, not universal music-theory rules.
-| PT-01 | Every step lies inside the pattern: `0 <= onset` and `onset + length(duration) <= length` (amended by ADR-034, Draft; previously "sum of step durations equals the declared pattern length") | Pattern | H | Semantic validation stage | Unit, proptest |
+| PT-01 | Every step lies inside the pattern: `0 <= onset` and `onset + length(duration) <= length` (amended by ADR-034; previously "sum of step durations equals the declared pattern length") | Pattern | H | Semantic validation stage | Unit, proptest |
 | PT-02 | Every selector resolves to sounded strings of the given voicing at bind time, or binding fails with a typed error | Pattern | H at bind | Bind stage | Proptest |
-| PT-03 | Within one lane, steps are in onset order and do not overlap (ADR-034, Draft) | Pattern | H | Semantic validation stage | Unit, proptest |
-| PT-04 | Durations are valid `NoteValue`s; onsets are non-negative rationals (ADR-034, Draft) | Pattern | H | Semantic validation stage | Unit |
-| PT-05 | A `Hold` follows a strike or hold in the same lane and holds only strings the held strike plays (ADR-034, Draft) | Pattern | H | Semantic validation stage | Unit |
-| PT-06 | Gesture references resolve in the library; no gesture references a gesture in 6a (ADR-034, Draft) | Pattern | H | Semantic validation stage | Unit |
-| PT-07 | Technique spans cover existing steps of one lane; combinations are kept and resolved by the ADR-035 precedence (ADR-034, Draft) | Pattern | H | Semantic validation stage | Unit |
-| PT-08 | Gesture names are unique without case and never equal a DSL keyword (ADR-034, Draft) | Pattern | H | Library validation | Unit |
-| PT-09 | Gaps in a lane are rests, filled by the binder (ADR-034, Draft) | Pattern | Convention | Bind stage | Proptest |
+| PT-03 | Within one lane, steps are in onset order and do not overlap (ADR-034) | Pattern | H | Semantic validation stage | Unit, proptest |
+| PT-04 | Durations are valid `NoteValue`s; onsets are non-negative rationals (ADR-034) | Pattern | H | Semantic validation stage | Unit |
+| PT-05 | A `Hold` follows a strike or hold in the same lane and holds only strings the held strike plays (ADR-034) | Pattern | H | Semantic validation stage | Unit |
+| PT-06 | Gesture references resolve in the library; no gesture references a gesture in 6a (ADR-034) | Pattern | H | Semantic validation stage | Unit |
+| PT-07 | Technique spans cover existing steps of one lane; combinations are kept and resolved by the ADR-035 precedence (ADR-034) | Pattern | H | Semantic validation stage | Unit |
+| PT-08 | Gesture names are unique without case and never equal a DSL keyword (ADR-034) | Pattern | H | Library validation | Unit |
+| PT-09 | Gaps in a lane are rests, filled by the binder (ADR-034) | Pattern | Convention | Bind stage | Proptest |
 | P-01 | Every asset reference resolves to an entry in the package | Project | H | Loader | Fixture tests |
 | P-02 | Entry hashes match the manifest | Project | H | Loader (mismatch: typed error, offer recovery) | Corruption tests |
 | P-03 | Format version is supported, and all `required_features` are known | Project | H | Loader | Version tests |

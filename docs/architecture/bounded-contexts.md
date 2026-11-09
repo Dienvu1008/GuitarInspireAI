@@ -70,7 +70,7 @@ Phase 2 implementation (2026-10-31): `TuningPreset` (standard, drop-d, dadgad, o
 9. Invariants: A voicing has at most one position per string; positions are within the fret range of the tuning used.
 10. Relationships: Customer of the shared kernel. Upstream of Pattern. Used by `mc-app` for chord finder queries and retune commands.
 
-## 4. Pattern Engine (`mc-pattern`, Phase 6a, Proposed: follows [ADR-034](decisions/ADR-034-pattern-engine-ir-first.md) Draft)
+## 4. Pattern Engine (`mc-pattern`, Phase 6a, follows [ADR-034](decisions/ADR-034-pattern-engine-ir-first.md), Accepted)
 
 1. Responsibilities: Reusable picking and strumming patterns as a structured Pattern IR (the source of truth); semantic validation; user gestures; binding to a voicing; the text DSL as one front end (`mc_pattern::text`).
 2. Entities: `PatternDefinition` (id, name, length, optional meter, lanes, technique spans); `GestureDefinition` (id, name, strike template).

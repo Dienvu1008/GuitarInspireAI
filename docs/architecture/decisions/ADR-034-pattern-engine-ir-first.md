@@ -1,9 +1,8 @@
 # ADR-034 Pattern engine: the Pattern IR is the source of truth (Phase 6a)
 
-Status: Draft, revision 2 (2026-11-09).
+Status: Accepted (2026-11-09).
 - The acceptance criteria in section 11 were fixed before any code.
-- The user reviewed revision 1 (`8e3c8ee`): the architecture is approved in principle, and the decisions and revisions requested are recorded in section 13.
-- The ADR stays Draft until the user approves this revision. No implementation starts before that.
+- The user reviewed revision 1 (`8e3c8ee`) and revision 2 (`a20dbe3`). The user approved revision 2 with the four clarifications and two amendments recorded in section 13.
 
 Date: 2026-11-09
 Related documents: [guitar-pattern-engine.md](../guitar-pattern-engine.md), [bounded-contexts.md](../bounded-contexts.md) section 4, [domain-invariants.md](../domain-invariants.md) (PT-01 to PT-09), [ADR-035](ADR-035-playing-techniques-in-the-score.md), [ADR-011](ADR-011-rational-time-model.md), [ADR-016](ADR-016-undo-structural-sharing-snapshots.md), [ADR-020](ADR-020-invariants-vs-diagnostics.md), [ADR-030](ADR-030-editor-debt-clipboard-and-session-marker.md), [open-questions.md](../../research/open-questions.md), [pattern-corpus-proposed.md](../pattern-corpus-proposed.md)
@@ -177,7 +176,7 @@ Techniques, direction and accent from steps, spans and gestures are attached to 
     - Full repetitions, then the last one is cut at the range end.
     - A step that starts at or after the end is dropped.
     - A step that starts before the end and would sound past it is shortened. The remaining length is written as tied values, the same way bar lines split notes.
-    - A tuplet step that would need shortening is dropped instead, because a tuplet cannot be split.
+    - A tuplet step that would need shortening is dropped instead, because a tuplet cannot be split. The timing of every remaining step is kept, and no duration is redistributed.
     - The report lists every dropped and shortened step: lane, repetition, onset, written value and new value.
   - **`WholeRepetitionsOnly`:** whole repetitions only; the rest of the range is left as rests.
   - **Cancel:** no change.
@@ -189,7 +188,9 @@ Techniques, direction and accent from steps, spans and gestures are attached to 
 **ApplyPattern** `{ track, first, last, pattern, voicing, chord, fit, overwrite: bool }`:
 - It **replaces voices 1 and 2** of the track over the range. Other tracks, voices 3 and above, master bars, tempo and every other bar are kept. A voice 2 is created where the pattern uses the fingers lane, and left untouched where it does not (choice 13.5).
 - **Overwrite safeguard.**
-  - The core returns `WouldOverwrite { bars }` and changes nothing if voice 1 or 2 of any bar in the range holds a beat and `overwrite` is false.
+  - The core checks only the voices the pattern writes: voice 1 for a Strum pattern, voices 1 and 2 for a Thumb and Fingers pattern.
+  - If a checked voice of any bar in the range holds a beat and `overwrite` is false, the core returns `WouldOverwrite { bars }` and changes nothing.
+  - Existing voice 2 content never triggers the prompt for a Strum pattern, because that voice is not touched.
   - The UI shows a preview of the result and the bars to be overwritten, and asks for explicit confirmation. Only then does it resend with `overwrite: true`.
   - The rule is in the core, not in Dart.
 - **No insert semantics** in 6a.
@@ -245,7 +246,7 @@ Measured on the reference machine (ADR-025). Thresholds are not lowered to match
 | PE-4 | Timing: in a range of whole repetitions, every note starts at `range start + repetition offset + step onset` and lasts its step duration; notes crossing bar lines are split into tied notes that sum exactly; a hold ties only the held strings; a tuplet step crossing a bar line is rejected | Property test comparing the placed fragment with the IR |
 | PE-5 | Two lanes: a thumb note sounds for its written duration while the fingers lane attacks; in the compiled playback timeline its note-off is at its own duration, not at the next finger attack | Bind test plus a timeline test |
 | PE-6 | Every technique, direction and accent from steps, spans and gestures reaches each resulting note or beat exactly once, with every flag kept | Property test |
-| PE-7 | `ApplyPattern` replaces only voices 1 and 2 of the target track in the range; other tracks, voices 3 and above, master bars and tempo are byte-identical before and after; with existing content and `overwrite: false` it returns `WouldOverwrite` with the exact bars and changes nothing; on success there is one revision and one undo step, and undo restores the score byte for byte | Session tests and a property test |
+| PE-7 | `ApplyPattern` replaces only voices 1 and 2 of the target track in the range; other tracks, voices 3 and above, master bars and tempo are byte-identical before and after; with existing content in a voice the pattern writes and `overwrite: false` it returns `WouldOverwrite` with the exact bars and changes nothing; a Strum pattern applied over bars whose only content is in voice 2 applies without `WouldOverwrite` and leaves voice 2 byte-identical; on success there is one revision and one undo step, and undo restores the score byte for byte | Session tests and a property test |
 | PE-8 | Range and fit: the range duration is the sum of nominal bar durations; a whole multiple repeats with no prompt; any other length is refused without an explicit fit; `RepeatAndCut` reports exactly the dropped and shortened steps (and shortens with tied values, dropping tuplets); `WholeRepetitionsOnly` leaves the remainder as rests; a pickup in range gives `PickupInRange`; a declared meter that differs from a bar gives `MeterMismatch`; a pattern without a meter crosses mixed time signatures continuously | Session tests |
 | PE-9 | Gestures: a gesture used by several patterns binds identically in each; a rename changes no bound result; unknown and duplicate names are typed errors; a name equal to a keyword is rejected | Unit tests |
 | PE-10 | DSL: `parse(print(ir)) == ir` for random valid IR; every confirmed corpus pattern parses to its IR; a step without a value and without a `unit` is an error with a span; keywords are case-insensitive; a bar check off a bar line is an error | Property and golden tests |
@@ -278,12 +279,17 @@ Measured on the reference machine (ADR-025). Thresholds are not lowered to match
 8. **Alt:** the chord-tone preference is kept. The upper region is defined from the voicing, independent of the selectors in a strike (section 5). The C, G and Am results, and the D failure, are binding fixtures.
 9. **Corpus:** reviewed pattern by pattern; the corpus document records each decision. Pattern 7 stays unconfirmed.
 
-Open for the user's final approval: the clarifications made in this revision that the review did not spell out, namely:
-- `PickupInRange`;
-- `MeterMismatch` for a pattern with a declared meter;
-- tuplet steps dropped rather than shortened by `RepeatAndCut`;
-- voice 2 left untouched where a pattern has no fingers lane;
-- the D `xx0232` result for `Alt`.
+Final review of revision 2 (user, 2026-11-09). The user approved these clarifications:
+- Ranges containing a pickup bar are rejected with `PickupInRange`.
+- Every target bar must match a declared pattern meter, otherwise `MeterMismatch`.
+- `RepeatAndCut` drops tuplet steps that would need shortening, keeps the timing of all remaining steps, redistributes nothing, and reports the dropped steps.
+- Voice 2 is left untouched when the pattern has no Fingers lane.
+
+The user made two amendments:
+- **A.** The overwrite check covers only the voices the pattern writes (section 7, PE-7).
+- **B.** Corpus pattern 9 uses `U Treble(4)` for the up-stroke on 3&.
+
+Pattern 7 stays unconfirmed. Everything else is approved, and 6a-1 (ADR-035) begins.
 
 ## Alternatives
 

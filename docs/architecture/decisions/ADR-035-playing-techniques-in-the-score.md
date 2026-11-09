@@ -1,9 +1,8 @@
 # ADR-035 Playing techniques in the score: accent, palm mute, string-percussive, stroke direction (Phase 6a-1)
 
-Status: Draft, revision 2 (2026-11-09).
+Status: Accepted (2026-11-09).
 - The acceptance criteria in section 7 were fixed before any code.
-- The user reviewed revision 1 (`8e3c8ee`) and confirmed the decisions now recorded in section 8.
-- The ADR stays Draft until the user approves this revision. No implementation starts before that.
+- The user confirmed the decisions in section 8 on revision 1 (`8e3c8ee`) and approved revision 2 (`a20dbe3`). Implemented in slice 6a-1.
 Date: 2026-11-09
 Related documents: [ADR-034](ADR-034-pattern-engine-ir-first.md), [ADR-024](ADR-024-playback-rendering-conventions-and-rt-failures.md), [ADR-030](ADR-030-editor-debt-clipboard-and-session-marker.md), [ADR-033](ADR-033-musicxml-export-adapter.md), [project-format.md](../project-format.md), [domain-invariants.md](../domain-invariants.md)
 
