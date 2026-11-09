@@ -518,3 +518,53 @@ impl Now for FixedClock {
         self.0.get()
     }
 }
+
+/// ADR-030 section 3: closing asks "save changes?" only when work would be lost. A new
+/// document is dirty but holds nothing until it is edited; opened and recovered
+/// documents follow `is_dirty` exactly.
+#[test]
+fn c6_unsaved_work_ignores_an_untouched_new_document() {
+    let store = MemStore::default();
+    let mut s = session(2);
+    assert!(s.is_dirty());
+    assert!(!s.has_unsaved_work(), "untouched new document");
+
+    let t = first_track(&s);
+    let b = add_beat(&mut s, t, 0);
+    assert!(s.has_unsaved_work(), "edited new document");
+    s.undo().unwrap();
+    assert!(!s.has_unsaved_work(), "back to how it was created");
+    s.redo().unwrap();
+
+    s.save_as(&store, Path::new("song"), &app()).unwrap();
+    assert!(!s.has_unsaved_work());
+    s.execute(cmd(1, set_note(b, 1, 3))).unwrap();
+    assert!(s.has_unsaved_work());
+    // After a save, only the saved file counts: removing everything is a change.
+    s.execute(cmd(2, Command::Score(ScoreCommand::RemoveBeat { beat: b })))
+        .unwrap();
+    assert!(s.has_unsaved_work());
+
+    let bytes = store.read_raw("song");
+    let (recovered, _) = DocumentSession::recover(
+        DocumentId(9),
+        &bytes,
+        Some("song".into()),
+        SessionConfig::default(),
+        &clock(),
+    )
+    .unwrap();
+    assert!(
+        recovered.has_unsaved_work(),
+        "recovered content is not on disk"
+    );
+    let (opened, _) = DocumentSession::from_bytes(
+        DocumentId(10),
+        &bytes,
+        Some("song".into()),
+        SessionConfig::default(),
+        &clock(),
+    )
+    .unwrap();
+    assert!(!opened.has_unsaved_work());
+}

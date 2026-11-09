@@ -10,23 +10,24 @@ Criticality: Critical blocks merge. Important requires review. Advisory reports 
 
 Rows may depend on columns marked Y. Everything else is forbidden. The matrix is stored as a version-controlled file (planned `architecture/allowed-deps.toml`) and checked by FF-01.
 
-| From \ To | theory | score | guitar | pattern | notation | playback | project | dsp | app | audio | midi | ffi |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| theory | | | | | | | | | | | | |
-| score | Y | | | | | | | | | | | |
-| guitar | Y | | | | | | | | | | | |
-| pattern | Y | Y | Y | | | | | | | | | |
-| notation | Y | Y | | | | | | | | | | |
-| playback | Y | Y | | | | | | | | | | |
-| project | Y | Y | | Y (Phase 6) | | | | | | | | |
-| dsp | | | | | | | | | | | | |
-| app | Y | Y | Y | Y (Phase 6) | Y | Y | Y | Y | | | | |
-| audio | Y | | | | | Y | | Y | Y | | | |
-| midi | Y | Y | Y | | | Y | | | | | | |
-| ffi | | | | | | | | | Y | Y | Y (Phase 4) | |
-| cli | | | | | | | Y | | Y | Y (optional) | Y (Phase 4) | |
+| From \ To | theory | score | guitar | pattern | notation | playback | project | dsp | app | audio | midi | musicxml | ffi |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| theory | | | | | | | | | | | | | |
+| score | Y | | | | | | | | | | | | |
+| guitar | Y | | | | | | | | | | | | |
+| pattern | Y | Y | Y | | | | | | | | | | |
+| notation | Y | Y | | | | | | | | | | | |
+| playback | Y | Y | | | | | | | | | | | |
+| project | Y | Y | | Y (Phase 6) | | | | | | | | | |
+| dsp | | | | | | | | | | | | | |
+| app | Y | Y | Y | Y (Phase 6) | Y | Y | Y | Y | | | | | |
+| audio | Y | | | | | Y | | Y | Y | | | | |
+| midi | Y | Y | Y | | | Y | | | | | | | |
+| musicxml | Y | Y | | | | | | | | | | | |
+| ffi | | | | | | | | | Y | Y | Y (Phase 4) | Y (Phase 6) | |
+| cli | | | | | | | Y | | Y | Y (optional) | Y (Phase 4) | Y (Phase 6) | |
 
-`midi` (`mc-midi`, Phase 4) is the SMF import and export adapter ([ADR-023](decisions/ADR-023-midi-adapter-crate.md)); only the adapters `ffi` and `cli` use it.
+`midi` (`mc-midi`, Phase 4) is the SMF import and export adapter ([ADR-023](decisions/ADR-023-midi-adapter-crate.md)); only the adapters `ffi` and `cli` use it. `musicxml` (`mc-musicxml`, Phase 6) is the MusicXML export adapter ([ADR-033](decisions/ADR-033-musicxml-export-adapter.md)); it reads the score through `mc-score` and spells pitches through `mc-theory`, and only `ffi` and `cli` use it.
 
 Future `mc-analysis` (Phase 8): may depend on `theory` and `dsp` only. `app` may depend on it. It is added to the matrix file in Phase 8 by ADR.
 

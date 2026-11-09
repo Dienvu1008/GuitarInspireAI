@@ -2,11 +2,15 @@
 /// inspector. Imports only the `core_bridge` facade, `ui_kit` and `app_platform` (FF-05).
 library;
 
+export 'src/clipboard.dart' show BeatClipboard, beatClipboardProvider;
 export 'src/document_controller.dart'
     show
+        BeatSlot,
         CursorOverlayBuilder,
         DocumentController,
         EditorState,
+        ReplaceGuard,
+        replaceGuardProvider,
         appPathsProvider,
         cursorOverlayProvider,
         documentFactoryProvider,

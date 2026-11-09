@@ -227,3 +227,262 @@ fn tick_type_is_exposed_for_the_position_stream() {
     assert_eq!(e.status().tick, 0);
     let _ = Tick(0);
 }
+
+// ---- ADR-032: volume and pan per channel (X1-X5) ----
+
+mod mix {
+    use super::*;
+    use mc_playback::{Channel, Pan, Volume, assign_channels};
+
+    /// An engine whose synthesizer has no reverb and chorus. The effects return is not
+    /// panned and rings after a note ends, so a per-channel measurement (X2, X3, X4)
+    /// is made on the dry signal; the default synthesizer is covered by X1 and X5.
+    fn dry_engine(bars: usize) -> OfflineEngine {
+        use crate::rt::RtCommand;
+        use rustysynth::{Synthesizer, SynthesizerSettings};
+        let mut e = OfflineEngine::new(RATE);
+        let font = crate::soundfont::parse_soundfont(SF2).unwrap();
+        let mut settings = SynthesizerSettings::new(RATE as i32);
+        settings.enable_reverb_and_chorus = false;
+        let synth = Synthesizer::new(&font, &settings).unwrap();
+        e.send(RtCommand::InstallSynth(Box::new(synth)));
+        e.load_timeline(timeline(bars));
+        e
+    }
+
+    fn ch(n: u8) -> Channel {
+        Channel::try_new(n).unwrap()
+    }
+    fn vol(v: u8) -> Volume {
+        Volume::try_new(v).unwrap()
+    }
+    fn pan(v: i16) -> Pan {
+        Pan::try_new(v).unwrap()
+    }
+
+    fn max_diff(a: &[f32], b: &[f32]) -> f32 {
+        assert_eq!(a.len(), b.len());
+        a.iter().zip(b).fold(0.0, |m, (x, y)| m.max((x - y).abs()))
+    }
+
+    fn energy(samples: &[f32], right: bool) -> f64 {
+        samples
+            .chunks(2)
+            .map(|f| f[usize::from(right)] as f64)
+            .map(|x| x * x)
+            .sum()
+    }
+
+    /// Plays the 4-bar score for `frames` frames, applying `before` to the engine first.
+    fn run(frames: usize, before: impl FnOnce(&mut OfflineEngine)) -> Vec<f32> {
+        let mut e = engine_with(4);
+        before(&mut e);
+        e.play();
+        e.render(frames)
+    }
+
+    fn run_dry(frames: usize, before: impl FnOnce(&mut OfflineEngine)) -> Vec<f32> {
+        let mut e = dry_engine(4);
+        before(&mut e);
+        e.play();
+        e.render(frames)
+    }
+
+    #[test]
+    fn x1_the_default_mix_changes_nothing() {
+        let with_mix = run(RATE as usize, |_| {});
+        let without = run(RATE as usize, |e| e.rt_mut().mix_disabled = true);
+        assert_eq!(with_mix, without, "the default table must be bit-identical");
+    }
+
+    #[test]
+    fn x2_volume_zero_equals_a_muted_track() {
+        let s = reference(Shape {
+            tracks: 2,
+            bars: 4,
+            beats: 8,
+            notes_per_beat: 2,
+        });
+        let tracks: Vec<_> = assign_channels(&s);
+        assert!(tracks.len() >= 2);
+        let (t1, c1) = (tracks[1].track, tracks[1].channel);
+        let mut options = CompileOptions::new();
+        options.muted.insert(t1);
+        let muted = compile(&s, &options).unwrap().timeline;
+
+        let mut reference_engine = OfflineEngine::new(RATE);
+        reference_engine.install_soundfont(SF2).unwrap();
+        reference_engine.load_timeline(muted);
+        reference_engine.play();
+        let expected = reference_engine.render(RATE as usize);
+
+        let silenced = run(RATE as usize, |e| {
+            e.set_channel_mix(c1, vol(0), Pan::CENTRE)
+        });
+        assert!(
+            max_diff(&expected, &silenced) < 1e-6,
+            "volume 0 must sound like a muted track: {}",
+            max_diff(&expected, &silenced)
+        );
+        assert!(peak(&silenced) > 0.01, "the other track still sounds");
+    }
+
+    #[test]
+    fn x2_a_volume_drop_in_the_middle_of_a_note_is_audible() {
+        let mut e = dry_engine(4);
+        e.play();
+        e.render(RATE as usize / 4);
+        let loud = energy(&e.render(2400), false);
+        e.set_channel_mix(ch(0), vol(0), Pan::CENTRE);
+        e.set_channel_mix(ch(1), vol(0), Pan::CENTRE);
+        e.render(480);
+        let quiet = energy(&e.render(2400), false);
+        assert!(quiet < loud * 0.01, "loud {loud}, quiet {quiet}");
+    }
+
+    #[test]
+    fn x3_pan_moves_the_sound_between_the_sides() {
+        let hard = |p: i16| {
+            run_dry(RATE as usize, |e| {
+                e.set_channel_mix(ch(0), vol(100), pan(p));
+                e.set_channel_mix(ch(1), vol(0), Pan::CENTRE);
+            })
+        };
+        let left = hard(-63);
+        let right = hard(63);
+        let centre = hard(0);
+        assert!(energy(&left, true) <= energy(&left, false) * 0.01 + 1e-12);
+        assert!(energy(&right, false) <= energy(&right, true) * 0.01 + 1e-12);
+        let (l, r) = (energy(&centre, false), energy(&centre, true));
+        assert!(
+            l > 0.0 && r > 0.0 && (l / r - 1.0).abs() < 0.2,
+            "centre {l} {r}"
+        );
+        // The centre pan equals the default table (the default pan is the centre).
+        let default = run_dry(RATE as usize, |e| {
+            e.set_channel_mix(ch(1), vol(0), Pan::CENTRE)
+        });
+        assert_eq!(centre, default);
+    }
+
+    #[test]
+    fn x4_a_change_is_heard_in_the_next_callback() {
+        let mut control = dry_engine(4);
+        let mut changed = dry_engine(4);
+        control.play();
+        changed.play();
+        assert_eq!(control.render(4800), changed.render(4800));
+        for c in [ch(0), ch(1)] {
+            changed.set_channel_mix(c, vol(0), Pan::CENTRE);
+        }
+        let a = control.render(480);
+        let b = changed.render(480);
+        assert!(max_diff(&a, &b) > 1e-4, "the very next callback differs");
+        changed.render(480 * 2);
+        let tail = energy(&changed.render(480), false) + energy(&changed.render(0), true);
+        let reference_level =
+            energy(&control.render(480 * 2), false) + energy(&control.render(480), false);
+        assert!(
+            tail < reference_level * 0.01 + 1e-9,
+            "silent within 3 callbacks"
+        );
+    }
+
+    fn silenced(e: &mut OfflineEngine) {
+        for c in [0u8, 1] {
+            e.set_channel_mix(ch(c), vol(0), Pan::CENTRE);
+        }
+    }
+
+    fn assert_still_silent(e: &mut OfflineEngine, what: &str) {
+        e.play();
+        e.render(480); // the callback applies commands and the table
+        let p = peak(&e.render(RATE as usize / 2));
+        assert!(p < 1e-3, "after {what} the mix must still hold (peak {p})");
+    }
+
+    #[test]
+    fn x5_the_mix_survives_seek_swap_reinstall_and_device_rebuild() {
+        let mut e = engine_with(4);
+        silenced(&mut e);
+        e.seek(Tick(0));
+        assert_still_silent(&mut e, "seek");
+
+        e.load_timeline(timeline(4));
+        assert_still_silent(&mut e, "a timeline swap");
+
+        e.install_soundfont(SF2).unwrap();
+        assert_still_silent(&mut e, "installing the synthesizer again");
+
+        e.rebuild_device().unwrap();
+        e.load_timeline(timeline(4));
+        assert_still_silent(&mut e, "a device rebuild");
+
+        // And the sound comes back when the mix is restored.
+        for c in [0u8, 1] {
+            e.set_channel_mix(ch(c), Volume::DEFAULT, Pan::CENTRE);
+        }
+        e.seek(Tick(0));
+        e.render(480);
+        assert!(peak(&e.render(RATE as usize / 2)) > 0.01);
+    }
+
+    /// X12 (ADR-032): how much the mix polling adds to a callback. Not run by default;
+    /// run in release mode on the reference machine and record the numbers:
+    ///   cargo test --release -p mc-audio --lib -- --ignored mix_overhead --nocapture
+    /// Two engines render the same timeline, one with the mix polling and one without,
+    /// timed alternately block by block so drift hits both the same way. The "changing"
+    /// run also moves one channel's volume every block, so a controller message is sent
+    /// every callback (an upper bound for a slider drag).
+    #[test]
+    #[ignore = "measurement; run in release mode on the reference machine"]
+    fn mix_overhead_measurement() {
+        use std::time::Instant;
+        const BLOCKS: usize = 20_000;
+        let p = |v: &mut Vec<u64>, q: f64| {
+            v.sort_unstable();
+            v[((v.len() as f64 * q) as usize).min(v.len() - 1)]
+        };
+        for changing in [false, true] {
+            let mut with = engine_with(16);
+            let mut without = engine_with(16);
+            without.rt_mut().mix_disabled = true;
+            with.play();
+            without.play();
+            let mut buf = vec![0.0f32; 480 * 2];
+            // Warm both up past the first callbacks.
+            for _ in 0..200 {
+                with.process(&mut buf, 2);
+                without.process(&mut buf, 2);
+            }
+            let (mut a, mut b) = (Vec::with_capacity(BLOCKS), Vec::with_capacity(BLOCKS));
+            for i in 0..BLOCKS {
+                if changing {
+                    with.set_channel_mix(ch(0), vol((i % 100) as u8 + 1), Pan::CENTRE);
+                }
+                let time = |e: &mut OfflineEngine, buf: &mut Vec<f32>| {
+                    let t0 = Instant::now();
+                    e.process(buf, 2);
+                    t0.elapsed().as_nanos() as u64
+                };
+                if i % 2 == 0 {
+                    a.push(time(&mut with, &mut buf));
+                    b.push(time(&mut without, &mut buf));
+                } else {
+                    b.push(time(&mut without, &mut buf));
+                    a.push(time(&mut with, &mut buf));
+                }
+                with.drain_retired();
+            }
+            let (a50, b50) = (p(&mut a.clone(), 0.5), p(&mut b.clone(), 0.5));
+            let (a99, b99) = (p(&mut a, 0.99), p(&mut b, 0.99));
+            println!(
+                "changing={changing}: with mix p50 {a50} ns p99 {a99} ns max {} ns; \
+                 without p50 {b50} ns p99 {b99} ns max {} ns; p99 difference {} ns",
+                a.last().unwrap(),
+                b.last().unwrap(),
+                a99 as i64 - b99 as i64
+            );
+        }
+    }
+}

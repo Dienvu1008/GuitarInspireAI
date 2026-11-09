@@ -6,6 +6,7 @@
 //! identified by its manifest (`format`, `format_version`), not by its name.
 
 mod guitar;
+mod interchange;
 mod script;
 
 use mc_app::infra::{FsProjectStore, SystemClock, SystemEntropy, cleanup_temp_files};
@@ -118,7 +119,7 @@ fn save_new(session: &mut DocumentSession, out: &Path) -> Result<(), String> {
 }
 
 fn usage() -> String {
-    format!("{USAGE}{}", guitar::USAGE)
+    format!("{USAGE}{}{}", guitar::USAGE, interchange::USAGE)
 }
 
 fn run(args: &[String]) -> Result<(), String> {
@@ -129,6 +130,14 @@ fn run(args: &[String]) -> Result<(), String> {
         "identify" => guitar::identify(rest)?,
         "scale" => guitar::scale(rest)?,
         "tunings" => guitar::tunings(),
+        "export-musicxml" => interchange::export_musicxml(
+            &positional(rest, 0, "source")?,
+            &positional(rest, 1, "output path")?,
+        )?,
+        "export-midi" => interchange::export_midi(
+            &positional(rest, 0, "source")?,
+            &positional(rest, 1, "output path")?,
+        )?,
         "new" => {
             let out = output_path(&positional(rest, 0, "output path")?);
             let bars = flag(rest, "--bars")

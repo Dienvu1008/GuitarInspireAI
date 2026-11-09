@@ -49,10 +49,18 @@ final class FakeDocumentService implements DocumentService {
 
   bool get _dirty => !_state.sameAs(_saved);
 
+  /// State as created, until the first save; mirrors `has_unsaved_work` in the core.
+  late _State? _pristine = _state.copy();
+
+  /// How often [writeAutosave] and [discardAutosaves] were called (for tests).
+  int autosaveWrites = 0;
+  int autosaveDiscards = 0;
+
   @override
   DocumentSummaryDto summary() => DocumentSummaryDto(
     revision: _revision,
     dirty: _dirty,
+    unsavedWork: _dirty && !_state.sameAs(_pristine),
     canUndo: _undo.isNotEmpty,
     canRedo: _redo.isNotEmpty,
     location: _location,
@@ -211,6 +219,73 @@ final class FakeDocumentService implements DocumentService {
           EventKindDto.masterBarsInserted(at: at, count: count),
           const EventKindDto.tempoMapChanged(),
         ];
+      // Paste and cut: a small subset of the core rules (string count, empty
+      // fragment, positions). The contract suite runs the same cases on the core.
+      case CommandDto_PasteBeats(
+        :final track,
+        :final bar,
+        :final voice,
+        :final index,
+        :final beats,
+      ):
+        final v = _voice(track, bar, voice);
+        if (beats.isEmpty || index < 0 || index > v.length) {
+          throw ApiError(rule: 'E-04', message: 'paste at $index');
+        }
+        final strings = _track(track).instrument.tuning.length;
+        for (final b in beats) {
+          for (final n in b.notes) {
+            if (n.string < 1 || n.string > strings) {
+              throw ApiError(rule: 'H-03', message: 'string ${n.string}');
+            }
+          }
+        }
+        v.insertAll(index, [
+          for (final b in beats)
+            _Beat(_nextId++, b.duration, [
+              for (final n in b.notes)
+                NoteDto(
+                  id: _nextId++,
+                  string: n.string,
+                  fret: n.fret,
+                  tie: n.tie,
+                  letRing: n.letRing,
+                  dead: n.dead,
+                ),
+            ]),
+        ]);
+        return [
+          EventKindDto.barContentChanged(
+            track: track,
+            start: bar,
+            end: bar + 1,
+          ),
+        ];
+      case CommandDto_RemoveBeats(
+        :final track,
+        :final voice,
+        :final fromBar,
+        :final fromIndex,
+        :final toBar,
+        :final toIndex,
+      ):
+        for (final (bar, from, to) in _run(
+          track,
+          voice,
+          fromBar,
+          fromIndex,
+          toBar,
+          toIndex,
+        )) {
+          _voice(track, bar, voice).removeRange(from, to);
+        }
+        return [
+          EventKindDto.barContentChanged(
+            track: track,
+            start: fromBar,
+            end: toBar + 1,
+          ),
+        ];
       default:
         throw ApiError(rule: 'unsupported', message: 'FakeDocumentService: $c');
     }
@@ -269,6 +344,7 @@ final class FakeDocumentService implements DocumentService {
   Future<OutcomeDto> saveAs(String path) async {
     _location = path;
     _saved = _state.copy();
+    _pristine = null;
     return _commit([const EventKindDto.documentSaved()], null);
   }
 
@@ -283,6 +359,62 @@ final class FakeDocumentService implements DocumentService {
     final t = _track(track);
     return bar >= 0 && bar < t.bars.length ? t.bars[bar].length : 0;
   }
+
+  /// `(bar, index range)` pieces of an inclusive run; throws E-04 like the core.
+  List<(int, int, int)> _run(
+    int track,
+    int voice,
+    int fb,
+    int fi,
+    int tb,
+    int ti,
+  ) {
+    if (fb > tb || (fb == tb && fi > ti) || tb >= _state.bars) {
+      throw ApiError(rule: 'E-04', message: 'beat run ($fb,$fi) to ($tb,$ti)');
+    }
+    final pieces = <(int, int, int)>[];
+    for (var bar = fb; bar <= tb; bar++) {
+      final len = _voice(track, bar, voice).length;
+      if ((bar == fb && fi >= len) || (bar == tb && ti >= len)) {
+        throw ApiError(rule: 'E-04', message: 'beat out of range in bar $bar');
+      }
+      pieces.add((bar, bar == fb ? fi : 0, bar == tb ? ti + 1 : len));
+    }
+    return pieces;
+  }
+
+  @override
+  List<ClipBeatDto> copyBeats(
+    int track,
+    int voice, {
+    required int fromBar,
+    required int fromIndex,
+    required int toBar,
+    required int toIndex,
+  }) => [
+    for (final (bar, from, to) in _run(
+      track,
+      voice,
+      fromBar,
+      fromIndex,
+      toBar,
+      toIndex,
+    ))
+      for (final b in _voice(track, bar, voice).sublist(from, to))
+        ClipBeatDto(
+          duration: b.duration,
+          notes: [
+            for (final n in b.notes)
+              ClipNoteDto(
+                string: n.string,
+                fret: n.fret,
+                tie: n.tie,
+                letRing: n.letRing,
+                dead: n.dead,
+              ),
+          ],
+        ),
+  ];
 
   /// A fixed voicing set for widget tests: "x32010" (open C shape) regardless of the
   /// symbol, plus a barre. A bad symbol (empty) throws, to exercise the error path.
@@ -329,6 +461,96 @@ final class FakeDocumentService implements DocumentService {
   @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) {
     final t = _track(track);
+    final system = _stave(t, metrics, [
+      for (final bar in t.bars) bar[0].length,
+    ]);
+    return TabLayoutDto(
+      track: track,
+      strings: t.instrument.tuning.length,
+      width: metrics.width,
+      height: system.height,
+      systems: [system],
+    );
+  }
+
+  /// The shown tracks in score order; throws like the core for none or unknown ids.
+  List<_Track> _shown(List<int> tracks) {
+    for (final id in tracks) {
+      _track(id);
+    }
+    final shown = [
+      for (final t in _state.tracks)
+        if (tracks.contains(t.id)) t,
+    ];
+    if (shown.isEmpty) throw ApiError(rule: 'layout', message: 'no track');
+    return shown;
+  }
+
+  /// Columns per bar shared by every stave (beat k of every track in column k), so
+  /// bar lines line up as in the core.
+  List<int> _columns(List<_Track> shown) => [
+    for (var bar = 0; bar < _state.bars; bar++)
+      shown.map((t) => t.bars[bar][0].length).reduce((a, b) => a > b ? a : b),
+  ];
+
+  /// The whole score is one system in the fake.
+  @override
+  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics) {
+    final shown = _shown(tracks);
+    final height = shown
+        .map((t) => _staveHeight(t, metrics))
+        .reduce((a, b) => a + b);
+    return ScoreOutlineDto(
+      revision: _revision,
+      width: metrics.width,
+      height: height,
+      systems: [
+        OutlineSystemDto(
+          index: 0,
+          y: 0,
+          height: height,
+          firstBar: 0,
+          endBar: _state.bars,
+        ),
+      ],
+    );
+  }
+
+  @override
+  List<ScoreSystemDto> scoreSystems(
+    List<int> tracks,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) {
+    final shown = _shown(tracks);
+    if (first > 0 || count <= 0) return const [];
+    final columns = _columns(shown);
+    final staves = <StaveDto>[];
+    var top = 0.0;
+    for (final t in shown) {
+      final system = _stave(t, metrics, columns);
+      staves.add(
+        StaveDto(
+          track: t.id,
+          strings: t.instrument.tuning.length,
+          top: top,
+          system: system,
+        ),
+      );
+      top += system.height;
+    }
+    return [ScoreSystemDto(index: 0, y: 0, height: top, staves: staves)];
+  }
+
+  double _staveHeight(_Track t, MetricsDto metrics) =>
+      metrics.aboveStaff +
+      (t.instrument.tuning.length - 1) * metrics.stringSpacing +
+      metrics.belowStaff;
+
+  /// One stave in stave coordinates; `columns[bar]` columns per bar (an empty bar has
+  /// the empty-bar width).
+  SystemDto _stave(_Track t, MetricsDto metrics, List<int> columns) {
     final strings = t.instrument.tuning.length;
     final glyphs = <GlyphDto>[];
     final rects = <double>[];
@@ -369,7 +591,9 @@ final class FakeDocumentService implements DocumentService {
         }
         x += w;
       }
-      x += beats.isEmpty ? metrics.emptyBarWidth : metrics.barPadding;
+      // Columns this track does not use still take their width, so bars line up.
+      x += (columns[bar] - beats.length) * metrics.minColumnWidth;
+      x += columns[bar] == 0 ? metrics.emptyBarWidth : metrics.barPadding;
       bars.add(
         BarLayoutDto(bar: bar, x: start, width: x - start, diagnostic: false),
       );
@@ -381,28 +605,18 @@ final class FakeDocumentService implements DocumentService {
       lines.addAll([metrics.marginLeft, y, x, y]);
       kinds.add(LineKind.string);
     }
-    final height =
-        top + (strings - 1) * metrics.stringSpacing + metrics.belowStaff;
-    return TabLayoutDto(
-      track: track,
-      strings: strings,
-      width: metrics.width,
-      height: height,
-      systems: [
-        SystemDto(
-          index: 0,
-          y: 0,
-          height: height,
-          staffTop: top,
-          bars: bars,
-          lines: Float32List.fromList(lines),
-          lineKinds: Uint8List.fromList(kinds),
-          glyphs: glyphs,
-          hitRects: Float32List.fromList(rects),
-          hitMeta: Int32List.fromList(meta),
-          beats: hitBeats,
-        ),
-      ],
+    return SystemDto(
+      index: 0,
+      y: 0,
+      height: _staveHeight(t, metrics),
+      staffTop: top,
+      bars: bars,
+      lines: Float32List.fromList(lines),
+      lineKinds: Uint8List.fromList(kinds),
+      glyphs: glyphs,
+      hitRects: Float32List.fromList(rects),
+      hitMeta: Int32List.fromList(meta),
+      beats: hitBeats,
     );
   }
 
@@ -414,8 +628,12 @@ final class FakeDocumentService implements DocumentService {
 
   @override
   Future<void> writeAutosave(String dir) async {
-    // No-op in the fake; just mark the autosave done.
+    // The fake keeps no files; it only counts the call.
+    autosaveWrites++;
   }
+
+  @override
+  void discardAutosaves() => autosaveDiscards++;
 
   @override
   void close() {
@@ -427,9 +645,15 @@ final class FakeDocumentService implements DocumentService {
 final class FakeDocumentFactory implements DocumentFactory {
   final Map<String, FakeDocumentService> _files = {};
 
+  /// Every document created, in order, so tests can read their counters.
+  final List<FakeDocumentService> created = [];
+
   @override
-  DocumentService create({int bars = 4}) =>
-      _Tracked(FakeDocumentService(bars: bars), _files);
+  DocumentService create({int bars = 4}) {
+    final doc = FakeDocumentService(bars: bars);
+    created.add(doc);
+    return _Tracked(doc, _files);
+  }
 
   @override
   Future<DocumentService> open(String path) async {
@@ -460,6 +684,34 @@ final class FakeDocumentFactory implements DocumentFactory {
   @override
   void discardRecovery(String dir, String projectId) =>
       recovery[dir]?.removeWhere((e) => e.projectId == projectId);
+
+  /// Directories whose session marker is present. Tests seed it to simulate a crash;
+  /// it starts empty, so a fresh fake behaves like a first, clean start.
+  final Set<String> sessionMarkers = {};
+
+  /// Modification time of source files in Unix millis, for the newer-than-source
+  /// rule. A source missing from the map counts as gone (always offered), as in core.
+  final Map<String, int> sourceModified = {};
+
+  @override
+  bool beginSession(String dir) => !sessionMarkers.add(dir);
+
+  @override
+  void endSession(String dir) => sessionMarkers.remove(dir);
+
+  /// Mirrors `mc_app::recovery::offered`; the Rust contract test checks the real one.
+  @override
+  List<RecoveryEntryDto> offeredRecovery(String dir, {required bool unclean}) {
+    if (!unclean) return const [];
+    return List.unmodifiable(
+      recoveryEntries(dir).where((e) {
+        final src = e.source;
+        if (src == null) return true;
+        final modified = sourceModified[src];
+        return modified == null || e.timestamp > modified;
+      }),
+    );
+  }
 }
 
 /// Remembers documents by save location so [FakeDocumentFactory.open] can return them.
@@ -505,14 +757,42 @@ final class _Tracked implements DocumentService {
   ChordResultDto chordVoicings(int track, String symbol, {int max = 5}) =>
       _inner.chordVoicings(track, symbol, max: max);
   @override
+  List<ClipBeatDto> copyBeats(
+    int track,
+    int voice, {
+    required int fromBar,
+    required int fromIndex,
+    required int toBar,
+    required int toIndex,
+  }) => _inner.copyBeats(
+    track,
+    voice,
+    fromBar: fromBar,
+    fromIndex: fromIndex,
+    toBar: toBar,
+    toIndex: toIndex,
+  );
+  @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _inner.tabLayout(track, metrics);
+  @override
+  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics) =>
+      _inner.scoreOutline(tracks, metrics);
+  @override
+  List<ScoreSystemDto> scoreSystems(
+    List<int> tracks,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) => _inner.scoreSystems(tracks, metrics, first, count);
   @override
   Stream<EventDto> get events => _inner.events;
   @override
   bool autosaveDue() => _inner.autosaveDue();
   @override
   Future<void> writeAutosave(String dir) => _inner.writeAutosave(dir);
+  @override
+  void discardAutosaves() => _inner.discardAutosaves();
   @override
   void close() => _inner.close();
 }

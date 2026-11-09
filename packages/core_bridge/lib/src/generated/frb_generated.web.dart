@@ -12,6 +12,7 @@ import 'api/engine.dart';
 import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/midi.dart';
+import 'api/musicxml.dart';
 import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -106,6 +107,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected ChordResultDto dco_decode_chord_result_dto(dynamic raw);
 
+@protected ClipBeatDto dco_decode_clip_beat_dto(dynamic raw);
+
+@protected ClipNoteDto dco_decode_clip_note_dto(dynamic raw);
+
 @protected CommandDto dco_decode_command_dto(dynamic raw);
 
 @protected DiagnosticDto dco_decode_diagnostic_dto(dynamic raw);
@@ -148,6 +153,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<BeatDto> dco_decode_list_beat_dto(dynamic raw);
 
+@protected List<ClipBeatDto> dco_decode_list_clip_beat_dto(dynamic raw);
+
+@protected List<ClipNoteDto> dco_decode_list_clip_note_dto(dynamic raw);
+
 @protected List<DiagnosticDto> dco_decode_list_diagnostic_dto(dynamic raw);
 
 @protected List<EventDto> dco_decode_list_event_dto(dynamic raw);
@@ -159,6 +168,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected List<MasterBarDto> dco_decode_list_master_bar_dto(dynamic raw);
 
 @protected List<NoteDto> dco_decode_list_note_dto(dynamic raw);
+
+@protected List<OutlineSystemDto> dco_decode_list_outline_system_dto(dynamic raw);
 
 @protected List<PlayedBarDto> dco_decode_list_played_bar_dto(dynamic raw);
 
@@ -174,6 +185,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<RecoveryEntryDto> dco_decode_list_recovery_entry_dto(dynamic raw);
 
+@protected List<ScoreSystemDto> dco_decode_list_score_system_dto(dynamic raw);
+
+@protected List<StaveDto> dco_decode_list_stave_dto(dynamic raw);
+
 @protected List<SystemDto> dco_decode_list_system_dto(dynamic raw);
 
 @protected List<TrackSummaryDto> dco_decode_list_track_summary_dto(dynamic raw);
@@ -183,6 +198,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected MasterBarDto dco_decode_master_bar_dto(dynamic raw);
 
 @protected MetricsDto dco_decode_metrics_dto(dynamic raw);
+
+@protected MusicXmlExportResult dco_decode_music_xml_export_result(dynamic raw);
+
+@protected MusicXmlReportDto dco_decode_music_xml_report_dto(dynamic raw);
 
 @protected NoteDto dco_decode_note_dto(dynamic raw);
 
@@ -198,6 +217,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected OutcomeDto dco_decode_outcome_dto(dynamic raw);
 
+@protected OutlineSystemDto dco_decode_outline_system_dto(dynamic raw);
+
 @protected PlaybackStateDto dco_decode_playback_state_dto(dynamic raw);
 
 @protected PlayedBarDto dco_decode_played_bar_dto(dynamic raw);
@@ -205,6 +226,12 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected PositionDto dco_decode_position_dto(dynamic raw);
 
 @protected RecoveryEntryDto dco_decode_recovery_entry_dto(dynamic raw);
+
+@protected ScoreOutlineDto dco_decode_score_outline_dto(dynamic raw);
+
+@protected ScoreSystemDto dco_decode_score_system_dto(dynamic raw);
+
+@protected StaveDto dco_decode_stave_dto(dynamic raw);
 
 @protected SystemDto dco_decode_system_dto(dynamic raw);
 
@@ -294,6 +321,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected ChordResultDto sse_decode_chord_result_dto(SseDeserializer deserializer);
 
+@protected ClipBeatDto sse_decode_clip_beat_dto(SseDeserializer deserializer);
+
+@protected ClipNoteDto sse_decode_clip_note_dto(SseDeserializer deserializer);
+
 @protected CommandDto sse_decode_command_dto(SseDeserializer deserializer);
 
 @protected DiagnosticDto sse_decode_diagnostic_dto(SseDeserializer deserializer);
@@ -336,6 +367,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<BeatDto> sse_decode_list_beat_dto(SseDeserializer deserializer);
 
+@protected List<ClipBeatDto> sse_decode_list_clip_beat_dto(SseDeserializer deserializer);
+
+@protected List<ClipNoteDto> sse_decode_list_clip_note_dto(SseDeserializer deserializer);
+
 @protected List<DiagnosticDto> sse_decode_list_diagnostic_dto(SseDeserializer deserializer);
 
 @protected List<EventDto> sse_decode_list_event_dto(SseDeserializer deserializer);
@@ -347,6 +382,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected List<MasterBarDto> sse_decode_list_master_bar_dto(SseDeserializer deserializer);
 
 @protected List<NoteDto> sse_decode_list_note_dto(SseDeserializer deserializer);
+
+@protected List<OutlineSystemDto> sse_decode_list_outline_system_dto(SseDeserializer deserializer);
 
 @protected List<PlayedBarDto> sse_decode_list_played_bar_dto(SseDeserializer deserializer);
 
@@ -362,6 +399,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<RecoveryEntryDto> sse_decode_list_recovery_entry_dto(SseDeserializer deserializer);
 
+@protected List<ScoreSystemDto> sse_decode_list_score_system_dto(SseDeserializer deserializer);
+
+@protected List<StaveDto> sse_decode_list_stave_dto(SseDeserializer deserializer);
+
 @protected List<SystemDto> sse_decode_list_system_dto(SseDeserializer deserializer);
 
 @protected List<TrackSummaryDto> sse_decode_list_track_summary_dto(SseDeserializer deserializer);
@@ -371,6 +412,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected MasterBarDto sse_decode_master_bar_dto(SseDeserializer deserializer);
 
 @protected MetricsDto sse_decode_metrics_dto(SseDeserializer deserializer);
+
+@protected MusicXmlExportResult sse_decode_music_xml_export_result(SseDeserializer deserializer);
+
+@protected MusicXmlReportDto sse_decode_music_xml_report_dto(SseDeserializer deserializer);
 
 @protected NoteDto sse_decode_note_dto(SseDeserializer deserializer);
 
@@ -386,6 +431,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected OutcomeDto sse_decode_outcome_dto(SseDeserializer deserializer);
 
+@protected OutlineSystemDto sse_decode_outline_system_dto(SseDeserializer deserializer);
+
 @protected PlaybackStateDto sse_decode_playback_state_dto(SseDeserializer deserializer);
 
 @protected PlayedBarDto sse_decode_played_bar_dto(SseDeserializer deserializer);
@@ -393,6 +440,12 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected PositionDto sse_decode_position_dto(SseDeserializer deserializer);
 
 @protected RecoveryEntryDto sse_decode_recovery_entry_dto(SseDeserializer deserializer);
+
+@protected ScoreOutlineDto sse_decode_score_outline_dto(SseDeserializer deserializer);
+
+@protected ScoreSystemDto sse_decode_score_system_dto(SseDeserializer deserializer);
+
+@protected StaveDto sse_decode_stave_dto(SseDeserializer deserializer);
 
 @protected SystemDto sse_decode_system_dto(SseDeserializer deserializer);
 
@@ -482,6 +535,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_chord_result_dto(ChordResultDto self, SseSerializer serializer);
 
+@protected void sse_encode_clip_beat_dto(ClipBeatDto self, SseSerializer serializer);
+
+@protected void sse_encode_clip_note_dto(ClipNoteDto self, SseSerializer serializer);
+
 @protected void sse_encode_command_dto(CommandDto self, SseSerializer serializer);
 
 @protected void sse_encode_diagnostic_dto(DiagnosticDto self, SseSerializer serializer);
@@ -524,6 +581,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_list_beat_dto(List<BeatDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_clip_beat_dto(List<ClipBeatDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_clip_note_dto(List<ClipNoteDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_diagnostic_dto(List<DiagnosticDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_event_dto(List<EventDto> self, SseSerializer serializer);
@@ -535,6 +596,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_list_master_bar_dto(List<MasterBarDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_note_dto(List<NoteDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_outline_system_dto(List<OutlineSystemDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_played_bar_dto(List<PlayedBarDto> self, SseSerializer serializer);
 
@@ -550,6 +613,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_list_recovery_entry_dto(List<RecoveryEntryDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_score_system_dto(List<ScoreSystemDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_stave_dto(List<StaveDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_track_summary_dto(List<TrackSummaryDto> self, SseSerializer serializer);
@@ -559,6 +626,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_master_bar_dto(MasterBarDto self, SseSerializer serializer);
 
 @protected void sse_encode_metrics_dto(MetricsDto self, SseSerializer serializer);
+
+@protected void sse_encode_music_xml_export_result(MusicXmlExportResult self, SseSerializer serializer);
+
+@protected void sse_encode_music_xml_report_dto(MusicXmlReportDto self, SseSerializer serializer);
 
 @protected void sse_encode_note_dto(NoteDto self, SseSerializer serializer);
 
@@ -574,6 +645,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_outcome_dto(OutcomeDto self, SseSerializer serializer);
 
+@protected void sse_encode_outline_system_dto(OutlineSystemDto self, SseSerializer serializer);
+
 @protected void sse_encode_playback_state_dto(PlaybackStateDto self, SseSerializer serializer);
 
 @protected void sse_encode_played_bar_dto(PlayedBarDto self, SseSerializer serializer);
@@ -581,6 +654,12 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_position_dto(PositionDto self, SseSerializer serializer);
 
 @protected void sse_encode_recovery_entry_dto(RecoveryEntryDto self, SseSerializer serializer);
+
+@protected void sse_encode_score_outline_dto(ScoreOutlineDto self, SseSerializer serializer);
+
+@protected void sse_encode_score_system_dto(ScoreSystemDto self, SseSerializer serializer);
+
+@protected void sse_encode_stave_dto(StaveDto self, SseSerializer serializer);
 
 @protected void sse_encode_system_dto(SystemDto self, SseSerializer serializer);
 

@@ -1,13 +1,15 @@
 import 'dart:async';
 
+// The bridge's own Int64List (it differs from dart:typed_data's on the web).
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart'
-    show ExternalLibrary;
+    show ExternalLibrary, Int64List;
 
 import 'document_service.dart';
 import 'generated/api/document.dart';
 import 'generated/api/layout.dart';
 import 'generated/api/types.dart';
 import 'generated/frb_generated.dart';
+import 'musicxml_service.dart' show MusicXmlService, RustMusicXmlService;
 import 'playback_service.dart' show MidiService, PlaybackFactory;
 import 'rust_playback_service.dart' show RustMidiService, RustPlaybackFactory;
 import 'rust_tuner_service.dart' show RustTunerFactory;
@@ -39,6 +41,9 @@ abstract final class CoreBridge {
 
   /// MIDI import and export (no audio device needed, ADR-023).
   static MidiService get midi => const RustMidiService();
+
+  /// MusicXML export (ADR-033); no audio device needed.
+  static MusicXmlService get musicXml => const RustMusicXmlService();
 
   /// A tuner factory bound to [document] (ADR-029). Call `start()` on it to open the
   /// microphone; independent of the playback engine.
@@ -72,6 +77,16 @@ final class _RustDocumentFactory implements DocumentFactory {
   @override
   void discardRecovery(String dir, String projectId) =>
       DocumentHandle.discardRecovery(dir: dir, projectId: projectId);
+
+  @override
+  bool beginSession(String dir) => DocumentHandle.beginSession(dir: dir);
+
+  @override
+  void endSession(String dir) => DocumentHandle.endSession(dir: dir);
+
+  @override
+  List<RecoveryEntryDto> offeredRecovery(String dir, {required bool unclean}) =>
+      DocumentHandle.offeredRecoveryEntries(dir: dir, unclean: unclean);
 }
 
 /// [DocumentService] backed by the Rust session in `mc-ffi`.
@@ -124,6 +139,40 @@ final class RustDocumentService implements DocumentService {
       _handle.chordVoicings(track: track, symbol: symbol, max: max);
 
   @override
+  List<ClipBeatDto> copyBeats(
+    int track,
+    int voice, {
+    required int fromBar,
+    required int fromIndex,
+    required int toBar,
+    required int toIndex,
+  }) => _handle.copyBeats(
+    track: track,
+    voice: voice,
+    fromBar: fromBar,
+    fromIndex: fromIndex,
+    toBar: toBar,
+    toIndex: toIndex,
+  );
+
+  @override
+  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics) => _handle
+      .scoreOutline(tracks: Int64List.fromList(tracks), metrics: metrics);
+
+  @override
+  List<ScoreSystemDto> scoreSystems(
+    List<int> tracks,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) => _handle.scoreSystems(
+    tracks: Int64List.fromList(tracks),
+    metrics: metrics,
+    first: first,
+    count: count,
+  );
+
+  @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _handle.tabLayout(track: track, metrics: metrics);
 
@@ -145,6 +194,9 @@ final class RustDocumentService implements DocumentService {
 
   @override
   Future<void> writeAutosave(String dir) => _handle.writeAutosave(dir: dir);
+
+  @override
+  void discardAutosaves() => _handle.discardAutosaves();
 
   @override
   void close() {

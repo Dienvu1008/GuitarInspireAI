@@ -44,6 +44,33 @@ abstract interface class DocumentService {
   /// frets feed ordinary `setNote` commands when the user inserts one (GR-05).
   ChordResultDto chordVoicings(int track, String symbol, {int max = 5});
 
+  /// Copies the beats of [voice] from ([fromBar], [fromIndex]) to ([toBar],
+  /// [toIndex]), both inclusive, possibly across bars, as plain values for the in-app
+  /// clipboard (ADR-030). Throws [ApiError] when either end does not exist. Paste them
+  /// with `CommandDto.pasteBeats`; cut with `CommandDto.removeBeats`.
+  List<ClipBeatDto> copyBeats(
+    int track,
+    int voice, {
+    required int fromBar,
+    required int fromIndex,
+    required int toBar,
+    required int toIndex,
+  });
+
+  /// Line breaking of the shown [tracks] at the current revision (ADR-031): each
+  /// system's position, height and bars, without content. Sizes the scroll view.
+  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics);
+
+  /// The content of [count] systems from [first], one stave per shown track, laid out
+  /// for the current outline of the same [tracks] and [metrics] (ADR-031). Only these
+  /// systems are laid out, so a large score stays fast.
+  List<ScoreSystemDto> scoreSystems(
+    List<int> tracks,
+    MetricsDto metrics,
+    int first,
+    int count,
+  );
+
   /// TAB layout of a track at the current revision (synchronous; see ADR-018).
   TabLayoutDto tabLayout(int track, MetricsDto metrics);
 
@@ -55,6 +82,10 @@ abstract interface class DocumentService {
 
   /// Writes an autosave snapshot to the recovery directory.
   Future<void> writeAutosave(String dir);
+
+  /// Deletes this document's own autosaves (the user chose "Don't save" on close,
+  /// ADR-030 section 3). Does nothing if it never autosaved.
+  void discardAutosaves();
 
   /// Releases the document. The service must not be used afterwards.
   void close();
@@ -76,6 +107,20 @@ abstract interface class DocumentFactory {
 
   /// Removes all autosaves of [projectId] in [dir] (the user chose Discard).
   void discardRecovery(String dir, String projectId);
+
+  /// Starts an app session by writing the session marker in [dir]. Returns true when
+  /// the previous session did not end cleanly. Throws [ApiError] if the marker cannot
+  /// be written.
+  bool beginSession(String dir);
+
+  /// Ends the app session cleanly (removes the marker). Call only after every
+  /// document was saved or discarded (ADR-030 section 3).
+  void endSession(String dir);
+
+  /// The autosaves to offer on startup: none after a clean session; otherwise the
+  /// ones newer than their source file, untitled ones, and ones whose source is gone.
+  /// The rule is in the Rust core (ADR-030 section 2).
+  List<RecoveryEntryDto> offeredRecovery(String dir, {required bool unclean});
 }
 
 /// Line kind codes used in [SystemDto.lineKinds].

@@ -89,4 +89,76 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Export MIDI...'), findsOneWidget);
   });
+
+  testWidgets(
+    'X14: the Mixer is open by default and mute and solo work from it',
+    (tester) async {
+      final c = await _pumpWithPlayback(tester);
+      expect(find.byType(MixerPanel), findsOneWidget);
+      final tracks = c.read(mixerTracksProvider);
+      expect(tracks, isNotEmpty);
+      final id = tracks.first.id;
+      expect(find.text(tracks.first.name), findsWidgets);
+
+      await tester.tap(find.byKey(ValueKey('mixer-mute-$id')));
+      await tester.pump();
+      expect(c.read(transportProvider).isMuted(id), isTrue);
+
+      await tester.tap(find.byKey(ValueKey('mixer-solo-$id')));
+      await tester.pump();
+      expect(c.read(transportProvider).isSoloed(id), isTrue);
+
+      final volume = tester.widget<Slider>(
+        find.byKey(ValueKey('mixer-volume-$id')),
+      );
+      volume.onChanged!(64);
+      await tester.pump();
+      expect(c.read(transportProvider).mixOf(id).volume, 64);
+    },
+  );
+
+  testWidgets('the Tools menu hides and shows the Mixer', (tester) async {
+    await _pumpWithPlayback(tester);
+    expect(find.byType(MixerPanel), findsOneWidget);
+    await tester.tap(find.text('Tools'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.tap(find.byKey(const ValueKey('tools-mixer')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.byType(MixerPanel), findsNothing);
+  });
+
+  testWidgets('a new document starts with the default mix and no solo', (
+    tester,
+  ) async {
+    final c = await _pumpWithPlayback(tester);
+    final id = c.read(mixerTracksProvider).first.id;
+    await tester.tap(find.byKey(ValueKey('mixer-solo-$id')));
+    await tester.pump();
+    expect(c.read(transportProvider).soloedTracks, isNotEmpty);
+    await c.read(editorProvider.notifier).newDocument();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(c.read(transportProvider).soloedTracks, isEmpty);
+    expect(c.read(transportProvider).mixes, isEmpty);
+  });
+
+  testWidgets('the Mixer is not shown when playback is unavailable', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          documentFactoryProvider.overrideWithValue(FakeDocumentFactory()),
+          ...playbackOverrides(null, FakeMidiService()),
+        ],
+        child: const GuitarInspireApp(),
+      ),
+    );
+    expect(find.byType(MixerPanel), findsNothing);
+  });
 }

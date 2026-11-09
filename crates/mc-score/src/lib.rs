@@ -22,7 +22,7 @@ mod validate;
 pub mod fixtures;
 
 pub use diagnostics::{Diagnostic, DiagnosticKind};
-pub use edit::BeatRef;
+pub use edit::{BeatRef, BeatSlot, FragmentBeat, FragmentNote};
 pub use error::{DomainError, Violation};
 pub use events::DomainEvent;
 pub use ids::{BeatId, NoteId, TrackId};

@@ -1,0 +1,19 @@
+[package]
+name = "mc-musicxml"
+version = "0.1.0"
+description = "MusicXML 4.0 export adapter: writes the written score (TAB staves, repeats, voices, ties, let ring) with a MusicXmlReport (ADR-012, ADR-033)."
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[dependencies]
+mc-theory.workspace = true
+mc-score.workspace = true
+
+[dev-dependencies]
+mc-score = { workspace = true, features = ["fixtures"] }
+proptest.workspace = true
+roxmltree.workspace = true
+
+[lints]
+workspace = true

@@ -156,7 +156,7 @@ Failure modes and handling:
 - Recovery files are deleted after a successful normal save of the source.
 - A restored document keeps the original location but starts unsaved (dirty), so it keeps autosaving and its recovery files stay until the next successful save (`DocumentSession::recover`).
 
-Phase 3 status: autosave every 2 minutes when dirty (polled every 30 s), restore, discard of all rotated files of a project, deletion after a successful save, and untitled documents are implemented. The session marker, "Open original", the "newer than the source" filter and autosave on window close are not wired yet; recovery is offered whenever autosaves exist (open points O-1 to O-3 in [phase-3-exit-report.md](../roadmap/phase-3-exit-report.md)).
+Status (Phase 6b-1, [ADR-030](decisions/ADR-030-editor-debt-clipboard-and-session-marker.md)): all of the above is implemented. The app writes the session marker at start and removes it only on a clean exit, after the "save changes?" prompt (Save, Don't save, Cancel) on window close, New, Open and MIDI import. The prompt writes an autosave before it asks, so a system shutdown during the prompt leaves both the autosave and the marker, and the next start offers it. Which entries are offered is decided in the core (`mc_app::recovery::offered`): none after a clean session; otherwise those newer than their source, untitled ones, and ones whose source file is gone. An untouched new document is not prompted for (`DocumentSession::has_unsaved_work`). This closes open points O-1 to O-3 of [phase-3-exit-report.md](../roadmap/phase-3-exit-report.md). No format change: the marker and recovery files are app data outside the package.
 
 ## 13. Import and export boundaries
 

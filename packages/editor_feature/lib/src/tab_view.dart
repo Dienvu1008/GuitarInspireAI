@@ -1,5 +1,6 @@
 import 'package:core_bridge/core_bridge.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show HardwareKeyboard;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ui_kit/ui_kit.dart';
 
@@ -40,6 +41,27 @@ extension SystemHits on SystemDto {
     return first;
   }
 
+  /// One rectangle per selected beat in this system (the union of its string hit
+  /// regions), for the selection painter.
+  List<Rect> selectionRects((BeatSlot, BeatSlot)? selection) {
+    if (selection == null) return const [];
+    final (from, to) = selection;
+    final bySlot = <int, Rect>{};
+    for (var i = 0; i < hitCount; i++) {
+      final slot = hitMeta[i * 4 + 3];
+      if (slot < 0 || hitMeta[i * 4 + 2] != from.voice) continue;
+      final bar = hitMeta[i * 4];
+      final index = beats[slot].index;
+      final afterStart =
+          bar > from.bar || (bar == from.bar && index >= from.index);
+      final beforeEnd = bar < to.bar || (bar == to.bar && index <= to.index);
+      if (!afterStart || !beforeEnd) continue;
+      final r = hitRect(i);
+      bySlot[slot] = bySlot[slot]?.expandToInclude(r) ?? r;
+    }
+    return bySlot.values.toList();
+  }
+
   /// Hit region for a cursor, if the cursor is in this system.
   int? hitOf(EditorCursor c) {
     for (var i = 0; i < hitCount; i++) {
@@ -56,8 +78,10 @@ extension SystemHits on SystemDto {
   }
 }
 
-/// TAB of the active track: one painter per system in a virtualized list, so only
-/// visible systems are built and painted (cross-platform-ui section 5).
+/// TAB of the shown tracks (ADR-031): one system per list item, each with a stave
+/// per shown track whose bar lines line up. The outline sizes the virtualized list;
+/// system content is laid out by the core only when an item is built, so a large
+/// score with many tracks stays fast (cross-platform-ui section 5).
 class TabView extends ConsumerStatefulWidget {
   const TabView({super.key, this.zoom = 1.0});
 
@@ -68,28 +92,53 @@ class TabView extends ConsumerStatefulWidget {
 }
 
 class _TabViewState extends ConsumerState<TabView> {
-  TabLayoutDto? _layout;
-  (int, int, double, double)? _key;
+  /// Systems laid out per core call when an item needs one that is not cached.
+  static const _batch = 4;
 
-  /// Layout is recomputed only when revision, track, width or zoom change
-  /// (projection cache, cross-platform-ui section 4).
-  TabLayoutDto _layoutFor(EditorState s, double width) {
-    final key = (s.summary.revision, s.activeTrack, width, widget.zoom);
-    if (_key != key || _layout == null) {
-      _layout = s.service.tabLayout(
-        s.activeTrack,
-        measureTabMetrics(width: width, zoom: widget.zoom),
-      );
+  String? _key;
+  late MetricsDto _metrics;
+  late List<int> _tracks;
+  ScoreOutlineDto? _outline;
+  final Map<int, ScoreSystemDto> _systems = {};
+
+  /// The outline is recomputed and the system cache cleared only when revision,
+  /// shown tracks, width or zoom change (projection cache, cross-platform-ui
+  /// section 4).
+  ScoreOutlineDto _outlineFor(EditorState s, double width) {
+    final tracks = s.shownTracks;
+    final key =
+        '${s.summary.revision}|${tracks.join(',')}|$width|${widget.zoom}';
+    if (_key != key || _outline == null) {
+      _metrics = measureTabMetrics(width: width, zoom: widget.zoom);
+      _tracks = tracks;
+      _outline = s.service.scoreOutline(tracks, _metrics);
+      _systems.clear();
       _key = key;
     }
-    return _layout!;
+    return _outline!;
   }
 
-  /// Maps a playback tick to an x inside `system` from the played-bar tick ranges and
-  /// the system's bar x-positions. A played bar's master-bar index is matched to the
-  /// bar layout; x is the bar's left plus the within-bar fraction times its width.
-  /// Returns null when the tick is not in a bar this system draws.
-  double? Function(int tick) _tickToX(SystemDto system, List<PlayedBarDto> played) {
+  ScoreSystemDto _system(EditorState s, int index) {
+    final cached = _systems[index];
+    if (cached != null) return cached;
+    for (final sys in s.service.scoreSystems(
+      _tracks,
+      _metrics,
+      index,
+      _batch,
+    )) {
+      _systems[sys.index] = sys;
+    }
+    return _systems[index]!;
+  }
+
+  /// Maps a playback tick to an x inside a system from the played-bar tick ranges
+  /// and the system's bar x-positions (equal in every stave). Returns null when the
+  /// tick is not in a bar this system draws.
+  double? Function(int tick) _tickToX(
+    SystemDto system,
+    List<PlayedBarDto> played,
+  ) {
     return (int tick) {
       for (final pb in played) {
         if (tick < pb.startTick || tick >= pb.startTick + pb.lengthTicks) {
@@ -117,70 +166,59 @@ class _TabViewState extends ConsumerState<TabView> {
     final played = cursorBuilder == null
         ? const <PlayedBarDto>[]
         : s.service.playedBars();
+    final names = {for (final t in s.summary.tracks) t.id: t.name};
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth.clamp(320.0, 4000.0);
-        final layout = _layoutFor(s, width);
+        final outline = _outlineFor(s, width);
         final gap = 16.0 * widget.zoom;
+        final staves = _tracks.length;
+        final labelled = staves > 1;
         return ColoredBox(
           color: colors.paper,
+          // One list item per stave, not per system (ADR-031 6b-2d): a system of
+          // many staves is taller than the screen, and only the staves in view are
+          // built and painted.
           child: ListView.builder(
             key: const ValueKey('tab-systems'),
-            itemCount: layout.systems.length,
+            itemCount: outline.systems.length * staves,
             itemBuilder: (context, i) {
-              final system = layout.systems[i];
-              final cursorHit = system.hitOf(s.cursor);
+              final sys = _system(s, i ~/ staves);
+              final k = i % staves;
+              if (k >= sys.staves.length) return const SizedBox.shrink();
+              final stave = sys.staves[k];
+              final height = stave.system.height;
               return Padding(
-                padding: EdgeInsets.only(bottom: gap),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTapDown: (d) {
-                    final hit = system.hitAt(
-                      d.localPosition,
-                      voice: s.cursor.voice,
-                    );
-                    if (hit != null) {
-                      ref
-                          .read(editorProvider.notifier)
-                          .moveCursor(system.hitCursor(hit));
-                    }
-                  },
-                  child: SizedBox(
-                    width: width,
-                    height: system.height,
-                    child: Stack(
-                      children: [
+                // The gap between systems follows the last stave.
+                padding: EdgeInsets.only(bottom: k == staves - 1 ? gap : 0),
+                child: SizedBox(
+                  // The top of the system is the top of its first stave.
+                  key: k == 0 ? ValueKey('system-${sys.index}') : null,
+                  width: width,
+                  height: height,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: _StaveView(
+                          index: sys.index,
+                          stave: stave,
+                          state: s,
+                          colors: colors,
+                          fontSize: fontSize,
+                          label: labelled ? names[stave.track] : null,
+                        ),
+                      ),
+                      // The playback cursor at the same x on every stave of the
+                      // system (bar x-positions are equal in every stave), so
+                      // together they span the system.
+                      if (cursorBuilder != null)
                         Positioned.fill(
-                          child: RepaintBoundary(
-                            child: CustomPaint(
-                              key: ValueKey('system-${system.index}'),
-                              painter: SystemPainter(
-                                system: system,
-                                colors: colors,
-                                fontSize: fontSize,
-                              ),
-                            ),
+                          child: cursorBuilder(
+                            _tickToX(stave.system, played),
+                            height,
                           ),
                         ),
-                        Positioned.fill(
-                          child: CustomPaint(
-                            painter: CursorPainter(
-                              rect: cursorHit == null
-                                  ? null
-                                  : system.hitRect(cursorHit),
-                              color: colors.cursor,
-                            ),
-                          ),
-                        ),
-                        if (cursorBuilder != null)
-                          Positioned.fill(
-                            child: cursorBuilder(
-                              _tickToX(system, played),
-                              system.height,
-                            ),
-                          ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
               );
@@ -188,6 +226,102 @@ class _TabViewState extends ConsumerState<TabView> {
           ),
         );
       },
+    );
+  }
+}
+
+/// One track's stave: TAB painting, and on the active track the selection and the
+/// cursor. A click on another track's stave makes it active and places the cursor.
+class _StaveView extends ConsumerWidget {
+  const _StaveView({
+    required this.index,
+    required this.stave,
+    required this.state,
+    required this.colors,
+    required this.fontSize,
+    required this.label,
+  });
+
+  final int index;
+  final StaveDto stave;
+  final EditorState state;
+  final TabColors colors;
+  final double fontSize;
+
+  /// Track name shown at the stave's top left when several tracks are shown.
+  final String? label;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final system = stave.system;
+    final active = stave.track == state.activeTrack;
+    final cursorHit = active ? system.hitOf(state.cursor) : null;
+    return GestureDetector(
+      key: ValueKey('stave-$index-${stave.track}'),
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (d) {
+        final editor = ref.read(editorProvider.notifier);
+        final hit = system.hitAt(
+          d.localPosition,
+          voice: active ? state.cursor.voice : 0,
+        );
+        if (!active) editor.selectTrack(stave.track);
+        if (hit == null) return;
+        final target = system.hitCursor(hit);
+        // Shift+click extends the selection to a beat (ADR-030), on the same track.
+        final extend =
+            active &&
+            HardwareKeyboard.instance.isShiftPressed &&
+            target.beat != null;
+        editor.moveCursor(target, extend: extend);
+      },
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: RepaintBoundary(
+              child: CustomPaint(
+                painter: SystemPainter(
+                  system: system,
+                  colors: colors,
+                  fontSize: fontSize,
+                ),
+              ),
+            ),
+          ),
+          if (active) ...[
+            Positioned.fill(
+              child: CustomPaint(
+                key: ValueKey('selection-$index'),
+                painter: SelectionPainter(
+                  rects: system.selectionRects(state.selection),
+                  color: colors.cursor,
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: CustomPaint(
+                painter: CursorPainter(
+                  rect: cursorHit == null ? null : system.hitRect(cursorHit),
+                  color: colors.cursor,
+                ),
+              ),
+            ),
+          ],
+          if (label != null)
+            Positioned(
+              left: 4,
+              top: 0,
+              child: Text(
+                label!,
+                style: TextStyle(
+                  fontSize: fontSize * 0.9,
+                  color: active ? colors.cursor : colors.staff,
+                  fontWeight: active ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

@@ -199,3 +199,37 @@ fn session_marker_detects_an_unclean_shutdown() {
     );
     rec.end_session().unwrap();
 }
+
+/// ADR-030 C7/C8 on a real file system: after an unclean session only autosaves newer
+/// than their source file are offered; after a clean one nothing is.
+#[test]
+fn c7_c8_recovery_offers_only_newer_autosaves_after_an_unclean_session() {
+    use mc_app::infra::modified_unix_millis;
+    use mc_app::recovery::offered;
+
+    let dir = TempDir::new("offer");
+    let rec = FsRecoveryStore::new(dir.0.join("recovery"));
+    let saved = dir.0.join("saved.giproj");
+    fs::write(&saved, b"saved").unwrap();
+    let mtime = modified_unix_millis(&saved).expect("source mtime");
+
+    // Autosave written before the last save of the source: superseded.
+    rec.write_autosave("old", Some(&saved), b"x", mtime - 1_000)
+        .unwrap();
+    // Autosave written after it: unsaved work.
+    rec.write_autosave("new", Some(&saved), b"x", mtime + 1_000)
+        .unwrap();
+    // Untitled document, and a source that no longer exists.
+    rec.write_autosave("untitled", None, b"x", 1).unwrap();
+    rec.write_autosave("gone", Some(&dir.0.join("gone.giproj")), b"x", 1)
+        .unwrap();
+
+    let mut got: Vec<String> = offered(true, rec.list().unwrap(), modified_unix_millis)
+        .into_iter()
+        .map(|e| e.project_id)
+        .collect();
+    got.sort();
+    assert_eq!(got, vec!["gone", "new", "untitled"]);
+    assert!(offered(false, rec.list().unwrap(), modified_unix_millis).is_empty());
+    assert!(modified_unix_millis(&dir.0.join("gone.giproj")).is_none());
+}

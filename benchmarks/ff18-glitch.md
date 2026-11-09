@@ -37,3 +37,49 @@ WASAPI shared render, so a late callback is one arriving more than 1.5x the devi
 Zero underruns in 10 minutes: the A4 criterion holds on this machine. A second machine is
 deferred and R-21 stays open (ADR-025); this result does not generalize beyond the
 machine above.
+
+## ADR-032 X12 attempt (2026-11-07): not met, inconclusive
+
+Same procedure, same machine, after the mixer change (per-channel volume and pan polled once per callback). **X12 is not met by this attempt.** The criterion is unchanged: 0 late callbacks in 10 minutes, and the callback maximum may not grow by more than 5 µs p99.
+
+| Run | Code | Late callbacks | Max interval | Max callback | Device errors / rebuilds |
+|---|---|---|---|---|---|
+| 10 min | with mixer (`bc8cda4` + 6b-3c working tree) | **8** | 18.5 ms | 18.42 ms | 0 / 0 |
+
+Because the code from before the change might also fail on the machine in its present state, an interleaved A/B followed: 2-minute runs, alternating the pre-mixer build (`12f869e`, worktree) and the current build, three rounds each:
+
+| Round | Base (`12f869e`) late | Current late |
+|---|---|---|
+| 1 | 0 (max callback 10.18 ms at 90 s) | 3 |
+| 2 | 1 | 0 (max callback 13.29 ms at 90 s) |
+| 3 | 0 (max callback 11.27 ms at 90 s) | 5, with 2 device errors and 1 device rebuild |
+| Total in 6 min | **1** | **8** |
+
+What this shows and what it does not:
+- The base build also produced a late callback, so the machine was not in the state of the 2026-10-31 run (0 late, max callback 9.69 ms). The Kiro IDE was using a large share of CPU during the runs (total CPU 17 to 43 % in a spot check), and round 3 of the current build saw device errors.
+- The current build had more late callbacks than the base. With these few runs, that cannot be put down to load alone. **A regression is not ruled out.**
+- The procedure runs a debug build. In debug, the callback maximum was already 9.69 ms against a 10 ms period on 2026-10-31, so there is very little headroom.
+- An offline release-mode measurement of the mix polling itself (`mix_overhead_measurement`, 20 000 blocks of 480 frames, product synthesizer, the two engines timed alternately) found no measurable cost. p99 was 233.8 µs with the polling and 234.7 µs without. With a volume change on every block, the figures were 306.2 µs and 307.4 µs. The differences (−0.9 µs and −1.2 µs) are within noise. This measures the code path, not the device run, so it does not replace X12.
+
+Next step: repeat the 10-minute run and the interleaved A/B with the machine quiet (after a restart, no second IDE), and record the result here. Until then, X12 is an open evidence gap for 6b-3.
+
+## ADR-032 X12 repeat on a quiet machine (2026-11-07, after a restart): not met, no regression seen
+
+Conditions: the PC was restarted, no second IDE, one Kiro window. Measurement started after CPU load settled (5 to 20 %). During the whole run CPU was sampled every 10 s: 129 samples, mean 14.9 %, max 53 %, one sample above 50 %. Windows build 26300.9818 and the Balanced power plan, the same as `reference-machine.md` and the 2026-10-31 run. Binaries: debug test builds of `12f869e` (base, before the mixer) and `d5d458a` (current), run directly, not through cargo.
+
+Interleaved A/B, 2 minutes each, in this order:
+
+| Round | Base (`12f869e`) late | Base max callback | Current (`d5d458a`) late | Current max callback |
+|---|---|---|---|---|
+| 1 | 2 (1 device error, 1 rebuild) | 15.69 ms | 1 | 15.29 ms |
+| 2 | 3 | 16.77 ms | 1 | 15.87 ms |
+| 3 | 1 | 15.28 ms | 0 | 14.26 ms |
+| Total in 6 min | **6** | | **2** | |
+
+10 minutes, current build: **5 late callbacks**, 1 device error and 1 rebuild, max interval 17.4 ms, max callback 17.40 ms, 60 004 callbacks. The late callbacks came at about 120 s (2), 450 s, 480 s and 510 s.
+
+Reading:
+- **X12 is not met**: 5 late callbacks in 10 minutes against a criterion of 0. The threshold is unchanged.
+- **The code from before the mixer fails the same way on this machine today.** It had 6 late callbacks in 6 minutes against 2 for the current build, with similar maximum callback durations (14 to 17 ms in both). The 2026-10-31 baseline (0 late, max callback 9.69 ms) does not reproduce now, with the same OS build and power plan. In the debug build the callback itself sometimes takes longer than the 10 ms period, and this happens in both builds.
+- Together with the offline release measurement above (p99 difference of about −1 µs), the evidence does not show that the mixer causes a regression. It cannot prove there is none, and it does not explain why the machine changed since 2026-10-31.
+- This is an open evidence gap for the 6b exit report.

@@ -255,6 +255,16 @@ impl RecoveryStore for FsRecoveryStore {
     }
 }
 
+/// Last modification time of a file in Unix millis, or `None` if it cannot be read
+/// (missing, moved, no permission). Used by [`crate::recovery::offered`].
+pub fn modified_unix_millis(path: &Path) -> Option<u64> {
+    fs::metadata(path)
+        .and_then(|m| m.modified())
+        .ok()
+        .and_then(|t| t.duration_since(UNIX_EPOCH).ok())
+        .map(|d| d.as_millis() as u64)
+}
+
 /// Removes temp files left by a crash during save (`<name>.tmp-*` next to `target`).
 pub fn cleanup_temp_files(target: &Path) -> usize {
     let (Some(dir), Some(name)) = (target.parent(), target.file_name()) else {

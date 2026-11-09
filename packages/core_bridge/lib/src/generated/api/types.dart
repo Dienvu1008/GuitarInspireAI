@@ -8,8 +8,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'types.freezed.dart';
 
-            // These functions are ignored because they are not marked as `pub`: `new`, `note_id`, `to_app`, `to_app`, `to_app`, `track_id`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
+            // These functions are ignored because they are not marked as `pub`: `from_app`, `new`, `note_id`, `to_app`, `to_app`, `to_app`, `to_app`, `track_id`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
 
 
             
@@ -122,6 +122,59 @@ final List<VoicingDto> voicings;
 
             }
 
+/// A beat of a clipboard fragment: written duration and notes; no ids (ADR-030).
+class ClipBeatDto  {
+                final DurationDto duration;
+final List<ClipNoteDto> notes;
+
+                const ClipBeatDto({required this.duration ,required this.notes ,});
+
+
+
+
+
+        @override
+        int get hashCode => duration.hashCode^notes.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ClipBeatDto &&
+                runtimeType == other.runtimeType
+                && duration == other.duration&& notes == other.notes;
+
+            }
+
+/// A note of a clipboard fragment: strings and frets, not pitches; no ids (ADR-030).
+class ClipNoteDto  {
+                final int string;
+final int fret;
+final bool tie;
+final bool letRing;
+final bool dead;
+
+                const ClipNoteDto({required this.string ,required this.fret ,required this.tie ,required this.letRing ,required this.dead ,});
+
+
+
+
+
+        @override
+        int get hashCode => string.hashCode^fret.hashCode^tie.hashCode^letRing.hashCode^dead.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ClipNoteDto &&
+                runtimeType == other.runtimeType
+                && string == other.string&& fret == other.fret&& tie == other.tie&& letRing == other.letRing&& dead == other.dead;
+
+            }
+
 @freezed
                 sealed class CommandDto with _$CommandDto  {
                     const CommandDto._();
@@ -150,6 +203,12 @@ const factory CommandDto.shiftFrets({   required PlatformInt64 track ,  required
  const factory CommandDto.moveTrack({   required PlatformInt64 track ,  required int to , }) = CommandDto_MoveTrack;
  /// `keep_pitches`: notes keep their sound (frets move); otherwise frets are kept.
 const factory CommandDto.retune({   required PlatformInt64 track ,  required InstrumentDto instrument ,  required bool keepPitches , }) = CommandDto_Retune;
+ /// Inserts a copied run of beats at `index` of a voice (ADR-030). All or nothing;
+/// one undo step; never creates bars.
+const factory CommandDto.pasteBeats({   required PlatformInt64 track ,  required int bar ,  required int voice ,  required int index ,  required List<ClipBeatDto> beats , }) = CommandDto_PasteBeats;
+ /// Removes the beats of one voice from (`from_bar`, `from_index`) to (`to_bar`,
+/// `to_index`), both inclusive, possibly across bars (ADR-030 cut).
+const factory CommandDto.removeBeats({   required PlatformInt64 track ,  required int voice ,  required int fromBar ,  required int fromIndex ,  required int toBar ,  required int toIndex , }) = CommandDto_RemoveBeats;
 
                     
 
@@ -188,6 +247,8 @@ final String kind;
 class DocumentSummaryDto  {
                 final PlatformInt64 revision;
 final bool dirty;
+/// Closing would lose work: dirty, except an untouched new document (ADR-030).
+final bool unsavedWork;
 final bool canUndo;
 final bool canRedo;
 /// File path of the document, `None` until saved.
@@ -198,14 +259,14 @@ final List<TrackSummaryDto> tracks;
 final List<MasterBarDto> masterBars;
 final List<DiagnosticDto> diagnostics;
 
-                const DocumentSummaryDto({required this.revision ,required this.dirty ,required this.canUndo ,required this.canRedo ,this.location ,required this.unknownContent ,required this.tracks ,required this.masterBars ,required this.diagnostics ,});
+                const DocumentSummaryDto({required this.revision ,required this.dirty ,required this.unsavedWork ,required this.canUndo ,required this.canRedo ,this.location ,required this.unknownContent ,required this.tracks ,required this.masterBars ,required this.diagnostics ,});
 
 
 
 
 
         @override
-        int get hashCode => revision.hashCode^dirty.hashCode^canUndo.hashCode^canRedo.hashCode^location.hashCode^unknownContent.hashCode^tracks.hashCode^masterBars.hashCode^diagnostics.hashCode;
+        int get hashCode => revision.hashCode^dirty.hashCode^unsavedWork.hashCode^canUndo.hashCode^canRedo.hashCode^location.hashCode^unknownContent.hashCode^tracks.hashCode^masterBars.hashCode^diagnostics.hashCode;
 
 
 
@@ -214,7 +275,7 @@ final List<DiagnosticDto> diagnostics;
             identical(this, other) ||
             other is DocumentSummaryDto &&
                 runtimeType == other.runtimeType
-                && revision == other.revision&& dirty == other.dirty&& canUndo == other.canUndo&& canRedo == other.canRedo&& location == other.location&& unknownContent == other.unknownContent&& tracks == other.tracks&& masterBars == other.masterBars&& diagnostics == other.diagnostics;
+                && revision == other.revision&& dirty == other.dirty&& unsavedWork == other.unsavedWork&& canUndo == other.canUndo&& canRedo == other.canRedo&& location == other.location&& unknownContent == other.unknownContent&& tracks == other.tracks&& masterBars == other.masterBars&& diagnostics == other.diagnostics;
 
             }
 
@@ -294,6 +355,10 @@ final EventKindDto kind;
  /// Playback transport state changed (session state, ADR-028). The revision is
 /// unchanged on the carrying event.
 const factory EventKindDto.playbackStateChanged({   required PlaybackStateDto state , }) = EventKindDto_PlaybackStateChanged;
+ /// A track was soloed or unsoloed (session state, ADR-032).
+const factory EventKindDto.soloChanged({   required PlatformInt64 track ,  required bool soloed , }) = EventKindDto_SoloChanged;
+ /// A track's volume (0..=127) or pan (-63..=63) changed (session state, ADR-032).
+const factory EventKindDto.mixChanged({   required PlatformInt64 track ,  required int volume ,  required int pan , }) = EventKindDto_MixChanged;
  /// A track was muted or unmuted (session state, ADR-028).
 const factory EventKindDto.muteChanged({   required PlatformInt64 track ,  required bool muted , }) = EventKindDto_MuteChanged;
  /// The user tempo factor changed (session state, ADR-028). Hundredths of normal

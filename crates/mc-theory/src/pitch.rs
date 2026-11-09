@@ -127,6 +127,35 @@ impl SpelledPitch {
         PitchClass::from_semitone(self.semitone())
     }
 
+    /// Spelling of a semitone number using flats for the black keys (Db, Eb, Gb, Ab, Bb).
+    pub fn from_semitone_flat(semitone: i32) -> Self {
+        const TABLE: [(Letter, i8); 12] = [
+            (Letter::C, 0),
+            (Letter::D, -1),
+            (Letter::D, 0),
+            (Letter::E, -1),
+            (Letter::E, 0),
+            (Letter::F, 0),
+            (Letter::G, -1),
+            (Letter::G, 0),
+            (Letter::A, -1),
+            (Letter::A, 0),
+            (Letter::B, -1),
+            (Letter::B, 0),
+        ];
+        Self::from_table(semitone, &TABLE)
+    }
+
+    fn from_table(semitone: i32, table: &[(Letter, i8); 12]) -> Self {
+        let (letter, alter) = table[semitone.rem_euclid(12) as usize];
+        let octave = semitone.div_euclid(12) - 1;
+        SpelledPitch {
+            letter,
+            alter: Alter(alter),
+            octave: octave.clamp(i8::MIN as i32, i8::MAX as i32) as i8,
+        }
+    }
+
     /// Default spelling of a semitone number, using sharps.
     pub fn from_semitone_sharp(semitone: i32) -> Self {
         const TABLE: [(Letter, i8); 12] = [
@@ -143,13 +172,7 @@ impl SpelledPitch {
             (Letter::A, 1),
             (Letter::B, 0),
         ];
-        let (letter, alter) = TABLE[semitone.rem_euclid(12) as usize];
-        let octave = semitone.div_euclid(12) - 1;
-        SpelledPitch {
-            letter,
-            alter: Alter(alter),
-            octave: octave.clamp(i8::MIN as i32, i8::MAX as i32) as i8,
-        }
+        Self::from_table(semitone, &TABLE)
     }
 }
 

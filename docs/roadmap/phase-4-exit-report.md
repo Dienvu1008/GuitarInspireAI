@@ -110,3 +110,7 @@ Commits `e0f3911` (4a), `3996a38` (4e), `f4d960a` (4b), `ef05ce3` (ADR-027), `33
 ## 10. Closure
 
 Decisions (user, 2026-10-31): Phase 4 accepted with the single-machine evidence scope of section 4 (R-21 open, ADR-025) and the open points O-1 to O-6 of section 7. Phase 4 closes with a `--no-ff` merge of `phase-4-playback` into `main` with CI passing. The six slice commits keep their individual `Architecture-Change` trailers; the merge commit carries the full Phase 4 trailer set (ADR-005, ADR-007, ADR-022, ADR-023, ADR-024, ADR-025, ADR-026, ADR-027, ADR-028) so FF-19 passes for the merge commit itself. Next phase: Phase 5 (tuner, chord finder and fretboard UI; MVP, M5).
+
+## 11. Erratum (added in Phase 6b-3, 2026-11-07)
+
+The "per-track mute" rows in section 2 and the M4 demo wording say mute was met. That holds for the core, the controller and the `MuteButton` widget test. The button, however, was **never placed in the app's screen**, so a user could not mute a track in the MVP build. Phase 6b-3 puts mute on screen in the Mixer panel and adds solo, volume and pan ([ADR-032](../architecture/decisions/ADR-032-track-mixer-volume-pan-solo.md)). Decision Q3 above ("no solo") is superseded by that ADR, as noted in the [ADR-028](../architecture/decisions/ADR-028-playback-transport-port-and-session-state.md) amendment. The original text above is kept unchanged as the record of what was claimed.

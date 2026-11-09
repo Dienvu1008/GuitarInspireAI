@@ -30,6 +30,15 @@ pub struct RecoveryEntryDto {
     pub timestamp: i64,
 }
 
+fn recovery_entry_dto(e: mc_app::ports::RecoveryEntry) -> RecoveryEntryDto {
+    RecoveryEntryDto {
+        project_id: e.project_id,
+        path: e.path.to_string_lossy().into_owned(),
+        source: e.source.map(|p| p.to_string_lossy().into_owned()),
+        timestamp: e.written_unix_millis as i64,
+    }
+}
+
 static NEXT_DOCUMENT: AtomicU64 = AtomicU64::new(1);
 
 fn app_info() -> AppInfo {
@@ -224,23 +233,48 @@ impl DocumentHandle {
         Ok(())
     }
 
-    /// Lists the newest autosave of every project in `dir`. The app shows these on
-    /// startup; choosing one opens it with `open_from_recovery`.
+    /// Lists the newest autosave of every project in `dir`, unfiltered. Startup uses
+    /// [`Self::offered_recovery_entries`] instead.
     #[frb(sync)]
     pub fn list_recovery_entries(dir: String) -> Vec<RecoveryEntryDto> {
         let recovery = mc_app::infra::FsRecoveryStore::new(dir);
         match recovery.list() {
-            Ok(entries) => entries
-                .into_iter()
-                .map(|e| RecoveryEntryDto {
-                    project_id: e.project_id,
-                    path: e.path.to_string_lossy().into_owned(),
-                    source: e.source.map(|p| p.to_string_lossy().into_owned()),
-                    timestamp: e.written_unix_millis as i64,
-                })
-                .collect(),
+            Ok(entries) => entries.into_iter().map(recovery_entry_dto).collect(),
             Err(_) => Vec::new(),
         }
+    }
+
+    /// The autosaves to offer on startup (ADR-030 section 2): none after a clean
+    /// session; otherwise those newer than their source file, untitled documents, and
+    /// documents whose source is gone. The rule is `mc_app::recovery::offered`.
+    #[frb(sync)]
+    pub fn offered_recovery_entries(dir: String, unclean: bool) -> Vec<RecoveryEntryDto> {
+        let recovery = mc_app::infra::FsRecoveryStore::new(dir);
+        let Ok(entries) = recovery.list() else {
+            return Vec::new();
+        };
+        mc_app::recovery::offered(unclean, entries, mc_app::infra::modified_unix_millis)
+            .into_iter()
+            .map(recovery_entry_dto)
+            .collect()
+    }
+
+    /// Starts an app session: writes the session marker in `dir` and returns true if
+    /// the previous session did not end cleanly (its marker was still there).
+    #[frb(sync)]
+    pub fn begin_session(dir: String) -> Result<bool, ApiError> {
+        mc_app::infra::FsRecoveryStore::new(dir)
+            .begin_session()
+            .map_err(|e| ApiError::new("session", e.to_string()))
+    }
+
+    /// Ends the app session cleanly: removes the session marker in `dir`. Called only
+    /// after every document was saved or discarded (ADR-030 section 3).
+    #[frb(sync)]
+    pub fn end_session(dir: String) -> Result<(), ApiError> {
+        mc_app::infra::FsRecoveryStore::new(dir)
+            .end_session()
+            .map_err(|e| ApiError::new("session", e.to_string()))
     }
 
     /// Opens the newest autosave of `project_id` in `dir`. The document keeps the
@@ -270,6 +304,14 @@ impl DocumentHandle {
         Ok(handle)
     }
 
+    /// Deletes this document's own autosaves (the user chose "Don't save" when closing,
+    /// ADR-030 section 3). No-op if it never autosaved.
+    #[frb(sync)]
+    pub fn discard_autosaves(&self) {
+        let s = self.lock();
+        self.discard_own_recovery(&s);
+    }
+
     /// Deletes all autosaves of `project_id` in `dir` (the user chose Discard).
     #[frb(sync)]
     pub fn discard_recovery(dir: String, project_id: String) {
@@ -289,6 +331,32 @@ impl DocumentHandle {
     #[frb(sync)]
     pub fn summary(&self) -> DocumentSummaryDto {
         summary_dto(&self.lock())
+    }
+
+    /// Copies the beats of one voice from (`from_bar`, `from_index`) to (`to_bar`,
+    /// `to_index`), both inclusive, possibly across bars, as plain values for the
+    /// in-app clipboard (ADR-030). A query: nothing changes.
+    #[frb(sync)]
+    pub fn copy_beats(
+        &self,
+        track: i64,
+        voice: u32,
+        from_bar: u32,
+        from_index: u32,
+        to_bar: u32,
+        to_index: u32,
+    ) -> Result<Vec<ClipBeatDto>, ApiError> {
+        Ok(self
+            .lock()
+            .copy_beats(
+                track_id(track),
+                voice as usize,
+                (from_bar as usize, from_index as usize),
+                (to_bar as usize, to_index as usize),
+            )?
+            .into_iter()
+            .map(ClipBeatDto::from_app)
+            .collect())
     }
 
     /// Chord voicings for `track` using its tuning and capo (ADR-029 T6/T8). `max` caps
@@ -378,6 +446,12 @@ impl DocumentHandle {
             .map_or(0, |b| b.voices.len() as u32)
     }
 
+    /// Locks the session for a layout query that may update its view cache (the
+    /// multi-track outline, ADR-031). Same lock as every other call.
+    pub(crate) fn lock_for_layout(&self) -> MutexGuard<'_, DocumentSession> {
+        self.lock()
+    }
+
     pub(crate) fn with_session<R>(&self, f: impl FnOnce(&DocumentSession) -> R) -> R {
         f(&self.lock())
     }
@@ -400,6 +474,7 @@ fn summary_dto(s: &DocumentSession) -> DocumentSummaryDto {
     DocumentSummaryDto {
         revision: s.revision().0 as i64,
         dirty: s.is_dirty(),
+        unsaved_work: s.has_unsaved_work(),
         can_undo: s.can_undo(),
         can_redo: s.can_redo(),
         location: s.location().map(|p| p.to_string_lossy().into_owned()),
@@ -521,6 +596,15 @@ fn event_dto(e: &EventEnvelope) -> EventDto {
             AppEvent::HistoryApplied => EventKindDto::HistoryApplied,
             AppEvent::PlaybackStateChanged { state } => EventKindDto::PlaybackStateChanged {
                 state: playback_state_dto(*state),
+            },
+            AppEvent::SoloChanged { track, soloed } => EventKindDto::SoloChanged {
+                track: t(*track),
+                soloed: *soloed,
+            },
+            AppEvent::MixChanged { track, mix } => EventKindDto::MixChanged {
+                track: t(*track),
+                volume: mix.volume.get(),
+                pan: i16::from(mix.pan.get()),
             },
             AppEvent::MuteChanged { track, muted } => EventKindDto::MuteChanged {
                 track: t(*track),
@@ -664,6 +748,32 @@ fn to_command(s: &DocumentSession, c: CommandDto) -> Result<Command, ApiError> {
             track: track_id(track),
             bars: (from_bar as usize, to_bar as usize + 1),
             delta,
+        }),
+        CommandDto::PasteBeats {
+            track,
+            bar,
+            voice,
+            index,
+            beats,
+        } => sc(ScoreCommand::PasteBeats {
+            track: track_id(track),
+            bar: bar as usize,
+            voice: voice as usize,
+            index: index as usize,
+            beats: beats.iter().map(ClipBeatDto::to_app).collect(),
+        }),
+        CommandDto::RemoveBeats {
+            track,
+            voice,
+            from_bar,
+            from_index,
+            to_bar,
+            to_index,
+        } => sc(ScoreCommand::RemoveBeats {
+            track: track_id(track),
+            voice: voice as usize,
+            from: (from_bar as usize, from_index as usize),
+            to: (to_bar as usize, to_index as usize),
         }),
         CommandDto::AddTrack { name, instrument } => tc(TrackCommand::Add {
             name,

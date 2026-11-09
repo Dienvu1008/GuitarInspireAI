@@ -13,7 +13,7 @@ use crate::error::AudioError;
 use crate::rt::{Retired, RtCommand};
 use crate::soundfont::{build_synth, parse_soundfont};
 use crate::status::{EngineStatus, LastError, Status};
-use mc_playback::{PerformanceTimeline, TempoFactor, Tick};
+use mc_playback::{Channel, Pan, PerformanceTimeline, TempoFactor, Tick, Volume};
 use rustysynth::SoundFont;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
@@ -127,6 +127,17 @@ impl AudioEngine {
 
     pub fn set_tempo_factor(&self, factor: TempoFactor) -> Result<(), AudioError> {
         self.send(Msg::Factor(factor))
+    }
+
+    /// Sets the volume and pan of a MIDI channel (ADR-032). Wait-free and never fails:
+    /// it overwrites two atomics that the callback polls once per callback, so it is
+    /// heard in the next callback, also on notes that are already sounding, and it
+    /// survives a device rebuild and a synthesizer re-install. The last value wins, so
+    /// a slider drag cannot fill any queue.
+    pub fn set_channel_mix(&self, channel: Channel, volume: Volume, pan: Pan) {
+        self.status
+            .mix
+            .set(channel.get() as usize, volume.get(), pan.cc());
     }
 
     pub fn status(&self) -> EngineStatus {

@@ -111,7 +111,7 @@ All estimates are FTE weeks for one developer. Research items are timeboxed and 
 Sub-phases can be reordered by user priority.
 
 - 6a Pattern engine: Objective: reusable patterns bound to chords. Prerequisites: Q-01 to Q-06 answered, example corpus. Deliverables: `mc-pattern`, text front end, bind to score fragment. Acceptance: example corpus produces expected TAB. Complexity: Medium.
-- 6b Multi-track polish and MusicXML export: simultaneous multi-track notation display (deferred from MVP by Q-17), track mixer basics, MusicXML export with ExportReport. Complexity: Medium.
+- 6b Multi-track polish and MusicXML export: simultaneous multi-track notation display (deferred from MVP by Q-17), track mixer basics, MusicXML export with ExportReport. Complexity: Medium. The scope of the MusicXML export is set by [ADR-033](../architecture/decisions/ADR-033-musicxml-export-adapter.md): TAB staff only, uncompressed `.musicxml`. Recorded for later, not scheduled: compressed `.mxl` export, and truncating overfull bars as an option that is never the default.
 - 6c Standard notation and PDF: entry gate S11. High uncertainty; engraving quality is a long tail. Complexity: High.
 - 6d Guitar Pro import: entry gate S10. Acceptance: fixture files of each supported version import with reports. Complexity: Medium to high with format risk.
 

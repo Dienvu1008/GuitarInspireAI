@@ -11,7 +11,7 @@ use crate::api::document::DocumentHandle;
 use crate::api::types::{ApiError, OutcomeDto, PositionDto};
 use crate::frb_generated::StreamSink;
 use flutter_rust_bridge::frb;
-use mc_app::playback::{PerformanceTimeline, TempoFactor, Tick};
+use mc_app::playback::{Channel, Pan, PerformanceTimeline, TempoFactor, Tick, Volume};
 use mc_app::{AudioPort, PlaybackState, TransportCommand, TransportError};
 use mc_audio::{AudioEngine, EngineConfig};
 use std::path::PathBuf;
@@ -66,6 +66,16 @@ impl AudioPort for EnginePort<'_> {
         self.0
             .set_tempo_factor(factor)
             .map_err(|e| TransportError::Audio(e.to_string()))
+    }
+
+    fn set_channel_mix(
+        &mut self,
+        channel: Channel,
+        volume: Volume,
+        pan: Pan,
+    ) -> Result<(), TransportError> {
+        self.0.set_channel_mix(channel, volume, pan);
+        Ok(())
     }
 
     fn state(&self) -> PlaybackState {
@@ -166,6 +176,41 @@ impl EngineHandle {
                 muted,
             },
         )
+    }
+
+    /// Solo or unsolo a track (ADR-032). While any track is soloed the others are muted.
+    pub fn set_soloed(
+        &self,
+        document: &DocumentHandle,
+        track: i64,
+        soloed: bool,
+    ) -> Result<OutcomeDto, ApiError> {
+        self.run(
+            document,
+            TransportCommand::SetSoloed {
+                track: mc_app::types::TrackId::from_raw(track as u64),
+                soloed,
+            },
+        )
+    }
+
+    /// Set a track's volume (0..=127, default 100) and pan (-63..=63, default 0)
+    /// (ADR-032). Values outside the ranges are rejected with a `transport` error and
+    /// change nothing.
+    pub fn set_track_mix(
+        &self,
+        document: &DocumentHandle,
+        track: i64,
+        volume: i32,
+        pan: i32,
+    ) -> Result<OutcomeDto, ApiError> {
+        let cmd = TransportCommand::track_mix(
+            mc_app::types::TrackId::from_raw(track as u64),
+            volume,
+            pan,
+        )
+        .map_err(|e| ApiError::new("transport", e.to_string()))?;
+        self.run(document, cmd)
     }
 
     /// Set the user tempo factor in hundredths (100 = 1.0x), 25..=200 in steps of 5 (Q6).

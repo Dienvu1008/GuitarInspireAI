@@ -178,6 +178,27 @@ pub enum Op {
         capo: u8,
         keep_pitches: bool,
     },
+    /// Copies a run of beats from `src_track` and pastes it into `dst_track` (ADR-030).
+    Paste {
+        dst_track: usize,
+        bar: usize,
+        voice: usize,
+        index: usize,
+        src_track: usize,
+        from_bar: usize,
+        from_index: usize,
+        to_extra: usize,
+        to_index: usize,
+    },
+    /// Removes a run of beats (ADR-030 cut).
+    Cut {
+        track: usize,
+        voice: usize,
+        from_bar: usize,
+        from_index: usize,
+        to_extra: usize,
+        to_index: usize,
+    },
 }
 
 pub fn op() -> impl Strategy<Value = Op> {
@@ -259,6 +280,60 @@ pub fn op() -> impl Strategy<Value = Op> {
                 keep_pitches,
             }
         ),
+        (
+            0usize..3,
+            0usize..6,
+            0usize..2,
+            0usize..6,
+            0usize..3,
+            0usize..6,
+            0usize..4,
+            0usize..2,
+            0usize..4
+        )
+            .prop_map(
+                |(
+                    dst_track,
+                    bar,
+                    voice,
+                    index,
+                    src_track,
+                    from_bar,
+                    from_index,
+                    to_extra,
+                    to_index,
+                )| {
+                    Op::Paste {
+                        dst_track,
+                        bar,
+                        voice,
+                        index,
+                        src_track,
+                        from_bar,
+                        from_index,
+                        to_extra,
+                        to_index,
+                    }
+                }
+            ),
+        (
+            0usize..3,
+            0usize..2,
+            0usize..6,
+            0usize..4,
+            0usize..2,
+            0usize..4
+        )
+            .prop_map(
+                |(track, voice, from_bar, from_index, to_extra, to_index)| Op::Cut {
+                    track,
+                    voice,
+                    from_bar,
+                    from_index,
+                    to_extra,
+                    to_index,
+                }
+            ),
     ]
 }
 
@@ -419,5 +494,47 @@ pub fn to_command(s: &DocumentSession, op: &Op) -> Command {
                 },
             })
         }
+        Op::Paste {
+            dst_track,
+            bar,
+            voice,
+            index,
+            src_track,
+            from_bar,
+            from_index,
+            to_extra,
+            to_index,
+        } => {
+            // A source run that does not exist gives an empty fragment, which the core
+            // must reject cleanly.
+            let beats = s
+                .copy_beats(
+                    tid(src_track),
+                    voice,
+                    (from_bar, from_index),
+                    (from_bar + to_extra, to_index),
+                )
+                .unwrap_or_default();
+            Command::Score(ScoreCommand::PasteBeats {
+                track: tid(dst_track),
+                bar,
+                voice,
+                index,
+                beats,
+            })
+        }
+        Op::Cut {
+            track,
+            voice,
+            from_bar,
+            from_index,
+            to_extra,
+            to_index,
+        } => Command::Score(ScoreCommand::RemoveBeats {
+            track: tid(track),
+            voice,
+            from: (from_bar, from_index),
+            to: (from_bar + to_extra, to_index),
+        }),
     }
 }

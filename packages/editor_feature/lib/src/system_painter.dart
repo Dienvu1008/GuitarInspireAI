@@ -197,6 +197,27 @@ bool _samePaint(SystemDto a, SystemDto b) =>
         listEquals(a.bars, b.bars) &&
         listEquals(a.glyphs, b.glyphs));
 
+/// The beat selection (ADR-030): one tinted column per selected beat, on its own
+/// layer like the cursor.
+final class SelectionPainter extends CustomPainter {
+  SelectionPainter({required this.rects, required this.color});
+
+  final List<Rect> rects;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final fill = Paint()..color = color.withValues(alpha: 0.18);
+    for (final r in rects) {
+      canvas.drawRect(r, fill);
+    }
+  }
+
+  @override
+  bool shouldRepaint(SelectionPainter old) =>
+      old.color != color || !listEquals(old.rects, rects);
+}
+
 /// The cursor, painted on its own layer so moving it does not repaint the TAB
 /// (cross-platform-ui section 8).
 final class CursorPainter extends CustomPainter {

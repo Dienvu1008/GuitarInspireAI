@@ -34,6 +34,19 @@ final class ChordVisible extends Notifier<bool> {
   void toggle() => state = !state;
 }
 
+/// Whether the Mixer panel is shown (Tools menu toggle). Open by default: it is the one
+/// place that shows mute and solo (ADR-032).
+final mixerVisibleProvider = NotifierProvider<MixerVisible, bool>(
+  MixerVisible.new,
+);
+
+final class MixerVisible extends Notifier<bool> {
+  @override
+  bool build() => true;
+
+  void toggle() => state = !state;
+}
+
 /// Binds the playback feature to the editor's active document (ADR-028). This lives in
 /// the composition root because it joins two feature packages, which may not import each
 /// other (FF-05).
@@ -47,6 +60,12 @@ List<Override> playbackOverrides(PlaybackFactory? factory, MidiService midi) => 
   playbackAvailableProvider.overrideWithValue(factory != null),
   if (factory != null) playbackFactoryProvider.overrideWithValue(factory),
   midiServiceProvider.overrideWithValue(midi),
+  // The Mixer lists the editor's tracks; the playback package cannot import the editor
+  // package (FF-05), so the list is passed in here.
+  mixerTracksProvider.overrideWith((ref) {
+    final tracks = ref.watch(editorProvider.select((s) => s.summary.tracks));
+    return [for (final t in tracks) MixerTrack(id: t.id, name: t.name)];
+  }),
   if (factory != null)
     playbackServiceProvider.overrideWith((ref) {
       // Rebuilds when the active document changes; close the previous service.

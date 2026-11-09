@@ -59,3 +59,7 @@ FF-01 (dependency matrix: `mc-app -> mc-playback`, `mc-ffi -> mc-audio`), FF-07 
 ## Reconsideration conditions
 
 A second audio backend or an out-of-process engine is added (then the port may need to move to its own crate); solo, loop or metronome are implemented and need more transport state; or a non-Dart binding needs the same transport API.
+
+## Amendment (2026-11-07, ADR-032)
+
+Item 3 said there is no solo. [ADR-032](ADR-032-track-mixer-volume-pan-solo.md) adds solo, a per-track volume and a per-track pan to the session transport state. They follow the same rules as mute: session state, no command, no revision bump, not undoable, not saved. Solo is an application rule over the muted set (a muted track stays silent even when soloed). Volume and pan do not enter the timeline and never recompile; they reach the synthesizer through the audio port. The rest of this ADR is unchanged.

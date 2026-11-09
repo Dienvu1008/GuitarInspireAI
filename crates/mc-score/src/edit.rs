@@ -22,6 +22,28 @@ pub struct BeatRef {
     pub beat: BeatId,
 }
 
+/// Position of a beat inside a voice run: written bar and beat index within that bar.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct BeatSlot {
+    pub bar: usize,
+    pub index: usize,
+}
+
+/// A note of a clipboard fragment: plain values, no ids (ADR-030).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct FragmentNote {
+    pub position: FretPosition,
+    pub tie: bool,
+    pub effects: NoteEffects,
+}
+
+/// A beat of a clipboard fragment: its written value and its notes, no ids.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct FragmentBeat {
+    pub value: NoteValue,
+    pub notes: Vec<FragmentNote>,
+}
+
 struct Located {
     track: usize,
     bar: usize,
@@ -588,6 +610,166 @@ impl Score {
             }
         }
         Ok(self.content_events(t, bars))
+    }
+
+    // --------------------------------------------------------------- beat runs
+
+    /// Copies the beats of one voice from `start` to `end` (both inclusive, in written
+    /// order, possibly across bars) as plain values without ids (ADR-030).
+    pub fn copy_beats(
+        &self,
+        track: TrackId,
+        voice: usize,
+        start: BeatSlot,
+        end: BeatSlot,
+    ) -> Result<Vec<FragmentBeat>, DomainError> {
+        let t = self.track_index(track)?;
+        let runs = self.beat_run(t, voice, start, end)?;
+        let mut out = Vec::new();
+        for (bar, range) in runs {
+            for beat in &self.tracks[t].bars[bar].voices[voice].beats[range] {
+                out.push(FragmentBeat {
+                    value: beat.value,
+                    notes: beat
+                        .notes
+                        .iter()
+                        .map(|n| FragmentNote {
+                            position: n.position(),
+                            tie: n.tie,
+                            effects: n.effects,
+                        })
+                        .collect(),
+                });
+            }
+        }
+        Ok(out)
+    }
+
+    /// Inserts a copied run of beats at `index` of a voice, all or nothing. Strings and
+    /// frets are kept as given, not pitches, so pasting into another tuning changes the
+    /// sound. Every note is checked against the target track (H-03, H-04, H-05, H-10);
+    /// ties whose preceding note is missing after the paste are cleared and reported
+    /// (H-06). Bar capacity is a diagnostic and never blocks (Q-09). Never creates bars.
+    pub fn paste_beats(
+        &mut self,
+        track: TrackId,
+        bar: usize,
+        voice: usize,
+        index: usize,
+        beats: &[FragmentBeat],
+    ) -> Result<Events, DomainError> {
+        let t = self.track_index(track)?;
+        if beats.is_empty() {
+            return Err(DomainError::InvalidPosition("nothing to paste".into()));
+        }
+        let len = self.voice_ref(t, bar, voice)?.beats.len();
+        if index > len {
+            return Err(DomainError::InvalidPosition(format!(
+                "beat index {index} of {len}"
+            )));
+        }
+        let inst = self.tracks[t].fretted().clone();
+        for (k, beat) in beats.iter().enumerate() {
+            let mut strings = Vec::with_capacity(beat.notes.len());
+            for n in &beat.notes {
+                let probe = Note {
+                    id: NoteId::from_raw(0),
+                    kind: NoteKind::Fretted(n.position),
+                    tie: false,
+                    effects: n.effects,
+                };
+                check_note(&inst, &probe).map_err(|(rule, m)| {
+                    DomainError::invariant(rule, format!("pasted beat {k}: {m}"))
+                })?;
+                if strings.contains(&n.position.string) {
+                    return Err(DomainError::invariant(
+                        "H-05",
+                        format!(
+                            "pasted beat {k}: two notes on string {}",
+                            n.position.string.get()
+                        ),
+                    ));
+                }
+                strings.push(n.position.string);
+            }
+        }
+        // Everything is valid: from here on the paste cannot fail.
+        let mut built = Vec::with_capacity(beats.len());
+        for beat in beats {
+            let id = BeatId::from_raw(self.allocate_id());
+            let mut notes = Vec::with_capacity(beat.notes.len());
+            for n in &beat.notes {
+                notes.push(Note {
+                    id: NoteId::from_raw(self.allocate_id()),
+                    kind: NoteKind::Fretted(n.position),
+                    tie: n.tie,
+                    effects: n.effects,
+                });
+            }
+            notes.sort_by_key(|n| n.position().string.get());
+            built.push(Beat {
+                id,
+                value: beat.value,
+                notes,
+            });
+        }
+        let target = &mut self.bar_mut(t, bar).voices[voice].beats;
+        drop(target.splice(index..index, built));
+        Ok(self.content_events(t, bar..bar + 1))
+    }
+
+    /// Removes the beats of one voice from `start` to `end` (both inclusive, possibly
+    /// across bars), all or nothing. Bars keep their remaining beats; no bar is removed.
+    /// Ties that lose their preceding note are cleared and reported (H-06).
+    pub fn remove_beats(
+        &mut self,
+        track: TrackId,
+        voice: usize,
+        start: BeatSlot,
+        end: BeatSlot,
+    ) -> Result<Events, DomainError> {
+        let t = self.track_index(track)?;
+        let runs = self.beat_run(t, voice, start, end)?;
+        for (bar, range) in runs {
+            drop(self.bar_mut(t, bar).voices[voice].beats.drain(range));
+        }
+        Ok(self.content_events(t, start.bar..end.bar + 1))
+    }
+
+    /// Resolves an inclusive run of beats in one voice into `(bar, index range)` pieces.
+    /// Both ends must exist, and the voice must exist in every bar of the run.
+    fn beat_run(
+        &self,
+        t: usize,
+        voice: usize,
+        start: BeatSlot,
+        end: BeatSlot,
+    ) -> Result<Vec<(usize, Range<usize>)>, DomainError> {
+        if (start.bar, start.index) > (end.bar, end.index) || end.bar >= self.master_bars.len() {
+            return Err(DomainError::InvalidPosition(format!(
+                "beat run {start:?} to {end:?}"
+            )));
+        }
+        let mut runs = Vec::new();
+        for bar in start.bar..=end.bar {
+            let len = self.voice_ref(t, bar, voice)?.beats.len();
+            if bar == start.bar && start.index >= len {
+                return Err(DomainError::InvalidPosition(format!(
+                    "beat {} of {len} in bar {bar}",
+                    start.index
+                )));
+            }
+            if bar == end.bar && end.index >= len {
+                return Err(DomainError::InvalidPosition(format!(
+                    "beat {} of {len} in bar {bar}",
+                    end.index
+                )));
+            }
+            let from = if bar == start.bar { start.index } else { 0 };
+            let to = if bar == end.bar { end.index + 1 } else { len };
+            runs.push((bar, from..to));
+        }
+        Ok(runs)
     }
 
     // ----------------------------------------------------------------- helpers

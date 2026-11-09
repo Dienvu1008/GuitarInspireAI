@@ -7,6 +7,11 @@ pub enum NotationError {
     InvalidMetrics(String),
     /// A bar duration does not fit the rational representation.
     Overflow,
+    /// `layout_score` was asked for no track (ADR-031: at least the active one).
+    NoTracks,
+    /// An outline was used with a score it was not computed for (bars or tracks
+    /// changed); compute a new outline.
+    StaleOutline,
 }
 
 impl fmt::Display for NotationError {
@@ -15,6 +20,8 @@ impl fmt::Display for NotationError {
             Self::UnknownTrack(t) => write!(f, "track {} does not exist", t.raw()),
             Self::InvalidMetrics(m) => write!(f, "invalid layout metrics: {m}"),
             Self::Overflow => write!(f, "bar duration overflow"),
+            Self::NoTracks => write!(f, "no track to lay out"),
+            Self::StaleOutline => write!(f, "layout outline is out of date"),
         }
     }
 }

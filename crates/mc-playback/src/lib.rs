@@ -18,7 +18,12 @@ mod event;
 mod timeline;
 mod types;
 
-pub use compile::{CompileError, CompileOptions, CompileOutput, PlaybackWarning, compile};
+pub use compile::{
+    CompileError, CompileOptions, CompileOutput, PlaybackWarning, assign_channels, compile,
+};
 pub use event::{NoteSource, PerformanceEvent, TimedEvent};
 pub use timeline::{ChannelAssignment, PerformanceTimeline, PlayedBar, TempoPoint};
-pub use types::{Channel, GmProgram, MidiNote, OutOfRange, TempoFactor, Tick, TickRate, Velocity};
+pub use types::{
+    Channel, GmProgram, MidiNote, OutOfRange, Pan, TempoFactor, Tick, TickRate, TrackMix, Velocity,
+    Volume,
+};

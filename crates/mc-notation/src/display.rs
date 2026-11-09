@@ -175,6 +175,69 @@ impl SystemLayout {
     }
 }
 
+/// One track's stave inside a [`ScoreSystem`] (ADR-031). `layout` is in stave
+/// coordinates: its lines, glyphs and hit regions start at the stave top, and its `y`
+/// is the stave top in document coordinates. Bar x-positions and widths are identical
+/// in every stave of the system.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Stave {
+    pub track: TrackId,
+    pub strings: u8,
+    /// Top of the stave in system coordinates.
+    pub top: f32,
+    pub layout: SystemLayout,
+}
+
+/// One line of music with a stave per shown track, stacked in score order.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ScoreSystem {
+    pub index: usize,
+    /// Top of the system in document coordinates.
+    pub y: f32,
+    /// Sum of the stave heights.
+    pub height: f32,
+    pub staves: Vec<Stave>,
+}
+
+/// Where a system sits and which bars it holds, without its content (ADR-031).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct OutlineSystem {
+    pub index: usize,
+    /// Top of the system in document coordinates.
+    pub y: f32,
+    /// Sum of the stave heights.
+    pub height: f32,
+    pub first_bar: usize,
+    /// One past the last bar.
+    pub end_bar: usize,
+    /// Justification factor of the system's flexible width (shared by its staves).
+    pub scale: f32,
+}
+
+/// Line breaking of the shown tracks for the whole score: enough to size a scroll
+/// view and to lay out any system later with `layout_score_systems`.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ScoreOutline {
+    /// The shown tracks in stave order (score order).
+    pub tracks: Vec<TrackId>,
+    pub width: f32,
+    pub height: f32,
+    /// Master bar count the outline was computed for (stale-outline check).
+    pub bar_count: usize,
+    pub systems: Vec<OutlineSystem>,
+}
+
+/// Layout of several tracks shown together: systems from top to bottom.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ScoreLayout {
+    /// The shown tracks in stave order (score order).
+    pub tracks: Vec<TrackId>,
+    pub width: f32,
+    /// Total height of all systems including gaps.
+    pub height: f32,
+    pub systems: Vec<ScoreSystem>,
+}
+
 /// Layout of one track: systems from top to bottom.
 #[derive(Clone, Debug, PartialEq)]
 pub struct TabLayout {

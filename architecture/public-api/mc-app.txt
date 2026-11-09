@@ -175,23 +175,34 @@ impl core::marker::UnsafeUnpin for mc_app::infra::SystemEntropy
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::infra::SystemEntropy
 impl core::panic::unwind_safe::UnwindSafe for mc_app::infra::SystemEntropy
 pub fn mc_app::infra::cleanup_temp_files(&std::path::Path) -> usize
+pub fn mc_app::infra::modified_unix_millis(&std::path::Path) -> core::option::Option<u64>
 pub mod mc_app::notation
 pub use mc_app::notation::BarLayout
 pub use mc_app::notation::Glyph
 pub use mc_app::notation::GlyphKind
 pub use mc_app::notation::HitRegion
 pub use mc_app::notation::HitTarget
+pub use mc_app::notation::LayoutCache
 pub use mc_app::notation::LayoutMetrics
 pub use mc_app::notation::Line
 pub use mc_app::notation::LineKind
 pub use mc_app::notation::NotationError
+pub use mc_app::notation::OutlineSystem
 pub use mc_app::notation::Rect
+pub use mc_app::notation::ScoreLayout
+pub use mc_app::notation::ScoreOutline
+pub use mc_app::notation::ScoreSystem
+pub use mc_app::notation::Stave
 pub use mc_app::notation::SystemLayout
 pub use mc_app::notation::TabLayout
 pub mod mc_app::playback
+pub use mc_app::playback::Channel
+pub use mc_app::playback::Pan
 pub use mc_app::playback::PerformanceTimeline
 pub use mc_app::playback::TempoFactor
 pub use mc_app::playback::Tick
+pub use mc_app::playback::TrackMix
+pub use mc_app::playback::Volume
 pub fn mc_app::playback::compile_for_export(&mc_score::score::Score) -> core::result::Result<mc_playback::timeline::PerformanceTimeline, alloc::string::String>
 pub mod mc_app::ports
 pub enum mc_app::ports::StoreError
@@ -267,6 +278,8 @@ pub fn mc_app::infra::FsRecoveryStore::end_session(&self) -> core::result::Resul
 pub fn mc_app::infra::FsRecoveryStore::list(&self) -> core::result::Result<alloc::vec::Vec<mc_app::ports::RecoveryEntry>, mc_app::ports::StoreError>
 pub fn mc_app::infra::FsRecoveryStore::read(&self, &mc_app::ports::RecoveryEntry) -> core::result::Result<alloc::vec::Vec<u8>, mc_app::ports::StoreError>
 pub fn mc_app::infra::FsRecoveryStore::write_autosave(&self, &str, core::option::Option<&std::path::Path>, &[u8], u64) -> core::result::Result<std::path::PathBuf, mc_app::ports::StoreError>
+pub mod mc_app::recovery
+pub fn mc_app::recovery::offered(bool, alloc::vec::Vec<mc_app::ports::RecoveryEntry>, impl core::ops::function::Fn(&std::path::Path) -> core::option::Option<u64>) -> alloc::vec::Vec<mc_app::ports::RecoveryEntry>
 pub mod mc_app::transport
 pub enum mc_app::transport::PlaybackState
 pub mc_app::transport::PlaybackState::Failed
@@ -298,9 +311,18 @@ pub mc_app::transport::TransportCommand::Seek::tick: mc_playback::types::Tick
 pub mc_app::transport::TransportCommand::SetMuted
 pub mc_app::transport::TransportCommand::SetMuted::muted: bool
 pub mc_app::transport::TransportCommand::SetMuted::track: mc_score::ids::TrackId
+pub mc_app::transport::TransportCommand::SetSoloed
+pub mc_app::transport::TransportCommand::SetSoloed::soloed: bool
+pub mc_app::transport::TransportCommand::SetSoloed::track: mc_score::ids::TrackId
 pub mc_app::transport::TransportCommand::SetTempoFactor
 pub mc_app::transport::TransportCommand::SetTempoFactor::factor: mc_playback::types::TempoFactor
+pub mc_app::transport::TransportCommand::SetTrackMix
+pub mc_app::transport::TransportCommand::SetTrackMix::pan: mc_playback::types::Pan
+pub mc_app::transport::TransportCommand::SetTrackMix::track: mc_score::ids::TrackId
+pub mc_app::transport::TransportCommand::SetTrackMix::volume: mc_playback::types::Volume
 pub mc_app::transport::TransportCommand::Stop
+impl mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::track_mix(mc_score::ids::TrackId, i32, i32) -> core::result::Result<Self, mc_app::transport::TransportError>
 impl core::clone::Clone for mc_app::transport::TransportCommand
 pub fn mc_app::transport::TransportCommand::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportCommand
@@ -322,6 +344,8 @@ pub mc_app::transport::TransportError::Audio(alloc::string::String)
 pub mc_app::transport::TransportError::BarOutOfRange
 pub mc_app::transport::TransportError::BarOutOfRange::master_bar: usize
 pub mc_app::transport::TransportError::Compile(alloc::string::String)
+pub mc_app::transport::TransportError::InvalidMix(alloc::string::String)
+pub mc_app::transport::TransportError::UnknownTrack(mc_score::ids::TrackId)
 impl core::clone::Clone for mc_app::transport::TransportError
 pub fn mc_app::transport::TransportError::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportError
@@ -384,7 +408,10 @@ impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::PositionUpdate
 pub struct mc_app::transport::TransportState
 impl mc_app::transport::TransportState
 pub fn mc_app::transport::TransportState::is_muted(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::is_soloed(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::mix_of(&self, mc_score::ids::TrackId) -> mc_playback::types::TrackMix
 pub fn mc_app::transport::TransportState::muted(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
+pub fn mc_app::transport::TransportState::soloed(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
 pub fn mc_app::transport::TransportState::state(&self) -> mc_app::transport::PlaybackState
 pub fn mc_app::transport::TransportState::tempo_factor(&self) -> mc_playback::types::TempoFactor
 impl core::clone::Clone for mc_app::transport::TransportState
@@ -410,9 +437,11 @@ pub fn mc_app::transport::AudioPort::load_timeline(&mut self, mc_playback::timel
 pub fn mc_app::transport::AudioPort::play(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::transport::AudioPort::position(&self) -> mc_playback::types::Tick
 pub fn mc_app::transport::AudioPort::seek(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::transport::AudioPort::set_channel_mix(&mut self, mc_playback::types::Channel, mc_playback::types::Volume, mc_playback::types::Pan) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::transport::AudioPort::set_tempo_factor(&mut self, mc_playback::types::TempoFactor) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::transport::AudioPort::state(&self) -> mc_app::transport::PlaybackState
 pub fn mc_app::transport::AudioPort::stop(&mut self) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::transport::effective_muted(&[mc_score::ids::TrackId], &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>, &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>) -> alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
 pub mod mc_app::types
 pub use mc_app::types::AppInfo
 pub use mc_app::types::BarContent
@@ -445,11 +474,17 @@ pub mc_app::AppEvent::DirtyChanged::dirty: bool
 pub mc_app::AppEvent::DocumentSaved
 pub mc_app::AppEvent::DocumentSaved::revision: mc_app::Revision
 pub mc_app::AppEvent::HistoryApplied
+pub mc_app::AppEvent::MixChanged
+pub mc_app::AppEvent::MixChanged::mix: mc_playback::types::TrackMix
+pub mc_app::AppEvent::MixChanged::track: mc_score::ids::TrackId
 pub mc_app::AppEvent::MuteChanged
 pub mc_app::AppEvent::MuteChanged::muted: bool
 pub mc_app::AppEvent::MuteChanged::track: mc_score::ids::TrackId
 pub mc_app::AppEvent::PlaybackStateChanged
 pub mc_app::AppEvent::PlaybackStateChanged::state: mc_app::transport::PlaybackState
+pub mc_app::AppEvent::SoloChanged
+pub mc_app::AppEvent::SoloChanged::soloed: bool
+pub mc_app::AppEvent::SoloChanged::track: mc_score::ids::TrackId
 pub mc_app::AppEvent::TempoFactorChanged
 pub mc_app::AppEvent::TempoFactorChanged::hundredths: u16
 pub mc_app::AppEvent::UndoAvailabilityChanged
@@ -643,8 +678,19 @@ pub mc_app::ScoreCommand::InsertMasterBars
 pub mc_app::ScoreCommand::InsertMasterBars::at: usize
 pub mc_app::ScoreCommand::InsertMasterBars::count: usize
 pub mc_app::ScoreCommand::InsertMasterBars::template: mc_score::model::MasterBar
+pub mc_app::ScoreCommand::PasteBeats
+pub mc_app::ScoreCommand::PasteBeats::bar: usize
+pub mc_app::ScoreCommand::PasteBeats::beats: alloc::vec::Vec<mc_app::ClipBeat>
+pub mc_app::ScoreCommand::PasteBeats::index: usize
+pub mc_app::ScoreCommand::PasteBeats::track: mc_score::ids::TrackId
+pub mc_app::ScoreCommand::PasteBeats::voice: usize
 pub mc_app::ScoreCommand::RemoveBeat
 pub mc_app::ScoreCommand::RemoveBeat::beat: mc_app::BeatAddress
+pub mc_app::ScoreCommand::RemoveBeats
+pub mc_app::ScoreCommand::RemoveBeats::from: (usize, usize)
+pub mc_app::ScoreCommand::RemoveBeats::to: (usize, usize)
+pub mc_app::ScoreCommand::RemoveBeats::track: mc_score::ids::TrackId
+pub mc_app::ScoreCommand::RemoveBeats::voice: usize
 pub mc_app::ScoreCommand::RemoveMasterBars
 pub mc_app::ScoreCommand::RemoveMasterBars::at: usize
 pub mc_app::ScoreCommand::RemoveMasterBars::count: usize
@@ -735,9 +781,18 @@ pub mc_app::TransportCommand::Seek::tick: mc_playback::types::Tick
 pub mc_app::TransportCommand::SetMuted
 pub mc_app::TransportCommand::SetMuted::muted: bool
 pub mc_app::TransportCommand::SetMuted::track: mc_score::ids::TrackId
+pub mc_app::TransportCommand::SetSoloed
+pub mc_app::TransportCommand::SetSoloed::soloed: bool
+pub mc_app::TransportCommand::SetSoloed::track: mc_score::ids::TrackId
 pub mc_app::TransportCommand::SetTempoFactor
 pub mc_app::TransportCommand::SetTempoFactor::factor: mc_playback::types::TempoFactor
+pub mc_app::TransportCommand::SetTrackMix
+pub mc_app::TransportCommand::SetTrackMix::pan: mc_playback::types::Pan
+pub mc_app::TransportCommand::SetTrackMix::track: mc_score::ids::TrackId
+pub mc_app::TransportCommand::SetTrackMix::volume: mc_playback::types::Volume
 pub mc_app::TransportCommand::Stop
+impl mc_app::transport::TransportCommand
+pub fn mc_app::transport::TransportCommand::track_mix(mc_score::ids::TrackId, i32, i32) -> core::result::Result<Self, mc_app::transport::TransportError>
 impl core::clone::Clone for mc_app::transport::TransportCommand
 pub fn mc_app::transport::TransportCommand::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportCommand
@@ -759,6 +814,8 @@ pub mc_app::TransportError::Audio(alloc::string::String)
 pub mc_app::TransportError::BarOutOfRange
 pub mc_app::TransportError::BarOutOfRange::master_bar: usize
 pub mc_app::TransportError::Compile(alloc::string::String)
+pub mc_app::TransportError::InvalidMix(alloc::string::String)
+pub mc_app::TransportError::UnknownTrack(mc_score::ids::TrackId)
 impl core::clone::Clone for mc_app::transport::TransportError
 pub fn mc_app::transport::TransportError::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::transport::TransportError
@@ -798,6 +855,45 @@ impl core::marker::Unpin for mc_app::BeatAddress
 impl core::marker::UnsafeUnpin for mc_app::BeatAddress
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::BeatAddress
 impl core::panic::unwind_safe::UnwindSafe for mc_app::BeatAddress
+pub struct mc_app::ClipBeat
+pub mc_app::ClipBeat::duration: mc_app::DurationSpec
+pub mc_app::ClipBeat::notes: alloc::vec::Vec<mc_app::ClipNote>
+impl core::clone::Clone for mc_app::ClipBeat
+pub fn mc_app::ClipBeat::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::ClipBeat
+impl core::cmp::PartialEq for mc_app::ClipBeat
+pub fn mc_app::ClipBeat::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::ClipBeat
+pub fn mc_app::ClipBeat::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::ClipBeat
+impl core::marker::Freeze for mc_app::ClipBeat
+impl core::marker::Send for mc_app::ClipBeat
+impl core::marker::Sync for mc_app::ClipBeat
+impl core::marker::Unpin for mc_app::ClipBeat
+impl core::marker::UnsafeUnpin for mc_app::ClipBeat
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::ClipBeat
+impl core::panic::unwind_safe::UnwindSafe for mc_app::ClipBeat
+pub struct mc_app::ClipNote
+pub mc_app::ClipNote::effects: mc_score::model::NoteEffects
+pub mc_app::ClipNote::fret: u8
+pub mc_app::ClipNote::string: u8
+pub mc_app::ClipNote::tie: bool
+impl core::clone::Clone for mc_app::ClipNote
+pub fn mc_app::ClipNote::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::ClipNote
+impl core::cmp::PartialEq for mc_app::ClipNote
+pub fn mc_app::ClipNote::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::ClipNote
+pub fn mc_app::ClipNote::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::ClipNote
+impl core::marker::StructuralPartialEq for mc_app::ClipNote
+impl core::marker::Freeze for mc_app::ClipNote
+impl core::marker::Send for mc_app::ClipNote
+impl core::marker::Sync for mc_app::ClipNote
+impl core::marker::Unpin for mc_app::ClipNote
+impl core::marker::UnsafeUnpin for mc_app::ClipNote
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::ClipNote
+impl core::panic::unwind_safe::UnwindSafe for mc_app::ClipNote
 pub struct mc_app::CollectingSink
 pub mc_app::CollectingSink::events: alloc::vec::Vec<mc_app::EventEnvelope>
 impl core::default::Default for mc_app::CollectingSink
@@ -929,9 +1025,11 @@ pub fn mc_app::DocumentSession::autosave_due(&self, u64) -> bool
 pub fn mc_app::DocumentSession::can_redo(&self) -> bool
 pub fn mc_app::DocumentSession::can_undo(&self) -> bool
 pub fn mc_app::DocumentSession::chord_voicings(&self, mc_score::ids::TrackId, &str, usize) -> core::option::Option<core::result::Result<mc_app::guitar::ChordLookup, mc_app::guitar::QueryError>>
+pub fn mc_app::DocumentSession::copy_beats(&self, mc_score::ids::TrackId, usize, (usize, usize), (usize, usize)) -> core::result::Result<alloc::vec::Vec<mc_app::ClipBeat>, mc_app::CommandError>
 pub fn mc_app::DocumentSession::diagnostics(&self) -> alloc::vec::Vec<mc_score::diagnostics::Diagnostic>
 pub fn mc_app::DocumentSession::execute(&mut self, mc_app::CommandEnvelope) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::from_bytes(mc_app::DocumentId, &[u8], core::option::Option<std::path::PathBuf>, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
+pub fn mc_app::DocumentSession::has_unsaved_work(&self) -> bool
 pub fn mc_app::DocumentSession::history_bytes(&self) -> usize
 pub fn mc_app::DocumentSession::is_dirty(&self) -> bool
 pub fn mc_app::DocumentSession::location(&self) -> core::option::Option<&std::path::Path>
@@ -959,6 +1057,9 @@ pub fn mc_app::DocumentSession::undo(&mut self) -> core::result::Result<mc_app::
 pub fn mc_app::DocumentSession::undo_depth(&self) -> usize
 pub fn mc_app::DocumentSession::unknown_content(&self) -> &[alloc::string::String]
 impl mc_app::DocumentSession
+pub fn mc_app::DocumentSession::score_layout(&self, &[mc_score::ids::TrackId], &mc_notation::metrics::LayoutMetrics) -> core::result::Result<mc_notation::display::ScoreLayout, mc_notation::error::NotationError>
+pub fn mc_app::DocumentSession::score_outline(&mut self, &[mc_score::ids::TrackId], &mc_notation::metrics::LayoutMetrics) -> core::result::Result<&mc_notation::display::ScoreOutline, mc_notation::error::NotationError>
+pub fn mc_app::DocumentSession::score_systems(&mut self, &[mc_score::ids::TrackId], &mc_notation::metrics::LayoutMetrics, core::ops::range::Range<usize>) -> core::result::Result<alloc::vec::Vec<mc_notation::display::ScoreSystem>, mc_notation::error::NotationError>
 pub fn mc_app::DocumentSession::tab_layout(&self, mc_score::ids::TrackId, &mc_notation::metrics::LayoutMetrics) -> core::result::Result<mc_notation::display::TabLayout, mc_notation::error::NotationError>
 impl core::fmt::Debug for mc_app::DocumentSession
 pub fn mc_app::DocumentSession::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -973,6 +1074,8 @@ pub struct mc_app::DurationSpec
 pub mc_app::DurationSpec::base: u8
 pub mc_app::DurationSpec::dots: u8
 pub mc_app::DurationSpec::tuplet: core::option::Option<(u8, u8)>
+impl mc_app::DurationSpec
+pub fn mc_app::DurationSpec::from_value(mc_theory::duration::NoteValue) -> Self
 impl mc_app::DurationSpec
 pub const fn mc_app::DurationSpec::plain(u8) -> Self
 impl core::clone::Clone for mc_app::DurationSpec
@@ -1166,7 +1269,10 @@ impl core::panic::unwind_safe::UnwindSafe for mc_app::SessionConfig
 pub struct mc_app::TransportState
 impl mc_app::transport::TransportState
 pub fn mc_app::transport::TransportState::is_muted(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::is_soloed(&self, mc_score::ids::TrackId) -> bool
+pub fn mc_app::transport::TransportState::mix_of(&self, mc_score::ids::TrackId) -> mc_playback::types::TrackMix
 pub fn mc_app::transport::TransportState::muted(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
+pub fn mc_app::transport::TransportState::soloed(&self) -> &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
 pub fn mc_app::transport::TransportState::state(&self) -> mc_app::transport::PlaybackState
 pub fn mc_app::transport::TransportState::tempo_factor(&self) -> mc_playback::types::TempoFactor
 impl core::clone::Clone for mc_app::transport::TransportState
@@ -1211,6 +1317,7 @@ pub fn mc_app::AudioPort::load_timeline(&mut self, mc_playback::timeline::Perfor
 pub fn mc_app::AudioPort::play(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::AudioPort::position(&self) -> mc_playback::types::Tick
 pub fn mc_app::AudioPort::seek(&mut self, mc_playback::types::Tick) -> core::result::Result<(), mc_app::transport::TransportError>
+pub fn mc_app::AudioPort::set_channel_mix(&mut self, mc_playback::types::Channel, mc_playback::types::Volume, mc_playback::types::Pan) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::AudioPort::set_tempo_factor(&mut self, mc_playback::types::TempoFactor) -> core::result::Result<(), mc_app::transport::TransportError>
 pub fn mc_app::AudioPort::state(&self) -> mc_app::transport::PlaybackState
 pub fn mc_app::AudioPort::stop(&mut self) -> core::result::Result<(), mc_app::transport::TransportError>
@@ -1218,4 +1325,5 @@ pub trait mc_app::EventSink: core::marker::Send
 pub fn mc_app::EventSink::publish(&mut self, &[mc_app::EventEnvelope])
 impl mc_app::EventSink for mc_app::CollectingSink
 pub fn mc_app::CollectingSink::publish(&mut self, &[mc_app::EventEnvelope])
+pub fn mc_app::effective_muted(&[mc_score::ids::TrackId], &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>, &alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>) -> alloc::collections::btree::set::BTreeSet<mc_score::ids::TrackId>
 pub fn mc_app::new_score(&str, usize) -> core::result::Result<mc_score::score::Score, mc_score::error::DomainError>

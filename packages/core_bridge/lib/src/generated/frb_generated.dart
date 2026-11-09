@@ -8,6 +8,7 @@ import 'api/engine.dart';
 import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/midi.dart';
+import 'api/musicxml.dart';
 import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -75,7 +76,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
                   String get codegenVersion => '2.13.0';
 
                   @override
-                  int get rustContentHash => -1552370978;
+                  int get rustContentHash => -616709020;
 
                   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
                     stem: 'mc_ffi',
@@ -91,15 +92,25 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 List<BeatDto> crateApiDocumentDocumentHandleBeats({required DocumentHandle that , required PlatformInt64 track , required int bar , required int voice });
 
+bool crateApiDocumentDocumentHandleBeginSession({required String dir });
+
 ChordResultDto crateApiDocumentDocumentHandleChordVoicings({required DocumentHandle that , required PlatformInt64 track , required String symbol , required int max });
+
+List<ClipBeatDto> crateApiDocumentDocumentHandleCopyBeats({required DocumentHandle that , required PlatformInt64 track , required int voice , required int fromBar , required int fromIndex , required int toBar , required int toIndex });
 
 DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars });
 
+void crateApiDocumentDocumentHandleDiscardAutosaves({required DocumentHandle that });
+
 void crateApiDocumentDocumentHandleDiscardRecovery({required String dir , required String projectId });
+
+void crateApiDocumentDocumentHandleEndSession({required String dir });
 
 Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({required DocumentHandle that , required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision });
 
 List<RecoveryEntryDto> crateApiDocumentDocumentHandleListRecoveryEntries({required String dir });
+
+List<RecoveryEntryDto> crateApiDocumentDocumentHandleOfferedRecoveryEntries({required String dir , required bool unclean });
 
 Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path });
 
@@ -112,6 +123,10 @@ Future<OutcomeDto> crateApiDocumentDocumentHandleRedo({required DocumentHandle t
 Future<OutcomeDto> crateApiDocumentDocumentHandleSave({required DocumentHandle that });
 
 Future<OutcomeDto> crateApiDocumentDocumentHandleSaveAs({required DocumentHandle that , required String path });
+
+ScoreOutlineDto crateApiDocumentDocumentHandleScoreOutline({required DocumentHandle that , required Int64List tracks , required MetricsDto metrics });
+
+List<ScoreSystemDto> crateApiDocumentDocumentHandleScoreSystems({required DocumentHandle that , required Int64List tracks , required MetricsDto metrics , required int first , required int count });
 
 Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({required DocumentHandle that });
 
@@ -141,7 +156,11 @@ Future<OutcomeDto> crateApiEngineEngineHandleSeek({required EngineHandle that , 
 
 Future<OutcomeDto> crateApiEngineEngineHandleSetMuted({required EngineHandle that , required DocumentHandle document , required PlatformInt64 track , required bool muted });
 
+Future<OutcomeDto> crateApiEngineEngineHandleSetSoloed({required EngineHandle that , required DocumentHandle document , required PlatformInt64 track , required bool soloed });
+
 Future<OutcomeDto> crateApiEngineEngineHandleSetTempoFactor({required EngineHandle that , required DocumentHandle document , required int hundredths });
+
+Future<OutcomeDto> crateApiEngineEngineHandleSetTrackMix({required EngineHandle that , required DocumentHandle document , required PlatformInt64 track , required int volume , required int pan });
 
 Future<EngineHandle> crateApiEngineEngineHandleStart({String? soundfontPath });
 
@@ -168,6 +187,8 @@ String crateApiInfoCoreVersion();
 MetricsDto crateApiLayoutDefaultMetrics();
 
 Future<ExportResult> crateApiMidiExportMidi({required DocumentHandle document });
+
+Future<MusicXmlExportResult> crateApiMusicxmlExportMusicxml({required DocumentHandle document });
 
 Future<ImportResult> crateApiMidiImportMidi({required List<int> bytes });
 
@@ -262,6 +283,31 @@ sse_encode_u_32(voice, serializer);
         );
         
 
+@override bool crateApiDocumentDocumentHandleBeginSession({required String dir })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleBeginSessionConstMeta,
+            argValues: [dir],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleBeginSessionConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_begin_session",
+            argNames: ["dir"],
+        );
+        
+
 @override ChordResultDto crateApiDocumentDocumentHandleChordVoicings({required DocumentHandle that , required PlatformInt64 track , required String symbol , required int max })  { return handler.executeSync(SyncTask(
             callFfi: () {
               
@@ -269,7 +315,7 @@ sse_encode_u_32(voice, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_String(symbol, serializer);
 sse_encode_u_32(max, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
             
             },
             codec: 
@@ -290,11 +336,42 @@ sse_encode_u_32(max, serializer);
         );
         
 
+@override List<ClipBeatDto> crateApiDocumentDocumentHandleCopyBeats({required DocumentHandle that , required PlatformInt64 track , required int voice , required int fromBar , required int fromIndex , required int toBar , required int toIndex })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_i_64(track, serializer);
+sse_encode_u_32(voice, serializer);
+sse_encode_u_32(fromBar, serializer);
+sse_encode_u_32(fromIndex, serializer);
+sse_encode_u_32(toBar, serializer);
+sse_encode_u_32(toIndex, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_list_clip_beat_dto,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleCopyBeatsConstMeta,
+            argValues: [that, track, voice, fromBar, fromIndex, toBar, toIndex],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleCopyBeatsConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_copy_beats",
+            argNames: ["that", "track", "voice", "fromBar", "fromIndex", "toBar", "toIndex"],
+        );
+        
+
 @override DocumentHandle crateApiDocumentDocumentHandleCreate({required int bars })  { return handler.executeSync(SyncTask(
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_u_32(bars, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
             
             },
             codec: 
@@ -315,12 +392,37 @@ sse_encode_u_32(max, serializer);
         );
         
 
+@override void crateApiDocumentDocumentHandleDiscardAutosaves({required DocumentHandle that })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleDiscardAutosavesConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleDiscardAutosavesConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_discard_autosaves",
+            argNames: ["that"],
+        );
+        
+
 @override void crateApiDocumentDocumentHandleDiscardRecovery({required String dir , required String projectId })  { return handler.executeSync(SyncTask(
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
 sse_encode_String(projectId, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
             
             },
             codec: 
@@ -341,6 +443,31 @@ sse_encode_String(projectId, serializer);
         );
         
 
+@override void crateApiDocumentDocumentHandleEndSession({required String dir })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleEndSessionConstMeta,
+            argValues: [dir],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleEndSessionConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_end_session",
+            argNames: ["dir"],
+        );
+        
+
 @override Future<OutcomeDto> crateApiDocumentDocumentHandleExecute({required DocumentHandle that , required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
@@ -348,7 +475,7 @@ sse_encode_String(projectId, serializer);
 sse_encode_box_autoadd_command_dto(command, serializer);
 sse_encode_opt_box_autoadd_i_64(coalesceKey, serializer);
 sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
             
             },
             codec: 
@@ -373,7 +500,7 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
             
             },
             codec: 
@@ -394,11 +521,37 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
         );
         
 
+@override List<RecoveryEntryDto> crateApiDocumentDocumentHandleOfferedRecoveryEntries({required String dir , required bool unclean })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
+sse_encode_bool(unclean, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_list_recovery_entry_dto,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleOfferedRecoveryEntriesConstMeta,
+            argValues: [dir, unclean],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleOfferedRecoveryEntriesConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_offered_recovery_entries",
+            argNames: ["dir", "unclean"],
+        );
+        
+
 @override Future<DocumentHandle> crateApiDocumentDocumentHandleOpen({required String path })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(path, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
             
             },
             codec: 
@@ -424,7 +577,7 @@ sse_encode_opt_box_autoadd_i_64(expectedRevision, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(dir, serializer);
 sse_encode_String(projectId, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
             
             },
             codec: 
@@ -449,7 +602,7 @@ sse_encode_String(projectId, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
             
             },
             codec: 
@@ -474,7 +627,7 @@ sse_encode_String(projectId, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
             
             },
             codec: 
@@ -499,7 +652,7 @@ sse_encode_String(projectId, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
             
             },
             codec: 
@@ -525,7 +678,7 @@ sse_encode_String(projectId, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_String(path, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
             
             },
             codec: 
@@ -546,6 +699,62 @@ sse_encode_String(path, serializer);
         );
         
 
+@override ScoreOutlineDto crateApiDocumentDocumentHandleScoreOutline({required DocumentHandle that , required Int64List tracks , required MetricsDto metrics })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_list_prim_i_64_strict(tracks, serializer);
+sse_encode_box_autoadd_metrics_dto(metrics, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_score_outline_dto,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleScoreOutlineConstMeta,
+            argValues: [that, tracks, metrics],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleScoreOutlineConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_score_outline",
+            argNames: ["that", "tracks", "metrics"],
+        );
+        
+
+@override List<ScoreSystemDto> crateApiDocumentDocumentHandleScoreSystems({required DocumentHandle that , required Int64List tracks , required MetricsDto metrics , required int first , required int count })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
+sse_encode_list_prim_i_64_strict(tracks, serializer);
+sse_encode_box_autoadd_metrics_dto(metrics, serializer);
+sse_encode_u_32(first, serializer);
+sse_encode_u_32(count, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_list_score_system_dto,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiDocumentDocumentHandleScoreSystemsConstMeta,
+            argValues: [that, tracks, metrics, first, count],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiDocumentDocumentHandleScoreSystemsConstMeta => const TaskConstMeta(
+            debugName: "DocumentHandle_score_systems",
+            argNames: ["that", "tracks", "metrics", "first", "count"],
+        );
+        
+
 @override Stream<EventDto> crateApiDocumentDocumentHandleSubscribeEvents({required DocumentHandle that })  { 
             final sink = RustStreamSink<EventDto>();
             unawaited(handler.executeNormal(NormalTask(
@@ -553,7 +762,7 @@ sse_encode_String(path, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_StreamSink_event_dto_Sse(sink, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
             
             },
             codec: 
@@ -580,7 +789,7 @@ sse_encode_StreamSink_event_dto_Sse(sink, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22)!;
             
             },
             codec: 
@@ -607,7 +816,7 @@ sse_encode_StreamSink_event_dto_Sse(sink, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_box_autoadd_metrics_dto(metrics, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23)!;
             
             },
             codec: 
@@ -632,7 +841,7 @@ sse_encode_box_autoadd_metrics_dto(metrics, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24, port: port_);
             
             },
             codec: 
@@ -657,7 +866,7 @@ sse_encode_box_autoadd_metrics_dto(metrics, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25)!;
             
             },
             codec: 
@@ -684,7 +893,7 @@ sse_encode_box_autoadd_metrics_dto(metrics, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_u_32(bar, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26)!;
             
             },
             codec: 
@@ -710,7 +919,7 @@ sse_encode_u_32(bar, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(that, serializer);
 sse_encode_String(dir, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27, port: port_);
             
             },
             codec: 
@@ -735,7 +944,7 @@ sse_encode_String(dir, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28)!;
             
             },
             codec: 
@@ -762,7 +971,7 @@ sse_encode_String(dir, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_opt_box_autoadd_u_32(fromMasterBar, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29, port: port_);
             
             },
             codec: 
@@ -787,7 +996,7 @@ sse_encode_opt_box_autoadd_u_32(fromMasterBar, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30)!;
             
             },
             codec: 
@@ -815,7 +1024,7 @@ sse_encode_opt_box_autoadd_u_32(fromMasterBar, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_StreamSink_position_dto_Sse(sink, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31, port: port_);
             
             },
             codec: 
@@ -843,7 +1052,7 @@ sse_encode_StreamSink_position_dto_Sse(sink, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32, port: port_);
             
             },
             codec: 
@@ -870,7 +1079,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(tick, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33, port: port_);
             
             },
             codec: 
@@ -898,7 +1107,7 @@ sse_encode_i_64(tick, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(track, serializer);
 sse_encode_bool(muted, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34, port: port_);
             
             },
             codec: 
@@ -919,13 +1128,41 @@ sse_encode_bool(muted, serializer);
         );
         
 
+@override Future<OutcomeDto> crateApiEngineEngineHandleSetSoloed({required EngineHandle that , required DocumentHandle document , required PlatformInt64 track , required bool soloed })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
+sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+sse_encode_i_64(track, serializer);
+sse_encode_bool(soloed, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_outcome_dto,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiEngineEngineHandleSetSoloedConstMeta,
+            argValues: [that, document, track, soloed],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiEngineEngineHandleSetSoloedConstMeta => const TaskConstMeta(
+            debugName: "EngineHandle_set_soloed",
+            argNames: ["that", "document", "track", "soloed"],
+        );
+        
+
 @override Future<OutcomeDto> crateApiEngineEngineHandleSetTempoFactor({required EngineHandle that , required DocumentHandle document , required int hundredths })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_u_16(hundredths, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36, port: port_);
             
             },
             codec: 
@@ -946,11 +1183,40 @@ sse_encode_u_16(hundredths, serializer);
         );
         
 
+@override Future<OutcomeDto> crateApiEngineEngineHandleSetTrackMix({required EngineHandle that , required DocumentHandle document , required PlatformInt64 track , required int volume , required int pan })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
+sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+sse_encode_i_64(track, serializer);
+sse_encode_i_32(volume, serializer);
+sse_encode_i_32(pan, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_outcome_dto,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiEngineEngineHandleSetTrackMixConstMeta,
+            argValues: [that, document, track, volume, pan],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiEngineEngineHandleSetTrackMixConstMeta => const TaskConstMeta(
+            debugName: "EngineHandle_set_track_mix",
+            argNames: ["that", "document", "track", "volume", "pan"],
+        );
+        
+
 @override Future<EngineHandle> crateApiEngineEngineHandleStart({String? soundfontPath })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_opt_String(soundfontPath, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38, port: port_);
             
             },
             codec: 
@@ -976,7 +1242,7 @@ sse_encode_u_16(hundredths, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39, port: port_);
             
             },
             codec: 
@@ -1001,7 +1267,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40)!;
             
             },
             codec: 
@@ -1026,7 +1292,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 41)!;
             
             },
             codec: 
@@ -1052,7 +1318,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
 sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 42)!;
             
             },
             codec: 
@@ -1078,7 +1344,7 @@ sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueI
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
 sse_encode_import_report_dto(report, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 43)!;
             
             },
             codec: 
@@ -1103,7 +1369,7 @@ sse_encode_import_report_dto(report, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 44)!;
             
             },
             codec: 
@@ -1130,7 +1396,7 @@ sse_encode_import_report_dto(report, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(track, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 45)!;
             
             },
             codec: 
@@ -1155,7 +1421,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 46, port: port_);
             
             },
             codec: 
@@ -1180,7 +1446,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 47)!;
             
             },
             codec: 
@@ -1205,7 +1471,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 48)!;
             
             },
             codec: 
@@ -1230,7 +1496,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 49)!;
             
             },
             codec: 
@@ -1255,7 +1521,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 41, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 50, port: port_);
             
             },
             codec: 
@@ -1276,11 +1542,36 @@ sse_encode_i_64(track, serializer);
         );
         
 
+@override Future<MusicXmlExportResult> crateApiMusicxmlExportMusicxml({required DocumentHandle document })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 51, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_music_xml_export_result,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiMusicxmlExportMusicxmlConstMeta,
+            argValues: [document],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiMusicxmlExportMusicxmlConstMeta => const TaskConstMeta(
+            debugName: "export_musicxml",
+            argNames: ["document"],
+        );
+        
+
 @override Future<ImportResult> crateApiMidiImportMidi({required List<int> bytes })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_list_prim_u_8_loose(bytes, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 42, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 52, port: port_);
             
             },
             codec: 
@@ -1305,7 +1596,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 43, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 53, port: port_);
             
             },
             codec: 
@@ -1464,6 +1755,21 @@ final arr = raw as List<dynamic>;
 tones: dco_decode_list_String(arr[1]),
 voicings: dco_decode_list_voicing_dto(arr[2]),); }
 
+@protected ClipBeatDto dco_decode_clip_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return ClipBeatDto(duration: dco_decode_duration_dto(arr[0]),
+notes: dco_decode_list_clip_note_dto(arr[1]),); }
+
+@protected ClipNoteDto dco_decode_clip_note_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+                return ClipNoteDto(string: dco_decode_u_8(arr[0]),
+fret: dco_decode_u_8(arr[1]),
+tie: dco_decode_bool(arr[2]),
+letRing: dco_decode_bool(arr[3]),
+dead: dco_decode_bool(arr[4]),); }
+
 @protected CommandDto dco_decode_command_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 switch (raw[0]) {
                 case 0: return CommandDto_InsertMasterBars(at: dco_decode_u_32(raw[1]),count: dco_decode_u_32(raw[2]),);
@@ -1487,6 +1793,8 @@ case 17: return CommandDto_RenameTrack(track: dco_decode_i_64(raw[1]),name: dco_
 case 18: return CommandDto_SetInstrument(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),);
 case 19: return CommandDto_MoveTrack(track: dco_decode_i_64(raw[1]),to: dco_decode_u_32(raw[2]),);
 case 20: return CommandDto_Retune(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),keepPitches: dco_decode_bool(raw[3]),);
+case 21: return CommandDto_PasteBeats(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),index: dco_decode_u_32(raw[4]),beats: dco_decode_list_clip_beat_dto(raw[5]),);
+case 22: return CommandDto_RemoveBeats(track: dco_decode_i_64(raw[1]),voice: dco_decode_u_32(raw[2]),fromBar: dco_decode_u_32(raw[3]),fromIndex: dco_decode_u_32(raw[4]),toBar: dco_decode_u_32(raw[5]),toIndex: dco_decode_u_32(raw[6]),);
                 default: throw Exception("unreachable");
             } }
 
@@ -1501,16 +1809,17 @@ kind: dco_decode_String(arr[4]),); }
 
 @protected DocumentSummaryDto dco_decode_document_summary_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
+                if (arr.length != 10) throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
                 return DocumentSummaryDto(revision: dco_decode_i_64(arr[0]),
 dirty: dco_decode_bool(arr[1]),
-canUndo: dco_decode_bool(arr[2]),
-canRedo: dco_decode_bool(arr[3]),
-location: dco_decode_opt_String(arr[4]),
-unknownContent: dco_decode_list_String(arr[5]),
-tracks: dco_decode_list_track_summary_dto(arr[6]),
-masterBars: dco_decode_list_master_bar_dto(arr[7]),
-diagnostics: dco_decode_list_diagnostic_dto(arr[8]),); }
+unsavedWork: dco_decode_bool(arr[2]),
+canUndo: dco_decode_bool(arr[3]),
+canRedo: dco_decode_bool(arr[4]),
+location: dco_decode_opt_String(arr[5]),
+unknownContent: dco_decode_list_String(arr[6]),
+tracks: dco_decode_list_track_summary_dto(arr[7]),
+masterBars: dco_decode_list_master_bar_dto(arr[8]),
+diagnostics: dco_decode_list_diagnostic_dto(arr[9]),); }
 
 @protected DurationDto dco_decode_duration_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -1544,8 +1853,10 @@ case 11: return EventKindDto_DirtyChanged(dirty: dco_decode_bool(raw[1]),);
 case 12: return EventKindDto_UndoAvailabilityChanged(canUndo: dco_decode_bool(raw[1]),canRedo: dco_decode_bool(raw[2]),);
 case 13: return EventKindDto_HistoryApplied();
 case 14: return EventKindDto_PlaybackStateChanged(state: dco_decode_playback_state_dto(raw[1]),);
-case 15: return EventKindDto_MuteChanged(track: dco_decode_i_64(raw[1]),muted: dco_decode_bool(raw[2]),);
-case 16: return EventKindDto_TempoFactorChanged(hundredths: dco_decode_u_16(raw[1]),);
+case 15: return EventKindDto_SoloChanged(track: dco_decode_i_64(raw[1]),soloed: dco_decode_bool(raw[2]),);
+case 16: return EventKindDto_MixChanged(track: dco_decode_i_64(raw[1]),volume: dco_decode_u_8(raw[2]),pan: dco_decode_i_16(raw[3]),);
+case 17: return EventKindDto_MuteChanged(track: dco_decode_i_64(raw[1]),muted: dco_decode_bool(raw[2]),);
+case 18: return EventKindDto_TempoFactorChanged(hundredths: dco_decode_u_16(raw[1]),);
                 default: throw Exception("unreachable");
             } }
 
@@ -1638,6 +1949,12 @@ return (raw as List<dynamic>).map(dco_decode_bar_layout_dto).toList(); }
 @protected List<BeatDto> dco_decode_list_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_beat_dto).toList(); }
 
+@protected List<ClipBeatDto> dco_decode_list_clip_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_clip_beat_dto).toList(); }
+
+@protected List<ClipNoteDto> dco_decode_list_clip_note_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_clip_note_dto).toList(); }
+
 @protected List<DiagnosticDto> dco_decode_list_diagnostic_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_diagnostic_dto).toList(); }
 
@@ -1655,6 +1972,9 @@ return (raw as List<dynamic>).map(dco_decode_master_bar_dto).toList(); }
 
 @protected List<NoteDto> dco_decode_list_note_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_note_dto).toList(); }
+
+@protected List<OutlineSystemDto> dco_decode_list_outline_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_outline_system_dto).toList(); }
 
 @protected List<PlayedBarDto> dco_decode_list_played_bar_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_played_bar_dto).toList(); }
@@ -1676,6 +1996,12 @@ return raw as Uint8List; }
 
 @protected List<RecoveryEntryDto> dco_decode_list_recovery_entry_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_recovery_entry_dto).toList(); }
+
+@protected List<ScoreSystemDto> dco_decode_list_score_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_score_system_dto).toList(); }
+
+@protected List<StaveDto> dco_decode_list_stave_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_stave_dto).toList(); }
 
 @protected List<SystemDto> dco_decode_list_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_system_dto).toList(); }
@@ -1718,6 +2044,24 @@ belowStaff: dco_decode_f_32(arr[14]),
 systemGap: dco_decode_f_32(arr[15]),
 stemLength: dco_decode_f_32(arr[16]),); }
 
+@protected MusicXmlExportResult dco_decode_music_xml_export_result(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return MusicXmlExportResult(bytes: dco_decode_list_prim_u_8_strict(arr[0]),
+report: dco_decode_music_xml_report_dto(arr[1]),); }
+
+@protected MusicXmlReportDto dco_decode_music_xml_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 8) throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+                return MusicXmlReportDto(parts: dco_decode_u_32(arr[0]),
+measures: dco_decode_u_32(arr[1]),
+notes: dco_decode_u_32(arr[2]),
+paddedVoices: dco_decode_u_32(arr[3]),
+overfullMeasures: dco_decode_u_32(arr[4]),
+tupletsWithoutBracket: dco_decode_u_32(arr[5]),
+tempoRounded: dco_decode_u_32(arr[6]),
+charactersRemoved: dco_decode_u_32(arr[7]),); }
+
 @protected NoteDto dco_decode_note_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
                 if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
@@ -1749,6 +2093,15 @@ final arr = raw as List<dynamic>;
                 return OutcomeDto(revision: dco_decode_i_64(arr[0]),
 events: dco_decode_list_event_dto(arr[1]),); }
 
+@protected OutlineSystemDto dco_decode_outline_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+                return OutlineSystemDto(index: dco_decode_u_32(arr[0]),
+y: dco_decode_f_32(arr[1]),
+height: dco_decode_f_32(arr[2]),
+firstBar: dco_decode_u_32(arr[3]),
+endBar: dco_decode_u_32(arr[4]),); }
+
 @protected PlaybackStateDto dco_decode_playback_state_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return PlaybackStateDto.values[raw as int]; }
 
@@ -1774,6 +2127,30 @@ final arr = raw as List<dynamic>;
 path: dco_decode_String(arr[1]),
 source: dco_decode_opt_String(arr[2]),
 timestamp: dco_decode_i_64(arr[3]),); }
+
+@protected ScoreOutlineDto dco_decode_score_outline_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return ScoreOutlineDto(revision: dco_decode_i_64(arr[0]),
+width: dco_decode_f_32(arr[1]),
+height: dco_decode_f_32(arr[2]),
+systems: dco_decode_list_outline_system_dto(arr[3]),); }
+
+@protected ScoreSystemDto dco_decode_score_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return ScoreSystemDto(index: dco_decode_u_32(arr[0]),
+y: dco_decode_f_32(arr[1]),
+height: dco_decode_f_32(arr[2]),
+staves: dco_decode_list_stave_dto(arr[3]),); }
+
+@protected StaveDto dco_decode_stave_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+                return StaveDto(track: dco_decode_i_64(arr[0]),
+strings: dco_decode_u_8(arr[1]),
+top: dco_decode_f_32(arr[2]),
+system: dco_decode_system_dto(arr[3]),); }
 
 @protected SystemDto dco_decode_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -1964,6 +2341,19 @@ var var_tones = sse_decode_list_String(deserializer);
 var var_voicings = sse_decode_list_voicing_dto(deserializer);
 return ChordResultDto(symbol: var_symbol, tones: var_tones, voicings: var_voicings); }
 
+@protected ClipBeatDto sse_decode_clip_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_duration = sse_decode_duration_dto(deserializer);
+var var_notes = sse_decode_list_clip_note_dto(deserializer);
+return ClipBeatDto(duration: var_duration, notes: var_notes); }
+
+@protected ClipNoteDto sse_decode_clip_note_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_string = sse_decode_u_8(deserializer);
+var var_fret = sse_decode_u_8(deserializer);
+var var_tie = sse_decode_bool(deserializer);
+var var_letRing = sse_decode_bool(deserializer);
+var var_dead = sse_decode_bool(deserializer);
+return ClipNoteDto(string: var_string, fret: var_fret, tie: var_tie, letRing: var_letRing, dead: var_dead); }
+
 @protected CommandDto sse_decode_command_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
             var tag_ = sse_decode_i_32(deserializer);
@@ -2021,7 +2411,18 @@ var var_to = sse_decode_u_32(deserializer);
 return CommandDto_MoveTrack(track: var_track, to: var_to);case 20: var var_track = sse_decode_i_64(deserializer);
 var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
 var var_keepPitches = sse_decode_bool(deserializer);
-return CommandDto_Retune(track: var_track, instrument: var_instrument, keepPitches: var_keepPitches); default: throw UnimplementedError(''); }
+return CommandDto_Retune(track: var_track, instrument: var_instrument, keepPitches: var_keepPitches);case 21: var var_track = sse_decode_i_64(deserializer);
+var var_bar = sse_decode_u_32(deserializer);
+var var_voice = sse_decode_u_32(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+var var_beats = sse_decode_list_clip_beat_dto(deserializer);
+return CommandDto_PasteBeats(track: var_track, bar: var_bar, voice: var_voice, index: var_index, beats: var_beats);case 22: var var_track = sse_decode_i_64(deserializer);
+var var_voice = sse_decode_u_32(deserializer);
+var var_fromBar = sse_decode_u_32(deserializer);
+var var_fromIndex = sse_decode_u_32(deserializer);
+var var_toBar = sse_decode_u_32(deserializer);
+var var_toIndex = sse_decode_u_32(deserializer);
+return CommandDto_RemoveBeats(track: var_track, voice: var_voice, fromBar: var_fromBar, fromIndex: var_fromIndex, toBar: var_toBar, toIndex: var_toIndex); default: throw UnimplementedError(''); }
              }
 
 @protected DiagnosticDto sse_decode_diagnostic_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2035,6 +2436,7 @@ return DiagnosticDto(rule: var_rule, track: var_track, bar: var_bar, voice: var_
 @protected DocumentSummaryDto sse_decode_document_summary_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_revision = sse_decode_i_64(deserializer);
 var var_dirty = sse_decode_bool(deserializer);
+var var_unsavedWork = sse_decode_bool(deserializer);
 var var_canUndo = sse_decode_bool(deserializer);
 var var_canRedo = sse_decode_bool(deserializer);
 var var_location = sse_decode_opt_String(deserializer);
@@ -2042,7 +2444,7 @@ var var_unknownContent = sse_decode_list_String(deserializer);
 var var_tracks = sse_decode_list_track_summary_dto(deserializer);
 var var_masterBars = sse_decode_list_master_bar_dto(deserializer);
 var var_diagnostics = sse_decode_list_diagnostic_dto(deserializer);
-return DocumentSummaryDto(revision: var_revision, dirty: var_dirty, canUndo: var_canUndo, canRedo: var_canRedo, location: var_location, unknownContent: var_unknownContent, tracks: var_tracks, masterBars: var_masterBars, diagnostics: var_diagnostics); }
+return DocumentSummaryDto(revision: var_revision, dirty: var_dirty, unsavedWork: var_unsavedWork, canUndo: var_canUndo, canRedo: var_canRedo, location: var_location, unknownContent: var_unknownContent, tracks: var_tracks, masterBars: var_masterBars, diagnostics: var_diagnostics); }
 
 @protected DurationDto sse_decode_duration_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_base = sse_decode_u_8(deserializer);
@@ -2079,8 +2481,13 @@ return EventKindDto_DirtyChanged(dirty: var_dirty);case 12: var var_canUndo = ss
 var var_canRedo = sse_decode_bool(deserializer);
 return EventKindDto_UndoAvailabilityChanged(canUndo: var_canUndo, canRedo: var_canRedo);case 13: return EventKindDto_HistoryApplied();case 14: var var_state = sse_decode_playback_state_dto(deserializer);
 return EventKindDto_PlaybackStateChanged(state: var_state);case 15: var var_track = sse_decode_i_64(deserializer);
+var var_soloed = sse_decode_bool(deserializer);
+return EventKindDto_SoloChanged(track: var_track, soloed: var_soloed);case 16: var var_track = sse_decode_i_64(deserializer);
+var var_volume = sse_decode_u_8(deserializer);
+var var_pan = sse_decode_i_16(deserializer);
+return EventKindDto_MixChanged(track: var_track, volume: var_volume, pan: var_pan);case 17: var var_track = sse_decode_i_64(deserializer);
 var var_muted = sse_decode_bool(deserializer);
-return EventKindDto_MuteChanged(track: var_track, muted: var_muted);case 16: var var_hundredths = sse_decode_u_16(deserializer);
+return EventKindDto_MuteChanged(track: var_track, muted: var_muted);case 18: var var_hundredths = sse_decode_u_16(deserializer);
 return EventKindDto_TempoFactorChanged(hundredths: var_hundredths); default: throw UnimplementedError(''); }
              }
 
@@ -2186,6 +2593,22 @@ return InstrumentDto(tuning: var_tuning, fretCount: var_fretCount, capo: var_cap
         return ans_;
          }
 
+@protected List<ClipBeatDto> sse_decode_list_clip_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <ClipBeatDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_clip_beat_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<ClipNoteDto> sse_decode_list_clip_note_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <ClipNoteDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_clip_note_dto(deserializer)); }
+        return ans_;
+         }
+
 @protected List<DiagnosticDto> sse_decode_list_diagnostic_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
         var len_ = sse_decode_i_32(deserializer);
@@ -2234,6 +2657,14 @@ return InstrumentDto(tuning: var_tuning, fretCount: var_fretCount, capo: var_cap
         return ans_;
          }
 
+@protected List<OutlineSystemDto> sse_decode_list_outline_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <OutlineSystemDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_outline_system_dto(deserializer)); }
+        return ans_;
+         }
+
 @protected List<PlayedBarDto> sse_decode_list_played_bar_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
         var len_ = sse_decode_i_32(deserializer);
@@ -2267,6 +2698,22 @@ var len_ = sse_decode_i_32(deserializer);
         var len_ = sse_decode_i_32(deserializer);
         var ans_ = <RecoveryEntryDto>[];
         for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_recovery_entry_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<ScoreSystemDto> sse_decode_list_score_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <ScoreSystemDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_score_system_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<StaveDto> sse_decode_list_stave_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <StaveDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_stave_dto(deserializer)); }
         return ans_;
          }
 
@@ -2323,6 +2770,22 @@ var var_belowStaff = sse_decode_f_32(deserializer);
 var var_systemGap = sse_decode_f_32(deserializer);
 var var_stemLength = sse_decode_f_32(deserializer);
 return MetricsDto(width: var_width, marginLeft: var_marginLeft, marginRight: var_marginRight, stringSpacing: var_stringSpacing, digitWidth: var_digitWidth, glyphPadding: var_glyphPadding, minColumnWidth: var_minColumnWidth, durationSpacing: var_durationSpacing, barPadding: var_barPadding, emptyBarWidth: var_emptyBarWidth, headerWidth: var_headerWidth, timeSignatureWidth: var_timeSignatureWidth, repeatWidth: var_repeatWidth, aboveStaff: var_aboveStaff, belowStaff: var_belowStaff, systemGap: var_systemGap, stemLength: var_stemLength); }
+
+@protected MusicXmlExportResult sse_decode_music_xml_export_result(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_bytes = sse_decode_list_prim_u_8_strict(deserializer);
+var var_report = sse_decode_music_xml_report_dto(deserializer);
+return MusicXmlExportResult(bytes: var_bytes, report: var_report); }
+
+@protected MusicXmlReportDto sse_decode_music_xml_report_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_parts = sse_decode_u_32(deserializer);
+var var_measures = sse_decode_u_32(deserializer);
+var var_notes = sse_decode_u_32(deserializer);
+var var_paddedVoices = sse_decode_u_32(deserializer);
+var var_overfullMeasures = sse_decode_u_32(deserializer);
+var var_tupletsWithoutBracket = sse_decode_u_32(deserializer);
+var var_tempoRounded = sse_decode_u_32(deserializer);
+var var_charactersRemoved = sse_decode_u_32(deserializer);
+return MusicXmlReportDto(parts: var_parts, measures: var_measures, notes: var_notes, paddedVoices: var_paddedVoices, overfullMeasures: var_overfullMeasures, tupletsWithoutBracket: var_tupletsWithoutBracket, tempoRounded: var_tempoRounded, charactersRemoved: var_charactersRemoved); }
 
 @protected NoteDto sse_decode_note_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_id = sse_decode_i_64(deserializer);
@@ -2383,6 +2846,14 @@ var var_revision = sse_decode_i_64(deserializer);
 var var_events = sse_decode_list_event_dto(deserializer);
 return OutcomeDto(revision: var_revision, events: var_events); }
 
+@protected OutlineSystemDto sse_decode_outline_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_index = sse_decode_u_32(deserializer);
+var var_y = sse_decode_f_32(deserializer);
+var var_height = sse_decode_f_32(deserializer);
+var var_firstBar = sse_decode_u_32(deserializer);
+var var_endBar = sse_decode_u_32(deserializer);
+return OutlineSystemDto(index: var_index, y: var_y, height: var_height, firstBar: var_firstBar, endBar: var_endBar); }
+
 @protected PlaybackStateDto sse_decode_playback_state_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var inner = sse_decode_i_32(deserializer);
         return PlaybackStateDto.values[inner]; }
@@ -2406,6 +2877,27 @@ var var_path = sse_decode_String(deserializer);
 var var_source = sse_decode_opt_String(deserializer);
 var var_timestamp = sse_decode_i_64(deserializer);
 return RecoveryEntryDto(projectId: var_projectId, path: var_path, source: var_source, timestamp: var_timestamp); }
+
+@protected ScoreOutlineDto sse_decode_score_outline_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_revision = sse_decode_i_64(deserializer);
+var var_width = sse_decode_f_32(deserializer);
+var var_height = sse_decode_f_32(deserializer);
+var var_systems = sse_decode_list_outline_system_dto(deserializer);
+return ScoreOutlineDto(revision: var_revision, width: var_width, height: var_height, systems: var_systems); }
+
+@protected ScoreSystemDto sse_decode_score_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_index = sse_decode_u_32(deserializer);
+var var_y = sse_decode_f_32(deserializer);
+var var_height = sse_decode_f_32(deserializer);
+var var_staves = sse_decode_list_stave_dto(deserializer);
+return ScoreSystemDto(index: var_index, y: var_y, height: var_height, staves: var_staves); }
+
+@protected StaveDto sse_decode_stave_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_track = sse_decode_i_64(deserializer);
+var var_strings = sse_decode_u_8(deserializer);
+var var_top = sse_decode_f_32(deserializer);
+var var_system = sse_decode_system_dto(deserializer);
+return StaveDto(track: var_track, strings: var_strings, top: var_top, system: var_system); }
 
 @protected SystemDto sse_decode_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_index = sse_decode_u_32(deserializer);
@@ -2594,6 +3086,19 @@ sse_encode_list_String(self.tones, serializer);
 sse_encode_list_voicing_dto(self.voicings, serializer);
  }
 
+@protected void sse_encode_clip_beat_dto(ClipBeatDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_duration_dto(self.duration, serializer);
+sse_encode_list_clip_note_dto(self.notes, serializer);
+ }
+
+@protected void sse_encode_clip_note_dto(ClipNoteDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_8(self.string, serializer);
+sse_encode_u_8(self.fret, serializer);
+sse_encode_bool(self.tie, serializer);
+sse_encode_bool(self.letRing, serializer);
+sse_encode_bool(self.dead, serializer);
+ }
+
 @protected void sse_encode_command_dto(CommandDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 switch (self) { case CommandDto_InsertMasterBars(at: final at,count: final count): sse_encode_i_32(0, serializer); sse_encode_u_32(at, serializer);
 sse_encode_u_32(count, serializer);
@@ -2649,6 +3154,17 @@ sse_encode_u_32(to, serializer);
 case CommandDto_Retune(track: final track,instrument: final instrument,keepPitches: final keepPitches): sse_encode_i_32(20, serializer); sse_encode_i_64(track, serializer);
 sse_encode_box_autoadd_instrument_dto(instrument, serializer);
 sse_encode_bool(keepPitches, serializer);
+case CommandDto_PasteBeats(track: final track,bar: final bar,voice: final voice,index: final index,beats: final beats): sse_encode_i_32(21, serializer); sse_encode_i_64(track, serializer);
+sse_encode_u_32(bar, serializer);
+sse_encode_u_32(voice, serializer);
+sse_encode_u_32(index, serializer);
+sse_encode_list_clip_beat_dto(beats, serializer);
+case CommandDto_RemoveBeats(track: final track,voice: final voice,fromBar: final fromBar,fromIndex: final fromIndex,toBar: final toBar,toIndex: final toIndex): sse_encode_i_32(22, serializer); sse_encode_i_64(track, serializer);
+sse_encode_u_32(voice, serializer);
+sse_encode_u_32(fromBar, serializer);
+sse_encode_u_32(fromIndex, serializer);
+sse_encode_u_32(toBar, serializer);
+sse_encode_u_32(toIndex, serializer);
   } }
 
 @protected void sse_encode_diagnostic_dto(DiagnosticDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2662,6 +3178,7 @@ sse_encode_String(self.kind, serializer);
 @protected void sse_encode_document_summary_dto(DocumentSummaryDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self.revision, serializer);
 sse_encode_bool(self.dirty, serializer);
+sse_encode_bool(self.unsavedWork, serializer);
 sse_encode_bool(self.canUndo, serializer);
 sse_encode_bool(self.canRedo, serializer);
 sse_encode_opt_String(self.location, serializer);
@@ -2703,9 +3220,14 @@ case EventKindDto_DocumentSaved(): sse_encode_i_32(10, serializer); case EventKi
 case EventKindDto_UndoAvailabilityChanged(canUndo: final canUndo,canRedo: final canRedo): sse_encode_i_32(12, serializer); sse_encode_bool(canUndo, serializer);
 sse_encode_bool(canRedo, serializer);
 case EventKindDto_HistoryApplied(): sse_encode_i_32(13, serializer); case EventKindDto_PlaybackStateChanged(state: final state): sse_encode_i_32(14, serializer); sse_encode_playback_state_dto(state, serializer);
-case EventKindDto_MuteChanged(track: final track,muted: final muted): sse_encode_i_32(15, serializer); sse_encode_i_64(track, serializer);
+case EventKindDto_SoloChanged(track: final track,soloed: final soloed): sse_encode_i_32(15, serializer); sse_encode_i_64(track, serializer);
+sse_encode_bool(soloed, serializer);
+case EventKindDto_MixChanged(track: final track,volume: final volume,pan: final pan): sse_encode_i_32(16, serializer); sse_encode_i_64(track, serializer);
+sse_encode_u_8(volume, serializer);
+sse_encode_i_16(pan, serializer);
+case EventKindDto_MuteChanged(track: final track,muted: final muted): sse_encode_i_32(17, serializer); sse_encode_i_64(track, serializer);
 sse_encode_bool(muted, serializer);
-case EventKindDto_TempoFactorChanged(hundredths: final hundredths): sse_encode_i_32(16, serializer); sse_encode_u_16(hundredths, serializer);
+case EventKindDto_TempoFactorChanged(hundredths: final hundredths): sse_encode_i_32(18, serializer); sse_encode_u_16(hundredths, serializer);
   } }
 
 @protected void sse_encode_export_report_dto(ExportReportDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2795,6 +3317,14 @@ sse_encode_i_32(self.length, serializer);
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_beat_dto(item, serializer); } }
 
+@protected void sse_encode_list_clip_beat_dto(List<ClipBeatDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_clip_beat_dto(item, serializer); } }
+
+@protected void sse_encode_list_clip_note_dto(List<ClipNoteDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_clip_note_dto(item, serializer); } }
+
 @protected void sse_encode_list_diagnostic_dto(List<DiagnosticDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_diagnostic_dto(item, serializer); } }
@@ -2818,6 +3348,10 @@ sse_encode_i_32(self.length, serializer);
 @protected void sse_encode_list_note_dto(List<NoteDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_note_dto(item, serializer); } }
+
+@protected void sse_encode_list_outline_system_dto(List<OutlineSystemDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_outline_system_dto(item, serializer); } }
 
 @protected void sse_encode_list_played_bar_dto(List<PlayedBarDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
@@ -2846,6 +3380,14 @@ sse_encode_i_32(self.length, serializer);
 @protected void sse_encode_list_recovery_entry_dto(List<RecoveryEntryDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_recovery_entry_dto(item, serializer); } }
+
+@protected void sse_encode_list_score_system_dto(List<ScoreSystemDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_score_system_dto(item, serializer); } }
+
+@protected void sse_encode_list_stave_dto(List<StaveDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_stave_dto(item, serializer); } }
 
 @protected void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
@@ -2887,6 +3429,22 @@ sse_encode_f_32(self.aboveStaff, serializer);
 sse_encode_f_32(self.belowStaff, serializer);
 sse_encode_f_32(self.systemGap, serializer);
 sse_encode_f_32(self.stemLength, serializer);
+ }
+
+@protected void sse_encode_music_xml_export_result(MusicXmlExportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_prim_u_8_strict(self.bytes, serializer);
+sse_encode_music_xml_report_dto(self.report, serializer);
+ }
+
+@protected void sse_encode_music_xml_report_dto(MusicXmlReportDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.parts, serializer);
+sse_encode_u_32(self.measures, serializer);
+sse_encode_u_32(self.notes, serializer);
+sse_encode_u_32(self.paddedVoices, serializer);
+sse_encode_u_32(self.overfullMeasures, serializer);
+sse_encode_u_32(self.tupletsWithoutBracket, serializer);
+sse_encode_u_32(self.tempoRounded, serializer);
+sse_encode_u_32(self.charactersRemoved, serializer);
  }
 
 @protected void sse_encode_note_dto(NoteDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2943,6 +3501,14 @@ sse_encode_i_64(self.revision, serializer);
 sse_encode_list_event_dto(self.events, serializer);
  }
 
+@protected void sse_encode_outline_system_dto(OutlineSystemDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.index, serializer);
+sse_encode_f_32(self.y, serializer);
+sse_encode_f_32(self.height, serializer);
+sse_encode_u_32(self.firstBar, serializer);
+sse_encode_u_32(self.endBar, serializer);
+ }
+
 @protected void sse_encode_playback_state_dto(PlaybackStateDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.index, serializer); }
 
@@ -2964,6 +3530,27 @@ sse_encode_String(self.projectId, serializer);
 sse_encode_String(self.path, serializer);
 sse_encode_opt_String(self.source, serializer);
 sse_encode_i_64(self.timestamp, serializer);
+ }
+
+@protected void sse_encode_score_outline_dto(ScoreOutlineDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.revision, serializer);
+sse_encode_f_32(self.width, serializer);
+sse_encode_f_32(self.height, serializer);
+sse_encode_list_outline_system_dto(self.systems, serializer);
+ }
+
+@protected void sse_encode_score_system_dto(ScoreSystemDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.index, serializer);
+sse_encode_f_32(self.y, serializer);
+sse_encode_f_32(self.height, serializer);
+sse_encode_list_stave_dto(self.staves, serializer);
+ }
+
+@protected void sse_encode_stave_dto(StaveDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.track, serializer);
+sse_encode_u_8(self.strings, serializer);
+sse_encode_f_32(self.top, serializer);
+sse_encode_system_dto(self.system, serializer);
  }
 
 @protected void sse_encode_system_dto(SystemDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3067,6 +3654,17 @@ sse_encode_i_32(self.highestFret, serializer);
  ChordResultDto  chordVoicings({required PlatformInt64 track , required String symbol , required int max })=>RustLib.instance.api.crateApiDocumentDocumentHandleChordVoicings(that: this, track: track, symbol: symbol, max: max);
 
 
+/// Copies the beats of one voice from (`from_bar`, `from_index`) to (`to_bar`,
+/// `to_index`), both inclusive, possibly across bars, as plain values for the
+/// in-app clipboard (ADR-030). A query: nothing changes.
+ List<ClipBeatDto>  copyBeats({required PlatformInt64 track , required int voice , required int fromBar , required int fromIndex , required int toBar , required int toIndex })=>RustLib.instance.api.crateApiDocumentDocumentHandleCopyBeats(that: this, track: track, voice: voice, fromBar: fromBar, fromIndex: fromIndex, toBar: toBar, toIndex: toIndex);
+
+
+/// Deletes this document's own autosaves (the user chose "Don't save" when closing,
+/// ADR-030 section 3). No-op if it never autosaved.
+ void  discardAutosaves()=>RustLib.instance.api.crateApiDocumentDocumentHandleDiscardAutosaves(that: this, );
+
+
 /// Applies one command. On error the document is unchanged.
  Future<OutcomeDto>  execute({required CommandDto command , PlatformInt64? coalesceKey , PlatformInt64? expectedRevision })=>RustLib.instance.api.crateApiDocumentDocumentHandleExecute(that: this, command: command, coalesceKey: coalesceKey, expectedRevision: expectedRevision);
 
@@ -3085,6 +3683,16 @@ sse_encode_i_32(self.highestFret, serializer);
 
 
  Future<OutcomeDto>  saveAs({required String path })=>RustLib.instance.api.crateApiDocumentDocumentHandleSaveAs(that: this, path: path);
+
+
+/// Line breaking of the shown `tracks` at the current revision (ADR-031). Kept by
+/// the core per (revision, tracks, metrics), so the systems fetched next match it.
+ ScoreOutlineDto  scoreOutline({required Int64List tracks , required MetricsDto metrics })=>RustLib.instance.api.crateApiDocumentDocumentHandleScoreOutline(that: this, tracks: tracks, metrics: metrics);
+
+
+/// The content of `count` systems starting at `first`, for the current outline of
+/// the same tracks and metrics. Only these systems are laid out.
+ List<ScoreSystemDto>  scoreSystems({required Int64List tracks , required MetricsDto metrics , required int first , required int count })=>RustLib.instance.api.crateApiDocumentDocumentHandleScoreSystems(that: this, tracks: tracks, metrics: metrics, first: first, count: count);
 
 
  Stream<EventDto>  subscribeEvents()=>RustLib.instance.api.crateApiDocumentDocumentHandleSubscribeEvents(that: this, );
@@ -3164,8 +3772,18 @@ sse_encode_i_32(self.highestFret, serializer);
  Future<OutcomeDto>  setMuted({required DocumentHandle document , required PlatformInt64 track , required bool muted })=>RustLib.instance.api.crateApiEngineEngineHandleSetMuted(that: this, document: document, track: track, muted: muted);
 
 
+/// Solo or unsolo a track (ADR-032). While any track is soloed the others are muted.
+ Future<OutcomeDto>  setSoloed({required DocumentHandle document , required PlatformInt64 track , required bool soloed })=>RustLib.instance.api.crateApiEngineEngineHandleSetSoloed(that: this, document: document, track: track, soloed: soloed);
+
+
 /// Set the user tempo factor in hundredths (100 = 1.0x), 25..=200 in steps of 5 (Q6).
  Future<OutcomeDto>  setTempoFactor({required DocumentHandle document , required int hundredths })=>RustLib.instance.api.crateApiEngineEngineHandleSetTempoFactor(that: this, document: document, hundredths: hundredths);
+
+
+/// Set a track's volume (0..=127, default 100) and pan (-63..=63, default 0)
+/// (ADR-032). Values outside the ranges are rejected with a `transport` error and
+/// change nothing.
+ Future<OutcomeDto>  setTrackMix({required DocumentHandle document , required PlatformInt64 track , required int volume , required int pan })=>RustLib.instance.api.crateApiEngineEngineHandleSetTrackMix(that: this, document: document, track: track, volume: volume, pan: pan);
 
 
  Future<OutcomeDto>  stop({required DocumentHandle document })=>RustLib.instance.api.crateApiEngineEngineHandleStop(that: this, document: document);

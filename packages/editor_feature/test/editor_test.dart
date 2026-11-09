@@ -113,7 +113,10 @@ void main() {
           ),
         );
     await tester.pump();
-    await tester.tap(find.text('Bass'));
+    // The track list entry (the stave label shows the name too, ADR-031).
+    await tester.tap(
+      find.descendant(of: find.byType(TrackList), matching: find.text('Bass')),
+    );
     await tester.pump();
     final after = c.read(editorProvider);
     expect(after.activeTrack, after.summary.tracks[1].id);

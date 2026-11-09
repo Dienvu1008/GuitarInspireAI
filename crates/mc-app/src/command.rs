@@ -3,6 +3,7 @@
 
 use mc_guitar::RetuneMode;
 use mc_score::{BeatId, MasterBar, NoteEffects, NoteId, TrackId};
+use mc_theory::NoteValue;
 
 /// Opaque id chosen by the caller; copied into every event as the correlation id.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -70,6 +71,34 @@ impl DurationSpec {
             tuplet: None,
         }
     }
+}
+
+impl DurationSpec {
+    /// Plain values of a written duration (the reverse of the handler conversion).
+    pub fn from_value(v: NoteValue) -> Self {
+        DurationSpec {
+            base: v.base().exponent(),
+            dots: v.dots(),
+            tuplet: v.tuplet().map(|t| (t.actual(), t.normal())),
+        }
+    }
+}
+
+/// A note of a clipboard fragment as plain values, no ids (ADR-030). Strings and frets,
+/// not pitches.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ClipNote {
+    pub string: u8,
+    pub fret: u8,
+    pub tie: bool,
+    pub effects: NoteEffects,
+}
+
+/// A beat of a clipboard fragment: its written duration and its notes, no ids.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ClipBeat {
+    pub duration: DurationSpec,
+    pub notes: Vec<ClipNote>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -151,6 +180,23 @@ pub enum ScoreCommand {
         track: TrackId,
         bars: (usize, usize),
         delta: i16,
+    },
+    /// Inserts a copied run of beats at `index` of a voice (ADR-030). All or nothing;
+    /// one undo step. Never creates bars.
+    PasteBeats {
+        track: TrackId,
+        bar: usize,
+        voice: usize,
+        index: usize,
+        beats: Vec<ClipBeat>,
+    },
+    /// Removes the beats of one voice from `from` to `to`, both `(bar, index)` and
+    /// inclusive, possibly across bars (ADR-030 cut). All or nothing; one undo step.
+    RemoveBeats {
+        track: TrackId,
+        voice: usize,
+        from: (usize, usize),
+        to: (usize, usize),
     },
 }
 

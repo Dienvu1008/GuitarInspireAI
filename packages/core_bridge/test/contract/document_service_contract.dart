@@ -38,6 +38,15 @@ void documentServiceContract(
       return BeatAddressDto(track: track, bar: bar, voice: 0, beat: id);
     }
 
+    test('ADR-030: unsaved work ignores an untouched new document', () async {
+      expect(d.summary().unsavedWork, isFalse);
+      await insertBeat(0);
+      expect(d.summary().unsavedWork, isTrue);
+      await d.undo();
+      expect(d.summary().unsavedWork, isFalse);
+      expect(d.summary().dirty, isTrue, reason: 'still not on disk');
+    });
+
     test('a new document is clean, with one track and the requested bars', () {
       final s = d.summary();
       expect(s.revision, 0);
@@ -170,6 +179,173 @@ void documentServiceContract(
         }
         expect(regions, 6);
         expect(l.systems.expand((s) => s.bars).map((b) => b.bar), [0, 1]);
+      },
+    );
+
+    test(
+      'ADR-030: copy and paste a run across bars is one undo step',
+      () async {
+        final a = await insertBeat(0);
+        await d.execute(CommandDto.setNote(beat: a, string: 1, fret: 5));
+        final b = await insertBeat(1);
+        await d.execute(CommandDto.setNote(beat: b, string: 6, fret: 3));
+
+        final clip = d.copyBeats(
+          track,
+          0,
+          fromBar: 0,
+          fromIndex: 0,
+          toBar: 1,
+          toIndex: 0,
+        );
+        expect(clip.map((c) => c.notes.single.fret), [5, 3]);
+
+        final rev = d.summary().revision;
+        await d.execute(
+          CommandDto.pasteBeats(
+            track: track,
+            bar: 1,
+            voice: 0,
+            index: 1,
+            beats: clip,
+          ),
+        );
+        expect(d.summary().revision, rev + 1);
+        expect(
+          d
+              .beats(track, 1, 0)
+              .map((x) => (x.notes.single.string, x.notes.single.fret)),
+          [(6, 3), (1, 5), (6, 3)],
+        );
+        await d.undo();
+        expect(d.beats(track, 1, 0), hasLength(1));
+      },
+    );
+
+    test('ADR-030: cut removes the run as one undo step', () async {
+      await insertBeat(0);
+      await insertBeat(0);
+      await insertBeat(1);
+      await d.execute(
+        CommandDto.removeBeats(
+          track: track,
+          voice: 0,
+          fromBar: 0,
+          fromIndex: 1,
+          toBar: 1,
+          toIndex: 0,
+        ),
+      );
+      expect(
+        (d.beats(track, 0, 0).length, d.beats(track, 1, 0).length),
+        (1, 0),
+      );
+      await d.undo();
+      expect(
+        (d.beats(track, 0, 0).length, d.beats(track, 1, 0).length),
+        (2, 1),
+      );
+    });
+
+    test('ADR-030: an invalid paste is rejected and changes nothing', () async {
+      await insertBeat(0);
+      final before = d.summary().revision;
+      const bad = ClipBeatDto(
+        duration: quarter,
+        notes: [
+          ClipNoteDto(
+            string: 9,
+            fret: 0,
+            tie: false,
+            letRing: false,
+            dead: false,
+          ),
+        ],
+      );
+      await expectLater(
+        d.execute(
+          CommandDto.pasteBeats(
+            track: track,
+            bar: 0,
+            voice: 0,
+            index: 0,
+            beats: const [bad],
+          ),
+        ),
+        throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'H-03')),
+      );
+      expect(
+        () => d.copyBeats(
+          track,
+          0,
+          fromBar: 0,
+          fromIndex: 3,
+          toBar: 0,
+          toIndex: 3,
+        ),
+        throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'E-04')),
+      );
+      expect(d.summary().revision, before);
+      expect(d.beats(track, 0, 0), hasLength(1));
+    });
+
+    test(
+      'ADR-031: outline and systems show one aligned stave per track',
+      () async {
+        await d.execute(
+          CommandDto.addTrack(
+            name: 'Second',
+            instrument: d.summary().tracks.single.instrument,
+          ),
+        );
+        final ids = d.summary().tracks.map((t) => t.id).toList();
+        final a = await insertBeat(0);
+        await d.execute(CommandDto.setNote(beat: a, string: 1, fret: 5));
+        // A beat on the second track, bar 0.
+        await d.execute(
+          CommandDto.insertBeat(
+            track: ids[1],
+            bar: 0,
+            voice: 0,
+            index: 0,
+            duration: quarter,
+          ),
+        );
+
+        final m = metrics();
+        // Asked in reverse order: staves come in score order.
+        final outline = d.scoreOutline(ids.reversed.toList(), m);
+        expect(outline.revision, d.summary().revision);
+        expect(outline.systems, isNotEmpty);
+        expect(outline.systems.first.firstBar, 0);
+        expect(outline.systems.last.endBar, 2);
+
+        final systems = d.scoreSystems(ids, m, 0, outline.systems.length);
+        expect(systems.length, outline.systems.length);
+        for (var i = 0; i < systems.length; i++) {
+          final s = systems[i];
+          expect(s.index, outline.systems[i].index);
+          expect(s.height, closeTo(outline.systems[i].height, 1e-3));
+          expect(s.staves.map((st) => st.track), ids);
+          final bars = s.staves.first.system.bars;
+          for (final st in s.staves) {
+            expect(
+              st.system.bars.map((b) => (b.bar, b.x, b.width)),
+              bars.map((b) => (b.bar, b.x, b.width)),
+              reason: 'bar lines line up',
+            );
+            for (final beat in st.system.beats) {
+              final own = d.beats(st.track, beat.bar, beat.voice);
+              expect(
+                own[beat.index].id,
+                beat.id,
+                reason: 'hits stay on their track',
+              );
+            }
+          }
+        }
+        expect(d.scoreSystems(ids, m, outline.systems.length, 3), isEmpty);
+        expect(() => d.scoreOutline(const [], m), throwsA(isA<ApiError>()));
       },
     );
 

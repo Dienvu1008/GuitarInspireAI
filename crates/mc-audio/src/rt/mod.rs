@@ -13,7 +13,7 @@
 //! panic the engine outputs silence from then on and raises the `panicked` flag; the
 //! control thread reports it and can rebuild the engine.
 
-use crate::status::Status;
+use crate::status::{MIX_CHANNELS, Status};
 use mc_playback::{PerformanceEvent, PerformanceTimeline, TempoFactor, Tick, TimedEvent};
 use rtrb::{Consumer, Producer};
 use rustysynth::Synthesizer;
@@ -75,9 +75,19 @@ pub struct Rt {
     cmd: Consumer<RtCommand>,
     ret: Producer<Retired>,
     status: Arc<Status>,
+    /// The `(volume, pan)` controller values last sent to the synthesizer per channel;
+    /// `NOT_SENT` forces a send. Fixed size, so applying the mix never allocates.
+    applied: [[u8; 2]; MIX_CHANNELS],
     #[cfg(test)]
     pub(crate) inject_panic: bool,
+    /// Test only: skip applying the mix, which is how the engine behaved before ADR-032
+    /// (ADR-032 X1 compares against it).
+    #[cfg(test)]
+    pub(crate) mix_disabled: bool,
 }
+
+/// Marks a controller value as not yet sent (valid values are 0..=127).
+const NOT_SENT: u8 = 0xFF;
 
 fn silence(out: &mut [f32]) {
     for s in out.iter_mut() {
@@ -101,8 +111,11 @@ impl Rt {
             cmd: parts.cmd,
             ret: parts.ret,
             status: parts.status,
+            applied: [[NOT_SENT; 2]; MIX_CHANNELS],
             #[cfg(test)]
             inject_panic: false,
+            #[cfg(test)]
+            mix_disabled: false,
         }
     }
 
@@ -128,6 +141,7 @@ impl Rt {
             panic!("injected panic");
         }
         self.drain_commands();
+        self.apply_mix();
         let channels = channels.max(1);
         let total = out.len() / channels;
         let mut done = 0;
@@ -236,8 +250,40 @@ impl Rt {
                 if let Some(old) = self.synth.replace(new) {
                     self.retire(Retired::Synth(old));
                 }
+                // A new synthesizer starts with default controllers: send the mix again.
+                self.applied = [[NOT_SENT; 2]; MIX_CHANNELS];
                 self.replay_programs(self.cursor);
                 self.status.synth_ready.store(true, Relaxed);
+            }
+        }
+    }
+
+    /// Send the channels whose volume (CC 7) or pan (CC 10) changed since the last call
+    /// to the synthesizer (ADR-032). Once per callback, before rendering, so a change
+    /// is heard in the next callback, also on notes that are already sounding. Reads 32
+    /// atomics and allocates, locks and logs nothing. Channel 9 (percussion) is never
+    /// used by playback and is skipped.
+    fn apply_mix(&mut self) {
+        #[cfg(test)]
+        if self.mix_disabled {
+            return;
+        }
+        let Some(synth) = self.synth.as_mut() else {
+            return;
+        };
+        for ch in 0..MIX_CHANNELS {
+            if ch == 9 {
+                continue;
+            }
+            let (volume, pan) = self.status.mix.get(ch);
+            let sent = &mut self.applied[ch];
+            if sent[0] != volume {
+                synth.process_midi_message(ch as i32, 0xB0, 7, volume as i32);
+                sent[0] = volume;
+            }
+            if sent[1] != pan {
+                synth.process_midi_message(ch as i32, 0xB0, 10, pan as i32);
+                sent[1] = pan;
             }
         }
     }

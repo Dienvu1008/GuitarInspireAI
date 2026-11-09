@@ -399,6 +399,7 @@ pub const mc_theory::KeySignature::C_MAJOR: mc_theory::KeySignature
 pub const fn mc_theory::KeySignature::fifths(self) -> i8
 pub const fn mc_theory::KeySignature::mode(self) -> mc_theory::Mode
 pub fn mc_theory::KeySignature::new(i8, mc_theory::Mode) -> core::result::Result<Self, mc_theory::TheoryError>
+pub fn mc_theory::KeySignature::spell(self, i32) -> mc_theory::SpelledPitch
 impl core::clone::Clone for mc_theory::KeySignature
 pub fn mc_theory::KeySignature::clone(&self) -> Self
 impl core::cmp::Eq for mc_theory::KeySignature
@@ -548,6 +549,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_theory::Rational
 pub struct mc_theory::SpelledPitch
 impl mc_theory::SpelledPitch
 pub const fn mc_theory::SpelledPitch::alter(self) -> mc_theory::Alter
+pub fn mc_theory::SpelledPitch::from_semitone_flat(i32) -> Self
 pub fn mc_theory::SpelledPitch::from_semitone_sharp(i32) -> Self
 pub const fn mc_theory::SpelledPitch::letter(self) -> mc_theory::Letter
 pub const fn mc_theory::SpelledPitch::new(mc_theory::Letter, mc_theory::Alter, i8) -> Self

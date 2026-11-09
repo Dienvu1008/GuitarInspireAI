@@ -6,7 +6,9 @@ import 'package:playback_feature/playback_feature.dart';
 import 'package:tools_feature/tools_feature.dart';
 import 'package:ui_kit/ui_kit.dart';
 
+import 'close_guard.dart';
 import 'midi_menu.dart';
+import 'musicxml_menu.dart';
 import 'playback_wiring.dart';
 
 class GuitarInspireApp extends StatelessWidget {
@@ -14,6 +16,7 @@ class GuitarInspireApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
+    navigatorKey: appNavigatorKey,
     title: 'GuitarInspireAI',
     theme: AppTheme.light(),
     darkTheme: AppTheme.dark(),
@@ -84,7 +87,7 @@ class _ShellState extends ConsumerState<Shell> {
         child: Scaffold(
           body: Column(
             children: [
-              _MenuBar(shortcuts: shortcuts),
+              _MenuBar(shortcuts: shortcuts, keys: _keys),
               const Divider(height: 1),
               if (ref.watch(playbackAvailableProvider)) ...[
                 TransportBar(cursorMasterBar: s.cursor.bar),
@@ -97,6 +100,15 @@ class _ShellState extends ConsumerState<Shell> {
                     const VerticalDivider(width: 1),
                     const Expanded(child: TabView()),
                     const VerticalDivider(width: 1),
+                    if (ref.watch(playbackAvailableProvider) &&
+                        ref.watch(mixerVisibleProvider)) ...[
+                      const SizedBox(
+                        key: ValueKey('mixer-panel'),
+                        width: 280,
+                        child: MixerPanel(),
+                      ),
+                      const VerticalDivider(width: 1),
+                    ],
                     if (ref.watch(tunerVisibleProvider)) ...[
                       const SizedBox(width: 240, child: TunerView()),
                       const VerticalDivider(width: 1),
@@ -120,9 +132,12 @@ class _ShellState extends ConsumerState<Shell> {
 }
 
 class _MenuBar extends ConsumerWidget {
-  const _MenuBar({required this.shortcuts});
+  const _MenuBar({required this.shortcuts, required this.keys});
 
   final Map<ShortcutActivator, VoidCallback> shortcuts;
+
+  /// The editor's key handler, so menu edits run in the same order as keys.
+  final KeyboardHandler keys;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -166,6 +181,7 @@ class _MenuBar extends ConsumerWidget {
                 ),
                 const Divider(),
                 ...buildMidiMenuItems(context, ref),
+                ...buildMusicXmlMenuItems(context, ref),
               ],
               child: const Text('File'),
             ),
@@ -181,11 +197,38 @@ class _MenuBar extends ConsumerWidget {
                   const SingleActivator(LogicalKeyboardKey.keyY, control: true),
                   s.summary.canRedo ? editor.redo : null,
                 ),
+                const Divider(),
+                // ADR-030: in-app beat clipboard (not the system clipboard).
+                item(
+                  'Cut',
+                  const SingleActivator(LogicalKeyboardKey.keyX, control: true),
+                  keys.cut,
+                ),
+                item(
+                  'Copy',
+                  const SingleActivator(LogicalKeyboardKey.keyC, control: true),
+                  keys.copy,
+                ),
+                item(
+                  'Paste',
+                  const SingleActivator(LogicalKeyboardKey.keyV, control: true),
+                  ref.watch(beatClipboardProvider) == null ? null : keys.paste,
+                ),
               ],
               child: const Text('Edit'),
             ),
             SubmenuButton(
               menuChildren: [
+                MenuItemButton(
+                  key: const ValueKey('tools-mixer'),
+                  trailingIcon: ref.watch(mixerVisibleProvider)
+                      ? const Icon(Icons.check)
+                      : null,
+                  onPressed: ref.watch(playbackAvailableProvider)
+                      ? () => ref.read(mixerVisibleProvider.notifier).toggle()
+                      : null,
+                  child: const Text('Mixer'),
+                ),
                 MenuItemButton(
                   key: const ValueKey('tools-tuner'),
                   trailingIcon: ref.watch(tunerVisibleProvider)

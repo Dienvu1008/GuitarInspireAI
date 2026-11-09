@@ -12,7 +12,7 @@ import 'document_service.dart';
 /// A service is bound to one [DocumentService] at creation. Transport changes are
 /// session state: they never edit the document, never bump its revision and are not
 /// saved. They do arrive on the document's event stream as `PlaybackStateChanged`,
-/// `MuteChanged` and `TempoFactorChanged` (ADR-028).
+/// `MuteChanged`, `SoloChanged`, `MixChanged` and `TempoFactorChanged` (ADR-028, ADR-032).
 abstract interface class PlaybackService {
   /// Start playback. [fromMasterBar] is the bar containing the cursor (Q7); `null`
   /// resumes from the current position. Throws [ApiError] on an audio failure or a bar
@@ -27,6 +27,16 @@ abstract interface class PlaybackService {
   /// Mute or unmute a track. While playing, the core recompiles and swaps so the change
   /// is heard without a restart (Q8).
   Future<void> setMuted(int track, bool muted);
+
+  /// Solo or unsolo a track (ADR-032). While any track is soloed the core mutes the
+  /// others; a muted track stays silent even when soloed. While playing, the core
+  /// recompiles and swaps once, as for [setMuted].
+  Future<void> setSoloed(int track, bool soloed);
+
+  /// Set a track's volume (0..=127, default 100) and pan (-63..=63, default 0)
+  /// (ADR-032). The core rejects a value outside its range with an [ApiError] and
+  /// changes nothing. Never recompiles: the change is heard on notes already sounding.
+  Future<void> setTrackMix(int track, {required int volume, required int pan});
 
   /// Set the user tempo factor in hundredths (100 = 1.0x), 25..=200 in steps of 5 (Q6).
   Future<void> setTempoFactor(int hundredths);
@@ -77,6 +87,17 @@ final class MidiImport {
 
   final DocumentService document;
   final ImportReportDto report;
+}
+
+/// Ranges and defaults of the track mixer controls (ADR-032), used only to size and
+/// reset the sliders. The core owns the rules and rejects anything outside them.
+abstract final class MixRanges {
+  static const int volumeMin = 0;
+  static const int volumeMax = 127;
+  static const int volumeDefault = 100;
+  static const int panMin = -63;
+  static const int panMax = 63;
+  static const int panDefault = 0;
 }
 
 /// Tempo-factor steps shared by the UI (Q6): 0.25x..=2.0x in 0.05 (5-hundredth) steps.

@@ -11,6 +11,8 @@ List<Widget> buildMidiMenuItems(BuildContext context, WidgetRef ref) {
   final messenger = ScaffoldMessenger.of(context);
 
   Future<void> importMidi() async {
+    // Import replaces the current document, so it asks like Open (ADR-030).
+    if (!await ref.read(editorProvider.notifier).confirmReplace()) return;
     final dialogs = ref.read(fileDialogsProvider);
     final bytes = await dialogs.pickMidiToImport();
     if (bytes == null) return;

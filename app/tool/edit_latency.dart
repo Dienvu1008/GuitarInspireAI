@@ -49,9 +49,33 @@ const _Shape _large = (
 const _warmup = 30;
 const _samples = 200;
 
+/// Scroll phase (ADR-031 P4): frames and pixels per frame.
+const _scrollFrames = 300;
+const _scrollStep = 40.0;
+
+/// The scrollable of the TAB view (the list keyed `tab-systems`), found in the tree.
+ScrollableState? _tabScrollable() {
+  ScrollableState? found;
+  void visit(Element e, bool inside) {
+    if (found != null) return;
+    final here = inside || e.widget.key == const ValueKey('tab-systems');
+    if (here && e is StatefulElement && e.state is ScrollableState) {
+      found = e.state as ScrollableState;
+      return;
+    }
+    e.visitChildElements((c) => visit(c, here));
+  }
+
+  final root = WidgetsBinding.instance.rootElement;
+  if (root != null) visit(root, false);
+  return found;
+}
+
 Future<void> main(List<String> args) async {
   final shapeName = args.length > 1 ? args[1] : 'typical';
   final shape = shapeName == 'large' ? _large : _typical;
+  // Optional: how many tracks are shown (the first N); default every track.
+  final showCount = args.length > 2 ? int.parse(args[2]) : shape.tracks;
 
   WidgetsFlutterBinding.ensureInitialized();
   await CoreBridge.init();
@@ -86,11 +110,16 @@ Future<void> main(List<String> args) async {
   );
 
   // Parts, measured before the document is shown, so no frame work interleaves:
-  // command round trip, summary query and layout query.
+  // command round trip, summary query and layout queries. Every track is shown, as
+  // in the app by default (ADR-031): outline plus the systems in view (three).
   final command = <int>[];
   final summary = <int>[];
   final layout = <int>[];
+  final scoreLayout = <int>[];
   final metrics = measureTabMetrics(width: 1200);
+  final shown = [for (final t in doc.summary().tracks) t.id]
+      .take(showCount)
+      .toList();
   for (var i = 0; i < _warmup + 100; i++) {
     final w = Stopwatch()..start();
     await doc.execute(noteEdit(i));
@@ -101,14 +130,23 @@ Future<void> main(List<String> args) async {
     w.reset();
     doc.tabLayout(track, metrics);
     final l = w.elapsedMicroseconds;
+    w.reset();
+    doc.scoreOutline(shown, metrics);
+    doc.scoreSystems(shown, metrics, 0, 3);
+    final m = w.elapsedMicroseconds;
     if (i >= _warmup) {
       command.add(c);
       summary.add(s);
       layout.add(l);
+      scoreLayout.add(m);
     }
   }
 
   container.read(editorProvider.notifier).replace(doc);
+  // Show exactly the first N tracks, as a user would from the track list.
+  for (final (i, t) in doc.summary().tracks.indexed) {
+    container.read(editorProvider.notifier).setTrackShown(t.id, i < showCount);
+  }
   await WidgetsBinding.instance.endOfFrame;
   final editor = container.read(editorProvider.notifier);
 
@@ -130,6 +168,27 @@ Future<void> main(List<String> args) async {
   }
   // Frame timings are delivered in batches; give the last batch time to arrive.
   await Future<void>.delayed(const Duration(milliseconds: 500));
+  SchedulerBinding.instance.removeTimingsCallback(timings.addAll);
+
+  // ADR-031 P4: scroll the TAB view continuously (every track shown), one step per
+  // frame, wrapping to the top at the end, and time every frame.
+  final scrollTimings = <FrameTiming>[];
+  final scrollable = _tabScrollable();
+  if (scrollable != null) {
+    final position = scrollable.position;
+    SchedulerBinding.instance.addTimingsCallback(scrollTimings.addAll);
+    for (var i = 0; i < _scrollFrames; i++) {
+      final next = position.pixels + _scrollStep;
+      position.jumpTo(next > position.maxScrollExtent ? 0 : next);
+      await WidgetsBinding.instance.endOfFrame;
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+    SchedulerBinding.instance.removeTimingsCallback(scrollTimings.addAll);
+  }
+  final scrollCompute = [
+    for (final t in scrollTimings)
+      t.buildDuration.inMicroseconds + t.rasterDuration.inMicroseconds,
+  ];
 
   final raster = [for (final t in timings) t.rasterDuration.inMicroseconds];
   final build = [for (final t in timings) t.buildDuration.inMicroseconds];
@@ -144,6 +203,13 @@ Future<void> main(List<String> args) async {
     'command_round_trip_us': _stats(command),
     'summary_query_us': _stats(summary),
     'tab_layout_query_us': _stats(layout),
+    // ADR-031: outline of every track plus three systems in view (FFI included).
+    'score_layout_in_view_query_us': _stats(scoreLayout),
+    'shown_tracks': shown.length,
+    // ADR-031 P4: frames while scrolling, build plus raster per frame.
+    'scroll_frames': scrollCompute.length,
+    'scroll_frame_compute_us': _stats(scrollCompute),
+    'scroll_frames_over_33ms': scrollCompute.where((us) => us > 33000).length,
     'frame_build_us': _stats(build),
     'frame_raster_us': _stats(raster),
     // edit_to_frame includes waiting for the next vsync (each edit starts right after

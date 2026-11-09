@@ -8,8 +8,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'layout.freezed.dart';
 
-            // These functions are ignored because they are not marked as `pub`: `glyph_dto`, `to_core`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
+            // These functions are ignored because they are not marked as `pub`: `glyph_dto`, `system_dto`, `to_core`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
 
 
             /// Default metrics in abstract units, for tests and as a starting point before Dart
@@ -155,6 +155,120 @@ final double stemLength;
             other is MetricsDto &&
                 runtimeType == other.runtimeType
                 && width == other.width&& marginLeft == other.marginLeft&& marginRight == other.marginRight&& stringSpacing == other.stringSpacing&& digitWidth == other.digitWidth&& glyphPadding == other.glyphPadding&& minColumnWidth == other.minColumnWidth&& durationSpacing == other.durationSpacing&& barPadding == other.barPadding&& emptyBarWidth == other.emptyBarWidth&& headerWidth == other.headerWidth&& timeSignatureWidth == other.timeSignatureWidth&& repeatWidth == other.repeatWidth&& aboveStaff == other.aboveStaff&& belowStaff == other.belowStaff&& systemGap == other.systemGap&& stemLength == other.stemLength;
+
+            }
+
+/// Where a system sits and which bars it holds, without content.
+class OutlineSystemDto  {
+                final int index;
+final double y;
+final double height;
+final int firstBar;
+/// One past the last bar.
+final int endBar;
+
+                const OutlineSystemDto({required this.index ,required this.y ,required this.height ,required this.firstBar ,required this.endBar ,});
+
+
+
+
+
+        @override
+        int get hashCode => index.hashCode^y.hashCode^height.hashCode^firstBar.hashCode^endBar.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is OutlineSystemDto &&
+                runtimeType == other.runtimeType
+                && index == other.index&& y == other.y&& height == other.height&& firstBar == other.firstBar&& endBar == other.endBar;
+
+            }
+
+/// Line breaking of the shown tracks at `revision` (ADR-031): sizes the scroll view.
+/// Fetch the content of the systems in view with `score_systems`.
+/// No track list here: a returned `Vec<i64>` becomes `BigInt`s in Dart; each stave of
+/// `score_systems` carries its track id instead (score order).
+class ScoreOutlineDto  {
+                final PlatformInt64 revision;
+final double width;
+final double height;
+final List<OutlineSystemDto> systems;
+
+                const ScoreOutlineDto({required this.revision ,required this.width ,required this.height ,required this.systems ,});
+
+
+
+
+
+        @override
+        int get hashCode => revision.hashCode^width.hashCode^height.hashCode^systems.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ScoreOutlineDto &&
+                runtimeType == other.runtimeType
+                && revision == other.revision&& width == other.width&& height == other.height&& systems == other.systems;
+
+            }
+
+class ScoreSystemDto  {
+                final int index;
+final double y;
+final double height;
+final List<StaveDto> staves;
+
+                const ScoreSystemDto({required this.index ,required this.y ,required this.height ,required this.staves ,});
+
+
+
+
+
+        @override
+        int get hashCode => index.hashCode^y.hashCode^height.hashCode^staves.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ScoreSystemDto &&
+                runtimeType == other.runtimeType
+                && index == other.index&& y == other.y&& height == other.height&& staves == other.staves;
+
+            }
+
+/// One track's stave in a multi-track system (ADR-031). `system` is in stave
+/// coordinates, like a single-track system, so Dart paints and hit-tests it the same
+/// way; `top` places it in the system. Bar x-positions are equal in every stave.
+class StaveDto  {
+                final PlatformInt64 track;
+final int strings;
+final double top;
+final SystemDto system;
+
+                const StaveDto({required this.track ,required this.strings ,required this.top ,required this.system ,});
+
+
+
+
+
+        @override
+        int get hashCode => track.hashCode^strings.hashCode^top.hashCode^system.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is StaveDto &&
+                runtimeType == other.runtimeType
+                && track == other.track&& strings == other.strings&& top == other.top&& system == other.system;
 
             }
 

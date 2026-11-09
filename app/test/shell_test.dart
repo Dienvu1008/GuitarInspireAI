@@ -103,14 +103,20 @@ void main() {
     await tester.pump();
     final s = c.read(editorProvider);
     expect(s.summary.tracks, hasLength(2));
-    expect(find.text('Track 2'), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(TrackList), matching: find.text('Track 2')),
+      findsOneWidget,
+    );
     expect(
       s.summary.tracks[1].instrument,
       s.summary.tracks[0].instrument,
       reason: 'copies the active instrument',
     );
 
-    await tester.tap(find.text('Track 2'));
+    // The track list entry (the stave label shows the name too, ADR-031).
+    await tester.tap(
+      find.descendant(of: find.byType(TrackList), matching: find.text('Track 2')),
+    );
     await tester.pump();
     expect(c.read(editorProvider).activeTrack, s.summary.tracks[1].id);
 

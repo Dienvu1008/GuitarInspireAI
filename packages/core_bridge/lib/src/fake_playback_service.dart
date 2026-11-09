@@ -25,6 +25,11 @@ final class FakePlaybackService implements PlaybackService {
   bool _playing = false;
   PlaybackStateDto _state = PlaybackStateDto.stopped;
   final Set<int> _muted = {};
+  final Set<int> _soloed = {};
+  final Map<int, ({int volume, int pan})> _mix = {};
+
+  /// Every accepted [setTrackMix] call, in order (tests count commands with it).
+  final List<({int track, int volume, int pan})> mixCalls = [];
   int _tempoFactor = TempoFactorSteps.normal;
   String? _error;
   Timer? _ticker;
@@ -33,6 +38,12 @@ final class FakePlaybackService implements PlaybackService {
 
   int get tempoFactor => _tempoFactor;
   bool isMuted(int track) => _muted.contains(track);
+  bool isSoloed(int track) => _soloed.contains(track);
+
+  /// The mix the fake holds for [track]; the defaults when none was set.
+  ({int volume, int pan}) mixOf(int track) =>
+      _mix[track] ??
+      (volume: MixRanges.volumeDefault, pan: MixRanges.panDefault);
 
   int get _endTick => masterBars * ticksPerBar;
 
@@ -105,6 +116,40 @@ final class FakePlaybackService implements PlaybackService {
     } else {
       _muted.remove(track);
     }
+    _emit();
+  }
+
+  @override
+  Future<void> setSoloed(int track, bool soloed) async {
+    if (soloed) {
+      _soloed.add(track);
+    } else {
+      _soloed.remove(track);
+    }
+    _emit();
+  }
+
+  @override
+  Future<void> setTrackMix(
+    int track, {
+    required int volume,
+    required int pan,
+  }) async {
+    // Same rejection as the core: typed error, nothing changes.
+    if (volume < MixRanges.volumeMin || volume > MixRanges.volumeMax) {
+      throw ApiError(
+        rule: 'transport',
+        message: 'invalid mix: Volume out of range: $volume',
+      );
+    }
+    if (pan < MixRanges.panMin || pan > MixRanges.panMax) {
+      throw ApiError(
+        rule: 'transport',
+        message: 'invalid mix: Pan out of range: $pan',
+      );
+    }
+    _mix[track] = (volume: volume, pan: pan);
+    mixCalls.add((track: track, volume: volume, pan: pan));
     _emit();
   }
 

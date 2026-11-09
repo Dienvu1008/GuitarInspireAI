@@ -76,6 +76,25 @@ final class RustPlaybackService implements PlaybackService {
   }
 
   @override
+  Future<void> setSoloed(int track, bool soloed) async {
+    await _engine.setSoloed(document: _document, track: track, soloed: soloed);
+  }
+
+  @override
+  Future<void> setTrackMix(
+    int track, {
+    required int volume,
+    required int pan,
+  }) async {
+    await _engine.setTrackMix(
+      document: _document,
+      track: track,
+      volume: volume,
+      pan: pan,
+    );
+  }
+
+  @override
   Future<void> setTempoFactor(int hundredths) async {
     await _engine.setTempoFactor(document: _document, hundredths: hundredths);
   }
