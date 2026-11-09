@@ -1,7 +1,7 @@
 # Guitar Pattern Engine
 
 Purpose: Propose a structured intermediate representation for reusable picking and strumming patterns, define validation stages, and document the ambiguity of the example notation. The DSL grammar is NOT finalized.
-Status: Proposed (IR). Grammar: open. Implementation: Phase 6a, after open questions Q-01 to Q-06 are resolved.
+Status: Superseded in its design by [ADR-034](decisions/ADR-034-pattern-engine-ir-first.md) (Draft, 2026-11-09): the Pattern IR is the source of truth, the DSL is one front end, and Q-01 to Q-06 are decided. This page is kept as the record of the original analysis; section 4 shows why the example notation was ambiguous.
 Related documents: [bounded-contexts.md](bounded-contexts.md), [domain-invariants.md](domain-invariants.md), [open-questions.md](../research/open-questions.md), [implementation-phases.md](../roadmap/implementation-phases.md).
 
 ## 1. Why a structured IR rather than a string

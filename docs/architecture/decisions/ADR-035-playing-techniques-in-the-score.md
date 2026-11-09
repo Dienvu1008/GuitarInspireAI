@@ -1,0 +1,163 @@
+# ADR-035 Playing techniques in the score: accent, palm mute, percussive, stroke direction (Phase 6a-1)
+
+Status: Draft (2026-11-09). The acceptance criteria in section 4 are fixed before any code. Section 5 lists the decisions the user must confirm. No implementation starts until the user approves.
+Date: 2026-11-09
+Related documents: [ADR-034](ADR-034-pattern-engine-ir-first.md), [ADR-024](ADR-024-playback-rendering-conventions-and-rt-failures.md), [ADR-030](ADR-030-editor-debt-clipboard-and-session-marker.md), [ADR-033](ADR-033-musicxml-export-adapter.md), [project-format.md](../project-format.md), [domain-invariants.md](../domain-invariants.md)
+
+## Context
+
+The user asked that patterns carry palm mute, dead note, let ring, slap or percussive hit, accent and down or up strokes. These must survive into the score, and playback and TAB must agree on what they mean (2026-11-09). They are techniques in the model, not player-specific words.
+
+Findings from the code:
+
+- **A note has only `tie`, `let_ring` and `dead`** (`mc_score::NoteEffects`). A beat has no stroke direction. Nothing in `mc-score`, `mc-project` (format 1.0), `mc-playback`, `mc-notation`, `mc-musicxml`, the clipboard (ADR-030), the commands or the inspector knows accent, palm mute, percussive or direction.
+- **Playback today** (ADR-024):
+  - Normal velocity 96.
+  - A dead note is 1/64 long at velocity 40.
+  - Let ring sounds to the end of the played bar.
+  - If a note is both dead and let ring, dead wins.
+- **The TAB display list** carries `dead` and `let_ring` on the fret glyph; Flutter only paints it (ADR-018).
+- **Format policy:** additive optional fields are a minor version (project-format section 5). An older reader sees newer-minor content as unknown (U1) and protects the original with Save As (U2).
+- **Techniques are useful without patterns:** users write palm-muted riffs and accented strums by hand. So this is a score change for everyone, landed before the pattern engine (ADR-034 slice 6a-1).
+
+## Decision (proposed)
+
+### 1. Model (`mc-score`)
+
+| Technique | Level | Field |
+|---|---|---|
+| Accent | Note | `NoteEffects.accent: bool` |
+| Palm mute | Note | `NoteEffects.palm_mute: bool` |
+| Percussive hit (slap) | Note | `NoteEffects.percussive: bool` (choice 5.2) |
+| Dead note | Note | existing `NoteEffects.dead` |
+| Let ring | Note | existing `NoteEffects.let_ring` |
+| Stroke direction | Beat | `Beat.stroke: Option<Stroke>`, where `Stroke` is `Down` or `Up` |
+
+- Techniques are per note, so a chord can be partly muted.
+- Direction is per beat, because a stroke moves across the whole chord.
+- **No combination is rejected.** Released files may already hold dead and let ring together, and an invariant cannot reject them. Instead the sound follows a fixed precedence: percussive > dead > palm mute > let ring > normal. Accent applies on top of whichever wins.
+- The editor shows every flag that is set, whatever the precedence.
+
+### 2. Commands and editing (`mc-app`, editor)
+
+- `SetNoteEffects` carries all five flags.
+- A new `SetBeatStroke { beat, stroke }` sets the direction.
+- Both are undoable, and both bump the revision.
+- The clipboard (`ClipBeat`, `ClipNote`, ADR-030) carries the new flags and the stroke, so copy and paste keep them.
+- MIDI import sets them to their defaults (off). MIDI does not carry them.
+- The inspector gains toggles for accent, palm mute and percussive, and a Down / none / Up choice for the stroke. Keyboard shortcuts are choice 5.4.
+- Dart only shows the flags and sends the commands.
+
+### 3. Project format 1.1 (`mc-project`)
+
+- `format_version` becomes 1.1.
+- The note DTO gains optional `accent`, `palm_mute` and `percussive`; the beat DTO gains an optional `stroke`. All are omitted when off.
+- A 1.0 file loads unchanged, with every new flag off.
+- A 1.1 file that uses none of the new fields is byte-identical to what 1.0 wrote, except the version.
+- A new fixture `v1.1/techniques`, a schema snapshot (FF-32) and round-trip tests (FF-11) are added. The 1.0 fixtures are untouched (append-only).
+- A 1.0 app opening a 1.1 file reports newer-minor content (U1) and refuses Save over it (U2), as the policy defines.
+
+### 4. Playback (`mc-playback`, extends ADR-024)
+
+| Winning technique | Velocity | Note-off |
+|---|---|---|
+| Normal | 96 | end of the beat (as today) |
+| Let ring | 96 | end of the played bar (as today) |
+| Palm mute | 80 | the earlier of the beat end and onset + 1/16 whole note |
+| Dead | 40 | the earlier of the beat end and onset + 1/64 (as today) |
+| Percussive | 70 | the earlier of the beat end and onset + 1/64 |
+
+- **Accent** adds 24 to the winning velocity, capped at 127 (normal 96 becomes 120; palm mute 80 becomes 104; dead 40 becomes 64; percussive 70 becomes 94).
+- **Stroke direction** changes no timing in 6a: all notes of a beat start together (choice 5.3).
+- Percussive notes sound with the bundled guitar SoundFont at their fret pitch. There is no drum sound.
+- MIDI export uses the same compiled timeline, so it carries these velocities and lengths.
+- Existing scores without the new flags compile to the same timeline as before; the timeline golden is unchanged.
+
+### 5. TAB display (`mc-notation` display list, painted by Flutter)
+
+- **Accent:** a `>` glyph above the beat, when any note of the beat is accented.
+- **Palm mute:**
+  - A "P.M." label with a dashed line over each run of consecutive beats of a voice in which every sounding note is palm-muted.
+  - The line ends at the last such beat and is broken at system ends.
+  - A beat where only some notes are palm-muted gets a "P.M." on that beat only.
+- **Stroke:** a down arrow (↓) or up arrow (↑) above the beat.
+- **Percussive:** the fret glyph is drawn as `x` (as for dead) with a small "S" above the beat (choice 5.2).
+- **Dead and let ring:** unchanged.
+- Glyph positions are decided in Rust. Painting only draws them (ADR-018).
+- Layout goldens gain one score that uses every technique.
+
+### 6. MusicXML (`mc-musicxml`, extends ADR-033)
+
+- Each technique maps to the element the MusicXML 4.0 specification defines for it. **The mapping is verified against the specification and the XSD in 6a-1, not assumed here.** Candidates to check:
+  - `<accent/>` in `<articulations>`
+  - `<down-bow/>` and `<up-bow/>`, or `<arpeggiate direction>`, for strokes
+  - a palm-mute element if 4.0 has one
+- A technique with no element is written as `<other-technical>` text. It is counted in the report as approximated.
+- The schema job (E1) and the MuseScore procedure (E8, E9) run on the new fixture.
+
+## 4. Acceptance criteria (fixed before implementation)
+
+Single machine (ADR-025). Thresholds are not lowered to match a result.
+
+| Id | Criterion | How it is checked |
+|---|---|---|
+| TQ-1 | Every new flag and the stroke can be set, cleared, undone and redone; each change is one revision; nothing else changes | Session tests |
+| TQ-2 | Copy and paste keep every flag and the stroke (ADR-030 clipboard) | Session and property tests |
+| TQ-3 | Format 1.1: every flag round-trips byte for byte; a 1.0 fixture loads with the flags off; a 1.1 file without new content differs from 1.0 output only in the version; a 1.0 reader sees the 1.1 fixture as newer-minor content and protects it (U1, U2); released fixtures unchanged; new fixture and schema snapshot | `mc-project` tests, FF-11, FF-32 |
+| TQ-4 | Playback follows section 4 exactly: velocity and note-off per technique, precedence, accent offset with cap; scores without new flags give the same timeline as before (golden unchanged) | Timeline tests per technique, property test over random flags, golden |
+| TQ-5 | MIDI export carries the same velocities and lengths as playback | `mc-midi` test |
+| TQ-6 | TAB: accent, palm-mute runs (broken at system ends), stroke arrows and percussive marks appear where section 5 says; a partly muted beat shows "P.M." on that beat only | Layout goldens plus targeted tests |
+| TQ-7 | MusicXML: each technique is written as the specification defines; the mapping is cited in the ADR results with the reference page; approximations are counted; the schema job passes on the new fixture | `mc-musicxml` tests, CI schema job |
+| TQ-8 | MuseScore 4.7.5 opens the export of the new fixture; for each technique the result after its MusicXML re-export is recorded (kept or lost). A loss in MuseScore is an evidence gap, not a pass | `tools/musescore-check` run, results file |
+| TQ-9 | The inspector shows and toggles every flag and the stroke by mouse and keyboard with semantic labels; the editor sends one command per change | Widget tests |
+| TQ-10 | MIDI import leaves every new flag off; no other import or export path drops a flag silently | Tests |
+| TQ-11 | No music rule in Dart; FF-01, FF-03, FF-05, FF-12, FF-22 (additions only) and FF-34 pass | Fitness functions, CI |
+
+## 5. Decisions for the user (before any code)
+
+1. **Velocities and lengths of section 4:** accent +24 (cap 127), palm mute at velocity 80 and at most 1/16 long, percussive at velocity 70 and 1/64 long. Proposed as written. These are fixed numbers with tests; changing them later changes playback and MIDI export.
+2. **Percussive hit:**
+   - Proposed: a per-note flag that sounds like a louder dead note and shows `x` with "S".
+   - Alternative: a beat-level hit with no strings (a body slap), which needs a drum sound and a different note model. That would be a later ADR.
+3. **Stroke timing:**
+   - Proposed: no strum spread in 6a; the direction is shown and stored.
+   - Alternative: a fixed spread between strings in stroke order. Note that the timeline is in ticks, not milliseconds.
+4. **Shortcuts:** proposed, none in 6a-1 (inspector only). Alternative: letter keys, which would need a check against the existing key bindings.
+5. **Precedence instead of rejection** (section 1): proposed as written.
+
+## Alternatives
+
+- **Techniques only in the pattern IR, not in the score.** Rejected: the user requires that nothing is lost in the score and that TAB and playback agree.
+- **Accent and palm mute per beat.** Rejected: one note of a chord can be muted or accented alone.
+- **Reject contradictory combinations.** Rejected: released 1.0 files may hold dead and let ring together, and an invariant cannot reject them.
+- **A major format version.** Rejected: the change is additive; the policy calls for a minor version.
+
+## Trade-offs
+
+- Users of an older build cannot save over a 1.1 file; this is the policy, not a regression.
+- Fixed render numbers are a convention. A user who wants a softer accent must wait for a setting.
+- MusicXML and MuseScore coverage of these techniques is unknown until 6a-1 checks it.
+
+## Consequences
+
+- `mc-score` model and commands.
+- `mc-app` commands and clipboard.
+- `mc-project` format 1.1.
+- `mc-playback` render table.
+- `mc-notation` glyphs.
+- `mc-musicxml` mapping.
+- `mc-ffi` DTOs (bindings regenerated).
+- The editor inspector.
+- ADR-024 gains an amendment note for the render table.
+- Known limitations and release notes are updated.
+
+## Related fitness functions
+
+FF-11, FF-12, FF-19, FF-22, FF-32, FF-34; the schema job of ADR-033.
+
+## Reconsideration conditions
+
+- A stroke-spread requirement.
+- Body slap and other unpitched percussion.
+- User-adjustable render settings.
+- A technique that MusicXML or MuseScore cannot carry at all.

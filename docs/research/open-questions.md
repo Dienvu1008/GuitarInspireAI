@@ -6,12 +6,12 @@ Related documents: [guitar-pattern-engine.md](../architecture/guitar-pattern-eng
 
 | Id | Question | Needed by | Owner | Affects |
 |---|---|---|---|---|
-| Q-01 | Pattern DSL: are keywords case-sensitive (`Bass` vs `bass`)? | Phase 6a entry | User | guitar-pattern-engine |
-| Q-02 | Pattern DSL: do numbers mean absolute strings or chord-relative tones, and which numbering convention? | Phase 6a entry | User | guitar-pattern-engine |
-| Q-03 | Pattern DSL: default step duration (beat, fixed subdivision, bar divided equally)? | Phase 6a entry | User | guitar-pattern-engine |
-| Q-04 | Pattern DSL: meaning of `Treble` (single note, pinch, strum; how many strings)? | Phase 6a entry | User | guitar-pattern-engine |
-| Q-05 | Pattern DSL: default picking directions and syntax for direction | Phase 6a entry | User | guitar-pattern-engine |
-| Q-06 | Pattern DSL: syntax for rests, ties, accents, simultaneous strikes; plus 5 to 10 real example patterns with expected TAB | Phase 6a entry | User | guitar-pattern-engine |
+| Q-01 | Decided 2026-11-09: keywords are case-insensitive; the alternate bass is its own keyword (`Alt`); note names will need an explicit syntax (ADR-034) | Done | User | guitar-pattern-engine |
+| Q-02 | Decided 2026-11-09: numbers are absolute strings, 1 = highest; a string above the instrument's count is an error, never skipped; chord-relative selection would be a separate selector (ADR-034) | Done | User | guitar-pattern-engine |
+| Q-03 | Decided 2026-11-09 (changed from the proposal): no default duration. Each step has its own onset and duration in rationals; nothing is inferred from the step count, divided equally or stretched; patterns may span several bars; a length that does not fit the target is reported or asked about (ADR-034) | Done | User | guitar-pattern-engine |
+| Q-04 | Decided 2026-11-09: `Treble` = the 3 highest sounded strings, struck together; `Treble(n)` for n; fewer if the voicing has fewer; no notes are invented (ADR-034) | Done | User | guitar-pattern-engine |
+| Q-05 | Decided 2026-11-09: fingerstyle has no direction by default; strums default to down; `D` and `U`; the direction is stored in the IR and shown on TAB (ADR-034, ADR-035) | Done | User | guitar-pattern-engine |
+| Q-06 | Decided 2026-11-09: `-` rest, `_` hold (no new attack, optionally only some strings), `>` accent (playback and TAB), `+` simultaneous; techniques are model techniques, and player names are user gestures. The example corpus is proposed by the agent and awaits the user's review ([pattern-corpus-proposed.md](../architecture/pattern-corpus-proposed.md)) | Corpus open | User | guitar-pattern-engine |
 | Q-07 | Resolved: string 1 is the highest-pitched string; numbers are stable under retuning and never renumbered by pitch | Done | User | bounded-contexts, mc-theory |
 | Q-08 | Resolved: `.giproj` (GuitarInspire Project) is the product extension, defined in adapters only; file identity comes from the manifest format and version (project-format section 2a). Registered media type: still open, not needed before distribution | Done | User | project-format |
 | Q-09 | Resolved: underfull and overfull bars are diagnostics and never block saving; playback uses the effective master bar duration across all tracks and voices (domain-invariants section 4a) | Done | User | domain-invariants, audio-dsp-architecture |

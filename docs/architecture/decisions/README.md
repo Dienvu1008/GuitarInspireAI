@@ -76,3 +76,5 @@ Related documents: links
 | [ADR-031](ADR-031-multi-track-tab-display.md) | Simultaneous multi-track TAB display (Phase 6b-2) | Accepted (2026-11-06) |
 | [ADR-032](ADR-032-track-mixer-volume-pan-solo.md) | Track mixer basics: volume, pan, solo (Phase 6b-3) | Accepted (2026-11-07) |
 | [ADR-033](ADR-033-musicxml-export-adapter.md) | MusicXML export adapter `mc-musicxml` (Phase 6b-4) | Accepted (2026-11-07) |
+| [ADR-034](ADR-034-pattern-engine-ir-first.md) | Pattern engine: the Pattern IR is the source of truth (Phase 6a) | Draft (criteria fixed; decisions pending) |
+| [ADR-035](ADR-035-playing-techniques-in-the-score.md) | Playing techniques in the score: accent, palm mute, percussive, stroke (Phase 6a-1) | Draft (criteria fixed; decisions pending) |
