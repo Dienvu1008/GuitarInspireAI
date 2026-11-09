@@ -44,8 +44,8 @@ dev_external = ["proptest", "criterion"]
 [mc-cli]
 layer = "adapter"
 phase = 1
-# mc-midi added in Phase 4 (ADR-023).
-internal = ["mc-app", "mc-project", "mc-midi"]
+# mc-midi added in Phase 4 (ADR-023); mc-musicxml in Phase 6 (ADR-033).
+internal = ["mc-app", "mc-project", "mc-midi", "mc-musicxml"]
 external = []
 dev_external = []
 
@@ -68,8 +68,8 @@ dev_external = []
 [mc-ffi]
 layer = "adapter"
 phase = 3
-# mc-midi added in Phase 4 (ADR-023).
-internal = ["mc-app", "mc-audio", "mc-midi"]
+# mc-midi added in Phase 4 (ADR-023); mc-musicxml in Phase 6 (ADR-033).
+internal = ["mc-app", "mc-audio", "mc-midi", "mc-musicxml"]
 external = ["flutter_rust_bridge"]
 dev_external = []
 
@@ -95,6 +95,15 @@ phase = 4
 internal = ["mc-theory", "mc-score", "mc-guitar", "mc-playback"]
 external = ["midly"]
 dev_external = ["proptest"]
+
+[mc-musicxml]
+layer = "adapter"
+phase = 6
+# MusicXML 4.0 export (ADR-033). Reads the score; spelling is mc-theory (GR-05).
+internal = ["mc-theory", "mc-score"]
+external = []
+# roxmltree: test-only XML parsing of the exported files (MIT OR Apache-2.0, ADR-033).
+dev_external = ["proptest", "roxmltree"]
 
 [mc-dsp]
 layer = "domain"
