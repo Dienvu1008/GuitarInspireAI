@@ -3,5 +3,6 @@
 library;
 
 export 'src/fake_document_service.dart';
+export 'src/fake_musicxml_service.dart';
 export 'src/fake_playback_service.dart';
 export 'src/fake_tuner_service.dart';

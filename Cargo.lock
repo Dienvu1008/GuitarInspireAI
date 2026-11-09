@@ -1005,6 +1005,7 @@ dependencies = [
  "mc-app",
  "mc-audio",
  "mc-midi",
+ "mc-musicxml",
 ]
 
 [[package]]

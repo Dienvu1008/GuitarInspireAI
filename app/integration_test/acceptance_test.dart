@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:guitar_inspire/src/musicxml_menu.dart';
 import 'package:guitar_inspire/src/playback_wiring.dart';
 import 'package:guitar_inspire/src/shell.dart';
 import 'package:guitar_inspire/src/startup.dart';
@@ -32,6 +33,18 @@ final class _Dialogs implements FileDialogs {
       savePath;
   @override
   Future<List<int>?> pickMidiToImport() async => midiBytes;
+  String? musicXmlSavePath;
+  @override
+  Future<String?> saveMusicXml(
+    List<int> bytes, {
+    required String suggestedName,
+  }) async {
+    final path = musicXmlSavePath;
+    if (path == null) return null;
+    await File(path).writeAsBytes(bytes);
+    return path;
+  }
+
   @override
   Future<String?> saveMidi(
     List<int> bytes, {
@@ -83,6 +96,7 @@ void main() {
           fileDialogsProvider.overrideWithValue(dialogs),
           appPathsProvider.overrideWithValue(_Paths(recoveryDir)),
           midiServiceProvider.overrideWithValue(CoreBridge.midi),
+          musicXmlServiceProvider.overrideWithValue(CoreBridge.musicXml),
         ],
         // Autosave is triggered explicitly in the recovery test.
         child: const StartupGate(autosavePoll: Duration(hours: 1)),
@@ -272,6 +286,38 @@ void main() {
     // Reset returns to the defaults.
     await tester.tap(find.byKey(ValueKey('mixer-reset-$id')));
     await _until(tester, () => s().mixes.isEmpty);
+  });
+
+  // ADR-033 E13: File > Export MusicXML... in the built app with the real core. The
+  // fake dialog writes the bytes to disk; the file read back must equal what the core
+  // produces for the same document and hold one part per track. (The core has no
+  // MusicXML import, so the file is checked as written, not re-imported.)
+  testWidgets('E13: export MusicXML from the File menu', (tester) async {
+    final dialogs = _Dialogs()
+      ..musicXmlSavePath = '${tmp.path}${Platform.pathSeparator}song.musicxml';
+    final c = await start(tester, dialogs, '${tmp.path}/recovery-e13');
+    EditorState s() => c.read(editorProvider);
+    await tester.tap(find.byKey(const ValueKey('add-track')));
+    await _until(tester, () => s().summary.tracks.length == 2);
+    await tester.sendKeyEvent(LogicalKeyboardKey.digit5);
+    await _until(tester, () => _hasNote(c));
+
+    await tester.tap(find.text('File'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('export-musicxml')));
+    await _until(tester, () => File(dialogs.musicXmlSavePath!).existsSync());
+    await _until(
+      tester,
+      () => find.textContaining('to MusicXML').evaluate().isNotEmpty,
+    );
+
+    final written = await File(dialogs.musicXmlSavePath!).readAsBytes();
+    final again = await CoreBridge.musicXml.exportMusicXml(s().service);
+    expect(written, again.bytes, reason: 'the file is what the core produced');
+    final text = String.fromCharCodes(written);
+    expect(RegExp('<part id=').allMatches(text).length, 2);
+    expect(again.report.notes, 1);
+    expect(text, contains('<fret>5</fret>'));
   });
 }
 

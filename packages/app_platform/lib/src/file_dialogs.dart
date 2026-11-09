@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 
-/// Open and save dialogs for project and MIDI files. Returns `null` when the user
+/// Open and save dialogs for project, MIDI and MusicXML files. Returns `null` when the user
 /// cancels. MIDI bytes are read and written here because file I/O is a platform concern
 /// (GR-11, FF-08); the core only receives and produces bytes.
 abstract interface class FileDialogs {
@@ -17,6 +17,13 @@ abstract interface class FileDialogs {
   /// Pick a save location and write [bytes] as a `.mid` file. Returns the path written,
   /// or `null` if cancelled.
   Future<String?> saveMidi(List<int> bytes, {required String suggestedName});
+
+  /// Pick a save location and write [bytes] as a `.musicxml` file (ADR-033). Returns
+  /// the path written, or `null` if cancelled.
+  Future<String?> saveMusicXml(
+    List<int> bytes, {
+    required String suggestedName,
+  });
 }
 
 /// Product extension of project files (Q-08). Adapter-level convention only: the
@@ -27,6 +34,8 @@ const _projectFiles = XTypeGroup(
   label: 'GuitarInspire project',
   extensions: [projectExtension],
 );
+
+const _musicXmlFiles = XTypeGroup(label: 'MusicXML', extensions: ['musicxml']);
 
 const _midiFiles = XTypeGroup(
   label: 'Standard MIDI File',
@@ -64,17 +73,32 @@ final class SystemFileDialogs implements FileDialogs {
   }
 
   @override
-  Future<String?> saveMidi(
+  Future<String?> saveMidi(List<int> bytes, {required String suggestedName}) =>
+      _save(bytes, suggestedName, _midiFiles, 'mid');
+
+  @override
+  Future<String?> saveMusicXml(
     List<int> bytes, {
     required String suggestedName,
-  }) async {
+  }) => _save(bytes, suggestedName, _musicXmlFiles, 'musicxml');
+
+  /// Ask for a location and write [bytes] there, appending [extension] when the user
+  /// typed a name without one.
+  Future<String?> _save(
+    List<int> bytes,
+    String suggestedName,
+    XTypeGroup type,
+    String extension,
+  ) async {
     final location = await getSaveLocation(
-      acceptedTypeGroups: const [_midiFiles],
+      acceptedTypeGroups: [type],
       suggestedName: suggestedName,
     );
     if (location == null) return null;
     final name = location.path.split(RegExp(r'[\\/]')).last;
-    final path = name.contains('.') ? location.path : '${location.path}.mid';
+    final path = name.contains('.')
+        ? location.path
+        : '${location.path}.$extension';
     await XFile.fromData(
       Uint8List.fromList(bytes),
       name: suggestedName,

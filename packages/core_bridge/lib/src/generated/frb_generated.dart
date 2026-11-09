@@ -8,6 +8,7 @@ import 'api/engine.dart';
 import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/midi.dart';
+import 'api/musicxml.dart';
 import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -75,7 +76,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
                   String get codegenVersion => '2.13.0';
 
                   @override
-                  int get rustContentHash => -1263432862;
+                  int get rustContentHash => -616709020;
 
                   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
                     stem: 'mc_ffi',
@@ -186,6 +187,8 @@ String crateApiInfoCoreVersion();
 MetricsDto crateApiLayoutDefaultMetrics();
 
 Future<ExportResult> crateApiMidiExportMidi({required DocumentHandle document });
+
+Future<MusicXmlExportResult> crateApiMusicxmlExportMusicxml({required DocumentHandle document });
 
 Future<ImportResult> crateApiMidiImportMidi({required List<int> bytes });
 
@@ -1539,11 +1542,36 @@ sse_encode_i_64(track, serializer);
         );
         
 
+@override Future<MusicXmlExportResult> crateApiMusicxmlExportMusicxml({required DocumentHandle document })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 51, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_music_xml_export_result,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiMusicxmlExportMusicxmlConstMeta,
+            argValues: [document],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiMusicxmlExportMusicxmlConstMeta => const TaskConstMeta(
+            debugName: "export_musicxml",
+            argNames: ["document"],
+        );
+        
+
 @override Future<ImportResult> crateApiMidiImportMidi({required List<int> bytes })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_list_prim_u_8_loose(bytes, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 51, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 52, port: port_);
             
             },
             codec: 
@@ -1568,7 +1596,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 52, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 53, port: port_);
             
             },
             codec: 
@@ -2015,6 +2043,24 @@ aboveStaff: dco_decode_f_32(arr[13]),
 belowStaff: dco_decode_f_32(arr[14]),
 systemGap: dco_decode_f_32(arr[15]),
 stemLength: dco_decode_f_32(arr[16]),); }
+
+@protected MusicXmlExportResult dco_decode_music_xml_export_result(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return MusicXmlExportResult(bytes: dco_decode_list_prim_u_8_strict(arr[0]),
+report: dco_decode_music_xml_report_dto(arr[1]),); }
+
+@protected MusicXmlReportDto dco_decode_music_xml_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 8) throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+                return MusicXmlReportDto(parts: dco_decode_u_32(arr[0]),
+measures: dco_decode_u_32(arr[1]),
+notes: dco_decode_u_32(arr[2]),
+paddedVoices: dco_decode_u_32(arr[3]),
+overfullMeasures: dco_decode_u_32(arr[4]),
+tupletsWithoutBracket: dco_decode_u_32(arr[5]),
+tempoRounded: dco_decode_u_32(arr[6]),
+charactersRemoved: dco_decode_u_32(arr[7]),); }
 
 @protected NoteDto dco_decode_note_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2725,6 +2771,22 @@ var var_systemGap = sse_decode_f_32(deserializer);
 var var_stemLength = sse_decode_f_32(deserializer);
 return MetricsDto(width: var_width, marginLeft: var_marginLeft, marginRight: var_marginRight, stringSpacing: var_stringSpacing, digitWidth: var_digitWidth, glyphPadding: var_glyphPadding, minColumnWidth: var_minColumnWidth, durationSpacing: var_durationSpacing, barPadding: var_barPadding, emptyBarWidth: var_emptyBarWidth, headerWidth: var_headerWidth, timeSignatureWidth: var_timeSignatureWidth, repeatWidth: var_repeatWidth, aboveStaff: var_aboveStaff, belowStaff: var_belowStaff, systemGap: var_systemGap, stemLength: var_stemLength); }
 
+@protected MusicXmlExportResult sse_decode_music_xml_export_result(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_bytes = sse_decode_list_prim_u_8_strict(deserializer);
+var var_report = sse_decode_music_xml_report_dto(deserializer);
+return MusicXmlExportResult(bytes: var_bytes, report: var_report); }
+
+@protected MusicXmlReportDto sse_decode_music_xml_report_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_parts = sse_decode_u_32(deserializer);
+var var_measures = sse_decode_u_32(deserializer);
+var var_notes = sse_decode_u_32(deserializer);
+var var_paddedVoices = sse_decode_u_32(deserializer);
+var var_overfullMeasures = sse_decode_u_32(deserializer);
+var var_tupletsWithoutBracket = sse_decode_u_32(deserializer);
+var var_tempoRounded = sse_decode_u_32(deserializer);
+var var_charactersRemoved = sse_decode_u_32(deserializer);
+return MusicXmlReportDto(parts: var_parts, measures: var_measures, notes: var_notes, paddedVoices: var_paddedVoices, overfullMeasures: var_overfullMeasures, tupletsWithoutBracket: var_tupletsWithoutBracket, tempoRounded: var_tempoRounded, charactersRemoved: var_charactersRemoved); }
+
 @protected NoteDto sse_decode_note_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_id = sse_decode_i_64(deserializer);
 var var_string = sse_decode_u_8(deserializer);
@@ -3367,6 +3429,22 @@ sse_encode_f_32(self.aboveStaff, serializer);
 sse_encode_f_32(self.belowStaff, serializer);
 sse_encode_f_32(self.systemGap, serializer);
 sse_encode_f_32(self.stemLength, serializer);
+ }
+
+@protected void sse_encode_music_xml_export_result(MusicXmlExportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_prim_u_8_strict(self.bytes, serializer);
+sse_encode_music_xml_report_dto(self.report, serializer);
+ }
+
+@protected void sse_encode_music_xml_report_dto(MusicXmlReportDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.parts, serializer);
+sse_encode_u_32(self.measures, serializer);
+sse_encode_u_32(self.notes, serializer);
+sse_encode_u_32(self.paddedVoices, serializer);
+sse_encode_u_32(self.overfullMeasures, serializer);
+sse_encode_u_32(self.tupletsWithoutBracket, serializer);
+sse_encode_u_32(self.tempoRounded, serializer);
+sse_encode_u_32(self.charactersRemoved, serializer);
  }
 
 @protected void sse_encode_note_dto(NoteDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs

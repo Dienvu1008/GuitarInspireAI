@@ -36,6 +36,11 @@ final class _Dialogs implements FileDialogs {
   @override
   Future<List<int>?> pickMidiToImport() async => null;
   @override
+  Future<String?> saveMusicXml(
+    List<int> bytes, {
+    required String suggestedName,
+  }) async => null;
+  @override
   Future<String?> saveMidi(
     List<int> bytes, {
     required String suggestedName,

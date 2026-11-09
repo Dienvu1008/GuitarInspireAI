@@ -9,6 +9,7 @@ import 'generated/api/document.dart';
 import 'generated/api/layout.dart';
 import 'generated/api/types.dart';
 import 'generated/frb_generated.dart';
+import 'musicxml_service.dart' show MusicXmlService, RustMusicXmlService;
 import 'playback_service.dart' show MidiService, PlaybackFactory;
 import 'rust_playback_service.dart' show RustMidiService, RustPlaybackFactory;
 import 'rust_tuner_service.dart' show RustTunerFactory;
@@ -40,6 +41,9 @@ abstract final class CoreBridge {
 
   /// MIDI import and export (no audio device needed, ADR-023).
   static MidiService get midi => const RustMidiService();
+
+  /// MusicXML export (ADR-033); no audio device needed.
+  static MusicXmlService get musicXml => const RustMusicXmlService();
 
   /// A tuner factory bound to [document] (ADR-029). Call `start()` on it to open the
   /// microphone; independent of the playback engine.

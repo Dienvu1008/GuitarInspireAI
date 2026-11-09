@@ -12,6 +12,7 @@ import 'api/engine.dart';
 import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/midi.dart';
+import 'api/musicxml.dart';
 import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -197,6 +198,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected MasterBarDto dco_decode_master_bar_dto(dynamic raw);
 
 @protected MetricsDto dco_decode_metrics_dto(dynamic raw);
+
+@protected MusicXmlExportResult dco_decode_music_xml_export_result(dynamic raw);
+
+@protected MusicXmlReportDto dco_decode_music_xml_report_dto(dynamic raw);
 
 @protected NoteDto dco_decode_note_dto(dynamic raw);
 
@@ -408,6 +413,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected MetricsDto sse_decode_metrics_dto(SseDeserializer deserializer);
 
+@protected MusicXmlExportResult sse_decode_music_xml_export_result(SseDeserializer deserializer);
+
+@protected MusicXmlReportDto sse_decode_music_xml_report_dto(SseDeserializer deserializer);
+
 @protected NoteDto sse_decode_note_dto(SseDeserializer deserializer);
 
 @protected String? sse_decode_opt_String(SseDeserializer deserializer);
@@ -617,6 +626,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_master_bar_dto(MasterBarDto self, SseSerializer serializer);
 
 @protected void sse_encode_metrics_dto(MetricsDto self, SseSerializer serializer);
+
+@protected void sse_encode_music_xml_export_result(MusicXmlExportResult self, SseSerializer serializer);
+
+@protected void sse_encode_music_xml_report_dto(MusicXmlReportDto self, SseSerializer serializer);
 
 @protected void sse_encode_note_dto(NoteDto self, SseSerializer serializer);
 

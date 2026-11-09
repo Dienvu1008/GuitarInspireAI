@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'src/close_guard.dart';
+import 'src/musicxml_menu.dart';
 import 'src/playback_wiring.dart';
 import 'src/soundfont.dart';
 import 'src/startup.dart';
@@ -31,6 +32,7 @@ Future<void> main() async {
       overrides: [
         documentFactoryProvider.overrideWithValue(CoreBridge.documents),
         ...playbackOverrides(playback, CoreBridge.midi),
+        musicXmlServiceProvider.overrideWithValue(CoreBridge.musicXml),
         ...tunerOverrides(),
         ...toolsOverrides(),
         ...closeOverrides(),

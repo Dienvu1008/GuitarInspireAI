@@ -8,6 +8,7 @@ import 'package:ui_kit/ui_kit.dart';
 
 import 'close_guard.dart';
 import 'midi_menu.dart';
+import 'musicxml_menu.dart';
 import 'playback_wiring.dart';
 
 class GuitarInspireApp extends StatelessWidget {
@@ -180,6 +181,7 @@ class _MenuBar extends ConsumerWidget {
                 ),
                 const Divider(),
                 ...buildMidiMenuItems(context, ref),
+                ...buildMusicXmlMenuItems(context, ref),
               ],
               child: const Text('File'),
             ),
