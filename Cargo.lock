@@ -983,6 +983,8 @@ name = "mc-cli"
 version = "0.1.0"
 dependencies = [
  "mc-app",
+ "mc-midi",
+ "mc-musicxml",
  "mc-project",
 ]
 

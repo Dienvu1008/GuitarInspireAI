@@ -169,3 +169,16 @@ jobs:
         uses: EmbarkStudios/cargo-deny-action@v2
         with:
           command: check advisories licenses sources bans
+
+  musicxml-schema:
+    # ADR-033 E1: every MusicXML export validates against the MusicXML 4.0 XSD. The
+    # schema is fetched at a pinned commit and checked by SHA-256, not stored here.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install pinned Rust toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+      - name: Install xmllint
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends libxml2-utils
+      - name: Validate the exports (ADR-033 E1)
+        run: bash tools/musicxml-schema/validate.sh
