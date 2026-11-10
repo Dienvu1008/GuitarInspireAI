@@ -8,6 +8,7 @@ import 'document_service.dart';
 import 'generated/api/document.dart';
 import 'generated/api/layout.dart';
 import 'generated/api/pattern.dart' as pattern_api;
+import 'generated/api/pattern_grid.dart' as grid_api;
 import 'generated/api/types.dart';
 import 'generated/frb_generated.dart';
 import 'musicxml_service.dart' show MusicXmlService, RustMusicXmlService;
@@ -150,6 +151,14 @@ final class RustDocumentService implements DocumentService {
   pattern_api.PatternPreviewDto previewPattern(
     pattern_api.ApplyPatternDto args,
   ) => pattern_api.previewPattern(document: _handle, args: args);
+
+  @override
+  grid_api.GridViewDto patternGrid(int pattern, List<int> snaps) =>
+      grid_api.patternGrid(document: _handle, pattern: pattern, snaps: snaps);
+
+  @override
+  List<grid_api.GestureInfoDto> gestures() =>
+      grid_api.gestures(document: _handle);
 
   @override
   List<ClipBeatDto> copyBeats(

@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'document_service.dart';
+import 'fake_pattern_library.dart';
 import 'generated/api/document.dart' show RecoveryEntryDto;
 import 'generated/api/layout.dart';
 import 'generated/api/pattern.dart';
+import 'generated/api/pattern_grid.dart';
 import 'generated/api/types.dart';
 
 /// In-memory stand-in for the Rust document session, for widget tests.
@@ -133,7 +135,15 @@ final class FakeDocumentService implements DocumentService {
     _lastCoalesceKey = coalesceKey;
     final report = _lastPatternReport;
     _lastPatternReport = null;
-    return _commit(kinds, _nextCommand++, pattern: report);
+    final created = _lastCreated;
+    _lastCreated = (pattern: null, gesture: null);
+    return _commit(
+      kinds,
+      _nextCommand++,
+      pattern: report,
+      createdPattern: created.pattern,
+      createdGesture: created.gesture,
+    );
   }
 
   List<EventKindDto> _apply(CommandDto c) {
@@ -362,31 +372,72 @@ final class FakeDocumentService implements DocumentService {
             end: args.last + 1,
           ),
         ];
+      // ADR-034 (6a-5): library commands change only the placeholder library.
+      case CommandDto_NewPattern(
+        :final name,
+        :final twoLanes,
+        :final lengthNumerator,
+        :final lengthDenominator,
+        :final meter,
+      ):
+        _lastCreated = (
+          pattern: _state.library.create(
+            name,
+            twoLanes,
+            lengthNumerator,
+            lengthDenominator,
+            meter,
+          ),
+          gesture: null,
+        );
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_RemovePattern(:final pattern):
+        _state.library.remove(pattern);
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_EditPattern(:final pattern, :final edit):
+        _state.library.edit(pattern, edit);
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_DefineGesture(:final name, :final strike):
+        _lastCreated = (
+          pattern: null,
+          gesture: _state.library.defineGesture(name, strike),
+        );
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_GestureFromStep(
+        :final pattern,
+        :final lane,
+        :final index,
+        :final name,
+      ):
+        _lastCreated = (
+          pattern: null,
+          gesture: _state.library.gestureFromStep(pattern, lane, index, name),
+        );
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_RenameGesture(:final gesture, :final name):
+        _state.library.renameGesture(gesture, name);
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_ChangeGesture(:final gesture, :final strike):
+        _state.library.changeGesture(gesture, strike);
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_RemoveGesture(:final gesture):
+        _state.library.removeGesture(gesture);
+        return const [EventKindDto.patternLibraryChanged()];
       default:
         throw ApiError(rule: 'unsupported', message: 'FakeDocumentService: $c');
     }
   }
 
   PatternReportDto? _lastPatternReport;
+  ({int? pattern, int? gesture}) _lastCreated = (pattern: null, gesture: null);
 
   /// Test hook: when true, a pattern range needs a fit (the core decides this from
   /// the bar lengths; the fake's bars are all 4/4, so it never would on its own).
   /// Without a fit the preview reports `needsFit` and applying throws `PE-08`.
   bool patternNeedsFit = false;
 
-  /// The fake library holds only the sample pattern (one 4/4 bar, Strum), and every
-  /// fake bar is 4/4, so no fit is ever needed here.
-  static const _sample = PatternInfoDto(
-    id: 1,
-    name: 'Boom-chick',
-    description: 'Sample',
-    lengthNumerator: 1,
-    lengthDenominator: 1,
-    twoLanes: false,
-  );
-
   PatternReportDto _patternReport(ApplyPatternDto a) {
-    if (a.pattern != _sample.id) {
+    if (!_state.library.contains(a.pattern)) {
       throw ApiError(rule: 'PT-06', message: 'no pattern ${a.pattern}');
     }
     _track(a.track);
@@ -414,10 +465,19 @@ final class FakeDocumentService implements DocumentService {
   }
 
   @override
-  List<PatternInfoDto> patterns() => const [_sample];
+  List<PatternInfoDto> patterns() => _state.library.infos();
 
   @override
-  int samplePattern() => _sample.id;
+  int samplePattern() => _state.library.sampleUnchanged
+      ? FakePatternLibrary.sampleId
+      : -1;
+
+  @override
+  GridViewDto patternGrid(int pattern, List<int> snaps) =>
+      _state.library.view(pattern, snaps);
+
+  @override
+  List<GestureInfoDto> gestures() => _state.library.gestures();
 
   @override
   PatternPreviewDto previewPattern(ApplyPatternDto args) =>
@@ -451,6 +511,8 @@ final class FakeDocumentService implements DocumentService {
     List<EventKindDto> kinds,
     int? correlation, {
     PatternReportDto? pattern,
+    int? createdPattern,
+    int? createdGesture,
   }) {
     _revision++;
     final events = [
@@ -465,7 +527,13 @@ final class FakeDocumentService implements DocumentService {
     for (final e in events) {
       _events.add(e);
     }
-    return OutcomeDto(revision: _revision, events: events, pattern: pattern);
+    return OutcomeDto(
+      revision: _revision,
+      events: events,
+      pattern: pattern,
+      createdPattern: createdPattern,
+      createdGesture: createdGesture,
+    );
   }
 
   @override
@@ -474,7 +542,7 @@ final class FakeDocumentService implements DocumentService {
     _redo.add(_state);
     _state = _undo.removeLast();
     _lastCoalesceKey = null;
-    return _commit([const EventKindDto.historyApplied()], null);
+    return _commit(_historyKinds(_redo.last), null);
   }
 
   @override
@@ -483,8 +551,15 @@ final class FakeDocumentService implements DocumentService {
     _undo.add(_state);
     _state = _redo.removeLast();
     _lastCoalesceKey = null;
-    return _commit([const EventKindDto.historyApplied()], null);
+    return _commit(_historyKinds(_undo.last), null);
   }
+
+  /// Undo and redo say whether the library changed, as the core does.
+  List<EventKindDto> _historyKinds(_State from) => [
+    const EventKindDto.historyApplied(),
+    if (from.library.generation != _state.library.generation)
+      const EventKindDto.patternLibraryChanged(),
+  ];
 
   @override
   Future<OutcomeDto> save() async {
@@ -927,6 +1002,11 @@ final class _Tracked implements DocumentService {
   PatternPreviewDto previewPattern(ApplyPatternDto args) =>
       _inner.previewPattern(args);
   @override
+  GridViewDto patternGrid(int pattern, List<int> snaps) =>
+      _inner.patternGrid(pattern, snaps);
+  @override
+  List<GestureInfoDto> gestures() => _inner.gestures();
+  @override
   List<ClipBeatDto> copyBeats(
     int track,
     int voice, {
@@ -991,16 +1071,22 @@ final class _Track {
 }
 
 final class _State {
-  _State({required this.tracks, required this.bars});
+  _State({required this.tracks, required this.bars, FakePatternLibrary? library})
+    : library = library ?? FakePatternLibrary.sample();
   final List<_Track> tracks;
   int bars;
+  final FakePatternLibrary library;
 
-  _State copy() =>
-      _State(tracks: [for (final t in tracks) t.copy()], bars: bars);
+  _State copy() => _State(
+    tracks: [for (final t in tracks) t.copy()],
+    bars: bars,
+    library: library.copy(),
+  );
 
   bool sameAs(_State? other) {
     if (other == null ||
         other.bars != bars ||
+        other.library.generation != library.generation ||
         other.tracks.length != tracks.length) {
       return false;
     }

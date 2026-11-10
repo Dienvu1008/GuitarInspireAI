@@ -7,6 +7,7 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 import 'pattern.dart';
+import 'pattern_grid.dart';
 part 'types.freezed.dart';
 
             // These functions are ignored because they are not marked as `pub`: `from_app`, `from_app`, `new`, `note_id`, `to_app`, `to_app`, `to_app`, `to_app`, `to_app`, `track_id`
@@ -214,6 +215,19 @@ const factory CommandDto.shiftFrets({   required PlatformInt64 track ,  required
  /// Applies a pattern of the session library (ADR-034 section 7). See
 /// `preview_pattern` for what it would write.
 const factory CommandDto.applyPattern({   required ApplyPatternDto args , }) = CommandDto_ApplyPattern;
+ /// Library commands (ADR-034, 6a-5): each is one undo step and one revision and
+/// changes only the pattern library. A created id is in OutcomeDto.
+const factory CommandDto.newPattern({   required String name ,/// Thumb and fingers (voices 1 and 2); otherwise one strum lane.
+  required bool twoLanes ,  required PlatformInt64 lengthNumerator ,  required PlatformInt64 lengthDenominator ,  MeterDto? meter , }) = CommandDto_NewPattern;
+ const factory CommandDto.removePattern({   required PlatformInt64 pattern , }) = CommandDto_RemovePattern;
+ /// One grid edit; see pattern_grid for the view it changes.
+const factory CommandDto.editPattern({   required PlatformInt64 pattern ,  required GridEditDto edit , }) = CommandDto_EditPattern;
+ const factory CommandDto.defineGesture({   required String name ,  required GridStrikeDto strike , }) = CommandDto_DefineGesture;
+ /// Makes a gesture from the strike of a step and uses it there, in one step.
+const factory CommandDto.gestureFromStep({   required PlatformInt64 pattern ,  required PatternLaneDto lane ,  required int index ,  required String name , }) = CommandDto_GestureFromStep;
+ const factory CommandDto.renameGesture({   required PlatformInt64 gesture ,  required String name , }) = CommandDto_RenameGesture;
+ const factory CommandDto.changeGesture({   required PlatformInt64 gesture ,  required GridStrikeDto strike , }) = CommandDto_ChangeGesture;
+ const factory CommandDto.removeGesture({   required PlatformInt64 gesture , }) = CommandDto_RemoveGesture;
  /// `keep_pitches`: notes keep their sound (frets move); otherwise frets are kept.
 const factory CommandDto.retune({   required PlatformInt64 track ,  required InstrumentDto instrument ,  required bool keepPitches , }) = CommandDto_Retune;
  /// Inserts a copied run of beats at `index` of a voice (ADR-030). All or nothing;
@@ -365,6 +379,9 @@ final EventKindDto kind;
  const factory EventKindDto.dirtyChanged({   required bool dirty , }) = EventKindDto_DirtyChanged;
  const factory EventKindDto.undoAvailabilityChanged({   required bool canUndo ,  required bool canRedo , }) = EventKindDto_UndoAvailabilityChanged;
  const factory EventKindDto.historyApplied() = EventKindDto_HistoryApplied;
+ /// The pattern library changed (a library command, or undo or redo of one): the
+/// UI re-queries the patterns, gestures and grid (ADR-034, 6a-5).
+const factory EventKindDto.patternLibraryChanged() = EventKindDto_PatternLibraryChanged;
  /// Playback transport state changed (session state, ADR-028). The revision is
 /// unchanged on the carrying event.
 const factory EventKindDto.playbackStateChanged({   required PlaybackStateDto state , }) = EventKindDto_PlaybackStateChanged;
@@ -475,15 +492,19 @@ class OutcomeDto  {
 final List<EventDto> events;
 /// What `ApplyPattern` wrote; `None` for other commands.
 final PatternReportDto? pattern;
+/// The pattern a library command created (`NewPattern`), if any.
+final PlatformInt64? createdPattern;
+/// The gesture a library command created (`DefineGesture`, `GestureFromStep`).
+final PlatformInt64? createdGesture;
 
-                const OutcomeDto({required this.revision ,required this.events ,this.pattern ,});
+                const OutcomeDto({required this.revision ,required this.events ,this.pattern ,this.createdPattern ,this.createdGesture ,});
 
 
 
 
 
         @override
-        int get hashCode => revision.hashCode^events.hashCode^pattern.hashCode;
+        int get hashCode => revision.hashCode^events.hashCode^pattern.hashCode^createdPattern.hashCode^createdGesture.hashCode;
 
 
 
@@ -492,7 +513,7 @@ final PatternReportDto? pattern;
             identical(this, other) ||
             other is OutcomeDto &&
                 runtimeType == other.runtimeType
-                && revision == other.revision&& events == other.events&& pattern == other.pattern;
+                && revision == other.revision&& events == other.events&& pattern == other.pattern&& createdPattern == other.createdPattern&& createdGesture == other.createdGesture;
 
             }
 

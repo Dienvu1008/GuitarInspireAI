@@ -12,7 +12,8 @@ use mc_app::ports::RecoveryStore;
 use mc_app::types::{AppInfo, DiagnosticKind, DomainEvent, MasterBar, TimeSignature};
 use mc_app::{
     AppEvent, Command, CommandEnvelope, CommandOutcome, DocumentId, DocumentSession, EventEnvelope,
-    EventPayload, EventSink, GuitarCommand, Revision, ScoreCommand, SessionConfig, TrackCommand,
+    EventPayload, EventSink, GuitarCommand, LaneLayout, PatternCommand, Revision, ScoreCommand,
+    SessionConfig, TrackCommand,
 };
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -561,6 +562,8 @@ pub(crate) fn outcome_dto(o: &CommandOutcome) -> OutcomeDto {
         revision: o.revision.0 as i64,
         events: o.events.iter().map(event_dto).collect(),
         pattern: o.pattern.as_ref().map(crate::api::pattern::report_dto),
+        created_pattern: o.library.and_then(|l| l.pattern).map(|p| p.raw() as i64),
+        created_gesture: o.library.and_then(|l| l.gesture).map(|g| g.raw() as i64),
     }
 }
 
@@ -605,9 +608,7 @@ fn event_dto(e: &EventEnvelope) -> EventDto {
                 }
             }
             AppEvent::HistoryApplied => EventKindDto::HistoryApplied,
-            // Library commands are not on the bridge before 6a-5c, which adds their own
-            // event kind; until then this only follows an undo, so "re-query" fits.
-            AppEvent::PatternLibraryChanged => EventKindDto::HistoryApplied,
+            AppEvent::PatternLibraryChanged => EventKindDto::PatternLibraryChanged,
             AppEvent::PlaybackStateChanged { state } => EventKindDto::PlaybackStateChanged {
                 state: playback_state_dto(*state),
             },
@@ -652,6 +653,9 @@ fn to_command(s: &DocumentSession, c: CommandDto) -> Result<Command, ApiError> {
     };
     let sc = |c: ScoreCommand| Ok(Command::Score(c));
     let tc = |c: TrackCommand| Ok(Command::Track(c));
+    let pc = |c: PatternCommand| Ok(Command::Pattern(c));
+    let pattern_id = |raw: i64| mc_app::pattern::PatternId::from_raw(raw as u64);
+    let gesture_id = |raw: i64| mc_app::pattern::GestureId::from_raw(raw as u64);
     match c {
         CommandDto::InsertMasterBars { at, count } => {
             let source = at
@@ -824,6 +828,62 @@ fn to_command(s: &DocumentSession, c: CommandDto) -> Result<Command, ApiError> {
         CommandDto::ApplyPattern { args } => Ok(Command::Pattern(
             mc_app::PatternCommand::ApplyPattern(args.to_app()?),
         )),
+        CommandDto::NewPattern {
+            name,
+            two_lanes,
+            length_numerator,
+            length_denominator,
+            meter,
+        } => pc(PatternCommand::NewPattern {
+            name,
+            layout: if two_lanes {
+                LaneLayout::ThumbFingers
+            } else {
+                LaneLayout::Strum
+            },
+            length: mc_app::types::Rational::new(length_numerator, length_denominator)
+                .map_err(|e| ApiError::new("T", e.to_string()))?,
+            meter: meter.map(|m| m.to_app()).transpose()?,
+        }),
+        CommandDto::RemovePattern { pattern } => pc(PatternCommand::RemovePattern {
+            pattern: pattern_id(pattern),
+        }),
+        CommandDto::EditPattern { pattern, edit } => {
+            let id = pattern_id(pattern);
+            // SetMeta keeps the origin: the only input the command reads from the
+            // document, as an input convenience. The core validates the result.
+            let origin = s.patterns().pattern(id).and_then(|p| p.parts().meta.origin);
+            pc(PatternCommand::EditPattern {
+                pattern: id,
+                edit: edit.to_app(origin)?,
+            })
+        }
+        CommandDto::DefineGesture { name, strike } => pc(PatternCommand::DefineGesture {
+            name,
+            strike: strike.to_app()?,
+        }),
+        CommandDto::GestureFromStep {
+            pattern,
+            lane,
+            index,
+            name,
+        } => pc(PatternCommand::GestureFromStep {
+            pattern: pattern_id(pattern),
+            lane: lane.to_app(),
+            index: index as usize,
+            name,
+        }),
+        CommandDto::RenameGesture { gesture, name } => pc(PatternCommand::RenameGesture {
+            gesture: gesture_id(gesture),
+            name,
+        }),
+        CommandDto::ChangeGesture { gesture, strike } => pc(PatternCommand::ChangeGesture {
+            gesture: gesture_id(gesture),
+            strike: strike.to_app()?,
+        }),
+        CommandDto::RemoveGesture { gesture } => pc(PatternCommand::RemoveGesture {
+            gesture: gesture_id(gesture),
+        }),
         CommandDto::Retune {
             track,
             instrument,

@@ -12,6 +12,7 @@ export 'src/generated/api/musicxml.dart'
     show MusicXmlExportResult, MusicXmlReportDto;
 export 'src/generated/api/pattern.dart'
     hide patterns, previewPattern, samplePattern;
+export 'src/generated/api/pattern_grid.dart' hide gestures, patternGrid;
 export 'src/generated/api/types.dart';
 export 'src/musicxml_service.dart' show MusicXmlService;
 export 'src/playback_service.dart';

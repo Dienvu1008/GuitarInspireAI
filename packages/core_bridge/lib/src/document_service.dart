@@ -4,6 +4,7 @@ import 'generated/api/types.dart';
 import 'generated/api/document.dart' show RecoveryEntryDto;
 import 'generated/api/pattern.dart'
     show ApplyPatternDto, PatternInfoDto, PatternPreviewDto;
+import 'generated/api/pattern_grid.dart' show GestureInfoDto, GridViewDto;
 
 /// One open document. All musical rules are applied by the Rust core; this interface
 /// only sends commands and reads projections (ADR-002). Implementations: the real one
@@ -70,6 +71,15 @@ abstract interface class DocumentService {
   /// none gives `needsFit`; every other refusal throws [ApiError] with the core's
   /// rule. The core decides binding, fit and the overwrite safeguard (GR-05).
   PatternPreviewDto previewPattern(ApplyPatternDto args);
+
+  /// The grid of [pattern] with [snaps] cells per beat (ADR-034, 6a-5): rows, steps,
+  /// spans and the snap per beat, all decided by the core. Edits are sent as
+  /// `CommandDto.editPattern`. Throws [ApiError] with `PE-14` for a bad snap and
+  /// `PT` for an unknown pattern.
+  GridViewDto patternGrid(int pattern, List<int> snaps);
+
+  /// The user gestures of the session library (the palette).
+  List<GestureInfoDto> gestures();
 
   /// Line breaking of the shown [tracks] at the current revision (ADR-031): each
   /// system's position, height and bars, without content. Sizes the scroll view.

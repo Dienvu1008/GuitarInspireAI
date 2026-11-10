@@ -246,6 +246,46 @@ pub enum CommandDto {
     ApplyPattern {
         args: crate::api::pattern::ApplyPatternDto,
     },
+    /// Library commands (ADR-034, 6a-5): each is one undo step and one revision and
+    /// changes only the pattern library. A created id is in OutcomeDto.
+    NewPattern {
+        name: String,
+        /// Thumb and fingers (voices 1 and 2); otherwise one strum lane.
+        two_lanes: bool,
+        length_numerator: i64,
+        length_denominator: i64,
+        meter: Option<crate::api::pattern_grid::MeterDto>,
+    },
+    RemovePattern {
+        pattern: i64,
+    },
+    /// One grid edit; see pattern_grid for the view it changes.
+    EditPattern {
+        pattern: i64,
+        edit: crate::api::pattern_grid::GridEditDto,
+    },
+    DefineGesture {
+        name: String,
+        strike: crate::api::pattern_grid::GridStrikeDto,
+    },
+    /// Makes a gesture from the strike of a step and uses it there, in one step.
+    GestureFromStep {
+        pattern: i64,
+        lane: crate::api::pattern_grid::PatternLaneDto,
+        index: u32,
+        name: String,
+    },
+    RenameGesture {
+        gesture: i64,
+        name: String,
+    },
+    ChangeGesture {
+        gesture: i64,
+        strike: crate::api::pattern_grid::GridStrikeDto,
+    },
+    RemoveGesture {
+        gesture: i64,
+    },
     /// `keep_pitches`: notes keep their sound (frets move); otherwise frets are kept.
     Retune {
         track: i64,
@@ -415,6 +455,9 @@ pub enum EventKindDto {
         can_redo: bool,
     },
     HistoryApplied,
+    /// The pattern library changed (a library command, or undo or redo of one): the
+    /// UI re-queries the patterns, gestures and grid (ADR-034, 6a-5).
+    PatternLibraryChanged,
     /// Playback transport state changed (session state, ADR-028). The revision is
     /// unchanged on the carrying event.
     PlaybackStateChanged {
@@ -531,6 +574,10 @@ pub struct OutcomeDto {
     pub events: Vec<EventDto>,
     /// What `ApplyPattern` wrote; `None` for other commands.
     pub pattern: Option<crate::api::pattern::PatternReportDto>,
+    /// The pattern a library command created (`NewPattern`), if any.
+    pub created_pattern: Option<i64>,
+    /// The gesture a library command created (`DefineGesture`, `GestureFromStep`).
+    pub created_gesture: Option<i64>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

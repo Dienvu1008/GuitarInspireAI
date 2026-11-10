@@ -89,7 +89,7 @@ pub struct PatternPreviewDto {
     pub report: Option<PatternReportDto>,
 }
 
-fn duration(v: NoteValue) -> DurationDto {
+pub(crate) fn duration(v: NoteValue) -> DurationDto {
     DurationDto {
         base: v.base().exponent(),
         dots: v.dots(),

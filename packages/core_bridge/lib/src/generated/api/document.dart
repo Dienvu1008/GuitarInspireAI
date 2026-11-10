@@ -7,6 +7,7 @@ import '../frb_generated.dart';
 import 'layout.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'pattern.dart';
+import 'pattern_grid.dart';
 import 'types.dart';
 
 

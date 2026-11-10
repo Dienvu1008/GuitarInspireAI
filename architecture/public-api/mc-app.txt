@@ -240,16 +240,27 @@ pub use mc_app::notation::Stave
 pub use mc_app::notation::SystemLayout
 pub use mc_app::notation::TabLayout
 pub mod mc_app::pattern
+pub use mc_app::pattern::Action
 pub use mc_app::pattern::BindError
+pub use mc_app::pattern::Direction
 pub use mc_app::pattern::Fit
+pub use mc_app::pattern::GestureId
 pub use mc_app::pattern::LaneId
 pub use mc_app::pattern::Lanes
 pub use mc_app::pattern::NoteValue
+pub use mc_app::pattern::Origin
 pub use mc_app::pattern::PatternId
+pub use mc_app::pattern::PatternMeta
 pub use mc_app::pattern::PlaceError
 pub use mc_app::pattern::PlaceReport
 pub use mc_app::pattern::PlacedBar
 pub use mc_app::pattern::StepChange
+pub use mc_app::pattern::Strike
+pub use mc_app::pattern::StringIndex
+pub use mc_app::pattern::StringSelector
+pub use mc_app::pattern::Technique
+pub use mc_app::pattern::TechniqueSet
+pub use mc_app::pattern::grid
 pub enum mc_app::pattern::ApplyError
 pub mc_app::pattern::ApplyError::Bind(alloc::vec::Vec<mc_pattern::bind::BindError>)
 pub mc_app::pattern::ApplyError::Place(mc_pattern::place::PlaceError)
@@ -1264,6 +1275,7 @@ pub fn mc_app::DocumentSession::location(&self) -> core::option::Option<&std::pa
 pub fn mc_app::DocumentSession::mark_autosaved(&mut self, u64)
 pub fn mc_app::DocumentSession::new(mc_app::DocumentId, mc_score::score::Score, mc_app::SessionConfig, &dyn mc_app::ports::Clock, &dyn mc_app::ports::Entropy) -> Self
 pub fn mc_app::DocumentSession::open(mc_app::DocumentId, &dyn mc_app::ports::ProjectStore, &std::path::Path, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
+pub fn mc_app::DocumentSession::pattern_grid(&self, mc_pattern::ids::PatternId, &[u8]) -> core::result::Result<mc_pattern::grid::GridView, mc_app::CommandError>
 pub fn mc_app::DocumentSession::patterns(&self) -> &mc_pattern::library::PatternLibrary
 pub fn mc_app::DocumentSession::patterns_mut(&mut self) -> &mut mc_pattern::library::PatternLibrary
 pub fn mc_app::DocumentSession::played_bars(&self) -> alloc::vec::Vec<mc_app::transport::PlayedBarInfo>

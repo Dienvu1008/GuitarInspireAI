@@ -10,6 +10,7 @@ import 'api/layout.dart';
 import 'api/midi.dart';
 import 'api/musicxml.dart';
 import 'api/pattern.dart';
+import 'api/pattern_grid.dart';
 import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -77,7 +78,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
                   String get codegenVersion => '2.13.0';
 
                   @override
-                  int get rustContentHash => -568783285;
+                  int get rustContentHash => -194077946;
 
                   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
                     stem: 'mc_ffi',
@@ -191,15 +192,21 @@ Future<ExportResult> crateApiMidiExportMidi({required DocumentHandle document })
 
 Future<MusicXmlExportResult> crateApiMusicxmlExportMusicxml({required DocumentHandle document });
 
+List<GestureInfoDto> crateApiPatternGridGestures({required DocumentHandle document });
+
 Future<ImportResult> crateApiMidiImportMidi({required List<int> bytes });
 
 Future<void> crateApiInfoInitApp();
+
+GridViewDto crateApiPatternGridPatternGrid({required DocumentHandle document , required PlatformInt64 pattern , required List<int> snaps });
 
 List<PatternInfoDto> crateApiPatternPatterns({required DocumentHandle document });
 
 PatternPreviewDto crateApiPatternPreviewPattern({required DocumentHandle document , required ApplyPatternDto args });
 
 PlatformInt64 crateApiPatternSamplePattern({required DocumentHandle document });
+
+Future<TechniquesDto> crateApiPatternGridTechniquesDtoDefault();
 
 RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_DocumentHandle;
 
@@ -1574,11 +1581,36 @@ sse_encode_i_64(track, serializer);
         );
         
 
+@override List<GestureInfoDto> crateApiPatternGridGestures({required DocumentHandle document })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 52)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_list_gesture_info_dto,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiPatternGridGesturesConstMeta,
+            argValues: [document],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiPatternGridGesturesConstMeta => const TaskConstMeta(
+            debugName: "gestures",
+            argNames: ["document"],
+        );
+        
+
 @override Future<ImportResult> crateApiMidiImportMidi({required List<int> bytes })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_list_prim_u_8_loose(bytes, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 52, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 53, port: port_);
             
             },
             codec: 
@@ -1603,7 +1635,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 53, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 54, port: port_);
             
             },
             codec: 
@@ -1624,11 +1656,38 @@ sse_encode_i_64(track, serializer);
         );
         
 
+@override GridViewDto crateApiPatternGridPatternGrid({required DocumentHandle document , required PlatformInt64 pattern , required List<int> snaps })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+sse_encode_i_64(pattern, serializer);
+sse_encode_list_prim_u_8_loose(snaps, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 55)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_grid_view_dto,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiPatternGridPatternGridConstMeta,
+            argValues: [document, pattern, snaps],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiPatternGridPatternGridConstMeta => const TaskConstMeta(
+            debugName: "pattern_grid",
+            argNames: ["document", "pattern", "snaps"],
+        );
+        
+
 @override List<PatternInfoDto> crateApiPatternPatterns({required DocumentHandle document })  { return handler.executeSync(SyncTask(
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 54)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 56)!;
             
             },
             codec: 
@@ -1654,7 +1713,7 @@ sse_encode_i_64(track, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 55)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 57)!;
             
             },
             codec: 
@@ -1679,7 +1738,7 @@ sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 56)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 58)!;
             
             },
             codec: 
@@ -1697,6 +1756,31 @@ sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
         TaskConstMeta get kCrateApiPatternSamplePatternConstMeta => const TaskConstMeta(
             debugName: "sample_pattern",
             argNames: ["document"],
+        );
+        
+
+@override Future<TechniquesDto> crateApiPatternGridTechniquesDtoDefault()  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 59, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_techniques_dto,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiPatternGridTechniquesDtoDefaultConstMeta,
+            argValues: [],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiPatternGridTechniquesDtoDefaultConstMeta => const TaskConstMeta(
+            debugName: "techniques_dto_default",
+            argNames: [],
         );
         
 
@@ -1829,6 +1913,21 @@ return dco_decode_duration_dto(raw); }
 @protected FitDto dco_decode_box_autoadd_fit_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_fit_dto(raw); }
 
+@protected GridActionDto dco_decode_box_autoadd_grid_action_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_grid_action_dto(raw); }
+
+@protected GridCellDto dco_decode_box_autoadd_grid_cell_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_grid_cell_dto(raw); }
+
+@protected GridEditDto dco_decode_box_autoadd_grid_edit_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_grid_edit_dto(raw); }
+
+@protected GridSelectorDto dco_decode_box_autoadd_grid_selector_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_grid_selector_dto(raw); }
+
+@protected GridStrikeDto dco_decode_box_autoadd_grid_strike_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_grid_strike_dto(raw); }
+
 @protected PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_i_64(raw); }
 
@@ -1837,6 +1936,9 @@ return dco_decode_instrument_dto(raw); }
 
 @protected MasterBarDto dco_decode_box_autoadd_master_bar_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_master_bar_dto(raw); }
+
+@protected MeterDto dco_decode_box_autoadd_meter_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_meter_dto(raw); }
 
 @protected MetricsDto dco_decode_box_autoadd_metrics_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_metrics_dto(raw); }
@@ -1906,9 +2008,17 @@ case 18: return CommandDto_RenameTrack(track: dco_decode_i_64(raw[1]),name: dco_
 case 19: return CommandDto_SetInstrument(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),);
 case 20: return CommandDto_MoveTrack(track: dco_decode_i_64(raw[1]),to: dco_decode_u_32(raw[2]),);
 case 21: return CommandDto_ApplyPattern(args: dco_decode_box_autoadd_apply_pattern_dto(raw[1]),);
-case 22: return CommandDto_Retune(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),keepPitches: dco_decode_bool(raw[3]),);
-case 23: return CommandDto_PasteBeats(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),index: dco_decode_u_32(raw[4]),beats: dco_decode_list_clip_beat_dto(raw[5]),);
-case 24: return CommandDto_RemoveBeats(track: dco_decode_i_64(raw[1]),voice: dco_decode_u_32(raw[2]),fromBar: dco_decode_u_32(raw[3]),fromIndex: dco_decode_u_32(raw[4]),toBar: dco_decode_u_32(raw[5]),toIndex: dco_decode_u_32(raw[6]),);
+case 22: return CommandDto_NewPattern(name: dco_decode_String(raw[1]),twoLanes: dco_decode_bool(raw[2]),lengthNumerator: dco_decode_i_64(raw[3]),lengthDenominator: dco_decode_i_64(raw[4]),meter: dco_decode_opt_box_autoadd_meter_dto(raw[5]),);
+case 23: return CommandDto_RemovePattern(pattern: dco_decode_i_64(raw[1]),);
+case 24: return CommandDto_EditPattern(pattern: dco_decode_i_64(raw[1]),edit: dco_decode_box_autoadd_grid_edit_dto(raw[2]),);
+case 25: return CommandDto_DefineGesture(name: dco_decode_String(raw[1]),strike: dco_decode_box_autoadd_grid_strike_dto(raw[2]),);
+case 26: return CommandDto_GestureFromStep(pattern: dco_decode_i_64(raw[1]),lane: dco_decode_pattern_lane_dto(raw[2]),index: dco_decode_u_32(raw[3]),name: dco_decode_String(raw[4]),);
+case 27: return CommandDto_RenameGesture(gesture: dco_decode_i_64(raw[1]),name: dco_decode_String(raw[2]),);
+case 28: return CommandDto_ChangeGesture(gesture: dco_decode_i_64(raw[1]),strike: dco_decode_box_autoadd_grid_strike_dto(raw[2]),);
+case 29: return CommandDto_RemoveGesture(gesture: dco_decode_i_64(raw[1]),);
+case 30: return CommandDto_Retune(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),keepPitches: dco_decode_bool(raw[3]),);
+case 31: return CommandDto_PasteBeats(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),index: dco_decode_u_32(raw[4]),beats: dco_decode_list_clip_beat_dto(raw[5]),);
+case 32: return CommandDto_RemoveBeats(track: dco_decode_i_64(raw[1]),voice: dco_decode_u_32(raw[2]),fromBar: dco_decode_u_32(raw[3]),fromIndex: dco_decode_u_32(raw[4]),toBar: dco_decode_u_32(raw[5]),toIndex: dco_decode_u_32(raw[6]),);
                 default: throw Exception("unreachable");
             } }
 
@@ -1966,11 +2076,12 @@ case 10: return EventKindDto_DocumentSaved();
 case 11: return EventKindDto_DirtyChanged(dirty: dco_decode_bool(raw[1]),);
 case 12: return EventKindDto_UndoAvailabilityChanged(canUndo: dco_decode_bool(raw[1]),canRedo: dco_decode_bool(raw[2]),);
 case 13: return EventKindDto_HistoryApplied();
-case 14: return EventKindDto_PlaybackStateChanged(state: dco_decode_playback_state_dto(raw[1]),);
-case 15: return EventKindDto_SoloChanged(track: dco_decode_i_64(raw[1]),soloed: dco_decode_bool(raw[2]),);
-case 16: return EventKindDto_MixChanged(track: dco_decode_i_64(raw[1]),volume: dco_decode_u_8(raw[2]),pan: dco_decode_i_16(raw[3]),);
-case 17: return EventKindDto_MuteChanged(track: dco_decode_i_64(raw[1]),muted: dco_decode_bool(raw[2]),);
-case 18: return EventKindDto_TempoFactorChanged(hundredths: dco_decode_u_16(raw[1]),);
+case 14: return EventKindDto_PatternLibraryChanged();
+case 15: return EventKindDto_PlaybackStateChanged(state: dco_decode_playback_state_dto(raw[1]),);
+case 16: return EventKindDto_SoloChanged(track: dco_decode_i_64(raw[1]),soloed: dco_decode_bool(raw[2]),);
+case 17: return EventKindDto_MixChanged(track: dco_decode_i_64(raw[1]),volume: dco_decode_u_8(raw[2]),pan: dco_decode_i_16(raw[3]),);
+case 18: return EventKindDto_MuteChanged(track: dco_decode_i_64(raw[1]),muted: dco_decode_bool(raw[2]),);
+case 19: return EventKindDto_TempoFactorChanged(hundredths: dco_decode_u_16(raw[1]),);
                 default: throw Exception("unreachable");
             } }
 
@@ -1997,6 +2108,13 @@ return raw as double; }
 
 @protected FitDto dco_decode_fit_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return FitDto.values[raw as int]; }
+
+@protected GestureInfoDto dco_decode_gesture_info_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return GestureInfoDto(id: dco_decode_i_64(arr[0]),
+name: dco_decode_String(arr[1]),
+strike: dco_decode_grid_strike_dto(arr[2]),); }
 
 @protected GlyphDto dco_decode_glyph_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2026,6 +2144,113 @@ case 14: return GlyphKindDto_StringPercussive();
 case 15: return GlyphKindDto_PalmMute(run: dco_decode_bool(raw[1]),);
                 default: throw Exception("unreachable");
             } }
+
+@protected GridActionDto dco_decode_grid_action_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+switch (raw[0]) {
+                case 0: return GridActionDto_Strike(strike: dco_decode_box_autoadd_grid_strike_dto(raw[1]),);
+case 1: return GridActionDto_Gesture(gesture: dco_decode_i_64(raw[1]),);
+case 2: return GridActionDto_Hold(strings: dco_decode_opt_list_grid_selector_dto(raw[1]),);
+case 3: return GridActionDto_Rest();
+                default: throw Exception("unreachable");
+            } }
+
+@protected GridCellDto dco_decode_grid_cell_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return GridCellDto(beat: dco_decode_u_32(arr[0]),
+parts: dco_decode_u_8(arr[1]),
+cell: dco_decode_u_8(arr[2]),); }
+
+@protected GridEditDto dco_decode_grid_edit_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+switch (raw[0]) {
+                case 0: return GridEditDto_Place(lane: dco_decode_pattern_lane_dto(raw[1]),at: dco_decode_box_autoadd_grid_cell_dto(raw[2]),cells: dco_decode_u_8(raw[3]),action: dco_decode_box_autoadd_grid_action_dto(raw[4]),);
+case 1: return GridEditDto_Move(lane: dco_decode_pattern_lane_dto(raw[1]),index: dco_decode_u_32(raw[2]),to: dco_decode_box_autoadd_grid_cell_dto(raw[3]),);
+case 2: return GridEditDto_Resize(lane: dco_decode_pattern_lane_dto(raw[1]),index: dco_decode_u_32(raw[2]),parts: dco_decode_u_8(raw[3]),cells: dco_decode_u_8(raw[4]),);
+case 3: return GridEditDto_Delete(lane: dco_decode_pattern_lane_dto(raw[1]),first: dco_decode_u_32(raw[2]),last: dco_decode_u_32(raw[3]),);
+case 4: return GridEditDto_SetAction(lane: dco_decode_pattern_lane_dto(raw[1]),index: dco_decode_u_32(raw[2]),action: dco_decode_box_autoadd_grid_action_dto(raw[3]),);
+case 5: return GridEditDto_ToggleTarget(lane: dco_decode_pattern_lane_dto(raw[1]),index: dco_decode_u_32(raw[2]),selector: dco_decode_box_autoadd_grid_selector_dto(raw[3]),);
+case 6: return GridEditDto_SetDirection(lane: dco_decode_pattern_lane_dto(raw[1]),first: dco_decode_u_32(raw[2]),last: dco_decode_u_32(raw[3]),direction: dco_decode_opt_box_autoadd_stroke_dto(raw[4]),);
+case 7: return GridEditDto_SetTechnique(lane: dco_decode_pattern_lane_dto(raw[1]),index: dco_decode_u_32(raw[2]),technique: dco_decode_technique_kind_dto(raw[3]),on_: dco_decode_bool(raw[4]),);
+case 8: return GridEditDto_AddSpan(lane: dco_decode_pattern_lane_dto(raw[1]),first: dco_decode_u_32(raw[2]),last: dco_decode_u_32(raw[3]),technique: dco_decode_technique_kind_dto(raw[4]),);
+case 9: return GridEditDto_RemoveSpan(index: dco_decode_u_32(raw[1]),);
+case 10: return GridEditDto_SetLength(numerator: dco_decode_i_64(raw[1]),denominator: dco_decode_i_64(raw[2]),);
+case 11: return GridEditDto_SetMeter(meter: dco_decode_opt_box_autoadd_meter_dto(raw[1]),);
+case 12: return GridEditDto_SetName(name: dco_decode_String(raw[1]),);
+case 13: return GridEditDto_SetMeta(description: dco_decode_String(raw[1]),tags: dco_decode_list_String(raw[2]),);
+                default: throw Exception("unreachable");
+            } }
+
+@protected GridRowDto dco_decode_grid_row_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return GridRowDto(label: dco_decode_String(arr[0]),
+selector: dco_decode_opt_box_autoadd_grid_selector_dto(arr[1]),
+gesture: dco_decode_opt_box_autoadd_i_64(arr[2]),); }
+
+@protected GridSelectorDto dco_decode_grid_selector_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+                return GridSelectorDto(kind: dco_decode_selector_kind_dto(arr[0]),
+count: dco_decode_u_8(arr[1]),
+string: dco_decode_u_8(arr[2]),
+from: dco_decode_u_8(arr[3]),
+to: dco_decode_u_8(arr[4]),); }
+
+@protected GridSpanDto dco_decode_grid_span_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 9) throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
+                return GridSpanDto(index: dco_decode_u_32(arr[0]),
+lane: dco_decode_pattern_lane_dto(arr[1]),
+first: dco_decode_u_32(arr[2]),
+last: dco_decode_u_32(arr[3]),
+technique: dco_decode_technique_kind_dto(arr[4]),
+startNumerator: dco_decode_i_64(arr[5]),
+startDenominator: dco_decode_i_64(arr[6]),
+endNumerator: dco_decode_i_64(arr[7]),
+endDenominator: dco_decode_i_64(arr[8]),); }
+
+@protected GridStepDto dco_decode_grid_step_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 14) throw Exception('unexpected arr length: expect 14 but see ${arr.length}');
+                return GridStepDto(lane: dco_decode_pattern_lane_dto(arr[0]),
+index: dco_decode_u_32(arr[1]),
+onsetNumerator: dco_decode_i_64(arr[2]),
+onsetDenominator: dco_decode_i_64(arr[3]),
+endNumerator: dco_decode_i_64(arr[4]),
+endDenominator: dco_decode_i_64(arr[5]),
+value: dco_decode_duration_dto(arr[6]),
+cell: dco_decode_opt_box_autoadd_grid_cell_dto(arr[7]),
+kind: dco_decode_grid_step_kind_dto(arr[8]),
+gesture: dco_decode_opt_box_autoadd_i_64(arr[9]),
+rows: dco_decode_list_prim_u_32_strict(arr[10]),
+direction: dco_decode_opt_box_autoadd_stroke_dto(arr[11]),
+techniques: dco_decode_techniques_dto(arr[12]),
+spanTechniques: dco_decode_techniques_dto(arr[13]),); }
+
+@protected GridStepKindDto dco_decode_grid_step_kind_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return GridStepKindDto.values[raw as int]; }
+
+@protected GridStrikeDto dco_decode_grid_strike_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return GridStrikeDto(targets: dco_decode_list_grid_selector_dto(arr[0]),
+direction: dco_decode_opt_box_autoadd_stroke_dto(arr[1]),
+techniques: dco_decode_techniques_dto(arr[2]),); }
+
+@protected GridViewDto dco_decode_grid_view_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 11) throw Exception('unexpected arr length: expect 11 but see ${arr.length}');
+                return GridViewDto(name: dco_decode_String(arr[0]),
+lengthNumerator: dco_decode_i_64(arr[1]),
+lengthDenominator: dco_decode_i_64(arr[2]),
+meter: dco_decode_opt_box_autoadd_meter_dto(arr[3]),
+beatNumerator: dco_decode_i_64(arr[4]),
+beatDenominator: dco_decode_i_64(arr[5]),
+snaps: dco_decode_list_prim_u_8_strict(arr[6]),
+rows: dco_decode_list_grid_row_dto(arr[7]),
+lanes: dco_decode_list_pattern_lane_dto(arr[8]),
+steps: dco_decode_list_grid_step_dto(arr[9]),
+spans: dco_decode_list_grid_span_dto(arr[10]),); }
 
 @protected HitBeatDto dco_decode_hit_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2085,8 +2310,23 @@ return (raw as List<dynamic>).map(dco_decode_duration_dto).toList(); }
 @protected List<EventDto> dco_decode_list_event_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_event_dto).toList(); }
 
+@protected List<GestureInfoDto> dco_decode_list_gesture_info_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_gesture_info_dto).toList(); }
+
 @protected List<GlyphDto> dco_decode_list_glyph_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_glyph_dto).toList(); }
+
+@protected List<GridRowDto> dco_decode_list_grid_row_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_grid_row_dto).toList(); }
+
+@protected List<GridSelectorDto> dco_decode_list_grid_selector_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_grid_selector_dto).toList(); }
+
+@protected List<GridSpanDto> dco_decode_list_grid_span_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_grid_span_dto).toList(); }
+
+@protected List<GridStepDto> dco_decode_list_grid_step_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_grid_step_dto).toList(); }
 
 @protected List<HitBeatDto> dco_decode_list_hit_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_hit_beat_dto).toList(); }
@@ -2102,6 +2342,9 @@ return (raw as List<dynamic>).map(dco_decode_outline_system_dto).toList(); }
 
 @protected List<PatternInfoDto> dco_decode_list_pattern_info_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_pattern_info_dto).toList(); }
+
+@protected List<PatternLaneDto> dco_decode_list_pattern_lane_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_pattern_lane_dto).toList(); }
 
 @protected List<PlayedBarDto> dco_decode_list_played_bar_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_played_bar_dto).toList(); }
@@ -2155,6 +2398,12 @@ repeatStart: dco_decode_bool(arr[3]),
 repeatEnd: dco_decode_opt_box_autoadd_u_8(arr[4]),
 alternateEndings: dco_decode_list_prim_u_8_strict(arr[5]),
 marker: dco_decode_opt_String(arr[6]),); }
+
+@protected MeterDto dco_decode_meter_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return MeterDto(numerator: dco_decode_u_8(arr[0]),
+denominator: dco_decode_u_8(arr[1]),); }
 
 @protected MetricsDto dco_decode_metrics_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2215,8 +2464,17 @@ return raw == null ? null : dco_decode_String(raw); }
 @protected FitDto? dco_decode_opt_box_autoadd_fit_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_box_autoadd_fit_dto(raw); }
 
+@protected GridCellDto? dco_decode_opt_box_autoadd_grid_cell_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_grid_cell_dto(raw); }
+
+@protected GridSelectorDto? dco_decode_opt_box_autoadd_grid_selector_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_grid_selector_dto(raw); }
+
 @protected PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_box_autoadd_i_64(raw); }
+
+@protected MeterDto? dco_decode_opt_box_autoadd_meter_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_meter_dto(raw); }
 
 @protected PatternReportDto? dco_decode_opt_box_autoadd_pattern_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_box_autoadd_pattern_report_dto(raw); }
@@ -2233,12 +2491,17 @@ return raw == null ? null : dco_decode_box_autoadd_u_32(raw); }
 @protected int? dco_decode_opt_box_autoadd_u_8(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_box_autoadd_u_8(raw); }
 
+@protected List<GridSelectorDto>? dco_decode_opt_list_grid_selector_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_list_grid_selector_dto(raw); }
+
 @protected OutcomeDto dco_decode_outcome_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
                 return OutcomeDto(revision: dco_decode_i_64(arr[0]),
 events: dco_decode_list_event_dto(arr[1]),
-pattern: dco_decode_opt_box_autoadd_pattern_report_dto(arr[2]),); }
+pattern: dco_decode_opt_box_autoadd_pattern_report_dto(arr[2]),
+createdPattern: dco_decode_opt_box_autoadd_i_64(arr[3]),
+createdGesture: dco_decode_opt_box_autoadd_i_64(arr[4]),); }
 
 @protected OutlineSystemDto dco_decode_outline_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2258,6 +2521,9 @@ description: dco_decode_String(arr[2]),
 lengthNumerator: dco_decode_i_64(arr[3]),
 lengthDenominator: dco_decode_i_64(arr[4]),
 twoLanes: dco_decode_bool(arr[5]),); }
+
+@protected PatternLaneDto dco_decode_pattern_lane_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return PatternLaneDto.values[raw as int]; }
 
 @protected PatternPreviewDto dco_decode_pattern_preview_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2320,6 +2586,9 @@ y: dco_decode_f_32(arr[1]),
 height: dco_decode_f_32(arr[2]),
 staves: dco_decode_list_stave_dto(arr[3]),); }
 
+@protected SelectorKindDto dco_decode_selector_kind_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return SelectorKindDto.values[raw as int]; }
+
 @protected StaveDto dco_decode_stave_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
                 if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
@@ -2365,6 +2634,18 @@ strings: dco_decode_u_8(arr[1]),
 width: dco_decode_f_32(arr[2]),
 height: dco_decode_f_32(arr[3]),
 systems: dco_decode_list_system_dto(arr[4]),); }
+
+@protected TechniqueKindDto dco_decode_technique_kind_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return TechniqueKindDto.values[raw as int]; }
+
+@protected TechniquesDto dco_decode_techniques_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 5) throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+                return TechniquesDto(accent: dco_decode_bool(arr[0]),
+palmMute: dco_decode_bool(arr[1]),
+dead: dco_decode_bool(arr[2]),
+letRing: dco_decode_bool(arr[3]),
+stringPercussive: dco_decode_bool(arr[4]),); }
 
 @protected TrackSummaryDto dco_decode_track_summary_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2522,6 +2803,21 @@ return (sse_decode_duration_dto(deserializer)); }
 @protected FitDto sse_decode_box_autoadd_fit_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_fit_dto(deserializer)); }
 
+@protected GridActionDto sse_decode_box_autoadd_grid_action_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_grid_action_dto(deserializer)); }
+
+@protected GridCellDto sse_decode_box_autoadd_grid_cell_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_grid_cell_dto(deserializer)); }
+
+@protected GridEditDto sse_decode_box_autoadd_grid_edit_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_grid_edit_dto(deserializer)); }
+
+@protected GridSelectorDto sse_decode_box_autoadd_grid_selector_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_grid_selector_dto(deserializer)); }
+
+@protected GridStrikeDto sse_decode_box_autoadd_grid_strike_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_grid_strike_dto(deserializer)); }
+
 @protected PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_i_64(deserializer)); }
 
@@ -2530,6 +2826,9 @@ return (sse_decode_instrument_dto(deserializer)); }
 
 @protected MasterBarDto sse_decode_box_autoadd_master_bar_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_master_bar_dto(deserializer)); }
+
+@protected MeterDto sse_decode_box_autoadd_meter_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_meter_dto(deserializer)); }
 
 @protected MetricsDto sse_decode_box_autoadd_metrics_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_metrics_dto(deserializer)); }
@@ -2632,15 +2931,34 @@ var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
 return CommandDto_SetInstrument(track: var_track, instrument: var_instrument);case 20: var var_track = sse_decode_i_64(deserializer);
 var var_to = sse_decode_u_32(deserializer);
 return CommandDto_MoveTrack(track: var_track, to: var_to);case 21: var var_args = sse_decode_box_autoadd_apply_pattern_dto(deserializer);
-return CommandDto_ApplyPattern(args: var_args);case 22: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_ApplyPattern(args: var_args);case 22: var var_name = sse_decode_String(deserializer);
+var var_twoLanes = sse_decode_bool(deserializer);
+var var_lengthNumerator = sse_decode_i_64(deserializer);
+var var_lengthDenominator = sse_decode_i_64(deserializer);
+var var_meter = sse_decode_opt_box_autoadd_meter_dto(deserializer);
+return CommandDto_NewPattern(name: var_name, twoLanes: var_twoLanes, lengthNumerator: var_lengthNumerator, lengthDenominator: var_lengthDenominator, meter: var_meter);case 23: var var_pattern = sse_decode_i_64(deserializer);
+return CommandDto_RemovePattern(pattern: var_pattern);case 24: var var_pattern = sse_decode_i_64(deserializer);
+var var_edit = sse_decode_box_autoadd_grid_edit_dto(deserializer);
+return CommandDto_EditPattern(pattern: var_pattern, edit: var_edit);case 25: var var_name = sse_decode_String(deserializer);
+var var_strike = sse_decode_box_autoadd_grid_strike_dto(deserializer);
+return CommandDto_DefineGesture(name: var_name, strike: var_strike);case 26: var var_pattern = sse_decode_i_64(deserializer);
+var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+var var_name = sse_decode_String(deserializer);
+return CommandDto_GestureFromStep(pattern: var_pattern, lane: var_lane, index: var_index, name: var_name);case 27: var var_gesture = sse_decode_i_64(deserializer);
+var var_name = sse_decode_String(deserializer);
+return CommandDto_RenameGesture(gesture: var_gesture, name: var_name);case 28: var var_gesture = sse_decode_i_64(deserializer);
+var var_strike = sse_decode_box_autoadd_grid_strike_dto(deserializer);
+return CommandDto_ChangeGesture(gesture: var_gesture, strike: var_strike);case 29: var var_gesture = sse_decode_i_64(deserializer);
+return CommandDto_RemoveGesture(gesture: var_gesture);case 30: var var_track = sse_decode_i_64(deserializer);
 var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
 var var_keepPitches = sse_decode_bool(deserializer);
-return CommandDto_Retune(track: var_track, instrument: var_instrument, keepPitches: var_keepPitches);case 23: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_Retune(track: var_track, instrument: var_instrument, keepPitches: var_keepPitches);case 31: var var_track = sse_decode_i_64(deserializer);
 var var_bar = sse_decode_u_32(deserializer);
 var var_voice = sse_decode_u_32(deserializer);
 var var_index = sse_decode_u_32(deserializer);
 var var_beats = sse_decode_list_clip_beat_dto(deserializer);
-return CommandDto_PasteBeats(track: var_track, bar: var_bar, voice: var_voice, index: var_index, beats: var_beats);case 24: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_PasteBeats(track: var_track, bar: var_bar, voice: var_voice, index: var_index, beats: var_beats);case 32: var var_track = sse_decode_i_64(deserializer);
 var var_voice = sse_decode_u_32(deserializer);
 var var_fromBar = sse_decode_u_32(deserializer);
 var var_fromIndex = sse_decode_u_32(deserializer);
@@ -2703,15 +3021,15 @@ var var_notes = sse_decode_list_prim_i_64_strict(deserializer);
 return EventKindDto_TiesRemoved(track: var_track, notes: var_notes);case 10: return EventKindDto_DocumentSaved();case 11: var var_dirty = sse_decode_bool(deserializer);
 return EventKindDto_DirtyChanged(dirty: var_dirty);case 12: var var_canUndo = sse_decode_bool(deserializer);
 var var_canRedo = sse_decode_bool(deserializer);
-return EventKindDto_UndoAvailabilityChanged(canUndo: var_canUndo, canRedo: var_canRedo);case 13: return EventKindDto_HistoryApplied();case 14: var var_state = sse_decode_playback_state_dto(deserializer);
-return EventKindDto_PlaybackStateChanged(state: var_state);case 15: var var_track = sse_decode_i_64(deserializer);
+return EventKindDto_UndoAvailabilityChanged(canUndo: var_canUndo, canRedo: var_canRedo);case 13: return EventKindDto_HistoryApplied();case 14: return EventKindDto_PatternLibraryChanged();case 15: var var_state = sse_decode_playback_state_dto(deserializer);
+return EventKindDto_PlaybackStateChanged(state: var_state);case 16: var var_track = sse_decode_i_64(deserializer);
 var var_soloed = sse_decode_bool(deserializer);
-return EventKindDto_SoloChanged(track: var_track, soloed: var_soloed);case 16: var var_track = sse_decode_i_64(deserializer);
+return EventKindDto_SoloChanged(track: var_track, soloed: var_soloed);case 17: var var_track = sse_decode_i_64(deserializer);
 var var_volume = sse_decode_u_8(deserializer);
 var var_pan = sse_decode_i_16(deserializer);
-return EventKindDto_MixChanged(track: var_track, volume: var_volume, pan: var_pan);case 17: var var_track = sse_decode_i_64(deserializer);
+return EventKindDto_MixChanged(track: var_track, volume: var_volume, pan: var_pan);case 18: var var_track = sse_decode_i_64(deserializer);
 var var_muted = sse_decode_bool(deserializer);
-return EventKindDto_MuteChanged(track: var_track, muted: var_muted);case 18: var var_hundredths = sse_decode_u_16(deserializer);
+return EventKindDto_MuteChanged(track: var_track, muted: var_muted);case 19: var var_hundredths = sse_decode_u_16(deserializer);
 return EventKindDto_TempoFactorChanged(hundredths: var_hundredths); default: throw UnimplementedError(''); }
              }
 
@@ -2737,6 +3055,12 @@ return deserializer.buffer.getFloat64(); }
 @protected FitDto sse_decode_fit_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var inner = sse_decode_i_32(deserializer);
         return FitDto.values[inner]; }
+
+@protected GestureInfoDto sse_decode_gesture_info_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_id = sse_decode_i_64(deserializer);
+var var_name = sse_decode_String(deserializer);
+var var_strike = sse_decode_grid_strike_dto(deserializer);
+return GestureInfoDto(id: var_id, name: var_name, strike: var_strike); }
 
 @protected GlyphDto sse_decode_glyph_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_kind = sse_decode_glyph_kind_dto(deserializer);
@@ -2767,6 +3091,133 @@ return GlyphKindDto_StringName(string: var_string, name: var_name);case 12: retu
 return GlyphKindDto_Stroke(up: var_up);case 14: return GlyphKindDto_StringPercussive();case 15: var var_run = sse_decode_bool(deserializer);
 return GlyphKindDto_PalmMute(run: var_run); default: throw UnimplementedError(''); }
              }
+
+@protected GridActionDto sse_decode_grid_action_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            var tag_ = sse_decode_i_32(deserializer);
+            switch (tag_) { case 0: var var_strike = sse_decode_box_autoadd_grid_strike_dto(deserializer);
+return GridActionDto_Strike(strike: var_strike);case 1: var var_gesture = sse_decode_i_64(deserializer);
+return GridActionDto_Gesture(gesture: var_gesture);case 2: var var_strings = sse_decode_opt_list_grid_selector_dto(deserializer);
+return GridActionDto_Hold(strings: var_strings);case 3: return GridActionDto_Rest(); default: throw UnimplementedError(''); }
+             }
+
+@protected GridCellDto sse_decode_grid_cell_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_beat = sse_decode_u_32(deserializer);
+var var_parts = sse_decode_u_8(deserializer);
+var var_cell = sse_decode_u_8(deserializer);
+return GridCellDto(beat: var_beat, parts: var_parts, cell: var_cell); }
+
+@protected GridEditDto sse_decode_grid_edit_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            var tag_ = sse_decode_i_32(deserializer);
+            switch (tag_) { case 0: var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_at = sse_decode_box_autoadd_grid_cell_dto(deserializer);
+var var_cells = sse_decode_u_8(deserializer);
+var var_action = sse_decode_box_autoadd_grid_action_dto(deserializer);
+return GridEditDto_Place(lane: var_lane, at: var_at, cells: var_cells, action: var_action);case 1: var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+var var_to = sse_decode_box_autoadd_grid_cell_dto(deserializer);
+return GridEditDto_Move(lane: var_lane, index: var_index, to: var_to);case 2: var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+var var_parts = sse_decode_u_8(deserializer);
+var var_cells = sse_decode_u_8(deserializer);
+return GridEditDto_Resize(lane: var_lane, index: var_index, parts: var_parts, cells: var_cells);case 3: var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_first = sse_decode_u_32(deserializer);
+var var_last = sse_decode_u_32(deserializer);
+return GridEditDto_Delete(lane: var_lane, first: var_first, last: var_last);case 4: var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+var var_action = sse_decode_box_autoadd_grid_action_dto(deserializer);
+return GridEditDto_SetAction(lane: var_lane, index: var_index, action: var_action);case 5: var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+var var_selector = sse_decode_box_autoadd_grid_selector_dto(deserializer);
+return GridEditDto_ToggleTarget(lane: var_lane, index: var_index, selector: var_selector);case 6: var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_first = sse_decode_u_32(deserializer);
+var var_last = sse_decode_u_32(deserializer);
+var var_direction = sse_decode_opt_box_autoadd_stroke_dto(deserializer);
+return GridEditDto_SetDirection(lane: var_lane, first: var_first, last: var_last, direction: var_direction);case 7: var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+var var_technique = sse_decode_technique_kind_dto(deserializer);
+var var_on_ = sse_decode_bool(deserializer);
+return GridEditDto_SetTechnique(lane: var_lane, index: var_index, technique: var_technique, on_: var_on_);case 8: var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_first = sse_decode_u_32(deserializer);
+var var_last = sse_decode_u_32(deserializer);
+var var_technique = sse_decode_technique_kind_dto(deserializer);
+return GridEditDto_AddSpan(lane: var_lane, first: var_first, last: var_last, technique: var_technique);case 9: var var_index = sse_decode_u_32(deserializer);
+return GridEditDto_RemoveSpan(index: var_index);case 10: var var_numerator = sse_decode_i_64(deserializer);
+var var_denominator = sse_decode_i_64(deserializer);
+return GridEditDto_SetLength(numerator: var_numerator, denominator: var_denominator);case 11: var var_meter = sse_decode_opt_box_autoadd_meter_dto(deserializer);
+return GridEditDto_SetMeter(meter: var_meter);case 12: var var_name = sse_decode_String(deserializer);
+return GridEditDto_SetName(name: var_name);case 13: var var_description = sse_decode_String(deserializer);
+var var_tags = sse_decode_list_String(deserializer);
+return GridEditDto_SetMeta(description: var_description, tags: var_tags); default: throw UnimplementedError(''); }
+             }
+
+@protected GridRowDto sse_decode_grid_row_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_label = sse_decode_String(deserializer);
+var var_selector = sse_decode_opt_box_autoadd_grid_selector_dto(deserializer);
+var var_gesture = sse_decode_opt_box_autoadd_i_64(deserializer);
+return GridRowDto(label: var_label, selector: var_selector, gesture: var_gesture); }
+
+@protected GridSelectorDto sse_decode_grid_selector_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_kind = sse_decode_selector_kind_dto(deserializer);
+var var_count = sse_decode_u_8(deserializer);
+var var_string = sse_decode_u_8(deserializer);
+var var_from = sse_decode_u_8(deserializer);
+var var_to = sse_decode_u_8(deserializer);
+return GridSelectorDto(kind: var_kind, count: var_count, string: var_string, from: var_from, to: var_to); }
+
+@protected GridSpanDto sse_decode_grid_span_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_index = sse_decode_u_32(deserializer);
+var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_first = sse_decode_u_32(deserializer);
+var var_last = sse_decode_u_32(deserializer);
+var var_technique = sse_decode_technique_kind_dto(deserializer);
+var var_startNumerator = sse_decode_i_64(deserializer);
+var var_startDenominator = sse_decode_i_64(deserializer);
+var var_endNumerator = sse_decode_i_64(deserializer);
+var var_endDenominator = sse_decode_i_64(deserializer);
+return GridSpanDto(index: var_index, lane: var_lane, first: var_first, last: var_last, technique: var_technique, startNumerator: var_startNumerator, startDenominator: var_startDenominator, endNumerator: var_endNumerator, endDenominator: var_endDenominator); }
+
+@protected GridStepDto sse_decode_grid_step_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_lane = sse_decode_pattern_lane_dto(deserializer);
+var var_index = sse_decode_u_32(deserializer);
+var var_onsetNumerator = sse_decode_i_64(deserializer);
+var var_onsetDenominator = sse_decode_i_64(deserializer);
+var var_endNumerator = sse_decode_i_64(deserializer);
+var var_endDenominator = sse_decode_i_64(deserializer);
+var var_value = sse_decode_duration_dto(deserializer);
+var var_cell = sse_decode_opt_box_autoadd_grid_cell_dto(deserializer);
+var var_kind = sse_decode_grid_step_kind_dto(deserializer);
+var var_gesture = sse_decode_opt_box_autoadd_i_64(deserializer);
+var var_rows = sse_decode_list_prim_u_32_strict(deserializer);
+var var_direction = sse_decode_opt_box_autoadd_stroke_dto(deserializer);
+var var_techniques = sse_decode_techniques_dto(deserializer);
+var var_spanTechniques = sse_decode_techniques_dto(deserializer);
+return GridStepDto(lane: var_lane, index: var_index, onsetNumerator: var_onsetNumerator, onsetDenominator: var_onsetDenominator, endNumerator: var_endNumerator, endDenominator: var_endDenominator, value: var_value, cell: var_cell, kind: var_kind, gesture: var_gesture, rows: var_rows, direction: var_direction, techniques: var_techniques, spanTechniques: var_spanTechniques); }
+
+@protected GridStepKindDto sse_decode_grid_step_kind_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return GridStepKindDto.values[inner]; }
+
+@protected GridStrikeDto sse_decode_grid_strike_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_targets = sse_decode_list_grid_selector_dto(deserializer);
+var var_direction = sse_decode_opt_box_autoadd_stroke_dto(deserializer);
+var var_techniques = sse_decode_techniques_dto(deserializer);
+return GridStrikeDto(targets: var_targets, direction: var_direction, techniques: var_techniques); }
+
+@protected GridViewDto sse_decode_grid_view_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_name = sse_decode_String(deserializer);
+var var_lengthNumerator = sse_decode_i_64(deserializer);
+var var_lengthDenominator = sse_decode_i_64(deserializer);
+var var_meter = sse_decode_opt_box_autoadd_meter_dto(deserializer);
+var var_beatNumerator = sse_decode_i_64(deserializer);
+var var_beatDenominator = sse_decode_i_64(deserializer);
+var var_snaps = sse_decode_list_prim_u_8_strict(deserializer);
+var var_rows = sse_decode_list_grid_row_dto(deserializer);
+var var_lanes = sse_decode_list_pattern_lane_dto(deserializer);
+var var_steps = sse_decode_list_grid_step_dto(deserializer);
+var var_spans = sse_decode_list_grid_span_dto(deserializer);
+return GridViewDto(name: var_name, lengthNumerator: var_lengthNumerator, lengthDenominator: var_lengthDenominator, meter: var_meter, beatNumerator: var_beatNumerator, beatDenominator: var_beatDenominator, snaps: var_snaps, rows: var_rows, lanes: var_lanes, steps: var_steps, spans: var_spans); }
 
 @protected HitBeatDto sse_decode_hit_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_id = sse_decode_i_64(deserializer);
@@ -2863,11 +3314,51 @@ return InstrumentDto(tuning: var_tuning, fretCount: var_fretCount, capo: var_cap
         return ans_;
          }
 
+@protected List<GestureInfoDto> sse_decode_list_gesture_info_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <GestureInfoDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_gesture_info_dto(deserializer)); }
+        return ans_;
+         }
+
 @protected List<GlyphDto> sse_decode_list_glyph_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
         var len_ = sse_decode_i_32(deserializer);
         var ans_ = <GlyphDto>[];
         for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_glyph_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<GridRowDto> sse_decode_list_grid_row_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <GridRowDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_grid_row_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<GridSelectorDto> sse_decode_list_grid_selector_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <GridSelectorDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_grid_selector_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<GridSpanDto> sse_decode_list_grid_span_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <GridSpanDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_grid_span_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<GridStepDto> sse_decode_list_grid_step_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <GridStepDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_grid_step_dto(deserializer)); }
         return ans_;
          }
 
@@ -2908,6 +3399,14 @@ return InstrumentDto(tuning: var_tuning, fretCount: var_fretCount, capo: var_cap
         var len_ = sse_decode_i_32(deserializer);
         var ans_ = <PatternInfoDto>[];
         for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_pattern_info_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<PatternLaneDto> sse_decode_list_pattern_lane_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <PatternLaneDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_pattern_lane_dto(deserializer)); }
         return ans_;
          }
 
@@ -3009,6 +3508,11 @@ var var_alternateEndings = sse_decode_list_prim_u_8_strict(deserializer);
 var var_marker = sse_decode_opt_String(deserializer);
 return MasterBarDto(numerator: var_numerator, denominator: var_denominator, pickup: var_pickup, repeatStart: var_repeatStart, repeatEnd: var_repeatEnd, alternateEndings: var_alternateEndings, marker: var_marker); }
 
+@protected MeterDto sse_decode_meter_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_numerator = sse_decode_u_8(deserializer);
+var var_denominator = sse_decode_u_8(deserializer);
+return MeterDto(numerator: var_numerator, denominator: var_denominator); }
+
 @protected MetricsDto sse_decode_metrics_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_width = sse_decode_f_32(deserializer);
 var var_marginLeft = sse_decode_f_32(deserializer);
@@ -3076,10 +3580,37 @@ return NoteDto(id: var_id, string: var_string, fret: var_fret, tie: var_tie, let
             }
              }
 
+@protected GridCellDto? sse_decode_opt_box_autoadd_grid_cell_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_grid_cell_dto(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected GridSelectorDto? sse_decode_opt_box_autoadd_grid_selector_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_grid_selector_dto(deserializer));
+            } else {
+                return null;
+            }
+             }
+
 @protected PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
             if (sse_decode_bool(deserializer)) {
                 return (sse_decode_box_autoadd_i_64(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected MeterDto? sse_decode_opt_box_autoadd_meter_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_meter_dto(deserializer));
             } else {
                 return null;
             }
@@ -3130,11 +3661,22 @@ return NoteDto(id: var_id, string: var_string, fret: var_fret, tie: var_tie, let
             }
              }
 
+@protected List<GridSelectorDto>? sse_decode_opt_list_grid_selector_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_list_grid_selector_dto(deserializer));
+            } else {
+                return null;
+            }
+             }
+
 @protected OutcomeDto sse_decode_outcome_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_revision = sse_decode_i_64(deserializer);
 var var_events = sse_decode_list_event_dto(deserializer);
 var var_pattern = sse_decode_opt_box_autoadd_pattern_report_dto(deserializer);
-return OutcomeDto(revision: var_revision, events: var_events, pattern: var_pattern); }
+var var_createdPattern = sse_decode_opt_box_autoadd_i_64(deserializer);
+var var_createdGesture = sse_decode_opt_box_autoadd_i_64(deserializer);
+return OutcomeDto(revision: var_revision, events: var_events, pattern: var_pattern, createdPattern: var_createdPattern, createdGesture: var_createdGesture); }
 
 @protected OutlineSystemDto sse_decode_outline_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_index = sse_decode_u_32(deserializer);
@@ -3152,6 +3694,10 @@ var var_lengthNumerator = sse_decode_i_64(deserializer);
 var var_lengthDenominator = sse_decode_i_64(deserializer);
 var var_twoLanes = sse_decode_bool(deserializer);
 return PatternInfoDto(id: var_id, name: var_name, description: var_description, lengthNumerator: var_lengthNumerator, lengthDenominator: var_lengthDenominator, twoLanes: var_twoLanes); }
+
+@protected PatternLaneDto sse_decode_pattern_lane_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return PatternLaneDto.values[inner]; }
 
 @protected PatternPreviewDto sse_decode_pattern_preview_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_revision = sse_decode_i_64(deserializer);
@@ -3208,6 +3754,10 @@ var var_height = sse_decode_f_32(deserializer);
 var var_staves = sse_decode_list_stave_dto(deserializer);
 return ScoreSystemDto(index: var_index, y: var_y, height: var_height, staves: var_staves); }
 
+@protected SelectorKindDto sse_decode_selector_kind_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return SelectorKindDto.values[inner]; }
+
 @protected StaveDto sse_decode_stave_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_track = sse_decode_i_64(deserializer);
 var var_strings = sse_decode_u_8(deserializer);
@@ -3250,6 +3800,18 @@ var var_width = sse_decode_f_32(deserializer);
 var var_height = sse_decode_f_32(deserializer);
 var var_systems = sse_decode_list_system_dto(deserializer);
 return TabLayoutDto(track: var_track, strings: var_strings, width: var_width, height: var_height, systems: var_systems); }
+
+@protected TechniqueKindDto sse_decode_technique_kind_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return TechniqueKindDto.values[inner]; }
+
+@protected TechniquesDto sse_decode_techniques_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_accent = sse_decode_bool(deserializer);
+var var_palmMute = sse_decode_bool(deserializer);
+var var_dead = sse_decode_bool(deserializer);
+var var_letRing = sse_decode_bool(deserializer);
+var var_stringPercussive = sse_decode_bool(deserializer);
+return TechniquesDto(accent: var_accent, palmMute: var_palmMute, dead: var_dead, letRing: var_letRing, stringPercussive: var_stringPercussive); }
 
 @protected TrackSummaryDto sse_decode_track_summary_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_id = sse_decode_i_64(deserializer);
@@ -3407,6 +3969,21 @@ sse_encode_duration_dto(self, serializer); }
 @protected void sse_encode_box_autoadd_fit_dto(FitDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_fit_dto(self, serializer); }
 
+@protected void sse_encode_box_autoadd_grid_action_dto(GridActionDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_grid_action_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_grid_cell_dto(GridCellDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_grid_cell_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_grid_edit_dto(GridEditDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_grid_edit_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_grid_selector_dto(GridSelectorDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_grid_selector_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_grid_strike_dto(GridStrikeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_grid_strike_dto(self, serializer); }
+
 @protected void sse_encode_box_autoadd_i_64(PlatformInt64 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self, serializer); }
 
@@ -3415,6 +3992,9 @@ sse_encode_instrument_dto(self, serializer); }
 
 @protected void sse_encode_box_autoadd_master_bar_dto(MasterBarDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_master_bar_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_meter_dto(MeterDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_meter_dto(self, serializer); }
 
 @protected void sse_encode_box_autoadd_metrics_dto(MetricsDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_metrics_dto(self, serializer); }
@@ -3515,15 +4095,34 @@ sse_encode_box_autoadd_instrument_dto(instrument, serializer);
 case CommandDto_MoveTrack(track: final track,to: final to): sse_encode_i_32(20, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(to, serializer);
 case CommandDto_ApplyPattern(args: final args): sse_encode_i_32(21, serializer); sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
-case CommandDto_Retune(track: final track,instrument: final instrument,keepPitches: final keepPitches): sse_encode_i_32(22, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_NewPattern(name: final name,twoLanes: final twoLanes,lengthNumerator: final lengthNumerator,lengthDenominator: final lengthDenominator,meter: final meter): sse_encode_i_32(22, serializer); sse_encode_String(name, serializer);
+sse_encode_bool(twoLanes, serializer);
+sse_encode_i_64(lengthNumerator, serializer);
+sse_encode_i_64(lengthDenominator, serializer);
+sse_encode_opt_box_autoadd_meter_dto(meter, serializer);
+case CommandDto_RemovePattern(pattern: final pattern): sse_encode_i_32(23, serializer); sse_encode_i_64(pattern, serializer);
+case CommandDto_EditPattern(pattern: final pattern,edit: final edit): sse_encode_i_32(24, serializer); sse_encode_i_64(pattern, serializer);
+sse_encode_box_autoadd_grid_edit_dto(edit, serializer);
+case CommandDto_DefineGesture(name: final name,strike: final strike): sse_encode_i_32(25, serializer); sse_encode_String(name, serializer);
+sse_encode_box_autoadd_grid_strike_dto(strike, serializer);
+case CommandDto_GestureFromStep(pattern: final pattern,lane: final lane,index: final index,name: final name): sse_encode_i_32(26, serializer); sse_encode_i_64(pattern, serializer);
+sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_u_32(index, serializer);
+sse_encode_String(name, serializer);
+case CommandDto_RenameGesture(gesture: final gesture,name: final name): sse_encode_i_32(27, serializer); sse_encode_i_64(gesture, serializer);
+sse_encode_String(name, serializer);
+case CommandDto_ChangeGesture(gesture: final gesture,strike: final strike): sse_encode_i_32(28, serializer); sse_encode_i_64(gesture, serializer);
+sse_encode_box_autoadd_grid_strike_dto(strike, serializer);
+case CommandDto_RemoveGesture(gesture: final gesture): sse_encode_i_32(29, serializer); sse_encode_i_64(gesture, serializer);
+case CommandDto_Retune(track: final track,instrument: final instrument,keepPitches: final keepPitches): sse_encode_i_32(30, serializer); sse_encode_i_64(track, serializer);
 sse_encode_box_autoadd_instrument_dto(instrument, serializer);
 sse_encode_bool(keepPitches, serializer);
-case CommandDto_PasteBeats(track: final track,bar: final bar,voice: final voice,index: final index,beats: final beats): sse_encode_i_32(23, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_PasteBeats(track: final track,bar: final bar,voice: final voice,index: final index,beats: final beats): sse_encode_i_32(31, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(bar, serializer);
 sse_encode_u_32(voice, serializer);
 sse_encode_u_32(index, serializer);
 sse_encode_list_clip_beat_dto(beats, serializer);
-case CommandDto_RemoveBeats(track: final track,voice: final voice,fromBar: final fromBar,fromIndex: final fromIndex,toBar: final toBar,toIndex: final toIndex): sse_encode_i_32(24, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_RemoveBeats(track: final track,voice: final voice,fromBar: final fromBar,fromIndex: final fromIndex,toBar: final toBar,toIndex: final toIndex): sse_encode_i_32(32, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(voice, serializer);
 sse_encode_u_32(fromBar, serializer);
 sse_encode_u_32(fromIndex, serializer);
@@ -3583,15 +4182,15 @@ sse_encode_list_prim_i_64_strict(notes, serializer);
 case EventKindDto_DocumentSaved(): sse_encode_i_32(10, serializer); case EventKindDto_DirtyChanged(dirty: final dirty): sse_encode_i_32(11, serializer); sse_encode_bool(dirty, serializer);
 case EventKindDto_UndoAvailabilityChanged(canUndo: final canUndo,canRedo: final canRedo): sse_encode_i_32(12, serializer); sse_encode_bool(canUndo, serializer);
 sse_encode_bool(canRedo, serializer);
-case EventKindDto_HistoryApplied(): sse_encode_i_32(13, serializer); case EventKindDto_PlaybackStateChanged(state: final state): sse_encode_i_32(14, serializer); sse_encode_playback_state_dto(state, serializer);
-case EventKindDto_SoloChanged(track: final track,soloed: final soloed): sse_encode_i_32(15, serializer); sse_encode_i_64(track, serializer);
+case EventKindDto_HistoryApplied(): sse_encode_i_32(13, serializer); case EventKindDto_PatternLibraryChanged(): sse_encode_i_32(14, serializer); case EventKindDto_PlaybackStateChanged(state: final state): sse_encode_i_32(15, serializer); sse_encode_playback_state_dto(state, serializer);
+case EventKindDto_SoloChanged(track: final track,soloed: final soloed): sse_encode_i_32(16, serializer); sse_encode_i_64(track, serializer);
 sse_encode_bool(soloed, serializer);
-case EventKindDto_MixChanged(track: final track,volume: final volume,pan: final pan): sse_encode_i_32(16, serializer); sse_encode_i_64(track, serializer);
+case EventKindDto_MixChanged(track: final track,volume: final volume,pan: final pan): sse_encode_i_32(17, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_8(volume, serializer);
 sse_encode_i_16(pan, serializer);
-case EventKindDto_MuteChanged(track: final track,muted: final muted): sse_encode_i_32(17, serializer); sse_encode_i_64(track, serializer);
+case EventKindDto_MuteChanged(track: final track,muted: final muted): sse_encode_i_32(18, serializer); sse_encode_i_64(track, serializer);
 sse_encode_bool(muted, serializer);
-case EventKindDto_TempoFactorChanged(hundredths: final hundredths): sse_encode_i_32(18, serializer); sse_encode_u_16(hundredths, serializer);
+case EventKindDto_TempoFactorChanged(hundredths: final hundredths): sse_encode_i_32(19, serializer); sse_encode_u_16(hundredths, serializer);
   } }
 
 @protected void sse_encode_export_report_dto(ExportReportDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3615,6 +4214,12 @@ serializer.buffer.putFloat64(self); }
 
 @protected void sse_encode_fit_dto(FitDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.index, serializer); }
+
+@protected void sse_encode_gesture_info_dto(GestureInfoDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.id, serializer);
+sse_encode_String(self.name, serializer);
+sse_encode_grid_strike_dto(self.strike, serializer);
+ }
 
 @protected void sse_encode_glyph_dto(GlyphDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_glyph_kind_dto(self.kind, serializer);
@@ -3642,6 +4247,126 @@ sse_encode_String(name, serializer);
 case GlyphKindDto_Accent(): sse_encode_i_32(12, serializer); case GlyphKindDto_Stroke(up: final up): sse_encode_i_32(13, serializer); sse_encode_bool(up, serializer);
 case GlyphKindDto_StringPercussive(): sse_encode_i_32(14, serializer); case GlyphKindDto_PalmMute(run: final run): sse_encode_i_32(15, serializer); sse_encode_bool(run, serializer);
   } }
+
+@protected void sse_encode_grid_action_dto(GridActionDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+switch (self) { case GridActionDto_Strike(strike: final strike): sse_encode_i_32(0, serializer); sse_encode_box_autoadd_grid_strike_dto(strike, serializer);
+case GridActionDto_Gesture(gesture: final gesture): sse_encode_i_32(1, serializer); sse_encode_i_64(gesture, serializer);
+case GridActionDto_Hold(strings: final strings): sse_encode_i_32(2, serializer); sse_encode_opt_list_grid_selector_dto(strings, serializer);
+case GridActionDto_Rest(): sse_encode_i_32(3, serializer);   } }
+
+@protected void sse_encode_grid_cell_dto(GridCellDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.beat, serializer);
+sse_encode_u_8(self.parts, serializer);
+sse_encode_u_8(self.cell, serializer);
+ }
+
+@protected void sse_encode_grid_edit_dto(GridEditDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+switch (self) { case GridEditDto_Place(lane: final lane,at: final at,cells: final cells,action: final action): sse_encode_i_32(0, serializer); sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_box_autoadd_grid_cell_dto(at, serializer);
+sse_encode_u_8(cells, serializer);
+sse_encode_box_autoadd_grid_action_dto(action, serializer);
+case GridEditDto_Move(lane: final lane,index: final index,to: final to): sse_encode_i_32(1, serializer); sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_u_32(index, serializer);
+sse_encode_box_autoadd_grid_cell_dto(to, serializer);
+case GridEditDto_Resize(lane: final lane,index: final index,parts: final parts,cells: final cells): sse_encode_i_32(2, serializer); sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_u_32(index, serializer);
+sse_encode_u_8(parts, serializer);
+sse_encode_u_8(cells, serializer);
+case GridEditDto_Delete(lane: final lane,first: final first,last: final last): sse_encode_i_32(3, serializer); sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_u_32(first, serializer);
+sse_encode_u_32(last, serializer);
+case GridEditDto_SetAction(lane: final lane,index: final index,action: final action): sse_encode_i_32(4, serializer); sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_u_32(index, serializer);
+sse_encode_box_autoadd_grid_action_dto(action, serializer);
+case GridEditDto_ToggleTarget(lane: final lane,index: final index,selector: final selector): sse_encode_i_32(5, serializer); sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_u_32(index, serializer);
+sse_encode_box_autoadd_grid_selector_dto(selector, serializer);
+case GridEditDto_SetDirection(lane: final lane,first: final first,last: final last,direction: final direction): sse_encode_i_32(6, serializer); sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_u_32(first, serializer);
+sse_encode_u_32(last, serializer);
+sse_encode_opt_box_autoadd_stroke_dto(direction, serializer);
+case GridEditDto_SetTechnique(lane: final lane,index: final index,technique: final technique,on_: final on_): sse_encode_i_32(7, serializer); sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_u_32(index, serializer);
+sse_encode_technique_kind_dto(technique, serializer);
+sse_encode_bool(on_, serializer);
+case GridEditDto_AddSpan(lane: final lane,first: final first,last: final last,technique: final technique): sse_encode_i_32(8, serializer); sse_encode_pattern_lane_dto(lane, serializer);
+sse_encode_u_32(first, serializer);
+sse_encode_u_32(last, serializer);
+sse_encode_technique_kind_dto(technique, serializer);
+case GridEditDto_RemoveSpan(index: final index): sse_encode_i_32(9, serializer); sse_encode_u_32(index, serializer);
+case GridEditDto_SetLength(numerator: final numerator,denominator: final denominator): sse_encode_i_32(10, serializer); sse_encode_i_64(numerator, serializer);
+sse_encode_i_64(denominator, serializer);
+case GridEditDto_SetMeter(meter: final meter): sse_encode_i_32(11, serializer); sse_encode_opt_box_autoadd_meter_dto(meter, serializer);
+case GridEditDto_SetName(name: final name): sse_encode_i_32(12, serializer); sse_encode_String(name, serializer);
+case GridEditDto_SetMeta(description: final description,tags: final tags): sse_encode_i_32(13, serializer); sse_encode_String(description, serializer);
+sse_encode_list_String(tags, serializer);
+  } }
+
+@protected void sse_encode_grid_row_dto(GridRowDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.label, serializer);
+sse_encode_opt_box_autoadd_grid_selector_dto(self.selector, serializer);
+sse_encode_opt_box_autoadd_i_64(self.gesture, serializer);
+ }
+
+@protected void sse_encode_grid_selector_dto(GridSelectorDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_selector_kind_dto(self.kind, serializer);
+sse_encode_u_8(self.count, serializer);
+sse_encode_u_8(self.string, serializer);
+sse_encode_u_8(self.from, serializer);
+sse_encode_u_8(self.to, serializer);
+ }
+
+@protected void sse_encode_grid_span_dto(GridSpanDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.index, serializer);
+sse_encode_pattern_lane_dto(self.lane, serializer);
+sse_encode_u_32(self.first, serializer);
+sse_encode_u_32(self.last, serializer);
+sse_encode_technique_kind_dto(self.technique, serializer);
+sse_encode_i_64(self.startNumerator, serializer);
+sse_encode_i_64(self.startDenominator, serializer);
+sse_encode_i_64(self.endNumerator, serializer);
+sse_encode_i_64(self.endDenominator, serializer);
+ }
+
+@protected void sse_encode_grid_step_dto(GridStepDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_pattern_lane_dto(self.lane, serializer);
+sse_encode_u_32(self.index, serializer);
+sse_encode_i_64(self.onsetNumerator, serializer);
+sse_encode_i_64(self.onsetDenominator, serializer);
+sse_encode_i_64(self.endNumerator, serializer);
+sse_encode_i_64(self.endDenominator, serializer);
+sse_encode_duration_dto(self.value, serializer);
+sse_encode_opt_box_autoadd_grid_cell_dto(self.cell, serializer);
+sse_encode_grid_step_kind_dto(self.kind, serializer);
+sse_encode_opt_box_autoadd_i_64(self.gesture, serializer);
+sse_encode_list_prim_u_32_strict(self.rows, serializer);
+sse_encode_opt_box_autoadd_stroke_dto(self.direction, serializer);
+sse_encode_techniques_dto(self.techniques, serializer);
+sse_encode_techniques_dto(self.spanTechniques, serializer);
+ }
+
+@protected void sse_encode_grid_step_kind_dto(GridStepKindDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
+
+@protected void sse_encode_grid_strike_dto(GridStrikeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_grid_selector_dto(self.targets, serializer);
+sse_encode_opt_box_autoadd_stroke_dto(self.direction, serializer);
+sse_encode_techniques_dto(self.techniques, serializer);
+ }
+
+@protected void sse_encode_grid_view_dto(GridViewDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.name, serializer);
+sse_encode_i_64(self.lengthNumerator, serializer);
+sse_encode_i_64(self.lengthDenominator, serializer);
+sse_encode_opt_box_autoadd_meter_dto(self.meter, serializer);
+sse_encode_i_64(self.beatNumerator, serializer);
+sse_encode_i_64(self.beatDenominator, serializer);
+sse_encode_list_prim_u_8_strict(self.snaps, serializer);
+sse_encode_list_grid_row_dto(self.rows, serializer);
+sse_encode_list_pattern_lane_dto(self.lanes, serializer);
+sse_encode_list_grid_step_dto(self.steps, serializer);
+sse_encode_list_grid_span_dto(self.spans, serializer);
+ }
 
 @protected void sse_encode_hit_beat_dto(HitBeatDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self.id, serializer);
@@ -3706,9 +4431,29 @@ sse_encode_i_32(self.length, serializer);
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_event_dto(item, serializer); } }
 
+@protected void sse_encode_list_gesture_info_dto(List<GestureInfoDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_gesture_info_dto(item, serializer); } }
+
 @protected void sse_encode_list_glyph_dto(List<GlyphDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_glyph_dto(item, serializer); } }
+
+@protected void sse_encode_list_grid_row_dto(List<GridRowDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_grid_row_dto(item, serializer); } }
+
+@protected void sse_encode_list_grid_selector_dto(List<GridSelectorDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_grid_selector_dto(item, serializer); } }
+
+@protected void sse_encode_list_grid_span_dto(List<GridSpanDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_grid_span_dto(item, serializer); } }
+
+@protected void sse_encode_list_grid_step_dto(List<GridStepDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_grid_step_dto(item, serializer); } }
 
 @protected void sse_encode_list_hit_beat_dto(List<HitBeatDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
@@ -3729,6 +4474,10 @@ sse_encode_i_32(self.length, serializer);
 @protected void sse_encode_list_pattern_info_dto(List<PatternInfoDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_pattern_info_dto(item, serializer); } }
+
+@protected void sse_encode_list_pattern_lane_dto(List<PatternLaneDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_pattern_lane_dto(item, serializer); } }
 
 @protected void sse_encode_list_played_bar_dto(List<PlayedBarDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
@@ -3796,6 +4545,11 @@ sse_encode_list_prim_u_8_strict(self.alternateEndings, serializer);
 sse_encode_opt_String(self.marker, serializer);
  }
 
+@protected void sse_encode_meter_dto(MeterDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_8(self.numerator, serializer);
+sse_encode_u_8(self.denominator, serializer);
+ }
+
 @protected void sse_encode_metrics_dto(MetricsDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_f_32(self.width, serializer);
 sse_encode_f_32(self.marginLeft, serializer);
@@ -3861,11 +4615,35 @@ sse_encode_bool(self.stringPercussive, serializer);
                 }
                  }
 
+@protected void sse_encode_opt_box_autoadd_grid_cell_dto(GridCellDto? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_grid_cell_dto(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_opt_box_autoadd_grid_selector_dto(GridSelectorDto? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_grid_selector_dto(self, serializer);
+                }
+                 }
+
 @protected void sse_encode_opt_box_autoadd_i_64(PlatformInt64? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
                 sse_encode_bool(self != null, serializer);
                 if (self != null) {
                     sse_encode_box_autoadd_i_64(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_opt_box_autoadd_meter_dto(MeterDto? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_meter_dto(self, serializer);
                 }
                  }
 
@@ -3909,10 +4687,20 @@ sse_encode_bool(self.stringPercussive, serializer);
                 }
                  }
 
+@protected void sse_encode_opt_list_grid_selector_dto(List<GridSelectorDto>? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_list_grid_selector_dto(self, serializer);
+                }
+                 }
+
 @protected void sse_encode_outcome_dto(OutcomeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self.revision, serializer);
 sse_encode_list_event_dto(self.events, serializer);
 sse_encode_opt_box_autoadd_pattern_report_dto(self.pattern, serializer);
+sse_encode_opt_box_autoadd_i_64(self.createdPattern, serializer);
+sse_encode_opt_box_autoadd_i_64(self.createdGesture, serializer);
  }
 
 @protected void sse_encode_outline_system_dto(OutlineSystemDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3931,6 +4719,9 @@ sse_encode_i_64(self.lengthNumerator, serializer);
 sse_encode_i_64(self.lengthDenominator, serializer);
 sse_encode_bool(self.twoLanes, serializer);
  }
+
+@protected void sse_encode_pattern_lane_dto(PatternLaneDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
 
 @protected void sse_encode_pattern_preview_dto(PatternPreviewDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self.revision, serializer);
@@ -3986,6 +4777,9 @@ sse_encode_f_32(self.height, serializer);
 sse_encode_list_stave_dto(self.staves, serializer);
  }
 
+@protected void sse_encode_selector_kind_dto(SelectorKindDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
+
 @protected void sse_encode_stave_dto(StaveDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self.track, serializer);
 sse_encode_u_8(self.strings, serializer);
@@ -4026,6 +4820,17 @@ sse_encode_u_8(self.strings, serializer);
 sse_encode_f_32(self.width, serializer);
 sse_encode_f_32(self.height, serializer);
 sse_encode_list_system_dto(self.systems, serializer);
+ }
+
+@protected void sse_encode_technique_kind_dto(TechniqueKindDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
+
+@protected void sse_encode_techniques_dto(TechniquesDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_bool(self.accent, serializer);
+sse_encode_bool(self.palmMute, serializer);
+sse_encode_bool(self.dead, serializer);
+sse_encode_bool(self.letRing, serializer);
+sse_encode_bool(self.stringPercussive, serializer);
  }
 
 @protected void sse_encode_track_summary_dto(TrackSummaryDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs

@@ -596,8 +596,8 @@ The user accepted 6a-4 and started 6a-5. Like 6a-3, it is built in sub-slices, e
 |---|---|---|
 | 6a-5a | Library storage, format 1.2, through `mc-project` and the session | PE-13; the byte part of PE-1 |
 | 6a-5b | Undoable library and pattern-editing commands in `mc-app`, with the grid view model from the core | PE-12 (core side), part of PE-14 |
-| 6a-5c | FFI and the grid editor | PE-12, PE-14 (place, move, resize, delete, snap, span, keyboard) |
-| 6a-5d | Gesture palette (a gesture from a strike), the apply dialog on the stored library, and the Windows integration test | PE-14 (rest); the 6a-3 checklist of section 20 |
+| 6a-5c | The bridge: FFI for the grid view, the gestures and the library commands; the Dart service, the fake and the contract tests | PE-12 (bridge side) |
+| 6a-5d | The grid editor and the gesture palette in Flutter, the apply dialog on the stored library, and the Windows integration test | PE-12, PE-14; the 6a-3 checklist of section 20 |
 
 **Built in 6a-5a:**
 - **Format 1.2** (`mc-project`): the library is one entry, `patterns/library.json` ([project-format.md](../project-format.md) section 2b). New DTOs (`mc_project::library`), `library_json`, `save_with_library`, and `LoadedProject.library`. `save` keeps its signature and writes no library.
@@ -676,6 +676,25 @@ The user accepted 6a-4 and started 6a-5. Like 6a-3, it is built in sub-slices, e
   - A property (120 cases) over random mixed score and library histories: every accepted step is one revision, undoing everything gives back the first score and library, and redoing everything the last ones.
 - `crates/mc-app/tests/session.rs`: dirty transitions of a command, its undo and its redo.
 - **Mutations:** 13 mutations of the grid, the history and the session. 12 were caught. The thirteenth (span techniques without an upper bound) survived; an assertion was added, and it is now caught.
+
+### Results of 6a-5c, the bridge
+
+The plan was refined: 6a-5c is the bridge only, and the Flutter grid editor moves to 6a-5d with the palette (table above).
+
+**Built:**
+- **mc-ffi**, with no music rule:
+  - pattern_grid(document, pattern, snaps) and gestures(document), both synchronous queries (pi/pattern_grid.rs).
+  - CommandDto variants for every library command: NewPattern, RemovePattern, EditPattern with a GridEditDto, DefineGesture, GestureFromStep, RenameGesture, ChangeGesture, RemoveGesture.
+  - OutcomeDto.created_pattern and created_gesture, and the event kind PatternLibraryChanged, which replaces the temporary HistoryApplied mapping of 6a-5b.
+  - The DTOs convert plain values only. A string 0 or a bad meter is refused as a value; every other rule is the core's.
+  - Bindings were regenerated twice: 17 files with identical hashes (FF-12). The new module adds pattern_grid.dart and its freezed file.
+- **core_bridge:** DocumentService.patternGrid and gestures, in the real service, the fake and the fake's wrapper.
+  - The fake's library (ake_pattern_library.dart) is a placeholder. It keeps what it is sent and shows every step as an eighth. It decides no value, does not check holds, and refuses only what it cannot address, a bad snap, two steps starting together, a duplicate gesture name and the removal of a gesture in use.
+  - It reports a step's cell in the snap of the view, like the core. The contract test found that the first version echoed the cell a step was placed with.
+
+**Evidence:**
+- crates/mc-ffi/tests/api.rs (3 new tests): grid edits as commands, one revision each; a triplet eighth decided by the core; rows and cells of the view; spans; undo with the event. Refusals with their rules (PE-14 for a snap of 5, string 0 and 5/16; PT for an overlap and an unknown pattern), with nothing changed. A gesture from a strike in the palette and the grid, a rename, and the removal rule.
+- The Dart contract test "ADR-034 (6a-5): the pattern grid is edited by commands and undone" passes against the fake and against the real core. It covers new pattern, place, the default snap, cells relative to the view's snap, the PE-14 and PT refusals, a span, a gesture from a step, and undo with PatternLibraryChanged.
 
 ## Alternatives
 

@@ -342,6 +342,20 @@ impl DocumentSession {
         &mut self.patterns
     }
 
+    /// The grid view model of a library pattern (6a-5, `mc_pattern::grid::view`), with
+    /// `snaps` cells per beat. A query: nothing changes.
+    pub fn pattern_grid(
+        &self,
+        pattern: crate::pattern::PatternId,
+        snaps: &[u8],
+    ) -> Result<mc_pattern::grid::GridView, CommandError> {
+        let p = self
+            .patterns
+            .pattern(pattern)
+            .ok_or_else(|| vec![mc_pattern::PatternError::UnknownPattern(pattern)])?;
+        Ok(mc_pattern::grid::view(p.parts(), &self.patterns, snaps)?)
+    }
+
     /// The id of the built-in sample pattern (6a-3), if the library still holds it
     /// unchanged.
     pub fn sample_pattern(&self) -> Option<crate::pattern::PatternId> {

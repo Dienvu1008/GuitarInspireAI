@@ -4,7 +4,7 @@
 //! lives in the session, is not saved before format 1.2 (6a-5) and is not part of undo.
 
 use mc_guitar::Voicing;
-use mc_pattern::{BindFailure, PatternLibrary, PatternMeta, PatternParts, Strike, place};
+use mc_pattern::{BindFailure, PatternLibrary, PatternParts, place};
 use mc_score::{DomainError, DomainEvent, FragmentBeat, Score};
 use mc_theory::fretted::Fret;
 use mc_theory::{BaseValue, Rational, chord_symbol};
@@ -14,9 +14,12 @@ use crate::error::CommandError;
 
 /// Pattern types re-exported for adapters (mc-ffi depends on mc-app only).
 pub use mc_pattern::{
-    BindError, Fit, LaneId, Lanes, PatternId, PlaceError, PlaceReport, PlacedBar, StepChange,
+    Action, BindError, Direction, Fit, GestureId, LaneId, Lanes, Origin, PatternId, PatternMeta,
+    PlaceError, PlaceReport, PlacedBar, StepChange, Strike, StringSelector, Technique,
+    TechniqueSet, grid,
 };
 pub use mc_theory::NoteValue;
+pub use mc_theory::fretted::StringIndex;
 
 /// Why `ApplyPattern` was refused. On every error nothing changes.
 #[derive(Clone, Debug, PartialEq, Eq)]
