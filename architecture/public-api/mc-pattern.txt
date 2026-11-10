@@ -1,0 +1,634 @@
+pub mod mc_pattern
+pub enum mc_pattern::Action
+pub mc_pattern::Action::Gesture(mc_pattern::GestureId)
+pub mc_pattern::Action::Hold(core::option::Option<alloc::vec::Vec<mc_pattern::StringSelector>>)
+pub mc_pattern::Action::Rest
+pub mc_pattern::Action::Strike(mc_pattern::Strike)
+impl core::clone::Clone for mc_pattern::Action
+pub fn mc_pattern::Action::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::Action
+impl core::cmp::PartialEq for mc_pattern::Action
+pub fn mc_pattern::Action::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::Action
+pub fn mc_pattern::Action::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::Action
+impl core::marker::Freeze for mc_pattern::Action
+impl core::marker::Send for mc_pattern::Action
+impl core::marker::Sync for mc_pattern::Action
+impl core::marker::Unpin for mc_pattern::Action
+impl core::marker::UnsafeUnpin for mc_pattern::Action
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Action
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Action
+pub enum mc_pattern::LaneId
+pub mc_pattern::LaneId::Fingers
+pub mc_pattern::LaneId::Strum
+pub mc_pattern::LaneId::Thumb
+impl core::clone::Clone for mc_pattern::LaneId
+pub fn mc_pattern::LaneId::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::LaneId
+impl core::cmp::Ord for mc_pattern::LaneId
+pub fn mc_pattern::LaneId::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_pattern::LaneId
+pub fn mc_pattern::LaneId::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_pattern::LaneId
+pub fn mc_pattern::LaneId::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_pattern::LaneId
+pub fn mc_pattern::LaneId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_pattern::LaneId
+pub fn mc_pattern::LaneId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_pattern::LaneId
+impl core::marker::StructuralPartialEq for mc_pattern::LaneId
+impl core::marker::Freeze for mc_pattern::LaneId
+impl core::marker::Send for mc_pattern::LaneId
+impl core::marker::Sync for mc_pattern::LaneId
+impl core::marker::Unpin for mc_pattern::LaneId
+impl core::marker::UnsafeUnpin for mc_pattern::LaneId
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::LaneId
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::LaneId
+pub enum mc_pattern::Lanes
+pub mc_pattern::Lanes::Strum(mc_pattern::Lane)
+pub mc_pattern::Lanes::ThumbFingers
+pub mc_pattern::Lanes::ThumbFingers::fingers: mc_pattern::Lane
+pub mc_pattern::Lanes::ThumbFingers::thumb: mc_pattern::Lane
+impl mc_pattern::Lanes
+pub fn mc_pattern::Lanes::get(&self, mc_pattern::LaneId) -> core::option::Option<&mc_pattern::Lane>
+pub fn mc_pattern::Lanes::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = (mc_pattern::LaneId, &mc_pattern::Lane)>
+impl core::clone::Clone for mc_pattern::Lanes
+pub fn mc_pattern::Lanes::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::Lanes
+impl core::cmp::PartialEq for mc_pattern::Lanes
+pub fn mc_pattern::Lanes::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::Lanes
+pub fn mc_pattern::Lanes::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::Lanes
+impl core::marker::Freeze for mc_pattern::Lanes
+impl core::marker::Send for mc_pattern::Lanes
+impl core::marker::Sync for mc_pattern::Lanes
+impl core::marker::Unpin for mc_pattern::Lanes
+impl core::marker::UnsafeUnpin for mc_pattern::Lanes
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Lanes
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Lanes
+pub enum mc_pattern::NameProblem
+pub mc_pattern::NameProblem::Empty
+pub mc_pattern::NameProblem::InvalidCharacter(char)
+pub mc_pattern::NameProblem::Keyword(&'static str)
+pub mc_pattern::NameProblem::MustStartWithLetter
+impl core::clone::Clone for mc_pattern::NameProblem
+pub fn mc_pattern::NameProblem::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::NameProblem
+impl core::cmp::PartialEq for mc_pattern::NameProblem
+pub fn mc_pattern::NameProblem::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::NameProblem
+pub fn mc_pattern::NameProblem::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_pattern::NameProblem
+impl core::marker::StructuralPartialEq for mc_pattern::NameProblem
+impl core::marker::Freeze for mc_pattern::NameProblem
+impl core::marker::Send for mc_pattern::NameProblem
+impl core::marker::Sync for mc_pattern::NameProblem
+impl core::marker::Unpin for mc_pattern::NameProblem
+impl core::marker::UnsafeUnpin for mc_pattern::NameProblem
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::NameProblem
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::NameProblem
+pub enum mc_pattern::Origin
+pub mc_pattern::Origin::Grid
+pub mc_pattern::Origin::Tap
+pub mc_pattern::Origin::Text
+impl core::clone::Clone for mc_pattern::Origin
+pub fn mc_pattern::Origin::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::Origin
+impl core::cmp::PartialEq for mc_pattern::Origin
+pub fn mc_pattern::Origin::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::Origin
+pub fn mc_pattern::Origin::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_pattern::Origin
+impl core::marker::StructuralPartialEq for mc_pattern::Origin
+impl core::marker::Freeze for mc_pattern::Origin
+impl core::marker::Send for mc_pattern::Origin
+impl core::marker::Sync for mc_pattern::Origin
+impl core::marker::Unpin for mc_pattern::Origin
+impl core::marker::UnsafeUnpin for mc_pattern::Origin
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Origin
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Origin
+pub enum mc_pattern::PatternError
+pub mc_pattern::PatternError::DuplicateGestureName
+pub mc_pattern::PatternError::DuplicateGestureName::existing: mc_pattern::GestureId
+pub mc_pattern::PatternError::DuplicateGestureName::name: alloc::string::String
+pub mc_pattern::PatternError::DuplicateId(u64)
+pub mc_pattern::PatternError::EmptyTargets
+pub mc_pattern::PatternError::EmptyTargets::at: mc_pattern::StrikeAt
+pub mc_pattern::PatternError::GestureInUse
+pub mc_pattern::PatternError::GestureInUse::gesture: mc_pattern::GestureId
+pub mc_pattern::PatternError::GestureInUse::patterns: alloc::vec::Vec<mc_pattern::PatternId>
+pub mc_pattern::PatternError::HoldNotInStrike
+pub mc_pattern::PatternError::HoldNotInStrike::selector: mc_pattern::StringSelector
+pub mc_pattern::PatternError::HoldNotInStrike::step: mc_pattern::StepRef
+pub mc_pattern::PatternError::HoldWithoutStrike
+pub mc_pattern::PatternError::HoldWithoutStrike::step: mc_pattern::StepRef
+pub mc_pattern::PatternError::IdNotBelowCounter
+pub mc_pattern::PatternError::IdNotBelowCounter::id: u64
+pub mc_pattern::PatternError::IdNotBelowCounter::next_id: u64
+pub mc_pattern::PatternError::InvalidGestureName
+pub mc_pattern::PatternError::InvalidGestureName::name: alloc::string::String
+pub mc_pattern::PatternError::InvalidGestureName::problem: mc_pattern::NameProblem
+pub mc_pattern::PatternError::InvalidPattern
+pub mc_pattern::PatternError::InvalidPattern::errors: alloc::vec::Vec<mc_pattern::PatternError>
+pub mc_pattern::PatternError::InvalidPattern::pattern: mc_pattern::PatternId
+pub mc_pattern::PatternError::InvalidSelector
+pub mc_pattern::PatternError::InvalidSelector::at: mc_pattern::StrikeAt
+pub mc_pattern::PatternError::InvalidSelector::selector: mc_pattern::StringSelector
+pub mc_pattern::PatternError::NegativeOnset
+pub mc_pattern::PatternError::NegativeOnset::step: mc_pattern::StepRef
+pub mc_pattern::PatternError::NonPositiveLength
+pub mc_pattern::PatternError::NonPositiveLength::length: mc_theory::rational::Rational
+pub mc_pattern::PatternError::OutOfOrder
+pub mc_pattern::PatternError::OutOfOrder::previous_onset: mc_theory::rational::Rational
+pub mc_pattern::PatternError::OutOfOrder::step: mc_pattern::StepRef
+pub mc_pattern::PatternError::OutsidePattern
+pub mc_pattern::PatternError::OutsidePattern::end: mc_theory::rational::Rational
+pub mc_pattern::PatternError::OutsidePattern::length: mc_theory::rational::Rational
+pub mc_pattern::PatternError::OutsidePattern::step: mc_pattern::StepRef
+pub mc_pattern::PatternError::Overlap
+pub mc_pattern::PatternError::Overlap::previous_end: mc_theory::rational::Rational
+pub mc_pattern::PatternError::Overlap::step: mc_pattern::StepRef
+pub mc_pattern::PatternError::SpanLaneMissing
+pub mc_pattern::PatternError::SpanLaneMissing::lane: mc_pattern::LaneId
+pub mc_pattern::PatternError::SpanLaneMissing::span: usize
+pub mc_pattern::PatternError::SpanOutOfRange
+pub mc_pattern::PatternError::SpanOutOfRange::first: usize
+pub mc_pattern::PatternError::SpanOutOfRange::lane: mc_pattern::LaneId
+pub mc_pattern::PatternError::SpanOutOfRange::last: usize
+pub mc_pattern::PatternError::SpanOutOfRange::span: usize
+pub mc_pattern::PatternError::SpanOutOfRange::steps: usize
+pub mc_pattern::PatternError::TimeOverflow
+pub mc_pattern::PatternError::TimeOverflow::step: mc_pattern::StepRef
+pub mc_pattern::PatternError::UnknownGesture
+pub mc_pattern::PatternError::UnknownGesture::gesture: mc_pattern::GestureId
+pub mc_pattern::PatternError::UnknownGesture::step: mc_pattern::StepRef
+pub mc_pattern::PatternError::UnknownGestureId(mc_pattern::GestureId)
+pub mc_pattern::PatternError::UnknownPattern(mc_pattern::PatternId)
+impl core::clone::Clone for mc_pattern::PatternError
+pub fn mc_pattern::PatternError::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PatternError
+impl core::cmp::PartialEq for mc_pattern::PatternError
+pub fn mc_pattern::PatternError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_pattern::PatternError
+impl core::fmt::Debug for mc_pattern::PatternError
+pub fn mc_pattern::PatternError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_pattern::PatternError
+pub fn mc_pattern::PatternError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::PatternError
+impl core::marker::Freeze for mc_pattern::PatternError
+impl core::marker::Send for mc_pattern::PatternError
+impl core::marker::Sync for mc_pattern::PatternError
+impl core::marker::Unpin for mc_pattern::PatternError
+impl core::marker::UnsafeUnpin for mc_pattern::PatternError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternError
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternError
+pub enum mc_pattern::ResolvedAction
+pub mc_pattern::ResolvedAction::Hold(core::option::Option<alloc::vec::Vec<mc_pattern::StringSelector>>)
+pub mc_pattern::ResolvedAction::Rest
+pub mc_pattern::ResolvedAction::Strike(mc_pattern::Strike)
+impl core::clone::Clone for mc_pattern::ResolvedAction
+pub fn mc_pattern::ResolvedAction::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::ResolvedAction
+impl core::cmp::PartialEq for mc_pattern::ResolvedAction
+pub fn mc_pattern::ResolvedAction::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::ResolvedAction
+pub fn mc_pattern::ResolvedAction::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::ResolvedAction
+impl core::marker::Freeze for mc_pattern::ResolvedAction
+impl core::marker::Send for mc_pattern::ResolvedAction
+impl core::marker::Sync for mc_pattern::ResolvedAction
+impl core::marker::Unpin for mc_pattern::ResolvedAction
+impl core::marker::UnsafeUnpin for mc_pattern::ResolvedAction
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::ResolvedAction
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::ResolvedAction
+pub enum mc_pattern::StrikeAt
+pub mc_pattern::StrikeAt::Gesture
+pub mc_pattern::StrikeAt::Gesture::name: alloc::string::String
+pub mc_pattern::StrikeAt::Step(mc_pattern::StepRef)
+impl core::clone::Clone for mc_pattern::StrikeAt
+pub fn mc_pattern::StrikeAt::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::StrikeAt
+impl core::cmp::PartialEq for mc_pattern::StrikeAt
+pub fn mc_pattern::StrikeAt::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::StrikeAt
+pub fn mc_pattern::StrikeAt::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::StrikeAt
+impl core::marker::Freeze for mc_pattern::StrikeAt
+impl core::marker::Send for mc_pattern::StrikeAt
+impl core::marker::Sync for mc_pattern::StrikeAt
+impl core::marker::Unpin for mc_pattern::StrikeAt
+impl core::marker::UnsafeUnpin for mc_pattern::StrikeAt
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::StrikeAt
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::StrikeAt
+pub enum mc_pattern::StringSelector
+pub mc_pattern::StringSelector::Absolute(mc_theory::fretted::StringIndex)
+pub mc_pattern::StringSelector::Alt
+pub mc_pattern::StringSelector::Bass
+pub mc_pattern::StringSelector::Strum
+pub mc_pattern::StringSelector::StrumRange(mc_theory::fretted::StringIndex, mc_theory::fretted::StringIndex)
+pub mc_pattern::StringSelector::Treble(u8)
+impl mc_pattern::StringSelector
+pub const mc_pattern::StringSelector::TREBLE: mc_pattern::StringSelector
+impl core::clone::Clone for mc_pattern::StringSelector
+pub fn mc_pattern::StringSelector::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::StringSelector
+impl core::cmp::PartialEq for mc_pattern::StringSelector
+pub fn mc_pattern::StringSelector::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::StringSelector
+pub fn mc_pattern::StringSelector::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_pattern::StringSelector
+pub fn mc_pattern::StringSelector::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_pattern::StringSelector
+impl core::marker::StructuralPartialEq for mc_pattern::StringSelector
+impl core::marker::Freeze for mc_pattern::StringSelector
+impl core::marker::Send for mc_pattern::StringSelector
+impl core::marker::Sync for mc_pattern::StringSelector
+impl core::marker::Unpin for mc_pattern::StringSelector
+impl core::marker::UnsafeUnpin for mc_pattern::StringSelector
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::StringSelector
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::StringSelector
+pub enum mc_pattern::Technique
+pub mc_pattern::Technique::Accent
+pub mc_pattern::Technique::Dead
+pub mc_pattern::Technique::LetRing
+pub mc_pattern::Technique::PalmMute
+pub mc_pattern::Technique::StringPercussive
+impl core::clone::Clone for mc_pattern::Technique
+pub fn mc_pattern::Technique::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::Technique
+impl core::cmp::PartialEq for mc_pattern::Technique
+pub fn mc_pattern::Technique::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::Technique
+pub fn mc_pattern::Technique::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_pattern::Technique
+pub fn mc_pattern::Technique::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_pattern::Technique
+impl core::marker::StructuralPartialEq for mc_pattern::Technique
+impl core::marker::Freeze for mc_pattern::Technique
+impl core::marker::Send for mc_pattern::Technique
+impl core::marker::Sync for mc_pattern::Technique
+impl core::marker::Unpin for mc_pattern::Technique
+impl core::marker::UnsafeUnpin for mc_pattern::Technique
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Technique
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Technique
+pub struct mc_pattern::GestureDefinition
+impl mc_pattern::GestureDefinition
+pub fn mc_pattern::GestureDefinition::id(&self) -> mc_pattern::GestureId
+pub fn mc_pattern::GestureDefinition::name(&self) -> &str
+pub fn mc_pattern::GestureDefinition::strike(&self) -> &mc_pattern::Strike
+impl core::clone::Clone for mc_pattern::GestureDefinition
+pub fn mc_pattern::GestureDefinition::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::GestureDefinition
+impl core::cmp::PartialEq for mc_pattern::GestureDefinition
+pub fn mc_pattern::GestureDefinition::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::GestureDefinition
+pub fn mc_pattern::GestureDefinition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::GestureDefinition
+impl core::marker::Freeze for mc_pattern::GestureDefinition
+impl core::marker::Send for mc_pattern::GestureDefinition
+impl core::marker::Sync for mc_pattern::GestureDefinition
+impl core::marker::Unpin for mc_pattern::GestureDefinition
+impl core::marker::UnsafeUnpin for mc_pattern::GestureDefinition
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::GestureDefinition
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::GestureDefinition
+pub struct mc_pattern::GestureId(_)
+impl mc_pattern::GestureId
+pub const fn mc_pattern::GestureId::from_raw(u64) -> Self
+pub const fn mc_pattern::GestureId::raw(self) -> u64
+impl core::clone::Clone for mc_pattern::GestureId
+pub fn mc_pattern::GestureId::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::GestureId
+impl core::cmp::Ord for mc_pattern::GestureId
+pub fn mc_pattern::GestureId::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_pattern::GestureId
+pub fn mc_pattern::GestureId::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_pattern::GestureId
+pub fn mc_pattern::GestureId::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_pattern::GestureId
+pub fn mc_pattern::GestureId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_pattern::GestureId
+pub fn mc_pattern::GestureId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_pattern::GestureId
+impl core::marker::StructuralPartialEq for mc_pattern::GestureId
+impl core::marker::Freeze for mc_pattern::GestureId
+impl core::marker::Send for mc_pattern::GestureId
+impl core::marker::Sync for mc_pattern::GestureId
+impl core::marker::Unpin for mc_pattern::GestureId
+impl core::marker::UnsafeUnpin for mc_pattern::GestureId
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::GestureId
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::GestureId
+pub struct mc_pattern::GestureParts
+pub mc_pattern::GestureParts::id: mc_pattern::GestureId
+pub mc_pattern::GestureParts::name: alloc::string::String
+pub mc_pattern::GestureParts::strike: mc_pattern::Strike
+impl core::clone::Clone for mc_pattern::GestureParts
+pub fn mc_pattern::GestureParts::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::GestureParts
+impl core::cmp::PartialEq for mc_pattern::GestureParts
+pub fn mc_pattern::GestureParts::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::GestureParts
+pub fn mc_pattern::GestureParts::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::GestureParts
+impl core::marker::Freeze for mc_pattern::GestureParts
+impl core::marker::Send for mc_pattern::GestureParts
+impl core::marker::Sync for mc_pattern::GestureParts
+impl core::marker::Unpin for mc_pattern::GestureParts
+impl core::marker::UnsafeUnpin for mc_pattern::GestureParts
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::GestureParts
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::GestureParts
+pub struct mc_pattern::Lane
+pub mc_pattern::Lane::steps: alloc::vec::Vec<mc_pattern::Step>
+impl core::clone::Clone for mc_pattern::Lane
+pub fn mc_pattern::Lane::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::Lane
+impl core::cmp::PartialEq for mc_pattern::Lane
+pub fn mc_pattern::Lane::eq(&self, &Self) -> bool
+impl core::default::Default for mc_pattern::Lane
+pub fn mc_pattern::Lane::default() -> Self
+impl core::fmt::Debug for mc_pattern::Lane
+pub fn mc_pattern::Lane::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::Lane
+impl core::marker::Freeze for mc_pattern::Lane
+impl core::marker::Send for mc_pattern::Lane
+impl core::marker::Sync for mc_pattern::Lane
+impl core::marker::Unpin for mc_pattern::Lane
+impl core::marker::UnsafeUnpin for mc_pattern::Lane
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Lane
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Lane
+pub struct mc_pattern::LibraryParts
+pub mc_pattern::LibraryParts::gestures: alloc::vec::Vec<mc_pattern::GestureParts>
+pub mc_pattern::LibraryParts::next_id: u64
+pub mc_pattern::LibraryParts::patterns: alloc::vec::Vec<(mc_pattern::PatternId, mc_pattern::PatternParts)>
+impl core::clone::Clone for mc_pattern::LibraryParts
+pub fn mc_pattern::LibraryParts::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::LibraryParts
+impl core::cmp::PartialEq for mc_pattern::LibraryParts
+pub fn mc_pattern::LibraryParts::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::LibraryParts
+pub fn mc_pattern::LibraryParts::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::LibraryParts
+impl core::marker::Freeze for mc_pattern::LibraryParts
+impl core::marker::Send for mc_pattern::LibraryParts
+impl core::marker::Sync for mc_pattern::LibraryParts
+impl core::marker::Unpin for mc_pattern::LibraryParts
+impl core::marker::UnsafeUnpin for mc_pattern::LibraryParts
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::LibraryParts
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::LibraryParts
+pub struct mc_pattern::PatternDefinition
+impl mc_pattern::PatternDefinition
+pub fn mc_pattern::PatternDefinition::gestures_used(&self) -> alloc::vec::Vec<mc_pattern::GestureId>
+pub fn mc_pattern::PatternDefinition::id(&self) -> mc_pattern::PatternId
+pub fn mc_pattern::PatternDefinition::name(&self) -> &str
+pub fn mc_pattern::PatternDefinition::parts(&self) -> &mc_pattern::PatternParts
+impl core::clone::Clone for mc_pattern::PatternDefinition
+pub fn mc_pattern::PatternDefinition::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PatternDefinition
+impl core::cmp::PartialEq for mc_pattern::PatternDefinition
+pub fn mc_pattern::PatternDefinition::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::PatternDefinition
+pub fn mc_pattern::PatternDefinition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::PatternDefinition
+impl core::marker::Freeze for mc_pattern::PatternDefinition
+impl core::marker::Send for mc_pattern::PatternDefinition
+impl core::marker::Sync for mc_pattern::PatternDefinition
+impl core::marker::Unpin for mc_pattern::PatternDefinition
+impl core::marker::UnsafeUnpin for mc_pattern::PatternDefinition
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternDefinition
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternDefinition
+pub struct mc_pattern::PatternId(_)
+impl mc_pattern::PatternId
+pub const fn mc_pattern::PatternId::from_raw(u64) -> Self
+pub const fn mc_pattern::PatternId::raw(self) -> u64
+impl core::clone::Clone for mc_pattern::PatternId
+pub fn mc_pattern::PatternId::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PatternId
+impl core::cmp::Ord for mc_pattern::PatternId
+pub fn mc_pattern::PatternId::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_pattern::PatternId
+pub fn mc_pattern::PatternId::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_pattern::PatternId
+pub fn mc_pattern::PatternId::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_pattern::PatternId
+pub fn mc_pattern::PatternId::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_pattern::PatternId
+pub fn mc_pattern::PatternId::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_pattern::PatternId
+impl core::marker::StructuralPartialEq for mc_pattern::PatternId
+impl core::marker::Freeze for mc_pattern::PatternId
+impl core::marker::Send for mc_pattern::PatternId
+impl core::marker::Sync for mc_pattern::PatternId
+impl core::marker::Unpin for mc_pattern::PatternId
+impl core::marker::UnsafeUnpin for mc_pattern::PatternId
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternId
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternId
+pub struct mc_pattern::PatternLibrary
+impl mc_pattern::PatternLibrary
+pub fn mc_pattern::PatternLibrary::change_gesture(&mut self, mc_pattern::GestureId, mc_pattern::Strike) -> core::result::Result<(), alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::define_gesture(&mut self, &str, mc_pattern::Strike) -> core::result::Result<mc_pattern::GestureId, alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::define_pattern(&mut self, mc_pattern::PatternParts) -> core::result::Result<mc_pattern::PatternId, alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::from_parts(mc_pattern::LibraryParts) -> core::result::Result<Self, alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::gesture(&self, mc_pattern::GestureId) -> core::option::Option<&mc_pattern::GestureDefinition>
+pub fn mc_pattern::PatternLibrary::gesture_by_name(&self, &str) -> core::option::Option<&mc_pattern::GestureDefinition>
+pub fn mc_pattern::PatternLibrary::gestures(&self) -> impl core::iter::traits::iterator::Iterator<Item = &mc_pattern::GestureDefinition>
+pub fn mc_pattern::PatternLibrary::new() -> Self
+pub fn mc_pattern::PatternLibrary::pattern(&self, mc_pattern::PatternId) -> core::option::Option<&mc_pattern::PatternDefinition>
+pub fn mc_pattern::PatternLibrary::patterns(&self) -> impl core::iter::traits::iterator::Iterator<Item = &mc_pattern::PatternDefinition>
+pub fn mc_pattern::PatternLibrary::remove_gesture(&mut self, mc_pattern::GestureId) -> core::result::Result<mc_pattern::GestureDefinition, alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::remove_pattern(&mut self, mc_pattern::PatternId) -> core::result::Result<mc_pattern::PatternDefinition, alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::rename_gesture(&mut self, mc_pattern::GestureId, &str) -> core::result::Result<(), alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::replace_pattern(&mut self, mc_pattern::PatternId, mc_pattern::PatternParts) -> core::result::Result<(), alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::resolve(&self, mc_pattern::PatternId) -> core::result::Result<mc_pattern::ResolvedPattern, alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::to_parts(&self) -> mc_pattern::LibraryParts
+pub fn mc_pattern::PatternLibrary::validate_pattern(&self, &mc_pattern::PatternParts) -> alloc::vec::Vec<mc_pattern::PatternError>
+impl core::clone::Clone for mc_pattern::PatternLibrary
+pub fn mc_pattern::PatternLibrary::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PatternLibrary
+impl core::cmp::PartialEq for mc_pattern::PatternLibrary
+pub fn mc_pattern::PatternLibrary::eq(&self, &Self) -> bool
+impl core::default::Default for mc_pattern::PatternLibrary
+pub fn mc_pattern::PatternLibrary::default() -> Self
+impl core::fmt::Debug for mc_pattern::PatternLibrary
+pub fn mc_pattern::PatternLibrary::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::PatternLibrary
+impl core::marker::Freeze for mc_pattern::PatternLibrary
+impl core::marker::Send for mc_pattern::PatternLibrary
+impl core::marker::Sync for mc_pattern::PatternLibrary
+impl core::marker::Unpin for mc_pattern::PatternLibrary
+impl core::marker::UnsafeUnpin for mc_pattern::PatternLibrary
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternLibrary
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternLibrary
+pub struct mc_pattern::PatternMeta
+pub mc_pattern::PatternMeta::description: alloc::string::String
+pub mc_pattern::PatternMeta::origin: core::option::Option<mc_pattern::Origin>
+pub mc_pattern::PatternMeta::tags: alloc::vec::Vec<alloc::string::String>
+impl core::clone::Clone for mc_pattern::PatternMeta
+pub fn mc_pattern::PatternMeta::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PatternMeta
+impl core::cmp::PartialEq for mc_pattern::PatternMeta
+pub fn mc_pattern::PatternMeta::eq(&self, &Self) -> bool
+impl core::default::Default for mc_pattern::PatternMeta
+pub fn mc_pattern::PatternMeta::default() -> Self
+impl core::fmt::Debug for mc_pattern::PatternMeta
+pub fn mc_pattern::PatternMeta::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::PatternMeta
+impl core::marker::Freeze for mc_pattern::PatternMeta
+impl core::marker::Send for mc_pattern::PatternMeta
+impl core::marker::Sync for mc_pattern::PatternMeta
+impl core::marker::Unpin for mc_pattern::PatternMeta
+impl core::marker::UnsafeUnpin for mc_pattern::PatternMeta
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternMeta
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternMeta
+pub struct mc_pattern::PatternParts
+pub mc_pattern::PatternParts::lanes: mc_pattern::Lanes
+pub mc_pattern::PatternParts::length: mc_theory::rational::Rational
+pub mc_pattern::PatternParts::meta: mc_pattern::PatternMeta
+pub mc_pattern::PatternParts::meter: core::option::Option<mc_theory::time::TimeSignature>
+pub mc_pattern::PatternParts::name: alloc::string::String
+pub mc_pattern::PatternParts::spans: alloc::vec::Vec<mc_pattern::TechniqueSpan>
+impl core::clone::Clone for mc_pattern::PatternParts
+pub fn mc_pattern::PatternParts::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PatternParts
+impl core::cmp::PartialEq for mc_pattern::PatternParts
+pub fn mc_pattern::PatternParts::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::PatternParts
+pub fn mc_pattern::PatternParts::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::PatternParts
+impl core::marker::Freeze for mc_pattern::PatternParts
+impl core::marker::Send for mc_pattern::PatternParts
+impl core::marker::Sync for mc_pattern::PatternParts
+impl core::marker::Unpin for mc_pattern::PatternParts
+impl core::marker::UnsafeUnpin for mc_pattern::PatternParts
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternParts
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternParts
+pub struct mc_pattern::ResolvedPattern
+pub mc_pattern::ResolvedPattern::id: mc_pattern::PatternId
+pub mc_pattern::ResolvedPattern::lanes: alloc::vec::Vec<(mc_pattern::LaneId, alloc::vec::Vec<mc_pattern::ResolvedStep>)>
+pub mc_pattern::ResolvedPattern::length: mc_theory::rational::Rational
+pub mc_pattern::ResolvedPattern::meter: core::option::Option<mc_theory::time::TimeSignature>
+pub mc_pattern::ResolvedPattern::spans: alloc::vec::Vec<mc_pattern::TechniqueSpan>
+impl core::clone::Clone for mc_pattern::ResolvedPattern
+pub fn mc_pattern::ResolvedPattern::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::ResolvedPattern
+impl core::cmp::PartialEq for mc_pattern::ResolvedPattern
+pub fn mc_pattern::ResolvedPattern::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::ResolvedPattern
+pub fn mc_pattern::ResolvedPattern::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::ResolvedPattern
+impl core::marker::Freeze for mc_pattern::ResolvedPattern
+impl core::marker::Send for mc_pattern::ResolvedPattern
+impl core::marker::Sync for mc_pattern::ResolvedPattern
+impl core::marker::Unpin for mc_pattern::ResolvedPattern
+impl core::marker::UnsafeUnpin for mc_pattern::ResolvedPattern
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::ResolvedPattern
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::ResolvedPattern
+pub struct mc_pattern::ResolvedStep
+pub mc_pattern::ResolvedStep::action: mc_pattern::ResolvedAction
+pub mc_pattern::ResolvedStep::duration: mc_theory::duration::NoteValue
+pub mc_pattern::ResolvedStep::gesture: core::option::Option<mc_pattern::GestureId>
+pub mc_pattern::ResolvedStep::onset: mc_theory::rational::Rational
+impl core::clone::Clone for mc_pattern::ResolvedStep
+pub fn mc_pattern::ResolvedStep::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::ResolvedStep
+impl core::cmp::PartialEq for mc_pattern::ResolvedStep
+pub fn mc_pattern::ResolvedStep::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::ResolvedStep
+pub fn mc_pattern::ResolvedStep::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::ResolvedStep
+impl core::marker::Freeze for mc_pattern::ResolvedStep
+impl core::marker::Send for mc_pattern::ResolvedStep
+impl core::marker::Sync for mc_pattern::ResolvedStep
+impl core::marker::Unpin for mc_pattern::ResolvedStep
+impl core::marker::UnsafeUnpin for mc_pattern::ResolvedStep
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::ResolvedStep
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::ResolvedStep
+pub struct mc_pattern::Step
+pub mc_pattern::Step::action: mc_pattern::Action
+pub mc_pattern::Step::duration: mc_theory::duration::NoteValue
+pub mc_pattern::Step::onset: mc_theory::rational::Rational
+impl core::clone::Clone for mc_pattern::Step
+pub fn mc_pattern::Step::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::Step
+impl core::cmp::PartialEq for mc_pattern::Step
+pub fn mc_pattern::Step::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::Step
+pub fn mc_pattern::Step::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::Step
+impl core::marker::Freeze for mc_pattern::Step
+impl core::marker::Send for mc_pattern::Step
+impl core::marker::Sync for mc_pattern::Step
+impl core::marker::Unpin for mc_pattern::Step
+impl core::marker::UnsafeUnpin for mc_pattern::Step
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Step
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Step
+pub struct mc_pattern::StepRef
+pub mc_pattern::StepRef::index: usize
+pub mc_pattern::StepRef::lane: mc_pattern::LaneId
+pub mc_pattern::StepRef::onset: mc_theory::rational::Rational
+impl core::clone::Clone for mc_pattern::StepRef
+pub fn mc_pattern::StepRef::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::StepRef
+impl core::cmp::PartialEq for mc_pattern::StepRef
+pub fn mc_pattern::StepRef::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::StepRef
+pub fn mc_pattern::StepRef::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_pattern::StepRef
+pub fn mc_pattern::StepRef::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_pattern::StepRef
+impl core::marker::StructuralPartialEq for mc_pattern::StepRef
+impl core::marker::Freeze for mc_pattern::StepRef
+impl core::marker::Send for mc_pattern::StepRef
+impl core::marker::Sync for mc_pattern::StepRef
+impl core::marker::Unpin for mc_pattern::StepRef
+impl core::marker::UnsafeUnpin for mc_pattern::StepRef
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::StepRef
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::StepRef
+pub struct mc_pattern::Strike
+pub mc_pattern::Strike::direction: core::option::Option<mc_pattern::Direction>
+pub mc_pattern::Strike::targets: alloc::vec::Vec<mc_pattern::StringSelector>
+pub mc_pattern::Strike::techniques: mc_pattern::TechniqueSet
+impl mc_pattern::Strike
+pub fn mc_pattern::Strike::on(impl core::convert::Into<alloc::vec::Vec<mc_pattern::StringSelector>>) -> mc_pattern::Strike
+impl core::clone::Clone for mc_pattern::Strike
+pub fn mc_pattern::Strike::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::Strike
+impl core::cmp::PartialEq for mc_pattern::Strike
+pub fn mc_pattern::Strike::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::Strike
+pub fn mc_pattern::Strike::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::Strike
+impl core::marker::Freeze for mc_pattern::Strike
+impl core::marker::Send for mc_pattern::Strike
+impl core::marker::Sync for mc_pattern::Strike
+impl core::marker::Unpin for mc_pattern::Strike
+impl core::marker::UnsafeUnpin for mc_pattern::Strike
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Strike
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Strike
+pub struct mc_pattern::TechniqueSpan
+pub mc_pattern::TechniqueSpan::first: usize
+pub mc_pattern::TechniqueSpan::lane: mc_pattern::LaneId
+pub mc_pattern::TechniqueSpan::last: usize
+pub mc_pattern::TechniqueSpan::technique: mc_pattern::Technique
+impl core::clone::Clone for mc_pattern::TechniqueSpan
+pub fn mc_pattern::TechniqueSpan::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::TechniqueSpan
+impl core::cmp::PartialEq for mc_pattern::TechniqueSpan
+pub fn mc_pattern::TechniqueSpan::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::TechniqueSpan
+pub fn mc_pattern::TechniqueSpan::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_pattern::TechniqueSpan
+impl core::marker::StructuralPartialEq for mc_pattern::TechniqueSpan
+impl core::marker::Freeze for mc_pattern::TechniqueSpan
+impl core::marker::Send for mc_pattern::TechniqueSpan
+impl core::marker::Sync for mc_pattern::TechniqueSpan
+impl core::marker::Unpin for mc_pattern::TechniqueSpan
+impl core::marker::UnsafeUnpin for mc_pattern::TechniqueSpan
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::TechniqueSpan
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::TechniqueSpan
+pub const mc_pattern::KEYWORDS: &[&str]
+pub fn mc_pattern::check_name(&str) -> core::result::Result<(), mc_pattern::NameProblem>
+pub fn mc_pattern::covers(mc_pattern::StringSelector, mc_pattern::StringSelector) -> bool
+pub fn mc_pattern::name_key(&str) -> alloc::string::String
+pub type mc_pattern::Direction = mc_score::model::Stroke
+pub type mc_pattern::TechniqueSet = mc_score::model::NoteEffects

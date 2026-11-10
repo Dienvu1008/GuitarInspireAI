@@ -1,0 +1,19 @@
+[package]
+name = "mc-pattern"
+version = "0.1.0"
+description = "Pattern engine domain (ADR-034): the Pattern IR, its semantic validation and the pattern library of patterns and user gestures."
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+# mc-guitar (voicings, chord tones) is added in 6a-3 with binding; the FF-01 matrix
+# already allows it.
+[dependencies]
+mc-theory.workspace = true
+mc-score.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true

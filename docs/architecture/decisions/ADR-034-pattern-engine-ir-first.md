@@ -291,6 +291,58 @@ The user made two amendments:
 
 Pattern 7 stays unconfirmed. Everything else is approved, and 6a-1 (ADR-035) begins.
 
+## 14. Results of slice 6a-2 (2026-11-09, for user review)
+
+**Built.** A new domain crate, `mc-pattern`.
+- Dependencies: `mc-theory` and `mc-score` only; `mc-guitar` comes with binding in 6a-3. No external crate, as `allowed-deps.toml` requires.
+- It holds the IR of section 2, as plain data (`PatternParts`):
+  - `TechniqueSet` and `Direction` are the score's `NoteEffects` and `Stroke` (ADR-035), so binding copies them unchanged.
+  - Technique spans address steps by index (`first..=last`) in one lane.
+- Semantic validation covers PT-01 and PT-03 to PT-07. It returns every violation, not only the first, each with a typed error naming the lane, step index and onset, or the span.
+- The in-memory `PatternLibrary` is the aggregate of patterns and gestures:
+  - one id counter for both kinds; ids are never reused;
+  - define, rename, change and remove operations, all atomic;
+  - `resolve`, which expands gestures (the input of binding);
+  - `to_parts` and `from_parts`, which revalidate everything.
+- Domain events (bounded-contexts section 4) are not emitted yet: no session consumes them before 6a-3.
+
+**Interpretations made in 6a-2, which the user should confirm or change:**
+1. **PT-05 is checked for every voicing.**
+   - A hold may select only strings the held strike certainly plays on any voicing. Certain containment means one of:
+     - the same selector;
+     - `Strum` contains everything;
+     - `StrumRange` contains an `Absolute` string or a `StrumRange` inside it;
+     - `Treble(n)` contains `Treble(m)` for m ≤ n.
+   - Anything that depends on the voicing is rejected (`HoldNotInStrike`), for example a hold of string 1 after `Treble`. So PT-05 never fails at bind time.
+   - A hold must start exactly where the previous strike or hold ends, because a gap is a rest (PT-09).
+   - A partial hold narrows what the next hold can continue.
+   - A hold after a gesture uses the gesture's targets, so changing a gesture revalidates every pattern that uses it.
+2. **PT-08 name rules beyond "unique and not a keyword":**
+   - A name is letters and digits only and starts with a letter, so the 6a-4 DSL can always print and re-read it. "Bùm", "Kịch", "XL" and "Đàn" are accepted; "Kịch-2", "a b" and "4x" are not.
+   - The comparison is Unicode lower case, as written in PT-08.
+   - There is no Unicode normalization, because no allowed dependency provides it. A decomposed spelling (a letter followed by a combining accent) is rejected, since a combining mark is not a letter, rather than silently differing from the composed spelling.
+3. **The reserved keyword list is provisional.** It is `bass alt treble strum thumb fingers d u pm sp unit meter`: the words of the confirmed corpus sketch and the declarations of section 9. The 6a-4 grammar must use only these words, so an accepted gesture name is never taken away later.
+4. **Structural strike checks happen in the semantic stage.** An empty target list and `Treble(0)` are rejected there (`EmptyTargets`, `InvalidSelector`), because they would fail at bind for every voicing.
+5. **Spans may cover rests and holds.** How a span applies to them is a bind rule (6a-3, PE-6).
+
+**Evidence** (`crates/mc-pattern/tests`):
+- One test per rule: `pt01_` to `pt08_`.
+- The nine confirmed corpus patterns, written by hand as IR, are valid.
+- Property tests:
+  - 400 random valid patterns are accepted. The generator covers one and two lanes, tuplets, gaps, meters, spans, strikes, gestures, both kinds of hold, and rests, with counts checked.
+  - 400 cases inject one of seven violations and check that the error names the injected step or span.
+  - 300 random libraries round-trip through their plain data.
+- Thirteen mutation checks, one per rule or guard, were all caught.
+- FF-24 lists only PT-02 and PT-09 without a test; both are bind rules (6a-3).
+
+| Id | Result | Notes |
+|---|---|---|
+| PE-1 | **Partly met** | Onsets and durations are exact rationals and written values. Parts → library → parts, and library → parts → library, are identical for every generated library. **"Byte for byte through its DTO" is not checked:** the serialized DTO belongs to `mc-project` with format 1.2 (sections 1 and 8, slice 6a-5), and `mc-pattern` may not depend on serde. The byte check is proposed to be done with PE-13 in 6a-5, on the stored DTO; it is not counted as met here. |
+| PE-2 | Met | As above. |
+| PE-9 | **Partly met** | Met at the expansion level: a gesture used by two patterns expands to the same strike in each; renames change no resolved result and no pattern; unknown ids, duplicate names (without case, Vietnamese included) and keywords are typed errors; a gesture in use cannot be removed; a change that would break a pattern changes nothing. **"Binds identically" needs the binder of 6a-3**, and is checked there on bound output. |
+
+Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern` builds for wasm32), FF-07, FF-34. For FF-22, the snapshot `architecture/public-api/mc-pattern.txt` is new and the weekly job now lists the crate.
+
 ## Alternatives
 
 - **DSL as the stored form.** Rejected by the user: one syntax would own the data.
