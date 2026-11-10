@@ -26,6 +26,9 @@ pub enum CommandError {
     Guitar(GuitarError),
     NothingToUndo,
     NothingToRedo,
+    /// The pattern engine refused `ApplyPattern` (ADR-034), including the overwrite
+    /// safeguard `WouldOverwrite`.
+    Pattern(crate::pattern::ApplyError),
 }
 
 impl CommandError {
@@ -37,6 +40,8 @@ impl CommandError {
             CommandError::Constraint { rule, .. } => rule,
             CommandError::Guitar(_) => "G",
             CommandError::NothingToUndo | CommandError::NothingToRedo => "E-05",
+            CommandError::Pattern(crate::pattern::ApplyError::WouldOverwrite { .. }) => "PE-07",
+            CommandError::Pattern(_) => "PT",
         }
     }
 }
@@ -50,6 +55,12 @@ impl From<DomainError> for CommandError {
 impl From<GuitarError> for CommandError {
     fn from(e: GuitarError) -> Self {
         CommandError::Guitar(e)
+    }
+}
+
+impl From<crate::pattern::ApplyError> for CommandError {
+    fn from(e: crate::pattern::ApplyError) -> Self {
+        CommandError::Pattern(e)
     }
 }
 
@@ -75,6 +86,7 @@ impl fmt::Display for CommandError {
             CommandError::Guitar(e) => write!(f, "{e}"),
             CommandError::NothingToUndo => write!(f, "nothing to undo"),
             CommandError::NothingToRedo => write!(f, "nothing to redo"),
+            CommandError::Pattern(e) => write!(f, "{e:?}"),
         }
     }
 }

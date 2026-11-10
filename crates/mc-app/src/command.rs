@@ -41,6 +41,34 @@ pub enum Command {
     Score(ScoreCommand),
     Track(TrackCommand),
     Guitar(GuitarCommand),
+    /// Commands that use the session pattern library (ADR-034).
+    Pattern(PatternCommand),
+}
+
+/// Pattern engine commands (ADR-034 section 7).
+#[derive(Clone, Debug, PartialEq)]
+pub enum PatternCommand {
+    /// Binds a library pattern to one voicing and replaces voices 1 and 2 of the track
+    /// over whole bars `first..=last`. One atomic command, one undo step, one revision.
+    ApplyPattern(ApplyPattern),
+}
+
+/// The arguments of `ApplyPattern`, as plain values.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ApplyPattern {
+    pub track: TrackId,
+    /// First and last master bar of the range, inclusive.
+    pub first: usize,
+    pub last: usize,
+    pub pattern: crate::pattern::PatternId,
+    /// Per string, string 1 first: a fret, or `None` for a muted string.
+    pub voicing: Vec<Option<u8>>,
+    /// The chord symbol of the voicing (for `Alt`), for example "C" or "G/B".
+    pub chord: String,
+    /// Required when the range is not a whole multiple of the pattern (no default).
+    pub fit: Option<crate::pattern::Fit>,
+    /// False: refuse with `WouldOverwrite` if a written voice holds beats in the range.
+    pub overwrite: bool,
 }
 
 /// Commands that use Guitar context services to plan a score change.

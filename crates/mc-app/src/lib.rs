@@ -11,6 +11,7 @@ pub mod guitar;
 mod handlers;
 mod history;
 pub mod notation;
+pub mod pattern;
 pub mod ports;
 pub mod recovery;
 mod session;
@@ -20,8 +21,9 @@ pub mod transport;
 pub mod infra;
 
 pub use command::{
-    BeatAddress, ClipBeat, ClipNote, Command, CommandEnvelope, CommandId, DurationSpec,
-    GuitarCommand, InstrumentSpecInput, Revision, ScoreCommand, TrackCommand,
+    ApplyPattern, BeatAddress, ClipBeat, ClipNote, Command, CommandEnvelope, CommandId,
+    DurationSpec, GuitarCommand, InstrumentSpecInput, PatternCommand, Revision, ScoreCommand,
+    TrackCommand,
 };
 pub use constraints::Constraints;
 pub use error::{CommandError, OpenError, SaveError};

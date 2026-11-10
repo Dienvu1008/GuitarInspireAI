@@ -439,6 +439,58 @@ Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern
 | PE-8 | Met at domain level (range, fit, pickup, meter, mixed time signatures). Its "session tests" part comes with `ApplyPattern` in 6a-3c |
 | PT-09 | Tested (`pt09_`) |
 
+## 18. Results of slice 6a-3c, ApplyPattern (2026-11-10, for user review)
+
+**Built:**
+- **The `mc-app → mc-pattern` edge**, added to `allowed-deps.toml` as section 1 planned.
+- **`Command::Pattern(PatternCommand::ApplyPattern(ApplyPattern { track, first, last, pattern, voicing, chord, fit, overwrite }))`**, with plain values: the voicing is a fret or `None` per string, string 1 first; the chord is a symbol.
+  - It is a separate command family because it needs the session's pattern library.
+  - It binds (section 5), places (section 7), applies the overwrite safeguard, and writes through the new atomic `Score::replace_voices`. That method checks everything first, then replaces whole voices of the range, adds voice 2 only where the pattern writes it, and normalizes ties once.
+  - It is one revision and one undo step. `CommandOutcome.pattern` carries the report: range, voices written, overwritten bars, and the placement report.
+- **Errors:** `CommandError::Pattern(ApplyError)`, with `UnknownPattern`, `Bind`, `Place` and `WouldOverwrite { bars }` (rule `PE-07`). An invalid chord symbol is a `Value` error, a voicing that cannot be built a `Guitar` error, and a bad range or track a `Domain` error. On every error nothing changes.
+- **`DocumentSession::preview_pattern(args)`:** the same plan, with the bars it would write and the bars it would overwrite. It changes nothing; this is what the apply dialog shows.
+- **The session pattern library:**
+  - It is session state like the transport: not saved before format 1.2 (6a-5), and not part of undo.
+  - It holds one built-in sample pattern, corpus 3 "Boom-chick". It is a pattern, not a gesture; no gesture is built in.
+  - `patterns_mut()` gives direct access until the undoable library commands of 6a-5.
+
+**Interpretations made in 6a-3c, which the user should confirm or change:**
+1. **What counts as existing content.** A checked voice "holds a beat" when it has any beat, rests included.
+2. **Order of checks.** Binding and placement errors (fit included) come before `WouldOverwrite`, so the dialog asks for a fit first and for overwrite confirmation second.
+3. **The bar after the range.** A tie in the bar after the range that loses its source is cleared and reported (`TiesRemoved`, H-06), as for every other edit.
+4. **The sample pattern** is corpus 3.
+
+**Evidence** (`crates/mc-app/tests/pattern.rs`, 13 tests; `crates/mc-score/tests/replace_voices.rs`, 3 tests):
+- **PE-7:**
+  - The sample fills an empty range in one revision and one undo step.
+  - Only voices 1 and 2 of the track in the range change. Other tracks, master bars, the tempo map, bars outside the range and voice 3 are equal in model content (derived equality, ids included; `score_json` is a pure function of it).
+  - `WouldOverwrite` names exactly bars 1 and 3 and changes nothing; the preview names the same bars.
+  - A Strum pattern over bars with only voice 2 content needs no confirmation and leaves voice 2 unchanged.
+  - A Thumb and Fingers pattern is blocked by voice 2 content (amendment A).
+  - Undo restores the `score_json` bytes, and redo reapplies them.
+  - Ten refusals are each typed and change nothing; the preview refuses them too.
+  - The preview equals what is applied.
+- **PE-7 property:** 128 cases over random scores, with beats seeded into random bars. Without confirmation, `WouldOverwrite` names exactly the occupied bars, or the command applies to an empty range. With confirmation, only voice 1 of the range changes, and undo restores the bytes. A coverage test reaches every branch: 81 applied, 116 refused and then applied after confirmation, 3 other refusals.
+- **PE-8 through the session:** fit required, `RepeatAndCut` (with its report), `WholeRepetitionsOnly`, a whole multiple without fit, pickup and meter refusals, and a pattern without a meter across 4/4 and 3/4. Both bars come out exactly full, with no D-01 diagnostic.
+- **PE-5:** corpus 2 (Travis) applied and compiled with `mc_playback::compile`. The thumb's C3 starts at 0 and ends at 1/4, its own duration, while a finger note attacks at 1/8.
+- **Mutation checks:** seven on the apply path and `replace_voices`, all caught.
+
+| Id | Result in 6a-3c |
+|---|---|
+| PE-5 | Met |
+| PE-7 | Met |
+| PE-8 | Met (domain level in section 17, session level here) |
+| PE-15 | Met: see the measurement below |
+
+**PE-15 measurement** (`cargo bench -p mc-app --bench commands -- pattern`, release, reference machine, 2026-11-10, one run):
+- What is timed: one `execute` of `ApplyPattern` with a 4-bar Thumb and Fingers pattern (16 thumb quarters and 32 finger eighths) on bars 0 to 63, overwrite confirmed. That covers binding, placing, the overwrite check, writing both voices, ties and the undo snapshot.
+- Each sample starts from a fresh session.
+
+| Score | Samples | p50 | p99 | max | Criterion (mean) | Budget |
+|---|---|---|---|---|---|---|
+| Empty, 64 bars | 200 | 0.44 ms | 0.99 ms | 1.23 ms | 0.53 ms | ≤ 20 ms |
+| `reference(TYPICAL)`, first track, bars 0 to 63 (existing content) | 200 | 0.74 ms | 1.52 ms | 1.64 ms | 0.57 ms | ≤ 20 ms |
+
 ## Alternatives
 
 - **DSL as the stored form.** Rejected by the user: one syntax would own the data.

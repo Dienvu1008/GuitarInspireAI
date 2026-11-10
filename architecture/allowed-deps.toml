@@ -37,7 +37,8 @@ phase = 1
 # mc-guitar added in Phase 2 (ADR-003 context map: Application -> Guitar; ADR-019).
 # mc-notation added in Phase 3 (dependency-rules matrix: app -> notation; ADR-018).
 # mc-playback added in Phase 4 (matrix: app -> playback; ADR-003; Phase 4 entry decision Q2).
-internal = ["mc-theory", "mc-score", "mc-project", "mc-guitar", "mc-notation", "mc-playback"]
+# mc-pattern added in Phase 6a-3 (matrix: app -> pattern; ADR-034 section 1, ApplyPattern).
+internal = ["mc-theory", "mc-score", "mc-project", "mc-guitar", "mc-notation", "mc-playback", "mc-pattern"]
 external = []
 dev_external = ["proptest", "criterion"]
 

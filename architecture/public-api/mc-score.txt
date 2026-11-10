@@ -466,6 +466,7 @@ pub fn mc_score::Score::remove_tempo(&mut self, usize, mc_theory::rational::Rati
 pub fn mc_score::Score::remove_track(&mut self, mc_score::TrackId) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::remove_voice(&mut self, mc_score::TrackId, usize, usize) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::rename_track(&mut self, mc_score::TrackId, &str) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::replace_voices(&mut self, mc_score::TrackId, usize, &[alloc::vec::Vec<(usize, alloc::vec::Vec<mc_score::FragmentBeat>)>]) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::retune_track(&mut self, mc_score::TrackId, mc_score::InstrumentSpec, core::option::Option<&[i16]>) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::set_beat_stroke(&mut self, mc_score::BeatRef, core::option::Option<mc_score::Stroke>) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::set_beat_value(&mut self, mc_score::BeatRef, mc_theory::duration::NoteValue) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>

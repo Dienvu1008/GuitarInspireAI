@@ -195,6 +195,78 @@ pub use mc_app::notation::ScoreSystem
 pub use mc_app::notation::Stave
 pub use mc_app::notation::SystemLayout
 pub use mc_app::notation::TabLayout
+pub mod mc_app::pattern
+pub use mc_app::pattern::BindError
+pub use mc_app::pattern::Fit
+pub use mc_app::pattern::PatternId
+pub use mc_app::pattern::PlaceError
+pub use mc_app::pattern::PlaceReport
+pub use mc_app::pattern::PlacedBar
+pub use mc_app::pattern::StepChange
+pub enum mc_app::pattern::ApplyError
+pub mc_app::pattern::ApplyError::Bind(alloc::vec::Vec<mc_pattern::bind::BindError>)
+pub mc_app::pattern::ApplyError::Place(mc_pattern::place::PlaceError)
+pub mc_app::pattern::ApplyError::UnknownPattern(mc_pattern::ids::PatternId)
+pub mc_app::pattern::ApplyError::WouldOverwrite
+pub mc_app::pattern::ApplyError::WouldOverwrite::bars: alloc::vec::Vec<usize>
+impl core::clone::Clone for mc_app::pattern::ApplyError
+pub fn mc_app::pattern::ApplyError::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::pattern::ApplyError
+impl core::cmp::PartialEq for mc_app::pattern::ApplyError
+pub fn mc_app::pattern::ApplyError::eq(&self, &Self) -> bool
+impl core::convert::From<mc_app::pattern::ApplyError> for mc_app::CommandError
+pub fn mc_app::CommandError::from(mc_app::pattern::ApplyError) -> Self
+impl core::fmt::Debug for mc_app::pattern::ApplyError
+pub fn mc_app::pattern::ApplyError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::pattern::ApplyError
+impl core::marker::Freeze for mc_app::pattern::ApplyError
+impl core::marker::Send for mc_app::pattern::ApplyError
+impl core::marker::Sync for mc_app::pattern::ApplyError
+impl core::marker::Unpin for mc_app::pattern::ApplyError
+impl core::marker::UnsafeUnpin for mc_app::pattern::ApplyError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::pattern::ApplyError
+impl core::panic::unwind_safe::UnwindSafe for mc_app::pattern::ApplyError
+pub struct mc_app::pattern::PatternPreview
+pub mc_app::pattern::PatternPreview::bars: alloc::vec::Vec<mc_pattern::place::PlacedBar>
+pub mc_app::pattern::PatternPreview::report: mc_app::pattern::PatternReport
+impl core::clone::Clone for mc_app::pattern::PatternPreview
+pub fn mc_app::pattern::PatternPreview::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::pattern::PatternPreview
+impl core::cmp::PartialEq for mc_app::pattern::PatternPreview
+pub fn mc_app::pattern::PatternPreview::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::pattern::PatternPreview
+pub fn mc_app::pattern::PatternPreview::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::pattern::PatternPreview
+impl core::marker::Freeze for mc_app::pattern::PatternPreview
+impl core::marker::Send for mc_app::pattern::PatternPreview
+impl core::marker::Sync for mc_app::pattern::PatternPreview
+impl core::marker::Unpin for mc_app::pattern::PatternPreview
+impl core::marker::UnsafeUnpin for mc_app::pattern::PatternPreview
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::pattern::PatternPreview
+impl core::panic::unwind_safe::UnwindSafe for mc_app::pattern::PatternPreview
+pub struct mc_app::pattern::PatternReport
+pub mc_app::pattern::PatternReport::first: usize
+pub mc_app::pattern::PatternReport::last: usize
+pub mc_app::pattern::PatternReport::overwritten: alloc::vec::Vec<usize>
+pub mc_app::pattern::PatternReport::place: mc_pattern::place::PlaceReport
+pub mc_app::pattern::PatternReport::voices: usize
+impl core::clone::Clone for mc_app::pattern::PatternReport
+pub fn mc_app::pattern::PatternReport::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::pattern::PatternReport
+impl core::cmp::PartialEq for mc_app::pattern::PatternReport
+pub fn mc_app::pattern::PatternReport::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::pattern::PatternReport
+pub fn mc_app::pattern::PatternReport::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::pattern::PatternReport
+impl core::marker::Freeze for mc_app::pattern::PatternReport
+impl core::marker::Send for mc_app::pattern::PatternReport
+impl core::marker::Sync for mc_app::pattern::PatternReport
+impl core::marker::Unpin for mc_app::pattern::PatternReport
+impl core::marker::UnsafeUnpin for mc_app::pattern::PatternReport
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::pattern::PatternReport
+impl core::panic::unwind_safe::UnwindSafe for mc_app::pattern::PatternReport
+pub fn mc_app::pattern::sample_library() -> (mc_pattern::library::PatternLibrary, mc_pattern::ids::PatternId)
+pub fn mc_app::pattern::sample_parts() -> mc_pattern::model::PatternParts
 pub mod mc_app::playback
 pub use mc_app::playback::Channel
 pub use mc_app::playback::Pan
@@ -508,6 +580,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_app::AppEvent
 impl core::panic::unwind_safe::UnwindSafe for mc_app::AppEvent
 pub enum mc_app::Command
 pub mc_app::Command::Guitar(mc_app::GuitarCommand)
+pub mc_app::Command::Pattern(mc_app::PatternCommand)
 pub mc_app::Command::Score(mc_app::ScoreCommand)
 pub mc_app::Command::Track(mc_app::TrackCommand)
 impl core::clone::Clone for mc_app::Command
@@ -532,6 +605,7 @@ pub mc_app::CommandError::Domain(mc_score::error::DomainError)
 pub mc_app::CommandError::Guitar(mc_guitar::error::GuitarError)
 pub mc_app::CommandError::NothingToRedo
 pub mc_app::CommandError::NothingToUndo
+pub mc_app::CommandError::Pattern(mc_app::pattern::ApplyError)
 pub mc_app::CommandError::StaleRevision
 pub mc_app::CommandError::StaleRevision::actual: mc_app::Revision
 pub mc_app::CommandError::StaleRevision::expected: mc_app::Revision
@@ -543,6 +617,8 @@ pub fn mc_app::CommandError::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::CommandError
 impl core::cmp::PartialEq for mc_app::CommandError
 pub fn mc_app::CommandError::eq(&self, &Self) -> bool
+impl core::convert::From<mc_app::pattern::ApplyError> for mc_app::CommandError
+pub fn mc_app::CommandError::from(mc_app::pattern::ApplyError) -> Self
 impl core::convert::From<mc_guitar::error::GuitarError> for mc_app::CommandError
 pub fn mc_app::CommandError::from(mc_guitar::error::GuitarError) -> Self
 impl core::convert::From<mc_score::error::DomainError> for mc_app::CommandError
@@ -620,6 +696,22 @@ impl core::marker::Unpin for mc_app::OpenError
 impl core::marker::UnsafeUnpin for mc_app::OpenError
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::OpenError
 impl core::panic::unwind_safe::UnwindSafe for mc_app::OpenError
+pub enum mc_app::PatternCommand
+pub mc_app::PatternCommand::ApplyPattern(mc_app::ApplyPattern)
+impl core::clone::Clone for mc_app::PatternCommand
+pub fn mc_app::PatternCommand::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_app::PatternCommand
+pub fn mc_app::PatternCommand::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::PatternCommand
+pub fn mc_app::PatternCommand::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::PatternCommand
+impl core::marker::Freeze for mc_app::PatternCommand
+impl core::marker::Send for mc_app::PatternCommand
+impl core::marker::Sync for mc_app::PatternCommand
+impl core::marker::Unpin for mc_app::PatternCommand
+impl core::marker::UnsafeUnpin for mc_app::PatternCommand
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::PatternCommand
+impl core::panic::unwind_safe::UnwindSafe for mc_app::PatternCommand
 pub enum mc_app::PlaybackState
 pub mc_app::PlaybackState::Failed
 pub mc_app::PlaybackState::Playing
@@ -838,6 +930,30 @@ impl core::marker::Unpin for mc_app::transport::TransportError
 impl core::marker::UnsafeUnpin for mc_app::transport::TransportError
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::transport::TransportError
 impl core::panic::unwind_safe::UnwindSafe for mc_app::transport::TransportError
+pub struct mc_app::ApplyPattern
+pub mc_app::ApplyPattern::chord: alloc::string::String
+pub mc_app::ApplyPattern::first: usize
+pub mc_app::ApplyPattern::fit: core::option::Option<mc_pattern::place::Fit>
+pub mc_app::ApplyPattern::last: usize
+pub mc_app::ApplyPattern::overwrite: bool
+pub mc_app::ApplyPattern::pattern: mc_pattern::ids::PatternId
+pub mc_app::ApplyPattern::track: mc_score::ids::TrackId
+pub mc_app::ApplyPattern::voicing: alloc::vec::Vec<core::option::Option<u8>>
+impl core::clone::Clone for mc_app::ApplyPattern
+pub fn mc_app::ApplyPattern::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::ApplyPattern
+impl core::cmp::PartialEq for mc_app::ApplyPattern
+pub fn mc_app::ApplyPattern::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::ApplyPattern
+pub fn mc_app::ApplyPattern::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::ApplyPattern
+impl core::marker::Freeze for mc_app::ApplyPattern
+impl core::marker::Send for mc_app::ApplyPattern
+impl core::marker::Sync for mc_app::ApplyPattern
+impl core::marker::Unpin for mc_app::ApplyPattern
+impl core::marker::UnsafeUnpin for mc_app::ApplyPattern
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::ApplyPattern
+impl core::panic::unwind_safe::UnwindSafe for mc_app::ApplyPattern
 pub struct mc_app::BeatAddress
 pub mc_app::BeatAddress::bar: usize
 pub mc_app::BeatAddress::beat: mc_score::ids::BeatId
@@ -960,6 +1076,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_app::CommandId
 impl core::panic::unwind_safe::UnwindSafe for mc_app::CommandId
 pub struct mc_app::CommandOutcome
 pub mc_app::CommandOutcome::events: alloc::vec::Vec<mc_app::EventEnvelope>
+pub mc_app::CommandOutcome::pattern: core::option::Option<mc_app::pattern::PatternReport>
 pub mc_app::CommandOutcome::revision: mc_app::Revision
 impl core::clone::Clone for mc_app::CommandOutcome
 pub fn mc_app::CommandOutcome::clone(&self) -> Self
@@ -1041,12 +1158,16 @@ pub fn mc_app::DocumentSession::location(&self) -> core::option::Option<&std::pa
 pub fn mc_app::DocumentSession::mark_autosaved(&mut self, u64)
 pub fn mc_app::DocumentSession::new(mc_app::DocumentId, mc_score::score::Score, mc_app::SessionConfig, &dyn mc_app::ports::Clock, &dyn mc_app::ports::Entropy) -> Self
 pub fn mc_app::DocumentSession::open(mc_app::DocumentId, &dyn mc_app::ports::ProjectStore, &std::path::Path, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
+pub fn mc_app::DocumentSession::patterns(&self) -> &mc_pattern::library::PatternLibrary
+pub fn mc_app::DocumentSession::patterns_mut(&mut self) -> &mut mc_pattern::library::PatternLibrary
 pub fn mc_app::DocumentSession::played_bars(&self) -> alloc::vec::Vec<mc_app::transport::PlayedBarInfo>
+pub fn mc_app::DocumentSession::preview_pattern(&self, &mc_app::ApplyPattern) -> core::result::Result<mc_app::pattern::PatternPreview, mc_app::CommandError>
 pub fn mc_app::DocumentSession::project_id(&self) -> &str
 pub fn mc_app::DocumentSession::recover(mc_app::DocumentId, &[u8], core::option::Option<std::path::PathBuf>, mc_app::SessionConfig, &dyn mc_app::ports::Clock) -> core::result::Result<(Self, mc_app::OpenReport), mc_app::OpenError>
 pub fn mc_app::DocumentSession::redo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::refresh_playback_after_edit(&mut self, &mut dyn mc_app::transport::AudioPort) -> core::result::Result<mc_app::CommandOutcome, mc_app::transport::TransportError>
 pub fn mc_app::DocumentSession::revision(&self) -> mc_app::Revision
+pub fn mc_app::DocumentSession::sample_pattern(&self) -> mc_pattern::ids::PatternId
 pub fn mc_app::DocumentSession::save(&mut self, &dyn mc_app::ports::ProjectStore, &mc_project::AppInfo) -> core::result::Result<mc_app::CommandOutcome, mc_app::SaveError>
 pub fn mc_app::DocumentSession::save_as(&mut self, &dyn mc_app::ports::ProjectStore, &std::path::Path, &mc_project::AppInfo) -> core::result::Result<mc_app::CommandOutcome, mc_app::SaveError>
 pub fn mc_app::DocumentSession::saved_revision(&self) -> core::option::Option<mc_app::Revision>

@@ -1,7 +1,7 @@
 //! Document session (score-model-and-undo section 1): one open project, single writer.
 //! Owns the score, history, revision, event numbering and save state.
 
-use crate::command::{Command, CommandEnvelope, Revision};
+use crate::command::{Command, CommandEnvelope, PatternCommand, Revision};
 use crate::events::{AppEvent, DocumentId, EventEnvelope, EventPayload, EventSink};
 use crate::handlers::{guitar_handlers, score_handlers, track_handlers};
 use crate::history::{History, HistoryLimits};
@@ -22,6 +22,8 @@ use std::path::{Path, PathBuf};
 pub struct CommandOutcome {
     pub revision: Revision,
     pub events: Vec<EventEnvelope>,
+    /// What `ApplyPattern` wrote (ADR-034 section 7); `None` for other commands.
+    pub pattern: Option<crate::pattern::PatternReport>,
 }
 
 /// A tuner reading mapped to a track's strings (ADR-029 T8): the nearest open string
@@ -88,6 +90,10 @@ pub struct DocumentSession {
     /// Score as created, for a new document until its first save (see
     /// [`DocumentSession::has_unsaved_work`]). `None` for opened or recovered ones.
     pristine: Option<Score>,
+    /// The pattern library (ADR-034): session state, not saved before format 1.2 and
+    /// not part of undo. Holds the built-in sample pattern.
+    patterns: mc_pattern::PatternLibrary,
+    sample_pattern: crate::pattern::PatternId,
     /// Line breaking of the shown tracks at one revision (ADR-031 fallback 2), so the
     /// outline and the systems in view come from the same state. A view cache only.
     pub(crate) outline_cache: Option<crate::notation::OutlineCache>,
@@ -145,6 +151,8 @@ impl DocumentSession {
             sink: None,
             transport: TransportState::default(),
             pristine: Some(score_for_pristine),
+            patterns: crate::pattern::sample_library().0,
+            sample_pattern: crate::pattern::sample_library().1,
             outline_cache: None,
             width_cache: Default::default(),
         }
@@ -215,6 +223,8 @@ impl DocumentSession {
             sink: None,
             transport: TransportState::default(),
             pristine: None,
+            patterns: crate::pattern::sample_library().0,
+            sample_pattern: crate::pattern::sample_library().1,
             outline_cache: None,
             width_cache: Default::default(),
         };
@@ -244,17 +254,54 @@ impl DocumentSession {
         }
         let mut next = self.score.clone(); // structural-sharing snapshot (ADR-016)
         let constraints = self.config.constraints;
+        let mut report = None;
         let domain = match env.command {
             Command::Score(c) => score_handlers::handle(&mut next, c, &constraints)?,
             Command::Track(c) => track_handlers::handle(&mut next, c, &constraints)?,
             Command::Guitar(c) => guitar_handlers::handle(&mut next, c, &constraints)?,
+            Command::Pattern(PatternCommand::ApplyPattern(a)) => {
+                let (events, r) = crate::pattern::apply(&mut next, &self.patterns, &a)?;
+                report = Some(r);
+                events
+            }
         };
         let before = std::mem::replace(&mut self.score, next);
         self.update_diagnostics(&before);
         let could_undo = self.history.can_undo();
         let could_redo = self.history.can_redo();
         self.history.record(before, &self.score, env.coalesce_key);
-        Ok(self.commit(Some(env.id), domain, None, could_undo, could_redo))
+        let mut outcome = self.commit(Some(env.id), domain, None, could_undo, could_redo);
+        outcome.pattern = report;
+        Ok(outcome)
+    }
+
+    // ------------------------------------------------------------ patterns
+
+    /// The session pattern library (ADR-034).
+    pub fn patterns(&self) -> &mc_pattern::PatternLibrary {
+        &self.patterns
+    }
+
+    /// The library for direct changes. It is session state like the transport: not saved
+    /// before format 1.2 and not part of undo. Undoable library commands for the editor
+    /// come with the grid editor (6a-5).
+    pub fn patterns_mut(&mut self) -> &mut mc_pattern::PatternLibrary {
+        &mut self.patterns
+    }
+
+    /// The id of the built-in sample pattern (6a-3).
+    pub fn sample_pattern(&self) -> crate::pattern::PatternId {
+        self.sample_pattern
+    }
+
+    /// What `ApplyPattern` with these arguments would write, and which bars it would
+    /// overwrite (the preview of the apply dialog). Changes nothing; `overwrite` is
+    /// ignored.
+    pub fn preview_pattern(
+        &self,
+        args: &crate::command::ApplyPattern,
+    ) -> Result<crate::pattern::PatternPreview, CommandError> {
+        crate::pattern::preview(&self.score, &self.patterns, args)
     }
 
     pub fn undo(&mut self) -> Result<CommandOutcome, CommandError> {
@@ -502,6 +549,7 @@ impl DocumentSession {
         CommandOutcome {
             revision: self.revision,
             events,
+            pattern: None,
         }
     }
 
