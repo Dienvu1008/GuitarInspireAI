@@ -1,0 +1,5 @@
+// Corpus 8: palm-muted bass ostinato (G, 4/4). One palm-mute span over all eight steps;
+// the first step of each half is accented.
+"name": "Palm-muted bass ostinato"
+"length": 1
+strum: [pm >Bass:8 Bass:8 Bass:8 Bass:8 >Bass:8 Bass:8 Bass:8 Bass:8]

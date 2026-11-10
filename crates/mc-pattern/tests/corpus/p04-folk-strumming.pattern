@@ -1,0 +1,5 @@
+// Corpus 4: down, down-up, up-down-up (C, 4/4). Up-strokes play Treble(4). Beat 3 is a
+// true rest.
+"name": "Folk strumming"
+"length": 1
+strum: D Strum:4 D Strum:8 U Treble(4):8 -:8 U Treble(4):8 D Strum:8 U Treble(4):8

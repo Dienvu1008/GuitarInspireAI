@@ -5,7 +5,7 @@
 //! holds the IR, its semantic validation (PT-01, PT-03 to PT-07) and the pattern
 //! library of patterns and user gestures (PT-06, PT-08), in memory. Slice 6a-3 adds
 //! binding to a voicing (ADR-034 section 5, PT-02) and placing over a bar range
-//! (section 7, PT-09).
+//! (section 7, PT-09). Slice 6a-4 adds the text front end, `text` (section 9).
 //!
 //! Rule ids (PT-xx) refer to docs/architecture/domain-invariants.md.
 
@@ -16,6 +16,7 @@ mod library;
 mod model;
 mod names;
 mod place;
+pub mod text;
 mod validate;
 
 pub use bind::{BindError, BoundBeat, BoundLane, BoundNote, PatternFragment, bind};

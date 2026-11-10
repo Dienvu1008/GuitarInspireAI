@@ -114,6 +114,9 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
     refused, because playback would sound it twice.
   - If the score changes between the preview and Apply, Apply is refused and you preview
     again.
+  - The pattern text notation (Phase 6a-4, [pattern-text-syntax.md](../architecture/pattern-text-syntax.md))
+    exists only inside the core and its tests. There is no way to type or load a pattern
+    as text in the app yet.
 - A pickup bar round-trips through MIDI as a full-length bar with a trailing rest.
 - Copy and paste (Phase 6b-1, ADR-030) work on a run of beats in one voice, possibly
   across bars, selected with Shift+Left/Right or Shift+click. Paste inserts; there is no

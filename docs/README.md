@@ -37,6 +37,7 @@ This package is the accepted pre-implementation baseline (2026-10-31). M0 is com
 - [score-model-and-undo.md](architecture/score-model-and-undo.md): session, aggregate, structures, undo.
 - [domain-invariants.md](architecture/domain-invariants.md): invariant catalogue and categories.
 - [guitar-pattern-engine.md](architecture/guitar-pattern-engine.md): pattern IR and DSL ambiguity.
+- [pattern-text-syntax.md](architecture/pattern-text-syntax.md): the pattern text syntax (Phase 6a-4).
 - [dependency-rules.md](architecture/dependency-rules.md): GR-01 to GR-14.
 - [interop-architecture.md](architecture/interop-architecture.md): Dart and Rust communication.
 - [data-architecture.md](architecture/data-architecture.md): storage strategy.

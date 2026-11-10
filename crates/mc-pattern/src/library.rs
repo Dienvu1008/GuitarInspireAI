@@ -307,6 +307,15 @@ impl PatternLibrary {
         Ok(id)
     }
 
+    /// Parses pattern text against this library's gestures and defines the pattern.
+    /// A syntax error carries its span; a well-formed but invalid pattern carries the
+    /// semantic errors (PT-01 to PT-07). On any error nothing changes.
+    pub fn define_pattern_text(&mut self, text: &str) -> Result<PatternId, crate::text::TextError> {
+        use crate::text::TextError;
+        let parts = crate::text::parse(text, self).map_err(TextError::Parse)?;
+        self.define_pattern(parts).map_err(TextError::Invalid)
+    }
+
     pub fn replace_pattern(&mut self, id: PatternId, parts: PatternParts) -> Res<()> {
         if !self.patterns.contains_key(&id) {
             return Err(vec![PatternError::UnknownPattern(id)]);

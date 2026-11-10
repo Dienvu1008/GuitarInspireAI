@@ -1,0 +1,5 @@
+// Corpus 10: the user's example "Bass treb | Bass treb treb" (C, 2/4, two bars).
+"name": "Bass treb | Bass treb treb"
+"length": 1
+meter 2/4
+strum: Bass:4 Treble:4 | Bass:4 Treble:8 Treble:8

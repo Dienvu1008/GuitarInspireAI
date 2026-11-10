@@ -159,7 +159,32 @@ pub fn build_lane(
     seeds: &[StepSeed],
     gestures: &[(GestureId, Vec<StringSelector>)],
 ) -> Lane {
-    let values = values();
+    build_lane_with(&values(), length, seeds, gestures)
+}
+
+/// More note values for the text tests: double and triple dots, quintuplets and a
+/// septuplet, 1/64 and 1/256.
+pub fn ext_values() -> Vec<NoteValue> {
+    let mut out = values();
+    for (b, dots, t) in [
+        (BaseValue::QUARTER, 2, None),
+        (BaseValue::EIGHTH, 3, None),
+        (BaseValue::SIXTEENTH, 0, Some(Tuplet::new(5, 4).unwrap())),
+        (BaseValue::EIGHTH, 1, Some(Tuplet::new(7, 4).unwrap())),
+        (BaseValue::from_exponent(6).unwrap(), 0, None),
+        (BaseValue::from_exponent(8).unwrap(), 0, None),
+    ] {
+        out.push(NoteValue::new(b, dots, t).unwrap());
+    }
+    out
+}
+
+pub fn build_lane_with(
+    values: &[NoteValue],
+    length: Rational,
+    seeds: &[StepSeed],
+    gestures: &[(GestureId, Vec<StringSelector>)],
+) -> Lane {
     let mut t = Rational::ZERO;
     let mut steps: Vec<Step> = Vec::new();
     let mut held: Option<Vec<StringSelector>> = None;
@@ -245,15 +270,23 @@ pub fn build_pattern(
     seed: &PatternSeed,
     gestures: &[(GestureId, Vec<StringSelector>)],
 ) -> PatternParts {
+    build_pattern_with(&values(), seed, gestures)
+}
+
+pub fn build_pattern_with(
+    values: &[NoteValue],
+    seed: &PatternSeed,
+    gestures: &[(GestureId, Vec<StringSelector>)],
+) -> PatternParts {
     let (li, two, a, b, spans, meter) = seed;
     let length = lengths()[li % 4];
     let lanes = if *two {
         Lanes::ThumbFingers {
-            thumb: build_lane(length, a, gestures),
-            fingers: build_lane(length, b, gestures),
+            thumb: build_lane_with(values, length, a, gestures),
+            fingers: build_lane_with(values, length, b, gestures),
         }
     } else {
-        Lanes::Strum(build_lane(length, a, gestures))
+        Lanes::Strum(build_lane_with(values, length, a, gestures))
     };
     let mut out = Vec::new();
     for (lane_kind, x, y, tech) in spans {

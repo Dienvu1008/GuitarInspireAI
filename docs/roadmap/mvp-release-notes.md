@@ -92,3 +92,10 @@ The "Play it back" item above lists per-track mute. In the M5 build the mute con
   - One undo step.
   - This slice has one built-in sample pattern. See
     [mvp-known-limitations.md](mvp-known-limitations.md).
+
+## Added in Phase 6a-4
+
+- **Pattern text notation** (ADR-034, [pattern-text-syntax.md](../architecture/pattern-text-syntax.md)):
+  the core reads and writes patterns as text, and the confirmed reference patterns are
+  checked against their TAB and their playback. It has no user interface yet; see
+  [mvp-known-limitations.md](mvp-known-limitations.md).

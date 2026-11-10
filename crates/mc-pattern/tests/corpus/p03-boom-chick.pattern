@@ -1,0 +1,4 @@
+// Corpus 3: alternating bass, "boom-chick" (C, 4/4).
+"name": "Boom-chick"
+"length": 1
+strum: Bass:4 D Treble:4 Alt:4 D Treble:4

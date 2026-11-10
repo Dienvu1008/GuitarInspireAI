@@ -1,0 +1,19 @@
+TPW 64
+0 tempo bpm=120/1
+0 program ch=0 prog=25
+0 noteon ch=0 key=43 vel=104 src=1/0/3
+4 noteoff ch=0 key=43
+8 noteon ch=0 key=43 vel=80 src=1/0/5
+12 noteoff ch=0 key=43
+16 noteon ch=0 key=43 vel=80 src=1/0/7
+20 noteoff ch=0 key=43
+24 noteon ch=0 key=43 vel=80 src=1/0/9
+28 noteoff ch=0 key=43
+32 noteon ch=0 key=43 vel=104 src=1/0/11
+36 noteoff ch=0 key=43
+40 noteon ch=0 key=43 vel=80 src=1/0/13
+44 noteoff ch=0 key=43
+48 noteon ch=0 key=43 vel=80 src=1/0/15
+52 noteoff ch=0 key=43
+56 noteon ch=0 key=43 vel=80 src=1/0/17
+60 noteoff ch=0 key=43

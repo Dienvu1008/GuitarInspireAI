@@ -1,4 +1,120 @@
 pub mod mc_pattern
+pub mod mc_pattern::text
+pub enum mc_pattern::text::ParseErrorKind
+pub mc_pattern::text::ParseErrorKind::BadDuration
+pub mc_pattern::text::ParseErrorKind::BadEscape
+pub mc_pattern::text::ParseErrorKind::BadMeter
+pub mc_pattern::text::ParseErrorKind::BadNumber
+pub mc_pattern::text::ParseErrorKind::BadOrigin(alloc::string::String)
+pub mc_pattern::text::ParseErrorKind::BadRational
+pub mc_pattern::text::ParseErrorKind::BadTuplet
+pub mc_pattern::text::ParseErrorKind::BarCheckOffBarLine
+pub mc_pattern::text::ParseErrorKind::BarCheckOffBarLine::bar_length: mc_theory::rational::Rational
+pub mc_pattern::text::ParseErrorKind::BarCheckOffBarLine::position: mc_theory::rational::Rational
+pub mc_pattern::text::ParseErrorKind::BarCheckWithoutMeter
+pub mc_pattern::text::ParseErrorKind::DuplicateHeader(&'static str)
+pub mc_pattern::text::ParseErrorKind::DuplicateLane
+pub mc_pattern::text::ParseErrorKind::EmptyBracket
+pub mc_pattern::text::ParseErrorKind::Expected(&'static str)
+pub mc_pattern::text::ParseErrorKind::InvalidString(u32)
+pub mc_pattern::text::ParseErrorKind::KeywordNotAllowed(alloc::string::String)
+pub mc_pattern::text::ParseErrorKind::LaneMix
+pub mc_pattern::text::ParseErrorKind::MarksOnNonStrike
+pub mc_pattern::text::ParseErrorKind::MissingFingers
+pub mc_pattern::text::ParseErrorKind::MissingLength
+pub mc_pattern::text::ParseErrorKind::MissingThumb
+pub mc_pattern::text::ParseErrorKind::NoLane
+pub mc_pattern::text::ParseErrorKind::NoValue
+pub mc_pattern::text::ParseErrorKind::StepOutsideLane
+pub mc_pattern::text::ParseErrorKind::TimeOverflow
+pub mc_pattern::text::ParseErrorKind::UnclosedBracket
+pub mc_pattern::text::ParseErrorKind::UnknownGesture(alloc::string::String)
+pub mc_pattern::text::ParseErrorKind::UnknownKey(alloc::string::String)
+pub mc_pattern::text::ParseErrorKind::UnterminatedString
+impl core::clone::Clone for mc_pattern::text::ParseErrorKind
+pub fn mc_pattern::text::ParseErrorKind::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::text::ParseErrorKind
+impl core::cmp::PartialEq for mc_pattern::text::ParseErrorKind
+pub fn mc_pattern::text::ParseErrorKind::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::text::ParseErrorKind
+pub fn mc_pattern::text::ParseErrorKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::text::ParseErrorKind
+impl core::marker::Freeze for mc_pattern::text::ParseErrorKind
+impl core::marker::Send for mc_pattern::text::ParseErrorKind
+impl core::marker::Sync for mc_pattern::text::ParseErrorKind
+impl core::marker::Unpin for mc_pattern::text::ParseErrorKind
+impl core::marker::UnsafeUnpin for mc_pattern::text::ParseErrorKind
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::text::ParseErrorKind
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::text::ParseErrorKind
+pub enum mc_pattern::text::PrintError
+pub mc_pattern::text::PrintError::NoTargets
+pub mc_pattern::text::PrintError::NoTargets::lane: mc_pattern::LaneId
+pub mc_pattern::text::PrintError::NoTargets::step: usize
+pub mc_pattern::text::PrintError::TimeOverflow
+pub mc_pattern::text::PrintError::TimeOverflow::lane: mc_pattern::LaneId
+pub mc_pattern::text::PrintError::TimeOverflow::step: usize
+pub mc_pattern::text::PrintError::UnknownGesture(mc_pattern::GestureId)
+impl core::clone::Clone for mc_pattern::text::PrintError
+pub fn mc_pattern::text::PrintError::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::text::PrintError
+impl core::cmp::PartialEq for mc_pattern::text::PrintError
+pub fn mc_pattern::text::PrintError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_pattern::text::PrintError
+impl core::fmt::Debug for mc_pattern::text::PrintError
+pub fn mc_pattern::text::PrintError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_pattern::text::PrintError
+pub fn mc_pattern::text::PrintError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::text::PrintError
+impl core::marker::Freeze for mc_pattern::text::PrintError
+impl core::marker::Send for mc_pattern::text::PrintError
+impl core::marker::Sync for mc_pattern::text::PrintError
+impl core::marker::Unpin for mc_pattern::text::PrintError
+impl core::marker::UnsafeUnpin for mc_pattern::text::PrintError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::text::PrintError
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::text::PrintError
+pub enum mc_pattern::text::TextError
+pub mc_pattern::text::TextError::Invalid(alloc::vec::Vec<mc_pattern::PatternError>)
+pub mc_pattern::text::TextError::Parse(mc_pattern::text::ParseError)
+impl core::clone::Clone for mc_pattern::text::TextError
+pub fn mc_pattern::text::TextError::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::text::TextError
+impl core::cmp::PartialEq for mc_pattern::text::TextError
+pub fn mc_pattern::text::TextError::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::text::TextError
+pub fn mc_pattern::text::TextError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::text::TextError
+impl core::marker::Freeze for mc_pattern::text::TextError
+impl core::marker::Send for mc_pattern::text::TextError
+impl core::marker::Sync for mc_pattern::text::TextError
+impl core::marker::Unpin for mc_pattern::text::TextError
+impl core::marker::UnsafeUnpin for mc_pattern::text::TextError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::text::TextError
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::text::TextError
+pub struct mc_pattern::text::ParseError
+pub mc_pattern::text::ParseError::column: usize
+pub mc_pattern::text::ParseError::kind: mc_pattern::text::ParseErrorKind
+pub mc_pattern::text::ParseError::line: usize
+pub mc_pattern::text::ParseError::span: core::ops::range::Range<usize>
+impl core::clone::Clone for mc_pattern::text::ParseError
+pub fn mc_pattern::text::ParseError::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::text::ParseError
+impl core::cmp::PartialEq for mc_pattern::text::ParseError
+pub fn mc_pattern::text::ParseError::eq(&self, &Self) -> bool
+impl core::error::Error for mc_pattern::text::ParseError
+impl core::fmt::Debug for mc_pattern::text::ParseError
+pub fn mc_pattern::text::ParseError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_pattern::text::ParseError
+pub fn mc_pattern::text::ParseError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::text::ParseError
+impl core::marker::Freeze for mc_pattern::text::ParseError
+impl core::marker::Send for mc_pattern::text::ParseError
+impl core::marker::Sync for mc_pattern::text::ParseError
+impl core::marker::Unpin for mc_pattern::text::ParseError
+impl core::marker::UnsafeUnpin for mc_pattern::text::ParseError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::text::ParseError
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::text::ParseError
+pub fn mc_pattern::text::parse(&str, &mc_pattern::PatternLibrary) -> core::result::Result<mc_pattern::PatternParts, mc_pattern::text::ParseError>
+pub fn mc_pattern::text::print(&mc_pattern::PatternParts, &mc_pattern::PatternLibrary) -> core::result::Result<alloc::string::String, mc_pattern::text::PrintError>
 pub enum mc_pattern::Action
 pub mc_pattern::Action::Gesture(mc_pattern::GestureId)
 pub mc_pattern::Action::Hold(core::option::Option<alloc::vec::Vec<mc_pattern::StringSelector>>)
@@ -628,6 +744,7 @@ pub fn mc_pattern::PatternLibrary::bind(&self, mc_pattern::PatternId, &mc_guitar
 pub fn mc_pattern::PatternLibrary::change_gesture(&mut self, mc_pattern::GestureId, mc_pattern::Strike) -> core::result::Result<(), alloc::vec::Vec<mc_pattern::PatternError>>
 pub fn mc_pattern::PatternLibrary::define_gesture(&mut self, &str, mc_pattern::Strike) -> core::result::Result<mc_pattern::GestureId, alloc::vec::Vec<mc_pattern::PatternError>>
 pub fn mc_pattern::PatternLibrary::define_pattern(&mut self, mc_pattern::PatternParts) -> core::result::Result<mc_pattern::PatternId, alloc::vec::Vec<mc_pattern::PatternError>>
+pub fn mc_pattern::PatternLibrary::define_pattern_text(&mut self, &str) -> core::result::Result<mc_pattern::PatternId, mc_pattern::text::TextError>
 pub fn mc_pattern::PatternLibrary::from_parts(mc_pattern::LibraryParts) -> core::result::Result<Self, alloc::vec::Vec<mc_pattern::PatternError>>
 pub fn mc_pattern::PatternLibrary::gesture(&self, mc_pattern::GestureId) -> core::option::Option<&mc_pattern::GestureDefinition>
 pub fn mc_pattern::PatternLibrary::gesture_by_name(&self, &str) -> core::option::Option<&mc_pattern::GestureDefinition>

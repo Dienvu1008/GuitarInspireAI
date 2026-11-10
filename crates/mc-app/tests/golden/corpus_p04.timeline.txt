@@ -1,0 +1,57 @@
+TPW 64
+0 tempo bpm=120/1
+0 program ch=0 prog=25
+0 noteon ch=0 key=64 vel=96 src=1/0/3
+0 noteon ch=0 key=60 vel=96 src=1/0/4
+0 noteon ch=0 key=55 vel=96 src=1/0/5
+0 noteon ch=0 key=52 vel=96 src=1/0/6
+0 noteon ch=0 key=48 vel=96 src=1/0/7
+16 noteoff ch=0 key=64
+16 noteoff ch=0 key=60
+16 noteoff ch=0 key=55
+16 noteoff ch=0 key=52
+16 noteoff ch=0 key=48
+16 noteon ch=0 key=64 vel=96 src=1/0/9
+16 noteon ch=0 key=60 vel=96 src=1/0/10
+16 noteon ch=0 key=55 vel=96 src=1/0/11
+16 noteon ch=0 key=52 vel=96 src=1/0/12
+16 noteon ch=0 key=48 vel=96 src=1/0/13
+24 noteoff ch=0 key=64
+24 noteoff ch=0 key=60
+24 noteoff ch=0 key=55
+24 noteoff ch=0 key=52
+24 noteoff ch=0 key=48
+24 noteon ch=0 key=64 vel=96 src=1/0/15
+24 noteon ch=0 key=60 vel=96 src=1/0/16
+24 noteon ch=0 key=55 vel=96 src=1/0/17
+24 noteon ch=0 key=52 vel=96 src=1/0/18
+32 noteoff ch=0 key=64
+32 noteoff ch=0 key=60
+32 noteoff ch=0 key=55
+32 noteoff ch=0 key=52
+40 noteon ch=0 key=64 vel=96 src=1/0/21
+40 noteon ch=0 key=60 vel=96 src=1/0/22
+40 noteon ch=0 key=55 vel=96 src=1/0/23
+40 noteon ch=0 key=52 vel=96 src=1/0/24
+48 noteoff ch=0 key=64
+48 noteoff ch=0 key=60
+48 noteoff ch=0 key=55
+48 noteoff ch=0 key=52
+48 noteon ch=0 key=64 vel=96 src=1/0/26
+48 noteon ch=0 key=60 vel=96 src=1/0/27
+48 noteon ch=0 key=55 vel=96 src=1/0/28
+48 noteon ch=0 key=52 vel=96 src=1/0/29
+48 noteon ch=0 key=48 vel=96 src=1/0/30
+56 noteoff ch=0 key=64
+56 noteoff ch=0 key=60
+56 noteoff ch=0 key=55
+56 noteoff ch=0 key=52
+56 noteoff ch=0 key=48
+56 noteon ch=0 key=64 vel=96 src=1/0/32
+56 noteon ch=0 key=60 vel=96 src=1/0/33
+56 noteon ch=0 key=55 vel=96 src=1/0/34
+56 noteon ch=0 key=52 vel=96 src=1/0/35
+64 noteoff ch=0 key=64
+64 noteoff ch=0 key=60
+64 noteoff ch=0 key=55
+64 noteoff ch=0 key=52
