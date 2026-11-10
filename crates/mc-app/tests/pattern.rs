@@ -130,7 +130,7 @@ fn add_voice(s: &mut mc_app::DocumentSession, t: TrackId, bar: usize) {
 fn pe7_the_sample_pattern_fills_an_empty_range_in_one_step() {
     let mut s = session(6);
     let t = first_track(&s);
-    let p = s.sample_pattern();
+    let p = s.sample_pattern().unwrap();
     let (rev, depth) = (s.revision(), s.undo_depth());
     let out = s.execute(cmd(10, apply(args(t, 1, 4, p)))).unwrap();
     assert_eq!(s.revision().0, rev.0 + 1);
@@ -243,7 +243,7 @@ fn pe7_existing_content_is_not_overwritten_without_confirmation() {
     let t = first_track(&s);
     put(&mut s, t, 1, 0, 1);
     put(&mut s, t, 3, 0, 2);
-    let p = s.sample_pattern();
+    let p = s.sample_pattern().unwrap();
     let before = json(&s.snapshot());
     let (rev, depth) = (s.revision(), s.undo_depth());
     let err = s.execute(cmd(30, apply(args(t, 0, 4, p)))).unwrap_err();
@@ -273,7 +273,7 @@ fn pe7_a_strum_pattern_over_voice_2_only_content_needs_no_confirmation() {
     let voice2: Vec<_> = (0..3)
         .map(|b| s.score().track(t).unwrap().bar(b).unwrap().voices[1].clone())
         .collect();
-    let p = s.sample_pattern();
+    let p = s.sample_pattern().unwrap();
     let out = s.execute(cmd(40, apply(args(t, 0, 2, p)))).unwrap();
     assert!(out.pattern.unwrap().overwritten.is_empty());
     for (b, v) in voice2.iter().enumerate() {
@@ -291,7 +291,7 @@ fn pe7_undo_restores_the_score_byte_for_byte_and_redo_reapplies() {
     let t = first_track(&s);
     put(&mut s, t, 1, 0, 3);
     let before = json(&s.snapshot());
-    let mut a = args(t, 0, 3, s.sample_pattern());
+    let mut a = args(t, 0, 3, s.sample_pattern().unwrap());
     a.overwrite = true;
     s.execute(cmd(50, apply(a))).unwrap();
     let applied = json(&s.snapshot());
@@ -306,7 +306,7 @@ fn pe7_undo_restores_the_score_byte_for_byte_and_redo_reapplies() {
 fn pe7_every_refusal_is_typed_and_changes_nothing() {
     let mut s = session(4);
     let t = first_track(&s);
-    let sample = s.sample_pattern();
+    let sample = s.sample_pattern().unwrap();
     let mut pickup = s.score().master_bars()[0].clone();
     pickup.pickup = true;
     s.execute(cmd(
@@ -639,7 +639,7 @@ proptest! {
         let t = first_track(&s);
         let before = s.snapshot();
         let bytes = json(&before);
-        let p = s.sample_pattern();
+        let p = s.sample_pattern().unwrap();
         let occupied: Vec<usize> = (first..=last).filter(|&b| !before.track(t).unwrap().bar(b).unwrap().voices[0].beats.is_empty()).collect();
         let pickup = before.master_bars()[first..=last].iter().any(|b| b.pickup);
         let rev = s.revision();
@@ -712,7 +712,7 @@ fn the_pe7_property_covers_every_branch() {
         let first = first % n;
         let last = (first + len - 1).min(n - 1);
         let t = first_track(&s);
-        let p = s.sample_pattern();
+        let p = s.sample_pattern().unwrap();
         let key = match s.execute(cmd(500, apply(args(t, first, last, p)))) {
             Ok(_) => "applied",
             Err(CommandError::Pattern(ApplyError::WouldOverwrite { .. })) => "would overwrite",
@@ -758,7 +758,7 @@ fn pe7_a_thumb_and_fingers_pattern_also_checks_voice_2() {
         CommandError::Pattern(ApplyError::WouldOverwrite { bars: vec![1] })
     );
     assert_eq!(json(&s.snapshot()), before);
-    let strum = s.sample_pattern();
+    let strum = s.sample_pattern().unwrap();
     assert!(s.execute(cmd(96, apply(args(t, 0, 2, strum)))).is_ok());
 }
 
@@ -768,7 +768,7 @@ fn refusals_have_rule_ids_and_readable_messages() {
     let t = first_track(&s);
     put(&mut s, t, 1, 0, 1);
     put(&mut s, t, 3, 0, 2);
-    let p = s.sample_pattern();
+    let p = s.sample_pattern().unwrap();
     let e = s.execute(cmd(1, apply(args(t, 0, 3, p)))).unwrap_err();
     assert_eq!(e.rule(), "PE-07");
     assert_eq!(
@@ -819,7 +819,7 @@ fn a_confirmed_overwrite_is_refused_when_the_score_changed_after_the_preview() {
     let mut s = session(3);
     let t = first_track(&s);
     put(&mut s, t, 1, 0, 1);
-    let p = s.sample_pattern();
+    let p = s.sample_pattern().unwrap();
     let preview = s.preview_pattern(&args(t, 0, 2, p)).unwrap();
     assert_eq!(preview.report.overwritten, vec![1]);
     assert_eq!(
@@ -872,7 +872,7 @@ fn a_voice_with_only_rests_counts_as_existing_content() {
             .notes
             .is_empty()
     );
-    let p = s.sample_pattern();
+    let p = s.sample_pattern().unwrap();
     let err = s.execute(cmd(90, apply(args(t, 0, 1, p)))).unwrap_err();
     assert_eq!(
         err,

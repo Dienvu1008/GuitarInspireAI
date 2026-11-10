@@ -1175,7 +1175,7 @@ pub fn mc_app::DocumentSession::recover(mc_app::DocumentId, &[u8], core::option:
 pub fn mc_app::DocumentSession::redo(&mut self) -> core::result::Result<mc_app::CommandOutcome, mc_app::CommandError>
 pub fn mc_app::DocumentSession::refresh_playback_after_edit(&mut self, &mut dyn mc_app::transport::AudioPort) -> core::result::Result<mc_app::CommandOutcome, mc_app::transport::TransportError>
 pub fn mc_app::DocumentSession::revision(&self) -> mc_app::Revision
-pub fn mc_app::DocumentSession::sample_pattern(&self) -> mc_pattern::ids::PatternId
+pub fn mc_app::DocumentSession::sample_pattern(&self) -> core::option::Option<mc_pattern::ids::PatternId>
 pub fn mc_app::DocumentSession::save(&mut self, &dyn mc_app::ports::ProjectStore, &mc_project::AppInfo) -> core::result::Result<mc_app::CommandOutcome, mc_app::SaveError>
 pub fn mc_app::DocumentSession::save_as(&mut self, &dyn mc_app::ports::ProjectStore, &std::path::Path, &mc_project::AppInfo) -> core::result::Result<mc_app::CommandOutcome, mc_app::SaveError>
 pub fn mc_app::DocumentSession::saved_revision(&self) -> core::option::Option<mc_app::Revision>

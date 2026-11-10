@@ -588,6 +588,50 @@ The user accepted the interpretations of sections 16 to 19, except the stale pre
 - **PE-11** (`crates/mc-app/tests/corpus.rs`): for each of the 9 confirmed patterns, the TAB equals the corpus table and the timeline equals its golden; applying twice gives the same score bytes. Pattern 7 is not a golden.
 - **Workspace:** 468 tests pass; clippy with `-D warnings`, FF-01 to FF-34 (`fitness all`), `cargo deny` and the mermaid check pass. The `mc-pattern` public API snapshot has additions only (the `text` module and `define_pattern_text`).
 
+## 22. Slice 6a-5: plan, and results of 6a-5a, library storage (2026-11-10, for user review)
+
+The user accepted 6a-4 and started 6a-5. Like 6a-3, it is built in sub-slices, each committed with its evidence; the user reviews the whole slice.
+
+| Sub-slice | Content | Criteria |
+|---|---|---|
+| 6a-5a | Library storage, format 1.2, through `mc-project` and the session | PE-13; the byte part of PE-1 |
+| 6a-5b | Undoable library and pattern-editing commands in `mc-app`, with the grid view model from the core | PE-12 (core side), part of PE-14 |
+| 6a-5c | FFI and the grid editor | PE-12, PE-14 (place, move, resize, delete, snap, span, keyboard) |
+| 6a-5d | Gesture palette (a gesture from a strike), the apply dialog on the stored library, and the Windows integration test | PE-14 (rest); the 6a-3 checklist of section 20 |
+
+**Built in 6a-5a:**
+- **Format 1.2** (`mc-project`): the library is one entry, `patterns/library.json` ([project-format.md](../project-format.md) section 2b). New DTOs (`mc_project::library`), `library_json`, `save_with_library`, and `LoadedProject.library`. `save` keeps its signature and writes no library.
+  - On load, the shape is checked first. Every problem is a P-05 violation with its JSON path under `library` (`LoadError::Invalid`). The library is then rebuilt through `PatternLibrary::from_parts`, so every library rule is checked (GR-09 analogue); a broken rule is the new `LoadError::InvalidLibrary`.
+  - A 1.2 reader knows the entry; any other listed entry is still unknown content.
+- **The dependency edge `project -> pattern`**, planned in the dependency-rules matrix ("Phase 6") and in section 1, is now in `architecture/allowed-deps.toml`.
+- **The session** (`mc-app`):
+  - It opens the stored library. A file without one gets the built-in sample library, as before.
+  - It saves the library, also in autosave snapshots.
+  - The library is part of the dirty check: a library change makes the document dirty, and saving makes it clean.
+  - `DocumentSession::sample_pattern()` now returns `Option`: the sample can be removed from a stored library. The FFI function keeps its signature and returns `-1` then. The dialog handles that in 6a-5d.
+- **Fixtures:** `mc_pattern::fixtures::library()` (feature `fixtures`) is a reference library that uses every stored feature. `mc-cli format-fixtures` writes `v1.2/patterns.{package,score.json,library.json}`, the 1.2 fixtures of the existing scores, and the 1.2 schema snapshots (score, manifest and the new library schema). Released 1.0 and 1.1 fixtures and schemas are untouched; the 1.2 `score.json` files and the score schema are byte-identical to 1.1.
+
+**Interpretations made in 6a-5a, which the user should confirm or change:**
+1. **One library entry, not one JSON per pattern.** project-format section 2 first sketched `patterns/` with one file per pattern. One entry is simpler and safer: patterns refer to gestures by id, `next_id` must be stored once, and the library is validated as a whole. Section 2 now says so.
+2. **No library entry while the library is still the built-in sample library.** Otherwise every file saved by this build would carry the entry, and a 1.1 build would refuse to save over it, even for users who never touched patterns. A 1.1 build opens and saves such a 1.2 file normally (checked, see below). Reopening such a file gives the sample library again, so nothing is lost.
+3. **Library edits are not undoable yet.** `patterns_mut` still changes the library directly; undoable commands come in 6a-5b. Until then, undo does not touch the library, and a library change counts for the dirty check only.
+4. **Enums with data are stored as structs with a `kind`** (for example `{"kind":"strum_range","from":6,"to":4}`), so every level keeps an `extra` map for U1. A field that does not belong to the kind is a P-05 error with its path. A new kind is a JSON error (refused), as project-format section 9 says for enums that are not designated extensible.
+5. **`sample_pattern` is found by content**: the first pattern equal to the built-in sample, not a stored flag.
+
+**Evidence:**
+- **PE-13** (`crates/mc-project/tests/roundtrip.rs`, module `library`, and `crates/mc-app/tests/library.rs`):
+  - The 1.2 fixture loads with no warning, its library equals the reference library, and `library.json` and the whole package are written again byte for byte. Current output equals the golden `library.json`.
+  - The fixture uses every stored feature (a test lists them, including the non-ASCII gesture names and a gap in the ids).
+  - Every 1.0 and 1.1 fixture loads with no library. The 1.1 fixtures load to the same scores as the 1.2 ones, with identical `score.json`.
+  - U1: an unknown key at every level of the library DTO is reported with its exact path, and the known content still loads. A library entry missing from the manifest is refused (`UnlistedEntry`).
+  - A misshapen library is refused with every problem and its path (missing or extra selector fields, string 0, both lane shapes, a field of another action kind, a bad onset or value). An unknown enum value is a JSON error of the entry.
+  - Library rules on load: duplicate gesture names, an id at or above the counter, an overlap, and a missing gesture are each `InvalidLibrary`.
+  - Session: no entry for the sample library; save, reopen and save again keep `library.json` and `score.json` byte for byte; library changes make the document dirty and saving cleans it; removing the sample is kept; autosave snapshots carry the library; unknown library content blocks Save over the original (U2), which stays byte-identical, and Save As works.
+  - **The older reader** (done by hand, as in ADR-035 TQ-3): `mc-cli` built at `1290325` (6a-1, format 1.1) opens `v1.2/patterns.package`, reports one item of unknown content, `package:patterns/library.json`, and passes `validate`. Saving over the file fails ("cannot be saved back; use Save As") and leaves it byte-identical; Save As to a new file works. The same build opens `v1.2/techniques.package` (no library) without unknown content and saves over it.
+- **PE-1 (byte part):** a property test (200 cases) builds random valid libraries from the 6a-2 generator (the three test gestures, up to four random patterns with any Unicode names and tags, some removed), saves them in a package and loads them back: the same library, the same `library.json` bytes, and the same package bytes. A second property mutates `library.json` bytes; loading never panics.
+- **Mutations:** 10 mutations of the loader, the DTO walk, the shape checks and the session (the known entry, the U1 walk of the library, the strike walk, selector fields, action fields, the dirty check, the "no entry for the sample" rule, autosave, unsaved work). 9 were caught. The tenth (returning early after a lane-shape error) gives the same result, because nothing checked after the lanes can fail on a 64-bit target.
+- **Public API:** additions in `mc-project`. Two signatures changed on purpose: `DocumentSession::sample_pattern() -> Option<PatternId>`, and `mc_project::schemas()` now returns three schemas.
+
 ## Alternatives
 
 - **DSL as the stored form.** Rejected by the user: one syntax would own the data.

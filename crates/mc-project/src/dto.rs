@@ -11,7 +11,7 @@ use std::collections::BTreeMap;
 
 pub type Extra = BTreeMap<String, serde_json::Value>;
 
-fn is_false(b: &bool) -> bool {
+pub(crate) fn is_false(b: &bool) -> bool {
     !*b
 }
 
@@ -211,7 +211,7 @@ pub trait UnknownContent {
     fn unknown_paths(&self, path: &str, out: &mut Vec<String>);
 }
 
-fn extra_paths(extra: &Extra, path: &str, out: &mut Vec<String>) {
+pub(crate) fn extra_paths(extra: &Extra, path: &str, out: &mut Vec<String>) {
     out.extend(extra.keys().map(|k| format!("{path}.{k}")));
 }
 
@@ -233,7 +233,7 @@ leaf!(NoteDto);
 leaf!(AppDto);
 leaf!(EntryDto);
 
-fn list<T: UnknownContent>(items: &[T], path: &str, field: &str, out: &mut Vec<String>) {
+pub(crate) fn list<T: UnknownContent>(items: &[T], path: &str, field: &str, out: &mut Vec<String>) {
     for (i, item) in items.iter().enumerate() {
         item.unknown_paths(&format!("{path}.{field}[{i}]"), out);
     }

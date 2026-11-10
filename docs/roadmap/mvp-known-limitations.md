@@ -102,7 +102,9 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   Limits:
   - Only one built-in sample pattern ("Boom-chick", alternating bass) is available. Making
     and editing patterns, user gestures and the text notation come in later slices.
-  - Patterns are not saved with the project yet.
+  - The pattern library is saved with the project from format 1.2 (Phase 6a-5). A file
+    with a changed library cannot be saved over by an older build (it offers Save As).
+    Library changes are not undoable yet.
   - The preview is a text summary (repetitions, notes, bars replaced, steps cut at the
     end), not a TAB preview.
   - One voicing for the whole range; there is no chord track.

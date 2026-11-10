@@ -72,6 +72,8 @@ pub struct DocumentSession {
     /// Score as last saved or opened. Dirty means the content differs from it, so undoing
     /// back to the saved state is clean again. Shared Arcs make the comparison cheap.
     saved_score: Option<Score>,
+    /// Pattern library as last saved or opened (format 1.2); part of the dirty check.
+    saved_patterns: Option<mc_pattern::PatternLibrary>,
     seq: u64,
     location: Option<PathBuf>,
     project_id: ProjectId,
@@ -90,10 +92,9 @@ pub struct DocumentSession {
     /// Score as created, for a new document until its first save (see
     /// [`DocumentSession::has_unsaved_work`]). `None` for opened or recovered ones.
     pristine: Option<Score>,
-    /// The pattern library (ADR-034): session state, not saved before format 1.2 and
-    /// not part of undo. Holds the built-in sample pattern.
+    /// The pattern library (ADR-034), saved with the document from format 1.2. A new
+    /// document, and a file without a library, start with the built-in sample library.
     patterns: mc_pattern::PatternLibrary,
-    sample_pattern: crate::pattern::PatternId,
     /// Line breaking of the shown tracks at one revision (ADR-031 fallback 2), so the
     /// outline and the systems in view come from the same state. A view cache only.
     pub(crate) outline_cache: Option<crate::notation::OutlineCache>,
@@ -141,6 +142,7 @@ impl DocumentSession {
             revision: Revision(0),
             saved_revision: None,
             saved_score: None,
+            saved_patterns: None,
             seq: 0,
             location: None,
             project_id: ProjectId::from_parts(now, entropy.random_u128()),
@@ -152,7 +154,6 @@ impl DocumentSession {
             transport: TransportState::default(),
             pristine: Some(score_for_pristine),
             patterns: crate::pattern::sample_library().0,
-            sample_pattern: crate::pattern::sample_library().1,
             outline_cache: None,
             width_cache: Default::default(),
         }
@@ -183,6 +184,7 @@ impl DocumentSession {
     ) -> Result<(Self, OpenReport), OpenError> {
         let (mut session, report) = Self::from_bytes(id, bytes, location, config, clock)?;
         session.saved_score = None;
+        session.saved_patterns = None;
         session.saved_revision = None;
         Ok((session, report))
     }
@@ -196,7 +198,11 @@ impl DocumentSession {
         config: SessionConfig,
         clock: &dyn Clock,
     ) -> Result<(Self, OpenReport), OpenError> {
-        let loaded = mc_project::load(bytes).map_err(OpenError::Load)?;
+        let mut loaded = mc_project::load(bytes).map_err(OpenError::Load)?;
+        let patterns = loaded
+            .library
+            .take()
+            .unwrap_or_else(|| crate::pattern::sample_library().0);
         let report = OpenReport {
             unknown_content: loaded.unknown_content().to_vec(),
             newer_minor_version: loaded
@@ -208,6 +214,7 @@ impl DocumentSession {
             id,
             diagnostics: full_diagnostics(&loaded.score),
             saved_score: Some(loaded.score.clone()),
+            saved_patterns: Some(patterns.clone()),
             score: loaded.score,
             history: History::new(config.history),
             config,
@@ -223,8 +230,7 @@ impl DocumentSession {
             sink: None,
             transport: TransportState::default(),
             pristine: None,
-            patterns: crate::pattern::sample_library().0,
-            sample_pattern: crate::pattern::sample_library().1,
+            patterns,
             outline_cache: None,
             width_cache: Default::default(),
         };
@@ -289,9 +295,14 @@ impl DocumentSession {
         &mut self.patterns
     }
 
-    /// The id of the built-in sample pattern (6a-3).
-    pub fn sample_pattern(&self) -> crate::pattern::PatternId {
-        self.sample_pattern
+    /// The id of the built-in sample pattern (6a-3), if the library still holds it
+    /// unchanged.
+    pub fn sample_pattern(&self) -> Option<crate::pattern::PatternId> {
+        let sample = crate::pattern::sample_parts();
+        self.patterns
+            .patterns()
+            .find(|p| *p.parts() == sample)
+            .map(|p| p.id())
     }
 
     /// What `ApplyPattern` with these arguments would write, and which bars it would
@@ -601,7 +612,7 @@ impl DocumentSession {
             saved_by: app.clone(),
             saved_revision: self.file_revision + 1,
         };
-        let bytes = mc_project::save(&self.score, &info);
+        let bytes = mc_project::save_with_library(&self.score, self.library_to_store(), &info);
         store.write_atomic(path, &bytes).map_err(SaveError::Store)?;
         let was_dirty = self.is_dirty();
         // Once on disk, the creation state no longer matters: only the saved file does.
@@ -610,6 +621,7 @@ impl DocumentSession {
         self.created_by = Some(info.created_by);
         self.saved_revision = Some(self.revision);
         self.saved_score = Some(self.score.clone());
+        self.saved_patterns = Some(self.patterns.clone());
         self.history.break_coalescing();
         let mut payloads = vec![EventPayload::App(AppEvent::DocumentSaved {
             revision: self.revision,
@@ -628,7 +640,14 @@ impl DocumentSession {
             saved_by: app.clone(),
             saved_revision: self.file_revision,
         };
-        mc_project::save(&self.score, &info)
+        mc_project::save_with_library(&self.score, self.library_to_store(), &info)
+    }
+
+    /// The library to write: none while it is still the built-in sample library, so a
+    /// document that never used patterns stays readable without unknown content by a
+    /// 1.1 build (ADR-034 section 22).
+    fn library_to_store(&self) -> Option<&mc_pattern::PatternLibrary> {
+        (self.patterns != crate::pattern::sample_library().0).then_some(&self.patterns)
     }
 
     /// True when the document is dirty and the autosave interval has passed.
@@ -664,6 +683,7 @@ impl DocumentSession {
 
     pub fn is_dirty(&self) -> bool {
         self.saved_score.as_ref() != Some(&self.score)
+            || self.saved_patterns.as_ref() != Some(&self.patterns)
     }
 
     /// True when closing would lose work (ADR-030 section 3): the document is dirty,
@@ -672,7 +692,9 @@ impl DocumentSession {
     /// app does not ask "save changes?" for it. Opened and recovered documents have no
     /// such exception.
     pub fn has_unsaved_work(&self) -> bool {
-        self.is_dirty() && self.pristine.as_ref() != Some(&self.score)
+        self.is_dirty()
+            && (self.pristine.as_ref() != Some(&self.score)
+                || self.patterns != crate::pattern::sample_library().0)
     }
 
     /// Revision at the last save or open, if any.

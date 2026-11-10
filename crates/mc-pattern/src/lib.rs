@@ -11,6 +11,8 @@
 
 mod bind;
 mod error;
+#[cfg(feature = "fixtures")]
+pub mod fixtures;
 mod ids;
 mod library;
 mod model;

@@ -79,6 +79,8 @@ pub fn new_score(track_name: &str, bars: usize) -> Result<mc_score::Score, mc_sc
 
 #[cfg(feature = "fixtures")]
 pub mod fixtures {
+    /// The reference pattern library of the format 1.2 fixtures (ADR-034 section 8).
+    pub use mc_pattern::fixtures::library as pattern_library;
     pub use mc_score::fixtures::{
         LARGE, SMALL, Shape, TYPICAL, feature_rich, reference, techniques,
     };

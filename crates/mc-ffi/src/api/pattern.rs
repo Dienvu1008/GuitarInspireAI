@@ -180,7 +180,11 @@ pub fn patterns(document: &DocumentHandle) -> Vec<PatternInfoDto> {
 /// The id of the built-in sample pattern.
 #[frb(sync)]
 pub fn sample_pattern(document: &DocumentHandle) -> i64 {
-    document.lock_for_pattern().sample_pattern().raw() as i64
+    // -1 once the library no longer holds the sample unchanged (format 1.2 libraries).
+    document
+        .lock_for_pattern()
+        .sample_pattern()
+        .map_or(-1, |p| p.raw() as i64)
 }
 
 /// What `ApplyPattern` would write, without changing anything. A missing fit for a

@@ -85,12 +85,8 @@ fn master_bar_dto(m: &MasterBar) -> MasterBarDto {
 fn beat_dto(b: &Beat) -> BeatDto {
     BeatDto {
         id: b.id.raw(),
-        value: ValueDto {
-            base: b.value.base().exponent(),
-            dots: b.value.dots(),
-            tuplet: b.value.tuplet().map(|t| [t.actual(), t.normal()]),
-            extra: Extra::new(),
-        },
+        value: value_dto(b.value),
+
         notes: b
             .notes
             .iter()
@@ -119,12 +115,12 @@ fn beat_dto(b: &Beat) -> BeatDto {
 }
 
 /// Collects construction errors with their JSON path instead of stopping at the first.
-struct Ctx {
-    violations: Vec<Violation>,
+pub(crate) struct Ctx {
+    pub(crate) violations: Vec<Violation>,
 }
 
 impl Ctx {
-    fn fail(&mut self, path: String, message: impl ToString) {
+    pub(crate) fn fail(&mut self, path: String, message: impl ToString) {
         self.violations.push(Violation {
             rule: "P-05",
             location: path,
@@ -132,7 +128,7 @@ impl Ctx {
         });
     }
 
-    fn rational(&mut self, path: String, v: [i64; 2]) -> Option<Rational> {
+    pub(crate) fn rational(&mut self, path: String, v: [i64; 2]) -> Option<Rational> {
         Rational::new(v[0], v[1])
             .map_err(|e| self.fail(path, e))
             .ok()
@@ -255,21 +251,35 @@ pub fn from_dto(dto: &ScoreDto) -> Result<Score, Vec<Violation>> {
     })
 }
 
-fn beat_from(cx: &mut Ctx, path: &str, b: &BeatDto) -> Option<Beat> {
-    let base = BaseValue::from_exponent(b.value.base)
-        .map_err(|e| cx.fail(format!("{path}.value.base"), e))
+/// A stored note value; `path` is the path of the value itself.
+pub(crate) fn value_from(cx: &mut Ctx, path: &str, v: &ValueDto) -> Option<NoteValue> {
+    let base = BaseValue::from_exponent(v.base)
+        .map_err(|e| cx.fail(format!("{path}.base"), e))
         .ok()?;
-    let tuplet = match b.value.tuplet {
+    let tuplet = match v.tuplet {
         None => None,
         Some([a, n]) => Some(
             Tuplet::new(a, n)
-                .map_err(|e| cx.fail(format!("{path}.value.tuplet"), e))
+                .map_err(|e| cx.fail(format!("{path}.tuplet"), e))
                 .ok()?,
         ),
     };
-    let value = NoteValue::new(base, b.value.dots, tuplet)
-        .map_err(|e| cx.fail(format!("{path}.value"), e))
-        .ok()?;
+    NoteValue::new(base, v.dots, tuplet)
+        .map_err(|e| cx.fail(path.to_string(), e))
+        .ok()
+}
+
+pub(crate) fn value_dto(v: NoteValue) -> ValueDto {
+    ValueDto {
+        base: v.base().exponent(),
+        dots: v.dots(),
+        tuplet: v.tuplet().map(|t| [t.actual(), t.normal()]),
+        extra: Extra::new(),
+    }
+}
+
+fn beat_from(cx: &mut Ctx, path: &str, b: &BeatDto) -> Option<Beat> {
+    let value = value_from(cx, &format!("{path}.value"), &b.value)?;
     let notes = b
         .notes
         .iter()

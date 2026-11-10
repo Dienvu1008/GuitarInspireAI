@@ -30,7 +30,11 @@ impl Default for Limits {
 
 pub const MANIFEST: &str = "manifest.json";
 pub const SCORE: &str = "score.json";
-/// Prefixes reserved for later format versions. Format 1.0 writes none of them.
+/// The pattern library (format 1.2, ADR-034 section 8). Written only when the
+/// document has a library to store.
+pub const LIBRARY: &str = "patterns/library.json";
+/// Prefixes reserved for later format versions. Format 1.2 writes `patterns/library.json`;
+/// the other prefixes are still unused.
 pub const RESERVED_PREFIXES: &[&str] = &["assets/", "patterns/", "analysis/", "history/"];
 
 /// Entry name rules: relative, forward slashes, no empty, `.` or `..` segments, no

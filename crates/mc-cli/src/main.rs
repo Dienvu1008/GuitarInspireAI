@@ -351,6 +351,32 @@ fn format_fixtures(crate_dir: &Path) -> Result<(), String> {
             created.push(golden);
         }
     }
+    // Format 1.2: a package with the reference pattern library, and its library.json.
+    if FORMAT_VERSION >= (mc_project::FormatVersion { major: 1, minor: 2 }) {
+        let score = mc_app::fixtures::techniques();
+        let library = mc_app::fixtures::pattern_library();
+        let package = dir.join("patterns.package");
+        if write_new(
+            &package,
+            &mc_project::save_with_library(&score, Some(&library), &info),
+        )? {
+            created.push(package);
+        }
+        for (path, bytes) in [
+            (
+                dir.join("patterns.score.json"),
+                mc_project::score_json(&score),
+            ),
+            (
+                dir.join("patterns.library.json"),
+                mc_project::library_json(&library),
+            ),
+        ] {
+            if write_new(&path, &bytes)? {
+                created.push(path);
+            }
+        }
+    }
     for (name, schema) in mc_project::schemas() {
         let path = crate_dir
             .join("schema")

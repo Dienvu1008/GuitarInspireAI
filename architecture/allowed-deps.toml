@@ -27,7 +27,9 @@ dev_external = ["proptest"]
 [mc-project]
 layer = "domain"
 phase = 1
-internal = ["mc-theory", "mc-score"]
+# mc-pattern added in Phase 6a-5 (matrix: project -> pattern; ADR-034 sections 1 and 8,
+# the pattern library in format 1.2).
+internal = ["mc-theory", "mc-score", "mc-pattern"]
 external = ["serde", "serde_json", "zip", "sha2", "schemars"]
 dev_external = ["proptest", "criterion"]
 
