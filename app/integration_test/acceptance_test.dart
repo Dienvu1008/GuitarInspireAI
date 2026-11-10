@@ -319,6 +319,60 @@ void main() {
     expect(again.report.notes, 1);
     expect(text, contains('<fret>5</fret>'));
   });
+
+  // ADR-034 (slice 6a-3): Tools > Apply pattern... in the built app with the real
+  // core. The preview names the bar that would be overwritten, the dialog asks before
+  // replacing it, the result is one revision, and undo restores the note.
+  testWidgets('6a-3: apply the sample pattern from the Tools menu', (
+    tester,
+  ) async {
+    final c = await start(tester, _Dialogs(), '${tmp.path}/recovery-6a3');
+    EditorState s() => c.read(editorProvider);
+    final t = s().activeTrack;
+    await tester.sendKeyEvent(LogicalKeyboardKey.digit5);
+    await _until(tester, () => _hasNote(c));
+    final rev = s().summary.revision;
+
+    await tester.tap(find.text('Tools'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('tools-apply-pattern')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('apply-pattern-find')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('apply-pattern-first')),
+      '1',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('apply-pattern-last')),
+      '2',
+    );
+    await tester.tap(find.byKey(const ValueKey('apply-pattern-preview')));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('replaces the content of bars 1'),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('apply-pattern-apply')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('apply-pattern-overwrite')));
+    await _until(tester, () => s().summary.revision == rev + 1);
+
+    for (final bar in [0, 1]) {
+      final beats = s().service.beats(t, bar, 0);
+      expect(beats, hasLength(4), reason: 'bar ${bar + 1}: four quarters');
+      expect(beats[0].notes, hasLength(1), reason: 'the bass');
+      expect(beats[1].stroke, StrokeDto.down, reason: 'down-strum treble');
+      expect(beats[2].notes, hasLength(1), reason: 'the alternate bass');
+    }
+    await _ctrl(tester, LogicalKeyboardKey.keyZ);
+    await _until(tester, () => s().summary.revision == rev + 2);
+    expect(
+      s().service.beats(t, 0, 0).single.notes.single.fret,
+      5,
+      reason: 'undo restores the note',
+    );
+  });
 }
 
 Future<ProviderContainer> _startExpectingRecovery(

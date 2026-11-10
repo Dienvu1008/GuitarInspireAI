@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:core_bridge/core_bridge.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -327,6 +329,51 @@ void documentServiceContract(
       await d.execute(CommandDto.setBeatStroke(beat: a));
       expect(d.beats(track, 0, 0).single.stroke, isNull, reason: 'cleared');
     });
+
+    test(
+      'ADR-034: apply the sample pattern behind the overwrite safeguard',
+      () async {
+        final p = d.samplePattern();
+        expect(d.patterns().map((x) => x.id), contains(p));
+        final c = Int32List.fromList([0, 1, 0, 2, 3, -1]); // C x32010
+        ApplyPatternDto args({int pattern = -1, bool overwrite = false}) =>
+            ApplyPatternDto(
+              track: track,
+              first: 0,
+              last: 1,
+              pattern: pattern == -1 ? p : pattern,
+              frets: c,
+              chord: 'C',
+              overwrite: overwrite,
+            );
+        final preview = d.previewPattern(args());
+        expect(preview.needsFit, isFalse);
+        expect(preview.report!.overwritten, isEmpty);
+        final rev = d.summary().revision;
+        final out = await d.execute(CommandDto.applyPattern(args: args()));
+        expect(d.summary().revision, rev + 1, reason: 'one revision');
+        expect((out.pattern!.first, out.pattern!.last), (0, 1));
+        expect(d.beats(track, 0, 0), isNotEmpty);
+        expect(d.beats(track, 1, 0), isNotEmpty);
+        // Content now exists: refused without confirmation, nothing changes.
+        final rev2 = d.summary().revision;
+        expect(d.previewPattern(args()).report!.overwritten, [0, 1]);
+        await expectLater(
+          d.execute(CommandDto.applyPattern(args: args())),
+          throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'PE-07')),
+        );
+        expect(d.summary().revision, rev2);
+        await d.execute(CommandDto.applyPattern(args: args(overwrite: true)));
+        expect(d.summary().revision, rev2 + 1);
+        await d.undo();
+        await d.undo();
+        expect(d.beats(track, 0, 0), isEmpty, reason: 'undo restores');
+        expect(
+          () => d.previewPattern(args(pattern: 9999)),
+          throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'PT-06')),
+        );
+      },
+    );
 
     test('ADR-030: an invalid paste is rejected and changes nothing', () async {
       await insertBeat(0);

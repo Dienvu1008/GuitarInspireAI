@@ -491,6 +491,47 @@ Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern
 | Empty, 64 bars | 200 | 0.44 ms | 0.99 ms | 1.23 ms | 0.53 ms | ≤ 20 ms |
 | `reference(TYPICAL)`, first track, bars 0 to 63 (existing content) | 200 | 0.74 ms | 1.52 ms | 1.64 ms | 0.57 ms | ≤ 20 ms |
 
+## 19. Results of slice 6a-3d, bridge and minimal apply dialog (2026-11-10, for user review)
+
+**Built:**
+- **`mc-ffi`**, with no music rule:
+  - `patterns`, `sample_pattern` and `preview_pattern`;
+  - `CommandDto::ApplyPattern { args }`;
+  - `OutcomeDto.pattern`, the report.
+  - The voicing uses the chord finder's convention (`frets`, string 1 first, `-1` muted), so a chord-finder voicing goes straight into the command.
+  - The preview maps "a fit is needed and none was given" to `needs_fit`. Every other refusal is an `ApiError` with the core's rule: `PE-07` overwrite, `PE-08` range and fit, `PE-04` bar lines and lengths, `PT-02` binding, `PT-06` unknown pattern, `voicing` for a bad fret code.
+  - `ApplyError` has a readable message, for example "bars 2, 4 already have content in the voices the pattern writes".
+  - Bindings were regenerated twice: 15 files with identical hashes (FF-12).
+- **`core_bridge`:** `DocumentService.patterns`, `samplePattern` and `previewPattern`, in the real service and the fake. The fake decides no music: it writes placeholder beats, and a test hook makes it report that a fit is needed.
+- **The dialog**, Tools > Apply pattern... (`editor_feature`):
+  - Inputs: the pattern; a chord and one of its voicings from the chord finder; the first and last bar.
+  - Preview gives a summary: repetitions, notes, bars, the voices written, the bars replaced, and the steps dropped or shortened.
+  - When the core needs a fit, it asks for "Repeat and cut" or "Whole repetitions only". Any change of the range clears the fit and the preview, so the dialog asks again (decision 13.6).
+  - Apply is enabled only after a preview. It asks for confirmation before replacing content, and sends one `CommandDto.applyPattern`.
+  - Errors from the core are shown in the dialog. Fields and messages have semantic labels, and messages are live regions.
+
+**Interpretations made in 6a-3d, which the user should confirm or change:**
+1. **The preview is a text summary, not a TAB preview.** A TAB preview of the result needs a layout of a score that does not exist yet; it belongs to the grid editor (6a-5, PE-14).
+2. **A stale preview.** If content appears between the preview and Apply, the dialog sends `overwrite: false` (no confirmation was given), the core refuses with `PE-07`, and the dialog shows it. It never overwrites without asking.
+3. **The library is not saved.** It holds only the built-in sample until 6a-5.
+
+**Evidence:**
+- **The bridge from Rust** (`crates/mc-ffi/tests/api.rs`):
+  - `patterns` lists the sample.
+  - With a 4/4 and a 3/4 bar, the preview without a fit gives `needs_fit`. With `RepeatAndCut` it reports two repetitions and the dropped last quarter, with lane, step and onset. `execute` without a fit is refused with `PE-08`, and nothing changes; with the fit, the outcome carries the same report.
+  - A bad fret code gives `voicing`. Existing content gives `PE-07`, with "bars 2" in the message.
+- **The contract** (fake and real core): list, preview, apply in one revision, `PE-07` without confirmation (revision unchanged), apply after confirmation, undo, `PT-06`.
+- **Dialog widget tests** (8 tests):
+  - preview and apply in one command;
+  - Cancel at the confirmation sends nothing, and Overwrite applies;
+  - the fit step; a range change clears the fit, and the next preview asks again;
+  - a stale preview is refused by the core;
+  - invalid inputs (no voicing, bars out of range, an empty chord);
+  - Tab, Enter and Space;
+  - semantic labels and live regions.
+  - Five dialog mutations were all caught.
+- **The Windows acceptance test** "6a-3: apply the sample pattern from the Tools menu" (real core): preview, confirmation, one revision, four beats per bar with the down-strum on beat 2, and undo with Ctrl+Z.
+
 ## Alternatives
 
 - **DSL as the stored form.** Rejected by the user: one syntax would own the data.

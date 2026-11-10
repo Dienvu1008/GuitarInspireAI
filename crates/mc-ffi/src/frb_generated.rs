@@ -43,7 +43,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -616709020;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -568783285;
 
 // Section: executor
 
@@ -2615,6 +2615,153 @@ fn wire__crate__api__info__init_app_impl(
         },
     )
 }
+fn wire__crate__api__pattern__patterns_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "patterns",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_document = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_document_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_document,
+                            0,
+                            false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_document_guard = Some(api_document.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_document_guard = api_document_guard.unwrap();
+                let output_ok = Ok::<_, ()>(crate::api::pattern::patterns(&*api_document_guard))?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__pattern__preview_pattern_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "preview_pattern",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_document = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
+            >>::sse_decode(&mut deserializer);
+            let api_args = <crate::api::pattern::ApplyPatternDto>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, crate::api::types::ApiError>((move || {
+                let mut api_document_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_document,
+                            0,
+                            false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_document_guard = Some(api_document.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_document_guard = api_document_guard.unwrap();
+                let output_ok =
+                    crate::api::pattern::preview_pattern(&*api_document_guard, api_args)?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__pattern__sample_pattern_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "sample_pattern",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_document = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_document_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_document,
+                            0,
+                            false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_document_guard = Some(api_document.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_document_guard = api_document_guard.unwrap();
+                let output_ok =
+                    Ok::<_, ()>(crate::api::pattern::sample_pattern(&*api_document_guard))?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
 
 // Section: related_funcs
 
@@ -2757,6 +2904,30 @@ impl SseDecode for crate::api::types::ApiError {
         return crate::api::types::ApiError {
             rule: var_rule,
             message: var_message,
+        };
+    }
+}
+
+impl SseDecode for crate::api::pattern::ApplyPatternDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_track = <i64>::sse_decode(deserializer);
+        let mut var_first = <u32>::sse_decode(deserializer);
+        let mut var_last = <u32>::sse_decode(deserializer);
+        let mut var_pattern = <i64>::sse_decode(deserializer);
+        let mut var_frets = <Vec<i32>>::sse_decode(deserializer);
+        let mut var_chord = <String>::sse_decode(deserializer);
+        let mut var_fit = <Option<crate::api::pattern::FitDto>>::sse_decode(deserializer);
+        let mut var_overwrite = <bool>::sse_decode(deserializer);
+        return crate::api::pattern::ApplyPatternDto {
+            track: var_track,
+            first: var_first,
+            last: var_last,
+            pattern: var_pattern,
+            frets: var_frets,
+            chord: var_chord,
+            fit: var_fit,
+            overwrite: var_overwrite,
         };
     }
 }
@@ -3069,6 +3240,10 @@ impl SseDecode for crate::api::types::CommandDto {
                 };
             }
             21 => {
+                let mut var_args = <crate::api::pattern::ApplyPatternDto>::sse_decode(deserializer);
+                return crate::api::types::CommandDto::ApplyPattern { args: var_args };
+            }
+            22 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_instrument =
                     <crate::api::types::InstrumentDto>::sse_decode(deserializer);
@@ -3079,7 +3254,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     keep_pitches: var_keepPitches,
                 };
             }
-            22 => {
+            23 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_bar = <u32>::sse_decode(deserializer);
                 let mut var_voice = <u32>::sse_decode(deserializer);
@@ -3093,7 +3268,7 @@ impl SseDecode for crate::api::types::CommandDto {
                     beats: var_beats,
                 };
             }
-            23 => {
+            24 => {
                 let mut var_track = <i64>::sse_decode(deserializer);
                 let mut var_voice = <u32>::sse_decode(deserializer);
                 let mut var_fromBar = <u32>::sse_decode(deserializer);
@@ -3362,6 +3537,18 @@ impl SseDecode for f64 {
     }
 }
 
+impl SseDecode for crate::api::pattern::FitDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::pattern::FitDto::RepeatAndCut,
+            1 => crate::api::pattern::FitDto::WholeRepetitionsOnly,
+            _ => unreachable!("Invalid variant for FitDto: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for crate::api::layout::GlyphDto {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3614,6 +3801,18 @@ impl SseDecode for Vec<crate::api::types::DiagnosticDto> {
     }
 }
 
+impl SseDecode for Vec<crate::api::types::DurationDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::types::DurationDto>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::api::types::EventDto> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3688,6 +3887,20 @@ impl SseDecode for Vec<crate::api::layout::OutlineSystemDto> {
     }
 }
 
+impl SseDecode for Vec<crate::api::pattern::PatternInfoDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::pattern::PatternInfoDto>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::api::types::PlayedBarDto> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -3731,6 +3944,18 @@ impl SseDecode for Vec<i64> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<i64>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<u32> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<u32>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -3783,6 +4008,20 @@ impl SseDecode for Vec<crate::api::layout::StaveDto> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<crate::api::layout::StaveDto>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::pattern::StepChangeDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::pattern::StepChangeDto>::sse_decode(
+                deserializer,
+            ));
         }
         return ans_;
     }
@@ -3965,11 +4204,35 @@ impl SseDecode for Option<String> {
     }
 }
 
+impl SseDecode for Option<crate::api::pattern::FitDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::pattern::FitDto>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<i64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<i64>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::pattern::PatternReportDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::pattern::PatternReportDto>::sse_decode(
+                deserializer,
+            ));
         } else {
             return None;
         }
@@ -4025,9 +4288,12 @@ impl SseDecode for crate::api::types::OutcomeDto {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_revision = <i64>::sse_decode(deserializer);
         let mut var_events = <Vec<crate::api::types::EventDto>>::sse_decode(deserializer);
+        let mut var_pattern =
+            <Option<crate::api::pattern::PatternReportDto>>::sse_decode(deserializer);
         return crate::api::types::OutcomeDto {
             revision: var_revision,
             events: var_events,
+            pattern: var_pattern,
         };
     }
 }
@@ -4046,6 +4312,63 @@ impl SseDecode for crate::api::layout::OutlineSystemDto {
             height: var_height,
             first_bar: var_firstBar,
             end_bar: var_endBar,
+        };
+    }
+}
+
+impl SseDecode for crate::api::pattern::PatternInfoDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_id = <i64>::sse_decode(deserializer);
+        let mut var_name = <String>::sse_decode(deserializer);
+        let mut var_description = <String>::sse_decode(deserializer);
+        let mut var_lengthNumerator = <i64>::sse_decode(deserializer);
+        let mut var_lengthDenominator = <i64>::sse_decode(deserializer);
+        let mut var_twoLanes = <bool>::sse_decode(deserializer);
+        return crate::api::pattern::PatternInfoDto {
+            id: var_id,
+            name: var_name,
+            description: var_description,
+            length_numerator: var_lengthNumerator,
+            length_denominator: var_lengthDenominator,
+            two_lanes: var_twoLanes,
+        };
+    }
+}
+
+impl SseDecode for crate::api::pattern::PatternPreviewDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_needsFit = <bool>::sse_decode(deserializer);
+        let mut var_report =
+            <Option<crate::api::pattern::PatternReportDto>>::sse_decode(deserializer);
+        return crate::api::pattern::PatternPreviewDto {
+            needs_fit: var_needsFit,
+            report: var_report,
+        };
+    }
+}
+
+impl SseDecode for crate::api::pattern::PatternReportDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_first = <u32>::sse_decode(deserializer);
+        let mut var_last = <u32>::sse_decode(deserializer);
+        let mut var_voices = <u32>::sse_decode(deserializer);
+        let mut var_overwritten = <Vec<u32>>::sse_decode(deserializer);
+        let mut var_repetitions = <u32>::sse_decode(deserializer);
+        let mut var_notes = <u32>::sse_decode(deserializer);
+        let mut var_dropped = <Vec<crate::api::pattern::StepChangeDto>>::sse_decode(deserializer);
+        let mut var_shortened = <Vec<crate::api::pattern::StepChangeDto>>::sse_decode(deserializer);
+        return crate::api::pattern::PatternReportDto {
+            first: var_first,
+            last: var_last,
+            voices: var_voices,
+            overwritten: var_overwritten,
+            repetitions: var_repetitions,
+            notes: var_notes,
+            dropped: var_dropped,
+            shortened: var_shortened,
         };
     }
 }
@@ -4153,6 +4476,28 @@ impl SseDecode for crate::api::layout::StaveDto {
             strings: var_strings,
             top: var_top,
             system: var_system,
+        };
+    }
+}
+
+impl SseDecode for crate::api::pattern::StepChangeDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_lane = <String>::sse_decode(deserializer);
+        let mut var_repetition = <u32>::sse_decode(deserializer);
+        let mut var_step = <u32>::sse_decode(deserializer);
+        let mut var_onsetNumerator = <i64>::sse_decode(deserializer);
+        let mut var_onsetDenominator = <i64>::sse_decode(deserializer);
+        let mut var_written = <crate::api::types::DurationDto>::sse_decode(deserializer);
+        let mut var_now = <Vec<crate::api::types::DurationDto>>::sse_decode(deserializer);
+        return crate::api::pattern::StepChangeDto {
+            lane: var_lane,
+            repetition: var_repetition,
+            step: var_step,
+            onset_numerator: var_onsetNumerator,
+            onset_denominator: var_onsetDenominator,
+            written: var_written,
+            now: var_now,
         };
     }
 }
@@ -4513,6 +4858,9 @@ fn pde_ffi_dispatcher_sync_impl(
         47 => wire__crate__api__tuner__TunerHandle_stop_impl(ptr, rust_vec_len, data_len),
         48 => wire__crate__api__info__core_version_impl(ptr, rust_vec_len, data_len),
         49 => wire__crate__api__layout__default_metrics_impl(ptr, rust_vec_len, data_len),
+        54 => wire__crate__api__pattern__patterns_impl(ptr, rust_vec_len, data_len),
+        55 => wire__crate__api__pattern__preview_pattern_impl(ptr, rust_vec_len, data_len),
+        56 => wire__crate__api__pattern__sample_pattern_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -4594,6 +4942,33 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::ApiError>
     for crate::api::types::ApiError
 {
     fn into_into_dart(self) -> crate::api::types::ApiError {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pattern::ApplyPatternDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.track.into_into_dart().into_dart(),
+            self.first.into_into_dart().into_dart(),
+            self.last.into_into_dart().into_dart(),
+            self.pattern.into_into_dart().into_dart(),
+            self.frets.into_into_dart().into_dart(),
+            self.chord.into_into_dart().into_dart(),
+            self.fit.into_into_dart().into_dart(),
+            self.overwrite.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::pattern::ApplyPatternDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pattern::ApplyPatternDto>
+    for crate::api::pattern::ApplyPatternDto
+{
+    fn into_into_dart(self) -> crate::api::pattern::ApplyPatternDto {
         self
     }
 }
@@ -4900,12 +5275,15 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::CommandDto {
                 to.into_into_dart().into_dart(),
             ]
             .into_dart(),
+            crate::api::types::CommandDto::ApplyPattern { args } => {
+                [21.into_dart(), args.into_into_dart().into_dart()].into_dart()
+            }
             crate::api::types::CommandDto::Retune {
                 track,
                 instrument,
                 keep_pitches,
             } => [
-                21.into_dart(),
+                22.into_dart(),
                 track.into_into_dart().into_dart(),
                 instrument.into_into_dart().into_dart(),
                 keep_pitches.into_into_dart().into_dart(),
@@ -4918,7 +5296,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::CommandDto {
                 index,
                 beats,
             } => [
-                22.into_dart(),
+                23.into_dart(),
                 track.into_into_dart().into_dart(),
                 bar.into_into_dart().into_dart(),
                 voice.into_into_dart().into_dart(),
@@ -4934,7 +5312,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::CommandDto {
                 to_bar,
                 to_index,
             } => [
-                23.into_dart(),
+                24.into_dart(),
                 track.into_into_dart().into_dart(),
                 voice.into_into_dart().into_dart(),
                 from_bar.into_into_dart().into_dart(),
@@ -5193,6 +5571,24 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::midi::ExportResult>
     for crate::api::midi::ExportResult
 {
     fn into_into_dart(self) -> crate::api::midi::ExportResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pattern::FitDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::RepeatAndCut => 0.into_dart(),
+            Self::WholeRepetitionsOnly => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::pattern::FitDto {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pattern::FitDto>
+    for crate::api::pattern::FitDto
+{
+    fn into_into_dart(self) -> crate::api::pattern::FitDto {
         self
     }
 }
@@ -5507,6 +5903,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::OutcomeDto {
         [
             self.revision.into_into_dart().into_dart(),
             self.events.into_into_dart().into_dart(),
+            self.pattern.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -5540,6 +5937,79 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::OutlineSystemDto>
     for crate::api::layout::OutlineSystemDto
 {
     fn into_into_dart(self) -> crate::api::layout::OutlineSystemDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pattern::PatternInfoDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.id.into_into_dart().into_dart(),
+            self.name.into_into_dart().into_dart(),
+            self.description.into_into_dart().into_dart(),
+            self.length_numerator.into_into_dart().into_dart(),
+            self.length_denominator.into_into_dart().into_dart(),
+            self.two_lanes.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::pattern::PatternInfoDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pattern::PatternInfoDto>
+    for crate::api::pattern::PatternInfoDto
+{
+    fn into_into_dart(self) -> crate::api::pattern::PatternInfoDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pattern::PatternPreviewDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.needs_fit.into_into_dart().into_dart(),
+            self.report.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::pattern::PatternPreviewDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pattern::PatternPreviewDto>
+    for crate::api::pattern::PatternPreviewDto
+{
+    fn into_into_dart(self) -> crate::api::pattern::PatternPreviewDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pattern::PatternReportDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.first.into_into_dart().into_dart(),
+            self.last.into_into_dart().into_dart(),
+            self.voices.into_into_dart().into_dart(),
+            self.overwritten.into_into_dart().into_dart(),
+            self.repetitions.into_into_dart().into_dart(),
+            self.notes.into_into_dart().into_dart(),
+            self.dropped.into_into_dart().into_dart(),
+            self.shortened.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::pattern::PatternReportDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pattern::PatternReportDto>
+    for crate::api::pattern::PatternReportDto
+{
+    fn into_into_dart(self) -> crate::api::pattern::PatternReportDto {
         self
     }
 }
@@ -5696,6 +6166,32 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::StaveDto>
     for crate::api::layout::StaveDto
 {
     fn into_into_dart(self) -> crate::api::layout::StaveDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pattern::StepChangeDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.lane.into_into_dart().into_dart(),
+            self.repetition.into_into_dart().into_dart(),
+            self.step.into_into_dart().into_dart(),
+            self.onset_numerator.into_into_dart().into_dart(),
+            self.onset_denominator.into_into_dart().into_dart(),
+            self.written.into_into_dart().into_dart(),
+            self.now.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::pattern::StepChangeDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pattern::StepChangeDto>
+    for crate::api::pattern::StepChangeDto
+{
+    fn into_into_dart(self) -> crate::api::pattern::StepChangeDto {
         self
     }
 }
@@ -5968,6 +6464,20 @@ impl SseEncode for crate::api::types::ApiError {
     }
 }
 
+impl SseEncode for crate::api::pattern::ApplyPatternDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i64>::sse_encode(self.track, serializer);
+        <u32>::sse_encode(self.first, serializer);
+        <u32>::sse_encode(self.last, serializer);
+        <i64>::sse_encode(self.pattern, serializer);
+        <Vec<i32>>::sse_encode(self.frets, serializer);
+        <String>::sse_encode(self.chord, serializer);
+        <Option<crate::api::pattern::FitDto>>::sse_encode(self.fit, serializer);
+        <bool>::sse_encode(self.overwrite, serializer);
+    }
+}
+
 impl SseEncode for crate::api::layout::BarLayoutDto {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -6188,12 +6698,16 @@ impl SseEncode for crate::api::types::CommandDto {
                 <i64>::sse_encode(track, serializer);
                 <u32>::sse_encode(to, serializer);
             }
+            crate::api::types::CommandDto::ApplyPattern { args } => {
+                <i32>::sse_encode(21, serializer);
+                <crate::api::pattern::ApplyPatternDto>::sse_encode(args, serializer);
+            }
             crate::api::types::CommandDto::Retune {
                 track,
                 instrument,
                 keep_pitches,
             } => {
-                <i32>::sse_encode(21, serializer);
+                <i32>::sse_encode(22, serializer);
                 <i64>::sse_encode(track, serializer);
                 <crate::api::types::InstrumentDto>::sse_encode(instrument, serializer);
                 <bool>::sse_encode(keep_pitches, serializer);
@@ -6205,7 +6719,7 @@ impl SseEncode for crate::api::types::CommandDto {
                 index,
                 beats,
             } => {
-                <i32>::sse_encode(22, serializer);
+                <i32>::sse_encode(23, serializer);
                 <i64>::sse_encode(track, serializer);
                 <u32>::sse_encode(bar, serializer);
                 <u32>::sse_encode(voice, serializer);
@@ -6220,7 +6734,7 @@ impl SseEncode for crate::api::types::CommandDto {
                 to_bar,
                 to_index,
             } => {
-                <i32>::sse_encode(23, serializer);
+                <i32>::sse_encode(24, serializer);
                 <i64>::sse_encode(track, serializer);
                 <u32>::sse_encode(voice, serializer);
                 <u32>::sse_encode(from_bar, serializer);
@@ -6405,6 +6919,22 @@ impl SseEncode for f64 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_f64::<NativeEndian>(self).unwrap();
+    }
+}
+
+impl SseEncode for crate::api::pattern::FitDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::pattern::FitDto::RepeatAndCut => 0,
+                crate::api::pattern::FitDto::WholeRepetitionsOnly => 1,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
     }
 }
 
@@ -6614,6 +7144,16 @@ impl SseEncode for Vec<crate::api::types::DiagnosticDto> {
     }
 }
 
+impl SseEncode for Vec<crate::api::types::DurationDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::types::DurationDto>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::types::EventDto> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -6674,6 +7214,16 @@ impl SseEncode for Vec<crate::api::layout::OutlineSystemDto> {
     }
 }
 
+impl SseEncode for Vec<crate::api::pattern::PatternInfoDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::pattern::PatternInfoDto>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::types::PlayedBarDto> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -6714,6 +7264,16 @@ impl SseEncode for Vec<i64> {
     }
 }
 
+impl SseEncode for Vec<u32> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <u32>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<u8> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -6750,6 +7310,16 @@ impl SseEncode for Vec<crate::api::layout::StaveDto> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <crate::api::layout::StaveDto>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::pattern::StepChangeDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::pattern::StepChangeDto>::sse_encode(item, serializer);
         }
     }
 }
@@ -6868,12 +7438,32 @@ impl SseEncode for Option<String> {
     }
 }
 
+impl SseEncode for Option<crate::api::pattern::FitDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::pattern::FitDto>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<i64> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <i64>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::pattern::PatternReportDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::pattern::PatternReportDto>::sse_encode(value, serializer);
         }
     }
 }
@@ -6923,6 +7513,7 @@ impl SseEncode for crate::api::types::OutcomeDto {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i64>::sse_encode(self.revision, serializer);
         <Vec<crate::api::types::EventDto>>::sse_encode(self.events, serializer);
+        <Option<crate::api::pattern::PatternReportDto>>::sse_encode(self.pattern, serializer);
     }
 }
 
@@ -6934,6 +7525,40 @@ impl SseEncode for crate::api::layout::OutlineSystemDto {
         <f32>::sse_encode(self.height, serializer);
         <u32>::sse_encode(self.first_bar, serializer);
         <u32>::sse_encode(self.end_bar, serializer);
+    }
+}
+
+impl SseEncode for crate::api::pattern::PatternInfoDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i64>::sse_encode(self.id, serializer);
+        <String>::sse_encode(self.name, serializer);
+        <String>::sse_encode(self.description, serializer);
+        <i64>::sse_encode(self.length_numerator, serializer);
+        <i64>::sse_encode(self.length_denominator, serializer);
+        <bool>::sse_encode(self.two_lanes, serializer);
+    }
+}
+
+impl SseEncode for crate::api::pattern::PatternPreviewDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.needs_fit, serializer);
+        <Option<crate::api::pattern::PatternReportDto>>::sse_encode(self.report, serializer);
+    }
+}
+
+impl SseEncode for crate::api::pattern::PatternReportDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u32>::sse_encode(self.first, serializer);
+        <u32>::sse_encode(self.last, serializer);
+        <u32>::sse_encode(self.voices, serializer);
+        <Vec<u32>>::sse_encode(self.overwritten, serializer);
+        <u32>::sse_encode(self.repetitions, serializer);
+        <u32>::sse_encode(self.notes, serializer);
+        <Vec<crate::api::pattern::StepChangeDto>>::sse_encode(self.dropped, serializer);
+        <Vec<crate::api::pattern::StepChangeDto>>::sse_encode(self.shortened, serializer);
     }
 }
 
@@ -7010,6 +7635,19 @@ impl SseEncode for crate::api::layout::StaveDto {
         <u8>::sse_encode(self.strings, serializer);
         <f32>::sse_encode(self.top, serializer);
         <crate::api::layout::SystemDto>::sse_encode(self.system, serializer);
+    }
+}
+
+impl SseEncode for crate::api::pattern::StepChangeDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.lane, serializer);
+        <u32>::sse_encode(self.repetition, serializer);
+        <u32>::sse_encode(self.step, serializer);
+        <i64>::sse_encode(self.onset_numerator, serializer);
+        <i64>::sse_encode(self.onset_denominator, serializer);
+        <crate::api::types::DurationDto>::sse_encode(self.written, serializer);
+        <Vec<crate::api::types::DurationDto>>::sse_encode(self.now, serializer);
     }
 }
 

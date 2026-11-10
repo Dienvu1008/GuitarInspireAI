@@ -40,8 +40,7 @@ impl CommandError {
             CommandError::Constraint { rule, .. } => rule,
             CommandError::Guitar(_) => "G",
             CommandError::NothingToUndo | CommandError::NothingToRedo => "E-05",
-            CommandError::Pattern(crate::pattern::ApplyError::WouldOverwrite { .. }) => "PE-07",
-            CommandError::Pattern(_) => "PT",
+            CommandError::Pattern(e) => e.rule(),
         }
     }
 }
@@ -86,7 +85,7 @@ impl fmt::Display for CommandError {
             CommandError::Guitar(e) => write!(f, "{e}"),
             CommandError::NothingToUndo => write!(f, "nothing to undo"),
             CommandError::NothingToRedo => write!(f, "nothing to redo"),
-            CommandError::Pattern(e) => write!(f, "{e:?}"),
+            CommandError::Pattern(e) => write!(f, "{}: {e}", e.rule()),
         }
     }
 }

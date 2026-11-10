@@ -80,3 +80,15 @@ The "Play it back" item above lists per-track mute. In the M5 build the mute con
   - MusicXML export: written as MusicXML 4.0 defines, where it can.
   - Project files that use these are format 1.1; older builds open them read-only (Save As).
   - See [mvp-known-limitations.md](mvp-known-limitations.md).
+
+## Added in Phase 6a-3
+
+- **Apply a pattern** (ADR-034): Tools > Apply pattern... fills a range of bars of the
+  active track with a picking or strumming pattern for a chord voicing you choose from the
+  chord finder.
+  - A preview shows what will be written; the dialog asks before it replaces existing
+    notes, and asks how to fit the pattern when the range is not a whole number of
+    repetitions.
+  - One undo step.
+  - This slice has one built-in sample pattern. See
+    [mvp-known-limitations.md](mvp-known-limitations.md).

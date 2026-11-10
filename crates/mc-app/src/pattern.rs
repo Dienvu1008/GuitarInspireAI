@@ -4,15 +4,19 @@
 //! lives in the session, is not saved before format 1.2 (6a-5) and is not part of undo.
 
 use mc_guitar::Voicing;
-use mc_pattern::{BindFailure, Lanes, PatternLibrary, PatternMeta, PatternParts, Strike, place};
+use mc_pattern::{BindFailure, PatternLibrary, PatternMeta, PatternParts, Strike, place};
 use mc_score::{DomainError, DomainEvent, FragmentBeat, Score};
 use mc_theory::fretted::Fret;
-use mc_theory::{BaseValue, NoteValue, Rational, chord_symbol};
+use mc_theory::{BaseValue, Rational, chord_symbol};
 
 use crate::command::ApplyPattern;
 use crate::error::CommandError;
 
-pub use mc_pattern::{BindError, Fit, PatternId, PlaceError, PlaceReport, PlacedBar, StepChange};
+/// Pattern types re-exported for adapters (mc-ffi depends on mc-app only).
+pub use mc_pattern::{
+    BindError, Fit, LaneId, Lanes, PatternId, PlaceError, PlaceReport, PlacedBar, StepChange,
+};
+pub use mc_theory::NoteValue;
 
 /// Why `ApplyPattern` was refused. On every error nothing changes.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -25,6 +29,71 @@ pub enum ApplyError {
     WouldOverwrite {
         bars: Vec<usize>,
     },
+}
+
+impl ApplyError {
+    /// The rule id for callers: `PE-07` overwrite safeguard, `PE-08` range and fit,
+    /// `PE-04` bar lines and lengths, `PT-02` binding, `PT-06` unknown pattern.
+    pub fn rule(&self) -> &'static str {
+        match self {
+            ApplyError::WouldOverwrite { .. } => "PE-07",
+            ApplyError::UnknownPattern(_) => "PT-06",
+            ApplyError::Bind(_) => "PT-02",
+            ApplyError::Place(
+                PlaceError::EmptyRange
+                | PlaceError::PickupInRange { .. }
+                | PlaceError::MeterMismatch { .. }
+                | PlaceError::FitRequired { .. },
+            ) => "PE-08",
+            ApplyError::Place(_) => "PE-04",
+        }
+    }
+}
+
+impl std::fmt::Display for ApplyError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let bars = |b: &[usize]| {
+            b.iter()
+                .map(|x| (x + 1).to_string())
+                .collect::<Vec<_>>()
+                .join(", ")
+        };
+        match self {
+            ApplyError::WouldOverwrite { bars: b } => {
+                write!(
+                    f,
+                    "bars {} already have content in the voices the pattern writes",
+                    bars(b)
+                )
+            }
+            ApplyError::UnknownPattern(id) => write!(f, "no pattern {}", id.raw()),
+            ApplyError::Bind(errors) => {
+                let first = errors.first().map(|e| format!("{e:?}")).unwrap_or_default();
+                write!(
+                    f,
+                    "the pattern does not fit this voicing ({} problem(s), first: {first})",
+                    errors.len()
+                )
+            }
+            ApplyError::Place(PlaceError::FitRequired { range, pattern }) => write!(
+                f,
+                "the range ({range} whole notes) is not a whole number of repetitions of the pattern ({pattern}); choose how to fit it"
+            ),
+            ApplyError::Place(PlaceError::PickupInRange { bar }) => {
+                write!(f, "the range contains a pickup bar (range bar {})", bar + 1)
+            }
+            ApplyError::Place(PlaceError::MeterMismatch { bar, meter, found }) => write!(
+                f,
+                "the pattern is in {}/{} but range bar {} is in {}/{}",
+                meter.numerator(),
+                meter.denominator(),
+                bar + 1,
+                found.numerator(),
+                found.denominator()
+            ),
+            ApplyError::Place(e) => write!(f, "the pattern cannot be placed: {e:?}"),
+        }
+    }
 }
 
 /// What `ApplyPattern` wrote, or would write (preview).

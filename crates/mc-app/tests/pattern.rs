@@ -761,3 +761,52 @@ fn pe7_a_thumb_and_fingers_pattern_also_checks_voice_2() {
     let strum = s.sample_pattern();
     assert!(s.execute(cmd(96, apply(args(t, 0, 2, strum)))).is_ok());
 }
+
+#[test]
+fn refusals_have_rule_ids_and_readable_messages() {
+    let mut s = session(4);
+    let t = first_track(&s);
+    put(&mut s, t, 1, 0, 1);
+    put(&mut s, t, 3, 0, 2);
+    let p = s.sample_pattern();
+    let e = s.execute(cmd(1, apply(args(t, 0, 3, p)))).unwrap_err();
+    assert_eq!(e.rule(), "PE-07");
+    assert_eq!(
+        e.to_string(),
+        "PE-07: bars 2, 4 already have content in the voices the pattern writes"
+    );
+    let mut three = mc_app::pattern::sample_parts();
+    three.length = at(3, 4);
+    let Lanes::Strum(lane) = &mut three.lanes else {
+        unreachable!()
+    };
+    lane.steps.truncate(3);
+    let p3 = s.patterns_mut().define_pattern(three).unwrap();
+    let e = s
+        .execute(cmd(
+            2,
+            apply(ApplyPattern {
+                overwrite: true,
+                ..args(t, 0, 0, p3)
+            }),
+        ))
+        .unwrap_err();
+    assert_eq!(e.rule(), "PE-08");
+    assert!(e.to_string().contains("choose how to fit it"), "{e}");
+    let e = s
+        .execute(cmd(
+            3,
+            apply(ApplyPattern {
+                voicing: vec![None, None, Some(2), Some(3), Some(2), Some(0)],
+                chord: "D".into(),
+                overwrite: true,
+                ..args(t, 0, 0, p)
+            }),
+        ))
+        .unwrap_err();
+    assert_eq!(e.rule(), "PT-02");
+    let e = s
+        .execute(cmd(4, apply(args(t, 0, 0, PatternId::from_raw(77)))))
+        .unwrap_err();
+    assert_eq!(e.rule(), "PT-06");
+}

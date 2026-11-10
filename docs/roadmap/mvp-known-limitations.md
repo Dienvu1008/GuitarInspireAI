@@ -95,8 +95,22 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   - The TAB marks above the staff (arrow, `>`, `S`, "P.M.") can overlap volta brackets and
     the stems of an upper voice.
   - Files that use them are format 1.1. An older build opens them but cannot save over
-    them (use Save As); it loses the techniques. Repeat editing is limited
-  to simple start and end markers.
+    them (use Save As); it loses the techniques.
+- Repeat editing is limited to simple start and end markers.
+- **Patterns (Phase 6a-3, ADR-034).** Tools > Apply pattern... applies a picking or
+  strumming pattern to a range of whole bars of the active track, for one chord voicing.
+  Limits:
+  - Only one built-in sample pattern ("Boom-chick", alternating bass) is available. Making
+    and editing patterns, user gestures and the text notation come in later slices.
+  - Patterns are not saved with the project yet.
+  - The preview is a text summary (repetitions, notes, bars replaced, steps cut at the
+    end), not a TAB preview.
+  - One voicing for the whole range; there is no chord track.
+  - A range with a pickup bar is refused. When the range is not a whole number of
+    repetitions, you choose how to fit it each time.
+  - The pattern replaces voices 1 and 2 of the bars it writes; it does not insert.
+  - Holding a dead, palm-muted or string-percussive note, or letting one cross a bar line,
+    is refused, because playback would sound it twice.
 - A pickup bar round-trips through MIDI as a full-length bar with a trailing rest.
 - Copy and paste (Phase 6b-1, ADR-030) work on a run of beats in one voice, possibly
   across bars, selected with Shift+Left/Right or Shift+click. Paste inserts; there is no

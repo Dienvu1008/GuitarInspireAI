@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'document_service.dart';
 import 'generated/api/document.dart' show RecoveryEntryDto;
 import 'generated/api/layout.dart';
+import 'generated/api/pattern.dart';
 import 'generated/api/types.dart';
 
 /// In-memory stand-in for the Rust document session, for widget tests.
@@ -130,7 +131,9 @@ final class FakeDocumentService implements DocumentService {
     if (!coalesce) _undo.add(before);
     _redo.clear();
     _lastCoalesceKey = coalesceKey;
-    return _commit(kinds, _nextCommand++);
+    final report = _lastPatternReport;
+    _lastPatternReport = null;
+    return _commit(kinds, _nextCommand++, pattern: report);
   }
 
   List<EventKindDto> _apply(CommandDto c) {
@@ -313,10 +316,114 @@ final class FakeDocumentService implements DocumentService {
             end: toBar + 1,
           ),
         ];
+      case CommandDto_ApplyPattern(:final args):
+        if (patternNeedsFit && args.fit == null) {
+          throw ApiError(rule: 'PE-08', message: 'choose how to fit it');
+        }
+        final report = _patternReport(args);
+        if (!args.overwrite && report.overwritten.isNotEmpty) {
+          throw ApiError(
+            rule: 'PE-07',
+            message:
+                'bars ${report.overwritten.map((b) => b + 1).join(', ')} already have content',
+          );
+        }
+        // Placeholder content: four quarters on the lowest sounded string. The fake
+        // binds nothing; the real binding is tested in the core.
+        var lowest = -1;
+        for (var i = 0; i < args.frets.length; i++) {
+          if (args.frets[i] >= 0) lowest = i;
+        }
+        for (var bar = args.first; bar <= args.last; bar++) {
+          final v = _voice(args.track, bar, 0)..clear();
+          for (var k = 0; k < 4; k++) {
+            v.add(
+              _Beat(_nextId++, const DurationDto(base: 2, dots: 0), [
+                NoteDto(
+                  id: _nextId++,
+                  string: lowest + 1,
+                  fret: args.frets[lowest],
+                  tie: false,
+                  letRing: false,
+                  dead: false,
+                  accent: false,
+                  palmMute: false,
+                  stringPercussive: false,
+                ),
+              ]),
+            );
+          }
+        }
+        _lastPatternReport = report;
+        return [
+          EventKindDto.barContentChanged(
+            track: args.track,
+            start: args.first,
+            end: args.last + 1,
+          ),
+        ];
       default:
         throw ApiError(rule: 'unsupported', message: 'FakeDocumentService: $c');
     }
   }
+
+  PatternReportDto? _lastPatternReport;
+
+  /// Test hook: when true, a pattern range needs a fit (the core decides this from
+  /// the bar lengths; the fake's bars are all 4/4, so it never would on its own).
+  /// Without a fit the preview reports `needsFit` and applying throws `PE-08`.
+  bool patternNeedsFit = false;
+
+  /// The fake library holds only the sample pattern (one 4/4 bar, Strum), and every
+  /// fake bar is 4/4, so no fit is ever needed here.
+  static const _sample = PatternInfoDto(
+    id: 1,
+    name: 'Boom-chick',
+    description: 'Sample',
+    lengthNumerator: 1,
+    lengthDenominator: 1,
+    twoLanes: false,
+  );
+
+  PatternReportDto _patternReport(ApplyPatternDto a) {
+    if (a.pattern != _sample.id) {
+      throw ApiError(rule: 'PT-06', message: 'no pattern ${a.pattern}');
+    }
+    _track(a.track);
+    if (a.first > a.last || a.last >= _state.bars) {
+      throw ApiError(rule: 'E-04', message: 'bars ${a.first} to ${a.last}');
+    }
+    if (!a.frets.any((f) => f >= 0)) {
+      throw ApiError(rule: 'PT-02', message: 'no sounded string');
+    }
+    final overwritten = <int>[
+      for (var b = a.first; b <= a.last; b++)
+        if (_voice(a.track, b, 0).isNotEmpty) b,
+    ];
+    final bars = a.last - a.first + 1;
+    return PatternReportDto(
+      first: a.first,
+      last: a.last,
+      voices: 1,
+      overwritten: Uint32List.fromList(overwritten),
+      repetitions: bars,
+      notes: 4 * bars,
+      dropped: const [],
+      shortened: const [],
+    );
+  }
+
+  @override
+  List<PatternInfoDto> patterns() => const [_sample];
+
+  @override
+  int samplePattern() => _sample.id;
+
+  @override
+  PatternPreviewDto previewPattern(ApplyPatternDto args) =>
+      patternNeedsFit && args.fit == null
+      ? const PatternPreviewDto(needsFit: true)
+      : PatternPreviewDto(needsFit: false, report: _patternReport(args));
 
   static NoteDto _note(NoteDto n, {required int fret}) => NoteDto(
     id: n.id,
@@ -336,7 +443,11 @@ final class FakeDocumentService implements DocumentService {
     end: a.bar + 1,
   );
 
-  OutcomeDto _commit(List<EventKindDto> kinds, int? correlation) {
+  OutcomeDto _commit(
+    List<EventKindDto> kinds,
+    int? correlation, {
+    PatternReportDto? pattern,
+  }) {
     _revision++;
     final events = [
       for (final k in kinds)
@@ -350,7 +461,7 @@ final class FakeDocumentService implements DocumentService {
     for (final e in events) {
       _events.add(e);
     }
-    return OutcomeDto(revision: _revision, events: events);
+    return OutcomeDto(revision: _revision, events: events, pattern: pattern);
   }
 
   @override
@@ -804,6 +915,13 @@ final class _Tracked implements DocumentService {
   @override
   ChordResultDto chordVoicings(int track, String symbol, {int max = 5}) =>
       _inner.chordVoicings(track, symbol, max: max);
+  @override
+  List<PatternInfoDto> patterns() => _inner.patterns();
+  @override
+  int samplePattern() => _inner.samplePattern();
+  @override
+  PatternPreviewDto previewPattern(ApplyPatternDto args) =>
+      _inner.previewPattern(args);
   @override
   List<ClipBeatDto> copyBeats(
     int track,

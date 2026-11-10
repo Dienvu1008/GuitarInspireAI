@@ -9,6 +9,7 @@ import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/midi.dart';
 import 'api/musicxml.dart';
+import 'api/pattern.dart';
 import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -76,7 +77,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
                   String get codegenVersion => '2.13.0';
 
                   @override
-                  int get rustContentHash => -616709020;
+                  int get rustContentHash => -568783285;
 
                   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
                     stem: 'mc_ffi',
@@ -193,6 +194,12 @@ Future<MusicXmlExportResult> crateApiMusicxmlExportMusicxml({required DocumentHa
 Future<ImportResult> crateApiMidiImportMidi({required List<int> bytes });
 
 Future<void> crateApiInfoInitApp();
+
+List<PatternInfoDto> crateApiPatternPatterns({required DocumentHandle document });
+
+PatternPreviewDto crateApiPatternPreviewPattern({required DocumentHandle document , required ApplyPatternDto args });
+
+PlatformInt64 crateApiPatternSamplePattern({required DocumentHandle document });
 
 RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_DocumentHandle;
 
@@ -1617,6 +1624,82 @@ sse_encode_i_64(track, serializer);
         );
         
 
+@override List<PatternInfoDto> crateApiPatternPatterns({required DocumentHandle document })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 54)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_list_pattern_info_dto,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiPatternPatternsConstMeta,
+            argValues: [document],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiPatternPatternsConstMeta => const TaskConstMeta(
+            debugName: "patterns",
+            argNames: ["document"],
+        );
+        
+
+@override PatternPreviewDto crateApiPatternPreviewPattern({required DocumentHandle document , required ApplyPatternDto args })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 55)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_pattern_preview_dto,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiPatternPreviewPatternConstMeta,
+            argValues: [document, args],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiPatternPreviewPatternConstMeta => const TaskConstMeta(
+            debugName: "preview_pattern",
+            argNames: ["document", "args"],
+        );
+        
+
+@override PlatformInt64 crateApiPatternSamplePattern({required DocumentHandle document })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 56)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_i_64,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiPatternSamplePatternConstMeta,
+            argValues: [document],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiPatternSamplePatternConstMeta => const TaskConstMeta(
+            debugName: "sample_pattern",
+            argNames: ["document"],
+        );
+        
+
 RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_DocumentHandle => wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle;
 
 RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_DocumentHandle => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle;
@@ -1692,6 +1775,18 @@ final arr = raw as List<dynamic>;
                 return ApiError(rule: dco_decode_String(arr[0]),
 message: dco_decode_String(arr[1]),); }
 
+@protected ApplyPatternDto dco_decode_apply_pattern_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 8) throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+                return ApplyPatternDto(track: dco_decode_i_64(arr[0]),
+first: dco_decode_u_32(arr[1]),
+last: dco_decode_u_32(arr[2]),
+pattern: dco_decode_i_64(arr[3]),
+frets: dco_decode_list_prim_i_32_strict(arr[4]),
+chord: dco_decode_String(arr[5]),
+fit: dco_decode_opt_box_autoadd_fit_dto(arr[6]),
+overwrite: dco_decode_bool(arr[7]),); }
+
 @protected BarLayoutDto dco_decode_bar_layout_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
                 if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
@@ -1719,6 +1814,9 @@ stroke: dco_decode_opt_box_autoadd_stroke_dto(arr[3]),); }
 @protected bool dco_decode_bool(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw as bool; }
 
+@protected ApplyPatternDto dco_decode_box_autoadd_apply_pattern_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_apply_pattern_dto(raw); }
+
 @protected BeatAddressDto dco_decode_box_autoadd_beat_address_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_beat_address_dto(raw); }
 
@@ -1727,6 +1825,9 @@ return dco_decode_command_dto(raw); }
 
 @protected DurationDto dco_decode_box_autoadd_duration_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_duration_dto(raw); }
+
+@protected FitDto dco_decode_box_autoadd_fit_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_fit_dto(raw); }
 
 @protected PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_i_64(raw); }
@@ -1739,6 +1840,9 @@ return dco_decode_master_bar_dto(raw); }
 
 @protected MetricsDto dco_decode_box_autoadd_metrics_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_metrics_dto(raw); }
+
+@protected PatternReportDto dco_decode_box_autoadd_pattern_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return dco_decode_pattern_report_dto(raw); }
 
 @protected StrokeDto dco_decode_box_autoadd_stroke_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dco_decode_stroke_dto(raw); }
@@ -1801,9 +1905,10 @@ case 17: return CommandDto_RemoveTrack(track: dco_decode_i_64(raw[1]),);
 case 18: return CommandDto_RenameTrack(track: dco_decode_i_64(raw[1]),name: dco_decode_String(raw[2]),);
 case 19: return CommandDto_SetInstrument(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),);
 case 20: return CommandDto_MoveTrack(track: dco_decode_i_64(raw[1]),to: dco_decode_u_32(raw[2]),);
-case 21: return CommandDto_Retune(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),keepPitches: dco_decode_bool(raw[3]),);
-case 22: return CommandDto_PasteBeats(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),index: dco_decode_u_32(raw[4]),beats: dco_decode_list_clip_beat_dto(raw[5]),);
-case 23: return CommandDto_RemoveBeats(track: dco_decode_i_64(raw[1]),voice: dco_decode_u_32(raw[2]),fromBar: dco_decode_u_32(raw[3]),fromIndex: dco_decode_u_32(raw[4]),toBar: dco_decode_u_32(raw[5]),toIndex: dco_decode_u_32(raw[6]),);
+case 21: return CommandDto_ApplyPattern(args: dco_decode_box_autoadd_apply_pattern_dto(raw[1]),);
+case 22: return CommandDto_Retune(track: dco_decode_i_64(raw[1]),instrument: dco_decode_box_autoadd_instrument_dto(raw[2]),keepPitches: dco_decode_bool(raw[3]),);
+case 23: return CommandDto_PasteBeats(track: dco_decode_i_64(raw[1]),bar: dco_decode_u_32(raw[2]),voice: dco_decode_u_32(raw[3]),index: dco_decode_u_32(raw[4]),beats: dco_decode_list_clip_beat_dto(raw[5]),);
+case 24: return CommandDto_RemoveBeats(track: dco_decode_i_64(raw[1]),voice: dco_decode_u_32(raw[2]),fromBar: dco_decode_u_32(raw[3]),fromIndex: dco_decode_u_32(raw[4]),toBar: dco_decode_u_32(raw[5]),toIndex: dco_decode_u_32(raw[6]),);
                 default: throw Exception("unreachable");
             } }
 
@@ -1890,6 +1995,9 @@ return raw as double; }
 @protected double dco_decode_f_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw as double; }
 
+@protected FitDto dco_decode_fit_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return FitDto.values[raw as int]; }
+
 @protected GlyphDto dco_decode_glyph_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
                 if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
@@ -1971,6 +2079,9 @@ return (raw as List<dynamic>).map(dco_decode_clip_note_dto).toList(); }
 @protected List<DiagnosticDto> dco_decode_list_diagnostic_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_diagnostic_dto).toList(); }
 
+@protected List<DurationDto> dco_decode_list_duration_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_duration_dto).toList(); }
+
 @protected List<EventDto> dco_decode_list_event_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_event_dto).toList(); }
 
@@ -1989,6 +2100,9 @@ return (raw as List<dynamic>).map(dco_decode_note_dto).toList(); }
 @protected List<OutlineSystemDto> dco_decode_list_outline_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_outline_system_dto).toList(); }
 
+@protected List<PatternInfoDto> dco_decode_list_pattern_info_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_pattern_info_dto).toList(); }
+
 @protected List<PlayedBarDto> dco_decode_list_played_bar_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_played_bar_dto).toList(); }
 
@@ -2000,6 +2114,9 @@ return raw as Int32List; }
 
 @protected Int64List dco_decode_list_prim_i_64_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return dcoDecodeInt64List(raw); }
+
+@protected Uint32List dco_decode_list_prim_u_32_strict(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw as Uint32List; }
 
 @protected List<int> dco_decode_list_prim_u_8_loose(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw as List<int>; }
@@ -2015,6 +2132,9 @@ return (raw as List<dynamic>).map(dco_decode_score_system_dto).toList(); }
 
 @protected List<StaveDto> dco_decode_list_stave_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_stave_dto).toList(); }
+
+@protected List<StepChangeDto> dco_decode_list_step_change_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return (raw as List<dynamic>).map(dco_decode_step_change_dto).toList(); }
 
 @protected List<SystemDto> dco_decode_list_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return (raw as List<dynamic>).map(dco_decode_system_dto).toList(); }
@@ -2092,8 +2212,14 @@ stringPercussive: dco_decode_bool(arr[8]),); }
 @protected String? dco_decode_opt_String(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_String(raw); }
 
+@protected FitDto? dco_decode_opt_box_autoadd_fit_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_fit_dto(raw); }
+
 @protected PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_box_autoadd_i_64(raw); }
+
+@protected PatternReportDto? dco_decode_opt_box_autoadd_pattern_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return raw == null ? null : dco_decode_box_autoadd_pattern_report_dto(raw); }
 
 @protected StrokeDto? dco_decode_opt_box_autoadd_stroke_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return raw == null ? null : dco_decode_box_autoadd_stroke_dto(raw); }
@@ -2109,9 +2235,10 @@ return raw == null ? null : dco_decode_box_autoadd_u_8(raw); }
 
 @protected OutcomeDto dco_decode_outcome_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
                 return OutcomeDto(revision: dco_decode_i_64(arr[0]),
-events: dco_decode_list_event_dto(arr[1]),); }
+events: dco_decode_list_event_dto(arr[1]),
+pattern: dco_decode_opt_box_autoadd_pattern_report_dto(arr[2]),); }
 
 @protected OutlineSystemDto dco_decode_outline_system_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2121,6 +2248,34 @@ y: dco_decode_f_32(arr[1]),
 height: dco_decode_f_32(arr[2]),
 firstBar: dco_decode_u_32(arr[3]),
 endBar: dco_decode_u_32(arr[4]),); }
+
+@protected PatternInfoDto dco_decode_pattern_info_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+                return PatternInfoDto(id: dco_decode_i_64(arr[0]),
+name: dco_decode_String(arr[1]),
+description: dco_decode_String(arr[2]),
+lengthNumerator: dco_decode_i_64(arr[3]),
+lengthDenominator: dco_decode_i_64(arr[4]),
+twoLanes: dco_decode_bool(arr[5]),); }
+
+@protected PatternPreviewDto dco_decode_pattern_preview_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return PatternPreviewDto(needsFit: dco_decode_bool(arr[0]),
+report: dco_decode_opt_box_autoadd_pattern_report_dto(arr[1]),); }
+
+@protected PatternReportDto dco_decode_pattern_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 8) throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+                return PatternReportDto(first: dco_decode_u_32(arr[0]),
+last: dco_decode_u_32(arr[1]),
+voices: dco_decode_u_32(arr[2]),
+overwritten: dco_decode_list_prim_u_32_strict(arr[3]),
+repetitions: dco_decode_u_32(arr[4]),
+notes: dco_decode_u_32(arr[5]),
+dropped: dco_decode_list_step_change_dto(arr[6]),
+shortened: dco_decode_list_step_change_dto(arr[7]),); }
 
 @protected PlaybackStateDto dco_decode_playback_state_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return PlaybackStateDto.values[raw as int]; }
@@ -2171,6 +2326,17 @@ final arr = raw as List<dynamic>;
 strings: dco_decode_u_8(arr[1]),
 top: dco_decode_f_32(arr[2]),
 system: dco_decode_system_dto(arr[3]),); }
+
+@protected StepChangeDto dco_decode_step_change_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 7) throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+                return StepChangeDto(lane: dco_decode_String(arr[0]),
+repetition: dco_decode_u_32(arr[1]),
+step: dco_decode_u_32(arr[2]),
+onsetNumerator: dco_decode_i_64(arr[3]),
+onsetDenominator: dco_decode_i_64(arr[4]),
+written: dco_decode_duration_dto(arr[5]),
+now: dco_decode_list_duration_dto(arr[6]),); }
 
 @protected StrokeDto dco_decode_stroke_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return StrokeDto.values[raw as int]; }
@@ -2305,6 +2471,17 @@ var var_rule = sse_decode_String(deserializer);
 var var_message = sse_decode_String(deserializer);
 return ApiError(rule: var_rule, message: var_message); }
 
+@protected ApplyPatternDto sse_decode_apply_pattern_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_track = sse_decode_i_64(deserializer);
+var var_first = sse_decode_u_32(deserializer);
+var var_last = sse_decode_u_32(deserializer);
+var var_pattern = sse_decode_i_64(deserializer);
+var var_frets = sse_decode_list_prim_i_32_strict(deserializer);
+var var_chord = sse_decode_String(deserializer);
+var var_fit = sse_decode_opt_box_autoadd_fit_dto(deserializer);
+var var_overwrite = sse_decode_bool(deserializer);
+return ApplyPatternDto(track: var_track, first: var_first, last: var_last, pattern: var_pattern, frets: var_frets, chord: var_chord, fit: var_fit, overwrite: var_overwrite); }
+
 @protected BarLayoutDto sse_decode_bar_layout_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_bar = sse_decode_u_32(deserializer);
 var var_x = sse_decode_f_32(deserializer);
@@ -2329,6 +2506,9 @@ return BeatDto(id: var_id, duration: var_duration, notes: var_notes, stroke: var
 @protected bool sse_decode_bool(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return deserializer.buffer.getUint8() != 0; }
 
+@protected ApplyPatternDto sse_decode_box_autoadd_apply_pattern_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_apply_pattern_dto(deserializer)); }
+
 @protected BeatAddressDto sse_decode_box_autoadd_beat_address_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_beat_address_dto(deserializer)); }
 
@@ -2337,6 +2517,9 @@ return (sse_decode_command_dto(deserializer)); }
 
 @protected DurationDto sse_decode_box_autoadd_duration_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_duration_dto(deserializer)); }
+
+@protected FitDto sse_decode_box_autoadd_fit_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_fit_dto(deserializer)); }
 
 @protected PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_i_64(deserializer)); }
@@ -2349,6 +2532,9 @@ return (sse_decode_master_bar_dto(deserializer)); }
 
 @protected MetricsDto sse_decode_box_autoadd_metrics_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_metrics_dto(deserializer)); }
+
+@protected PatternReportDto sse_decode_box_autoadd_pattern_report_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return (sse_decode_pattern_report_dto(deserializer)); }
 
 @protected StrokeDto sse_decode_box_autoadd_stroke_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return (sse_decode_stroke_dto(deserializer)); }
@@ -2444,15 +2630,16 @@ return CommandDto_RenameTrack(track: var_track, name: var_name);case 19: var var
 var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
 return CommandDto_SetInstrument(track: var_track, instrument: var_instrument);case 20: var var_track = sse_decode_i_64(deserializer);
 var var_to = sse_decode_u_32(deserializer);
-return CommandDto_MoveTrack(track: var_track, to: var_to);case 21: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_MoveTrack(track: var_track, to: var_to);case 21: var var_args = sse_decode_box_autoadd_apply_pattern_dto(deserializer);
+return CommandDto_ApplyPattern(args: var_args);case 22: var var_track = sse_decode_i_64(deserializer);
 var var_instrument = sse_decode_box_autoadd_instrument_dto(deserializer);
 var var_keepPitches = sse_decode_bool(deserializer);
-return CommandDto_Retune(track: var_track, instrument: var_instrument, keepPitches: var_keepPitches);case 22: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_Retune(track: var_track, instrument: var_instrument, keepPitches: var_keepPitches);case 23: var var_track = sse_decode_i_64(deserializer);
 var var_bar = sse_decode_u_32(deserializer);
 var var_voice = sse_decode_u_32(deserializer);
 var var_index = sse_decode_u_32(deserializer);
 var var_beats = sse_decode_list_clip_beat_dto(deserializer);
-return CommandDto_PasteBeats(track: var_track, bar: var_bar, voice: var_voice, index: var_index, beats: var_beats);case 23: var var_track = sse_decode_i_64(deserializer);
+return CommandDto_PasteBeats(track: var_track, bar: var_bar, voice: var_voice, index: var_index, beats: var_beats);case 24: var var_track = sse_decode_i_64(deserializer);
 var var_voice = sse_decode_u_32(deserializer);
 var var_fromBar = sse_decode_u_32(deserializer);
 var var_fromIndex = sse_decode_u_32(deserializer);
@@ -2545,6 +2732,10 @@ return deserializer.buffer.getFloat32(); }
 
 @protected double sse_decode_f_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return deserializer.buffer.getFloat64(); }
+
+@protected FitDto sse_decode_fit_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return FitDto.values[inner]; }
 
 @protected GlyphDto sse_decode_glyph_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_kind = sse_decode_glyph_kind_dto(deserializer);
@@ -2655,6 +2846,14 @@ return InstrumentDto(tuning: var_tuning, fretCount: var_fretCount, capo: var_cap
         return ans_;
          }
 
+@protected List<DurationDto> sse_decode_list_duration_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <DurationDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_duration_dto(deserializer)); }
+        return ans_;
+         }
+
 @protected List<EventDto> sse_decode_list_event_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
         var len_ = sse_decode_i_32(deserializer);
@@ -2703,6 +2902,14 @@ return InstrumentDto(tuning: var_tuning, fretCount: var_fretCount, capo: var_cap
         return ans_;
          }
 
+@protected List<PatternInfoDto> sse_decode_list_pattern_info_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <PatternInfoDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_pattern_info_dto(deserializer)); }
+        return ans_;
+         }
+
 @protected List<PlayedBarDto> sse_decode_list_played_bar_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
         var len_ = sse_decode_i_32(deserializer);
@@ -2722,6 +2929,10 @@ var len_ = sse_decode_i_32(deserializer);
 @protected Int64List sse_decode_list_prim_i_64_strict(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var len_ = sse_decode_i_32(deserializer);
                 return deserializer.buffer.getInt64List(len_); }
+
+@protected Uint32List sse_decode_list_prim_u_32_strict(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var len_ = sse_decode_i_32(deserializer);
+                return deserializer.buffer.getUint32List(len_); }
 
 @protected List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var len_ = sse_decode_i_32(deserializer);
@@ -2752,6 +2963,14 @@ var len_ = sse_decode_i_32(deserializer);
         var len_ = sse_decode_i_32(deserializer);
         var ans_ = <StaveDto>[];
         for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_stave_dto(deserializer)); }
+        return ans_;
+         }
+
+@protected List<StepChangeDto> sse_decode_list_step_change_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+        var len_ = sse_decode_i_32(deserializer);
+        var ans_ = <StepChangeDto>[];
+        for (var idx_ = 0; idx_ < len_; ++idx_) { ans_.add(sse_decode_step_change_dto(deserializer)); }
         return ans_;
          }
 
@@ -2847,10 +3066,28 @@ return NoteDto(id: var_id, string: var_string, fret: var_fret, tie: var_tie, let
             }
              }
 
+@protected FitDto? sse_decode_opt_box_autoadd_fit_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_fit_dto(deserializer));
+            } else {
+                return null;
+            }
+             }
+
 @protected PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
             if (sse_decode_bool(deserializer)) {
                 return (sse_decode_box_autoadd_i_64(deserializer));
+            } else {
+                return null;
+            }
+             }
+
+@protected PatternReportDto? sse_decode_opt_box_autoadd_pattern_report_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+            if (sse_decode_bool(deserializer)) {
+                return (sse_decode_box_autoadd_pattern_report_dto(deserializer));
             } else {
                 return null;
             }
@@ -2895,7 +3132,8 @@ return NoteDto(id: var_id, string: var_string, fret: var_fret, tie: var_tie, let
 @protected OutcomeDto sse_decode_outcome_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_revision = sse_decode_i_64(deserializer);
 var var_events = sse_decode_list_event_dto(deserializer);
-return OutcomeDto(revision: var_revision, events: var_events); }
+var var_pattern = sse_decode_opt_box_autoadd_pattern_report_dto(deserializer);
+return OutcomeDto(revision: var_revision, events: var_events, pattern: var_pattern); }
 
 @protected OutlineSystemDto sse_decode_outline_system_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_index = sse_decode_u_32(deserializer);
@@ -2904,6 +3142,31 @@ var var_height = sse_decode_f_32(deserializer);
 var var_firstBar = sse_decode_u_32(deserializer);
 var var_endBar = sse_decode_u_32(deserializer);
 return OutlineSystemDto(index: var_index, y: var_y, height: var_height, firstBar: var_firstBar, endBar: var_endBar); }
+
+@protected PatternInfoDto sse_decode_pattern_info_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_id = sse_decode_i_64(deserializer);
+var var_name = sse_decode_String(deserializer);
+var var_description = sse_decode_String(deserializer);
+var var_lengthNumerator = sse_decode_i_64(deserializer);
+var var_lengthDenominator = sse_decode_i_64(deserializer);
+var var_twoLanes = sse_decode_bool(deserializer);
+return PatternInfoDto(id: var_id, name: var_name, description: var_description, lengthNumerator: var_lengthNumerator, lengthDenominator: var_lengthDenominator, twoLanes: var_twoLanes); }
+
+@protected PatternPreviewDto sse_decode_pattern_preview_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_needsFit = sse_decode_bool(deserializer);
+var var_report = sse_decode_opt_box_autoadd_pattern_report_dto(deserializer);
+return PatternPreviewDto(needsFit: var_needsFit, report: var_report); }
+
+@protected PatternReportDto sse_decode_pattern_report_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_first = sse_decode_u_32(deserializer);
+var var_last = sse_decode_u_32(deserializer);
+var var_voices = sse_decode_u_32(deserializer);
+var var_overwritten = sse_decode_list_prim_u_32_strict(deserializer);
+var var_repetitions = sse_decode_u_32(deserializer);
+var var_notes = sse_decode_u_32(deserializer);
+var var_dropped = sse_decode_list_step_change_dto(deserializer);
+var var_shortened = sse_decode_list_step_change_dto(deserializer);
+return PatternReportDto(first: var_first, last: var_last, voices: var_voices, overwritten: var_overwritten, repetitions: var_repetitions, notes: var_notes, dropped: var_dropped, shortened: var_shortened); }
 
 @protected PlaybackStateDto sse_decode_playback_state_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var inner = sse_decode_i_32(deserializer);
@@ -2949,6 +3212,16 @@ var var_strings = sse_decode_u_8(deserializer);
 var var_top = sse_decode_f_32(deserializer);
 var var_system = sse_decode_system_dto(deserializer);
 return StaveDto(track: var_track, strings: var_strings, top: var_top, system: var_system); }
+
+@protected StepChangeDto sse_decode_step_change_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_lane = sse_decode_String(deserializer);
+var var_repetition = sse_decode_u_32(deserializer);
+var var_step = sse_decode_u_32(deserializer);
+var var_onsetNumerator = sse_decode_i_64(deserializer);
+var var_onsetDenominator = sse_decode_i_64(deserializer);
+var var_written = sse_decode_duration_dto(deserializer);
+var var_now = sse_decode_list_duration_dto(deserializer);
+return StepChangeDto(lane: var_lane, repetition: var_repetition, step: var_step, onsetNumerator: var_onsetNumerator, onsetDenominator: var_onsetDenominator, written: var_written, now: var_now); }
 
 @protected StrokeDto sse_decode_stroke_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var inner = sse_decode_i_32(deserializer);
@@ -3082,6 +3355,17 @@ sse_encode_String(self.rule, serializer);
 sse_encode_String(self.message, serializer);
  }
 
+@protected void sse_encode_apply_pattern_dto(ApplyPatternDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.track, serializer);
+sse_encode_u_32(self.first, serializer);
+sse_encode_u_32(self.last, serializer);
+sse_encode_i_64(self.pattern, serializer);
+sse_encode_list_prim_i_32_strict(self.frets, serializer);
+sse_encode_String(self.chord, serializer);
+sse_encode_opt_box_autoadd_fit_dto(self.fit, serializer);
+sse_encode_bool(self.overwrite, serializer);
+ }
+
 @protected void sse_encode_bar_layout_dto(BarLayoutDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_u_32(self.bar, serializer);
 sse_encode_f_32(self.x, serializer);
@@ -3106,6 +3390,9 @@ sse_encode_opt_box_autoadd_stroke_dto(self.stroke, serializer);
 @protected void sse_encode_bool(bool self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 serializer.buffer.putUint8(self ? 1 : 0); }
 
+@protected void sse_encode_box_autoadd_apply_pattern_dto(ApplyPatternDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_apply_pattern_dto(self, serializer); }
+
 @protected void sse_encode_box_autoadd_beat_address_dto(BeatAddressDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_beat_address_dto(self, serializer); }
 
@@ -3114,6 +3401,9 @@ sse_encode_command_dto(self, serializer); }
 
 @protected void sse_encode_box_autoadd_duration_dto(DurationDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_duration_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_fit_dto(FitDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_fit_dto(self, serializer); }
 
 @protected void sse_encode_box_autoadd_i_64(PlatformInt64 self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self, serializer); }
@@ -3126,6 +3416,9 @@ sse_encode_master_bar_dto(self, serializer); }
 
 @protected void sse_encode_box_autoadd_metrics_dto(MetricsDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_metrics_dto(self, serializer); }
+
+@protected void sse_encode_box_autoadd_pattern_report_dto(PatternReportDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_pattern_report_dto(self, serializer); }
 
 @protected void sse_encode_box_autoadd_stroke_dto(StrokeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_stroke_dto(self, serializer); }
@@ -3219,15 +3512,16 @@ case CommandDto_SetInstrument(track: final track,instrument: final instrument): 
 sse_encode_box_autoadd_instrument_dto(instrument, serializer);
 case CommandDto_MoveTrack(track: final track,to: final to): sse_encode_i_32(20, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(to, serializer);
-case CommandDto_Retune(track: final track,instrument: final instrument,keepPitches: final keepPitches): sse_encode_i_32(21, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_ApplyPattern(args: final args): sse_encode_i_32(21, serializer); sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
+case CommandDto_Retune(track: final track,instrument: final instrument,keepPitches: final keepPitches): sse_encode_i_32(22, serializer); sse_encode_i_64(track, serializer);
 sse_encode_box_autoadd_instrument_dto(instrument, serializer);
 sse_encode_bool(keepPitches, serializer);
-case CommandDto_PasteBeats(track: final track,bar: final bar,voice: final voice,index: final index,beats: final beats): sse_encode_i_32(22, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_PasteBeats(track: final track,bar: final bar,voice: final voice,index: final index,beats: final beats): sse_encode_i_32(23, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(bar, serializer);
 sse_encode_u_32(voice, serializer);
 sse_encode_u_32(index, serializer);
 sse_encode_list_clip_beat_dto(beats, serializer);
-case CommandDto_RemoveBeats(track: final track,voice: final voice,fromBar: final fromBar,fromIndex: final fromIndex,toBar: final toBar,toIndex: final toIndex): sse_encode_i_32(23, serializer); sse_encode_i_64(track, serializer);
+case CommandDto_RemoveBeats(track: final track,voice: final voice,fromBar: final fromBar,fromIndex: final fromIndex,toBar: final toBar,toIndex: final toIndex): sse_encode_i_32(24, serializer); sse_encode_i_64(track, serializer);
 sse_encode_u_32(voice, serializer);
 sse_encode_u_32(fromBar, serializer);
 sse_encode_u_32(fromIndex, serializer);
@@ -3317,6 +3611,9 @@ serializer.buffer.putFloat32(self); }
 @protected void sse_encode_f_64(double self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 serializer.buffer.putFloat64(self); }
 
+@protected void sse_encode_fit_dto(FitDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
+
 @protected void sse_encode_glyph_dto(GlyphDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_glyph_kind_dto(self.kind, serializer);
 sse_encode_f_32(self.x, serializer);
@@ -3399,6 +3696,10 @@ sse_encode_i_32(self.length, serializer);
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_diagnostic_dto(item, serializer); } }
 
+@protected void sse_encode_list_duration_dto(List<DurationDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_duration_dto(item, serializer); } }
+
 @protected void sse_encode_list_event_dto(List<EventDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_event_dto(item, serializer); } }
@@ -3423,6 +3724,10 @@ sse_encode_i_32(self.length, serializer);
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_outline_system_dto(item, serializer); } }
 
+@protected void sse_encode_list_pattern_info_dto(List<PatternInfoDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_pattern_info_dto(item, serializer); } }
+
 @protected void sse_encode_list_played_bar_dto(List<PlayedBarDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_played_bar_dto(item, serializer); } }
@@ -3438,6 +3743,10 @@ sse_encode_i_32(self.length, serializer);
 @protected void sse_encode_list_prim_i_64_strict(Int64List self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
                     serializer.buffer.putInt64List(self); }
+
+@protected void sse_encode_list_prim_u_32_strict(Uint32List self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+                    serializer.buffer.putUint32List(self); }
 
 @protected void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
@@ -3458,6 +3767,10 @@ sse_encode_i_32(self.length, serializer);
 @protected void sse_encode_list_stave_dto(List<StaveDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
         for (final item in self) { sse_encode_stave_dto(item, serializer); } }
+
+@protected void sse_encode_list_step_change_dto(List<StepChangeDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.length, serializer);
+        for (final item in self) { sse_encode_step_change_dto(item, serializer); } }
 
 @protected void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_32(self.length, serializer);
@@ -3538,11 +3851,27 @@ sse_encode_bool(self.stringPercussive, serializer);
                 }
                  }
 
+@protected void sse_encode_opt_box_autoadd_fit_dto(FitDto? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_fit_dto(self, serializer);
+                }
+                 }
+
 @protected void sse_encode_opt_box_autoadd_i_64(PlatformInt64? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 
                 sse_encode_bool(self != null, serializer);
                 if (self != null) {
                     sse_encode_box_autoadd_i_64(self, serializer);
+                }
+                 }
+
+@protected void sse_encode_opt_box_autoadd_pattern_report_dto(PatternReportDto? self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+
+                sse_encode_bool(self != null, serializer);
+                if (self != null) {
+                    sse_encode_box_autoadd_pattern_report_dto(self, serializer);
                 }
                  }
 
@@ -3581,6 +3910,7 @@ sse_encode_bool(self.stringPercussive, serializer);
 @protected void sse_encode_outcome_dto(OutcomeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self.revision, serializer);
 sse_encode_list_event_dto(self.events, serializer);
+sse_encode_opt_box_autoadd_pattern_report_dto(self.pattern, serializer);
  }
 
 @protected void sse_encode_outline_system_dto(OutlineSystemDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3589,6 +3919,31 @@ sse_encode_f_32(self.y, serializer);
 sse_encode_f_32(self.height, serializer);
 sse_encode_u_32(self.firstBar, serializer);
 sse_encode_u_32(self.endBar, serializer);
+ }
+
+@protected void sse_encode_pattern_info_dto(PatternInfoDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.id, serializer);
+sse_encode_String(self.name, serializer);
+sse_encode_String(self.description, serializer);
+sse_encode_i_64(self.lengthNumerator, serializer);
+sse_encode_i_64(self.lengthDenominator, serializer);
+sse_encode_bool(self.twoLanes, serializer);
+ }
+
+@protected void sse_encode_pattern_preview_dto(PatternPreviewDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_bool(self.needsFit, serializer);
+sse_encode_opt_box_autoadd_pattern_report_dto(self.report, serializer);
+ }
+
+@protected void sse_encode_pattern_report_dto(PatternReportDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_u_32(self.first, serializer);
+sse_encode_u_32(self.last, serializer);
+sse_encode_u_32(self.voices, serializer);
+sse_encode_list_prim_u_32_strict(self.overwritten, serializer);
+sse_encode_u_32(self.repetitions, serializer);
+sse_encode_u_32(self.notes, serializer);
+sse_encode_list_step_change_dto(self.dropped, serializer);
+sse_encode_list_step_change_dto(self.shortened, serializer);
  }
 
 @protected void sse_encode_playback_state_dto(PlaybackStateDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -3633,6 +3988,16 @@ sse_encode_i_64(self.track, serializer);
 sse_encode_u_8(self.strings, serializer);
 sse_encode_f_32(self.top, serializer);
 sse_encode_system_dto(self.system, serializer);
+ }
+
+@protected void sse_encode_step_change_dto(StepChangeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.lane, serializer);
+sse_encode_u_32(self.repetition, serializer);
+sse_encode_u_32(self.step, serializer);
+sse_encode_i_64(self.onsetNumerator, serializer);
+sse_encode_i_64(self.onsetDenominator, serializer);
+sse_encode_duration_dto(self.written, serializer);
+sse_encode_list_duration_dto(self.now, serializer);
  }
 
 @protected void sse_encode_stroke_dto(StrokeDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs

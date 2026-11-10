@@ -6,6 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
+import 'pattern.dart';
 part 'types.freezed.dart';
 
             // These functions are ignored because they are not marked as `pub`: `from_app`, `from_app`, `new`, `note_id`, `to_app`, `to_app`, `to_app`, `to_app`, `to_app`, `track_id`
@@ -210,6 +211,9 @@ const factory CommandDto.shiftFrets({   required PlatformInt64 track ,  required
  const factory CommandDto.renameTrack({   required PlatformInt64 track ,  required String name , }) = CommandDto_RenameTrack;
  const factory CommandDto.setInstrument({   required PlatformInt64 track ,  required InstrumentDto instrument , }) = CommandDto_SetInstrument;
  const factory CommandDto.moveTrack({   required PlatformInt64 track ,  required int to , }) = CommandDto_MoveTrack;
+ /// Applies a pattern of the session library (ADR-034 section 7). See
+/// `preview_pattern` for what it would write.
+const factory CommandDto.applyPattern({   required ApplyPatternDto args , }) = CommandDto_ApplyPattern;
  /// `keep_pitches`: notes keep their sound (frets move); otherwise frets are kept.
 const factory CommandDto.retune({   required PlatformInt64 track ,  required InstrumentDto instrument ,  required bool keepPitches , }) = CommandDto_Retune;
  /// Inserts a copied run of beats at `index` of a voice (ADR-030). All or nothing;
@@ -469,15 +473,17 @@ final bool stringPercussive;
 class OutcomeDto  {
                 final PlatformInt64 revision;
 final List<EventDto> events;
+/// What `ApplyPattern` wrote; `None` for other commands.
+final PatternReportDto? pattern;
 
-                const OutcomeDto({required this.revision ,required this.events ,});
+                const OutcomeDto({required this.revision ,required this.events ,this.pattern ,});
 
 
 
 
 
         @override
-        int get hashCode => revision.hashCode^events.hashCode;
+        int get hashCode => revision.hashCode^events.hashCode^pattern.hashCode;
 
 
 
@@ -486,7 +492,7 @@ final List<EventDto> events;
             identical(this, other) ||
             other is OutcomeDto &&
                 runtimeType == other.runtimeType
-                && revision == other.revision&& events == other.events;
+                && revision == other.revision&& events == other.events&& pattern == other.pattern;
 
             }
 

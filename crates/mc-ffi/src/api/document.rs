@@ -456,6 +456,12 @@ impl DocumentHandle {
         self.lock()
     }
 
+    /// Locks the session for a pattern-library query or preview (ADR-034). Same lock as
+    /// every other call.
+    pub(crate) fn lock_for_pattern(&self) -> MutexGuard<'_, DocumentSession> {
+        self.lock()
+    }
+
     pub(crate) fn with_session<R>(&self, f: impl FnOnce(&DocumentSession) -> R) -> R {
         f(&self.lock())
     }
@@ -554,6 +560,7 @@ pub(crate) fn outcome_dto(o: &CommandOutcome) -> OutcomeDto {
     OutcomeDto {
         revision: o.revision.0 as i64,
         events: o.events.iter().map(event_dto).collect(),
+        pattern: o.pattern.as_ref().map(crate::api::pattern::report_dto),
     }
 }
 
@@ -811,6 +818,9 @@ fn to_command(s: &DocumentSession, c: CommandDto) -> Result<Command, ApiError> {
             track: track_id(track),
             to: to as usize,
         }),
+        CommandDto::ApplyPattern { args } => Ok(Command::Pattern(
+            mc_app::PatternCommand::ApplyPattern(args.to_app()?),
+        )),
         CommandDto::Retune {
             track,
             instrument,

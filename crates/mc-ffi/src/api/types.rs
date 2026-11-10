@@ -241,6 +241,11 @@ pub enum CommandDto {
         track: i64,
         to: u32,
     },
+    /// Applies a pattern of the session library (ADR-034 section 7). See
+    /// `preview_pattern` for what it would write.
+    ApplyPattern {
+        args: crate::api::pattern::ApplyPatternDto,
+    },
     /// `keep_pitches`: notes keep their sound (frets move); otherwise frets are kept.
     Retune {
         track: i64,
@@ -524,6 +529,8 @@ pub struct EventDto {
 pub struct OutcomeDto {
     pub revision: i64,
     pub events: Vec<EventDto>,
+    /// What `ApplyPattern` wrote; `None` for other commands.
+    pub pattern: Option<crate::api::pattern::PatternReportDto>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
