@@ -79,6 +79,25 @@ impl core::marker::Unpin for mc_pattern::BindFailure
 impl core::marker::UnsafeUnpin for mc_pattern::BindFailure
 impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::BindFailure
 impl core::panic::unwind_safe::UnwindSafe for mc_pattern::BindFailure
+pub enum mc_pattern::Fit
+pub mc_pattern::Fit::RepeatAndCut
+pub mc_pattern::Fit::WholeRepetitionsOnly
+impl core::clone::Clone for mc_pattern::Fit
+pub fn mc_pattern::Fit::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::Fit
+impl core::cmp::PartialEq for mc_pattern::Fit
+pub fn mc_pattern::Fit::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::Fit
+pub fn mc_pattern::Fit::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_pattern::Fit
+impl core::marker::StructuralPartialEq for mc_pattern::Fit
+impl core::marker::Freeze for mc_pattern::Fit
+impl core::marker::Send for mc_pattern::Fit
+impl core::marker::Sync for mc_pattern::Fit
+impl core::marker::Unpin for mc_pattern::Fit
+impl core::marker::UnsafeUnpin for mc_pattern::Fit
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Fit
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Fit
 pub enum mc_pattern::LaneId
 pub mc_pattern::LaneId::Fingers
 pub mc_pattern::LaneId::Strum
@@ -244,6 +263,47 @@ impl core::marker::Unpin for mc_pattern::PatternError
 impl core::marker::UnsafeUnpin for mc_pattern::PatternError
 impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternError
 impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternError
+pub enum mc_pattern::PlaceError
+pub mc_pattern::PlaceError::EmptyRange
+pub mc_pattern::PlaceError::FitRequired
+pub mc_pattern::PlaceError::FitRequired::pattern: mc_theory::rational::Rational
+pub mc_pattern::PlaceError::FitRequired::range: mc_theory::rational::Rational
+pub mc_pattern::PlaceError::MeterMismatch
+pub mc_pattern::PlaceError::MeterMismatch::bar: usize
+pub mc_pattern::PlaceError::MeterMismatch::found: mc_theory::time::TimeSignature
+pub mc_pattern::PlaceError::MeterMismatch::meter: mc_theory::time::TimeSignature
+pub mc_pattern::PlaceError::Overflow
+pub mc_pattern::PlaceError::PickupInRange
+pub mc_pattern::PlaceError::PickupInRange::bar: usize
+pub mc_pattern::PlaceError::ShortNoteCrossesBar
+pub mc_pattern::PlaceError::ShortNoteCrossesBar::bar: usize
+pub mc_pattern::PlaceError::ShortNoteCrossesBar::lane: mc_pattern::LaneId
+pub mc_pattern::PlaceError::ShortNoteCrossesBar::repetition: usize
+pub mc_pattern::PlaceError::ShortNoteCrossesBar::step: usize
+pub mc_pattern::PlaceError::TupletCrossesBar
+pub mc_pattern::PlaceError::TupletCrossesBar::bar: usize
+pub mc_pattern::PlaceError::TupletCrossesBar::lane: mc_pattern::LaneId
+pub mc_pattern::PlaceError::TupletCrossesBar::repetition: usize
+pub mc_pattern::PlaceError::TupletCrossesBar::step: usize
+pub mc_pattern::PlaceError::UnwritableLength
+pub mc_pattern::PlaceError::UnwritableLength::at: mc_theory::rational::Rational
+pub mc_pattern::PlaceError::UnwritableLength::lane: mc_pattern::LaneId
+pub mc_pattern::PlaceError::UnwritableLength::length: mc_theory::rational::Rational
+impl core::clone::Clone for mc_pattern::PlaceError
+pub fn mc_pattern::PlaceError::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PlaceError
+impl core::cmp::PartialEq for mc_pattern::PlaceError
+pub fn mc_pattern::PlaceError::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::PlaceError
+pub fn mc_pattern::PlaceError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::PlaceError
+impl core::marker::Freeze for mc_pattern::PlaceError
+impl core::marker::Send for mc_pattern::PlaceError
+impl core::marker::Sync for mc_pattern::PlaceError
+impl core::marker::Unpin for mc_pattern::PlaceError
+impl core::marker::UnsafeUnpin for mc_pattern::PlaceError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PlaceError
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PlaceError
 pub enum mc_pattern::ResolvedAction
 pub mc_pattern::ResolvedAction::Hold(core::option::Option<alloc::vec::Vec<mc_pattern::StringSelector>>)
 pub mc_pattern::ResolvedAction::Rest
@@ -642,6 +702,64 @@ impl core::marker::Unpin for mc_pattern::PatternParts
 impl core::marker::UnsafeUnpin for mc_pattern::PatternParts
 impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternParts
 impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternParts
+pub struct mc_pattern::PlaceReport
+pub mc_pattern::PlaceReport::dropped: alloc::vec::Vec<mc_pattern::StepChange>
+pub mc_pattern::PlaceReport::notes: usize
+pub mc_pattern::PlaceReport::repetitions: usize
+pub mc_pattern::PlaceReport::rests_from: core::option::Option<mc_theory::rational::Rational>
+pub mc_pattern::PlaceReport::shortened: alloc::vec::Vec<mc_pattern::StepChange>
+impl core::clone::Clone for mc_pattern::PlaceReport
+pub fn mc_pattern::PlaceReport::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PlaceReport
+impl core::cmp::PartialEq for mc_pattern::PlaceReport
+pub fn mc_pattern::PlaceReport::eq(&self, &Self) -> bool
+impl core::default::Default for mc_pattern::PlaceReport
+pub fn mc_pattern::PlaceReport::default() -> Self
+impl core::fmt::Debug for mc_pattern::PlaceReport
+pub fn mc_pattern::PlaceReport::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::PlaceReport
+impl core::marker::Freeze for mc_pattern::PlaceReport
+impl core::marker::Send for mc_pattern::PlaceReport
+impl core::marker::Sync for mc_pattern::PlaceReport
+impl core::marker::Unpin for mc_pattern::PlaceReport
+impl core::marker::UnsafeUnpin for mc_pattern::PlaceReport
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PlaceReport
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PlaceReport
+pub struct mc_pattern::PlacedBar
+pub mc_pattern::PlacedBar::voices: alloc::vec::Vec<(mc_pattern::LaneId, alloc::vec::Vec<mc_score::edit::FragmentBeat>)>
+impl core::clone::Clone for mc_pattern::PlacedBar
+pub fn mc_pattern::PlacedBar::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PlacedBar
+impl core::cmp::PartialEq for mc_pattern::PlacedBar
+pub fn mc_pattern::PlacedBar::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::PlacedBar
+pub fn mc_pattern::PlacedBar::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::PlacedBar
+impl core::marker::Freeze for mc_pattern::PlacedBar
+impl core::marker::Send for mc_pattern::PlacedBar
+impl core::marker::Sync for mc_pattern::PlacedBar
+impl core::marker::Unpin for mc_pattern::PlacedBar
+impl core::marker::UnsafeUnpin for mc_pattern::PlacedBar
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PlacedBar
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PlacedBar
+pub struct mc_pattern::Placement
+pub mc_pattern::Placement::bars: alloc::vec::Vec<mc_pattern::PlacedBar>
+pub mc_pattern::Placement::report: mc_pattern::PlaceReport
+impl core::clone::Clone for mc_pattern::Placement
+pub fn mc_pattern::Placement::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::Placement
+impl core::cmp::PartialEq for mc_pattern::Placement
+pub fn mc_pattern::Placement::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::Placement
+pub fn mc_pattern::Placement::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::Placement
+impl core::marker::Freeze for mc_pattern::Placement
+impl core::marker::Send for mc_pattern::Placement
+impl core::marker::Sync for mc_pattern::Placement
+impl core::marker::Unpin for mc_pattern::Placement
+impl core::marker::UnsafeUnpin for mc_pattern::Placement
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Placement
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Placement
 pub struct mc_pattern::ResolvedPattern
 pub mc_pattern::ResolvedPattern::id: mc_pattern::PatternId
 pub mc_pattern::ResolvedPattern::lanes: alloc::vec::Vec<(mc_pattern::LaneId, alloc::vec::Vec<mc_pattern::ResolvedStep>)>
@@ -702,6 +820,28 @@ impl core::marker::Unpin for mc_pattern::Step
 impl core::marker::UnsafeUnpin for mc_pattern::Step
 impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Step
 impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Step
+pub struct mc_pattern::StepChange
+pub mc_pattern::StepChange::lane: mc_pattern::LaneId
+pub mc_pattern::StepChange::now: alloc::vec::Vec<mc_theory::duration::NoteValue>
+pub mc_pattern::StepChange::onset: mc_theory::rational::Rational
+pub mc_pattern::StepChange::repetition: usize
+pub mc_pattern::StepChange::step: usize
+pub mc_pattern::StepChange::written: mc_theory::duration::NoteValue
+impl core::clone::Clone for mc_pattern::StepChange
+pub fn mc_pattern::StepChange::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::StepChange
+impl core::cmp::PartialEq for mc_pattern::StepChange
+pub fn mc_pattern::StepChange::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::StepChange
+pub fn mc_pattern::StepChange::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::StepChange
+impl core::marker::Freeze for mc_pattern::StepChange
+impl core::marker::Send for mc_pattern::StepChange
+impl core::marker::Sync for mc_pattern::StepChange
+impl core::marker::Unpin for mc_pattern::StepChange
+impl core::marker::UnsafeUnpin for mc_pattern::StepChange
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::StepChange
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::StepChange
 pub struct mc_pattern::StepRef
 pub mc_pattern::StepRef::index: usize
 pub mc_pattern::StepRef::lane: mc_pattern::LaneId
@@ -771,5 +911,7 @@ pub fn mc_pattern::bind(&mc_pattern::ResolvedPattern, &mc_guitar::voicing::Voici
 pub fn mc_pattern::check_name(&str) -> core::result::Result<(), mc_pattern::NameProblem>
 pub fn mc_pattern::covers(mc_pattern::StringSelector, mc_pattern::StringSelector) -> bool
 pub fn mc_pattern::name_key(&str) -> alloc::string::String
+pub fn mc_pattern::place(&mc_pattern::PatternFragment, &[mc_score::model::MasterBar], core::option::Option<mc_pattern::Fit>) -> core::result::Result<mc_pattern::Placement, mc_pattern::PlaceError>
+pub fn mc_pattern::values_for(mc_theory::rational::Rational) -> core::option::Option<alloc::vec::Vec<mc_theory::duration::NoteValue>>
 pub type mc_pattern::Direction = mc_score::model::Stroke
 pub type mc_pattern::TechniqueSet = mc_score::model::NoteEffects

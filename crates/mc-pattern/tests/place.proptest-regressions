@@ -1,0 +1,8 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 0346ef7243043c0c6b60cb95d7a4b26c18f9cd9f1914ee7ebd2db6a7576226ec # shrinks to num = 703, k = 8, three = true
+cc 2b20060622aac5685eabe32d6458d1389662846f23abb3363e78c2de950aa134 # shrinks to seed = (1, false, [(28, 0, 0, 0, Strike { targets: [Bass], direction: None, techniques: NoteEffects { let_ring: false, dead: false, accent: false, palm_mute: false, string_percussive: false } }), (0, 0, 0, 0, Strike { targets: [Bass], direction: None, techniques: NoteEffects { let_ring: false, dead: false, accent: false, palm_mute: false, string_percussive: false } }), (0, 0, 0, 0, Strike { targets: [Bass], direction: None, techniques: NoteEffects { let_ring: false, dead: false, accent: false, palm_mute: false, string_percussive: false } })], [], [], 0), frets = [0, 0, 0, 0, 0, 0], extra = 1

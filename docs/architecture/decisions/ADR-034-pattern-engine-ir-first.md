@@ -399,6 +399,46 @@ Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern
 | PE-9 | Bind part met; with section 14 PE-9 is met, pending review of the interpretations above |
 | PT-02 | Tested (`pt02_`) |
 
+## 17. Results of slice 6a-3b, placing (2026-11-10, for user review)
+
+**Built.** `mc_pattern::place(fragment, bars, fit)`:
+- `bars` are the master bars of the range, in order. Their durations are nominal (time-signature lengths).
+- The result is, per bar, one beat list per lane, in voice order (Strum or Thumb = voice 1, Fingers = voice 2). Each list fills its bar exactly.
+- A `PlaceReport` lists repetitions, dropped and shortened steps (lane, repetition, step, onset, written value, new values), attacked notes, and with `WholeRepetitionsOnly` where the trailing rests begin.
+- Errors: `EmptyRange`, `PickupInRange`, `MeterMismatch`, `FitRequired`, `TupletCrossesBar`, `ShortNoteCrossesBar`, `UnwritableLength`.
+
+**Section 7 as implemented:**
+- A whole multiple repeats with no fit. Any other length needs `Fit::RepeatAndCut` or `Fit::WholeRepetitionsOnly`; `None` gives `FitRequired`, and cancel is the caller not applying.
+- `RepeatAndCut`: a step that starts at or after the range end is dropped. A step that would sound past the end is shortened to the remaining length, written as tied values, unless it is a tuplet, which is dropped. Nothing else moves.
+- `WholeRepetitionsOnly`: only whole repetitions; when the pattern is longer than the range, that means zero repetitions and only rests.
+- A pattern without a meter runs on across bars of different time signatures.
+
+**Interpretations made in 6a-3b, which the user should confirm or change:**
+1. **Writing computed lengths.** Gaps, bar-line pieces and cuts are written exactly, longest value first:
+   - a dyadic length as whole notes, then at most one plain value per binary digit, down to 1/256;
+   - a length with one factor 3 in its reduced denominator gets one triplet value for the remainder (for example 1/6 is a triplet quarter, and 5/12 a quarter plus a triplet quarter);
+   - anything else is `UnwritableLength`, never rounded. Example: the gap after a lone quintuplet sixteenth.
+   - Dotted values are kept only where the pattern writes them; computed pieces are not merged into dotted values.
+2. **Bar-line continuations** follow the hold rule of section 16: tied, same string and fret, only let ring kept, no stroke.
+3. **A dead, palm-muted or string-percussive note that crosses a bar line is rejected** (`ShortNoteCrossesBar`). Its tied continuation would be played as a new attack, the same reason holds of short notes are rejected in section 16.
+4. **The note count** in the report counts attacked notes only, not tied continuations.
+
+**Evidence** (`crates/mc-pattern/tests/place.rs`, 19 tests):
+- PT-09 (`pt09_`): gaps become rests, and every bar is filled exactly.
+- Fit: a whole multiple needs no fit; anything else is refused without one. The `RepeatAndCut` report is checked exactly, including a shortened half, a dropped tuplet that would need cutting, and a step starting exactly at the range end. `WholeRepetitionsOnly` leaves trailing rests, including the zero-repetition case.
+- Pickup and meter are checked; continuity across 4/4 and 3/4 is checked.
+- Bar lines: a dotted half across a bar line becomes a half tied to a quarter. `TupletCrossesBar`, `ShortNoteCrossesBar` and `UnwritableLength` are each tested.
+- Two lanes give two voices with independent durations (corpus 2).
+- `values_for`: a table, plus a property that every result sums exactly.
+- PE-4 property (300 cases): the placed bars are read back into events and compared with `range start + repetition offset + step onset`, its duration, its notes and its stroke. Every bar's sum is exact, and failures are only real tuplet crossings. A coverage test: 356 of 400 cases place, 91 with bar-line splits and 61 with holds.
+- Thirteen mutation checks were all caught. Two survived at first (a step exactly at the range end; the note count), and tests were added for them.
+
+| Id | Result in 6a-3b |
+|---|---|
+| PE-4 | Met at domain level |
+| PE-8 | Met at domain level (range, fit, pickup, meter, mixed time signatures). Its "session tests" part comes with `ApplyPattern` in 6a-3c |
+| PT-09 | Tested (`pt09_`) |
+
 ## Alternatives
 
 - **DSL as the stored form.** Rejected by the user: one syntax would own the data.

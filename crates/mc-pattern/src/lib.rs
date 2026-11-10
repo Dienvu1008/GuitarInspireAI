@@ -4,7 +4,8 @@
 //! text DSL (6a-4) and later tap-to-create all produce and edit it. This slice (6a-2)
 //! holds the IR, its semantic validation (PT-01, PT-03 to PT-07) and the pattern
 //! library of patterns and user gestures (PT-06, PT-08), in memory. Slice 6a-3 adds
-//! binding to a voicing (ADR-034 section 5, PT-02).
+//! binding to a voicing (ADR-034 section 5, PT-02) and placing over a bar range
+//! (section 7, PT-09).
 //!
 //! Rule ids (PT-xx) refer to docs/architecture/domain-invariants.md.
 
@@ -14,6 +15,7 @@ mod ids;
 mod library;
 mod model;
 mod names;
+mod place;
 mod validate;
 
 pub use bind::{BindError, BoundBeat, BoundLane, BoundNote, PatternFragment, bind};
@@ -28,4 +30,7 @@ pub use model::{
     StringSelector, Technique, TechniqueSet, TechniqueSpan,
 };
 pub use names::{KEYWORDS, check_name, name_key};
+pub use place::{
+    Fit, PlaceError, PlaceReport, PlacedBar, Placement, StepChange, place, values_for,
+};
 pub use validate::covers;
