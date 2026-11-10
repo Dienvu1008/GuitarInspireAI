@@ -456,3 +456,65 @@ fn pattern_bridge_rejects_bad_values_and_reports_the_overwrite_rule() {
     assert_eq!(err.rule, "PE-07");
     assert!(err.message.contains("bars 2"), "{}", err.message);
 }
+
+#[test]
+fn pattern_bridge_preview_revision_guards_the_confirmation() {
+    use mc_ffi::api::pattern::{preview_pattern, sample_pattern};
+    let d = DocumentHandle::create(2).unwrap();
+    let t = first_track(&d);
+    let p = sample_pattern(&d);
+    insert_beat(&d, t, 1);
+    let preview = preview_pattern(&d, c_args(t, p, None)).unwrap();
+    assert_eq!(
+        preview.revision,
+        d.summary().revision,
+        "same lock, same revision"
+    );
+    assert_eq!(preview.report.as_ref().unwrap().overwritten, vec![1]);
+    // Another command changes the bar to be replaced; the confirmation is then sent
+    // with the preview's revision and must be refused (E-01), leaving the note alone.
+    let beat = d.beats(t, 1, 0).unwrap()[0].id;
+    d.execute(
+        CommandDto::SetNote {
+            beat: BeatAddressDto {
+                track: t,
+                bar: 1,
+                voice: 0,
+                beat,
+            },
+            string: 1,
+            fret: 7,
+        },
+        None,
+        None,
+    )
+    .unwrap();
+    let rev = d.summary().revision;
+    let mut confirmed = c_args(t, p, None);
+    confirmed.overwrite = true;
+    let err = d
+        .execute(
+            CommandDto::ApplyPattern {
+                args: confirmed.clone(),
+            },
+            None,
+            Some(preview.revision),
+        )
+        .unwrap_err();
+    assert_eq!(err.rule, "E-01");
+    assert_eq!(d.summary().revision, rev);
+    assert_eq!(
+        d.beats(t, 1, 0).unwrap()[0].notes[0].fret,
+        7,
+        "nothing overwritten"
+    );
+    // A fresh preview and confirmation applies.
+    let fresh = preview_pattern(&d, c_args(t, p, None)).unwrap();
+    d.execute(
+        CommandDto::ApplyPattern { args: confirmed },
+        None,
+        Some(fresh.revision),
+    )
+    .unwrap();
+    assert_eq!(d.beats(t, 1, 0).unwrap().len(), 4);
+}
