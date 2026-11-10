@@ -605,6 +605,9 @@ fn event_dto(e: &EventEnvelope) -> EventDto {
                 }
             }
             AppEvent::HistoryApplied => EventKindDto::HistoryApplied,
+            // Library commands are not on the bridge before 6a-5c, which adds their own
+            // event kind; until then this only follows an undo, so "re-query" fits.
+            AppEvent::PatternLibraryChanged => EventKindDto::HistoryApplied,
             AppEvent::PlaybackStateChanged { state } => EventKindDto::PlaybackStateChanged {
                 state: playback_state_dto(*state),
             },

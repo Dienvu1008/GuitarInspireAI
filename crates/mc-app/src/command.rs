@@ -46,11 +46,69 @@ pub enum Command {
 }
 
 /// Pattern engine commands (ADR-034 section 7).
+///
+/// The library commands (6a-5b, ADR-034 section 22) change only the pattern library.
+/// Each is validated by `mc-pattern` and is one undo step and one revision; on any error
+/// nothing changes. A command that creates a pattern or a gesture reports its id in
+/// [`crate::CommandOutcome::library`].
 #[derive(Clone, Debug, PartialEq)]
 pub enum PatternCommand {
     /// Binds a library pattern to one voicing and replaces voices 1 and 2 of the track
     /// over whole bars `first..=last`. One atomic command, one undo step, one revision.
     ApplyPattern(ApplyPattern),
+    /// Creates an empty pattern.
+    NewPattern {
+        name: String,
+        layout: LaneLayout,
+        /// In whole notes, greater than 0.
+        length: mc_theory::Rational,
+        meter: Option<mc_theory::TimeSignature>,
+    },
+    /// Adds a complete pattern (for example from the text syntax).
+    DefinePattern {
+        parts: mc_pattern::PatternParts,
+    },
+    RemovePattern {
+        pattern: crate::pattern::PatternId,
+    },
+    /// One grid edit of a pattern (`mc_pattern::grid`).
+    EditPattern {
+        pattern: crate::pattern::PatternId,
+        edit: mc_pattern::grid::Edit,
+    },
+    DefineGesture {
+        name: String,
+        strike: mc_pattern::Strike,
+    },
+    /// Makes a gesture from the strike of a step and uses it in that step: one step.
+    GestureFromStep {
+        pattern: crate::pattern::PatternId,
+        lane: mc_pattern::LaneId,
+        index: usize,
+        name: String,
+    },
+    RenameGesture {
+        gesture: mc_pattern::GestureId,
+        name: String,
+    },
+    /// Changes a gesture's strike; every pattern that uses it must stay valid.
+    ChangeGesture {
+        gesture: mc_pattern::GestureId,
+        strike: mc_pattern::Strike,
+    },
+    /// Removes a gesture no pattern uses.
+    RemoveGesture {
+        gesture: mc_pattern::GestureId,
+    },
+}
+
+/// The lanes of a new pattern (ADR-034 decision 13.2).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum LaneLayout {
+    /// One strum lane (voice 1).
+    Strum,
+    /// Thumb (voice 1) and fingers (voice 2).
+    ThumbFingers,
 }
 
 /// The arguments of `ApplyPattern`, as plain values.

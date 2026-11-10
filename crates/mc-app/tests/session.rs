@@ -568,3 +568,43 @@ fn c6_unsaved_work_ignores_an_untouched_new_document() {
     .unwrap();
     assert!(!opened.has_unsaved_work());
 }
+
+/// A command that makes a saved document dirty says so, and an undo back to the saved
+/// state says it is clean again. (Before 6a-5b the transition was compared after the
+/// change on both sides, so these events were never sent by commands or undo.)
+#[test]
+fn dirty_transitions_of_commands_and_undo_are_announced() {
+    let store = MemStore::default();
+    let mut s = session(2);
+    let t = first_track(&s);
+    s.save_as(&store, Path::new("p"), &app()).unwrap();
+    let dirty = |out: &mc_app::CommandOutcome| -> Vec<bool> {
+        out.events
+            .iter()
+            .filter_map(|e| match e.payload {
+                EventPayload::App(AppEvent::DirtyChanged { dirty }) => Some(dirty),
+                _ => None,
+            })
+            .collect()
+    };
+    let index = s.score().track(t).unwrap().bar(0).unwrap().voices[0]
+        .beats
+        .len();
+    let out = s
+        .execute(cmd(
+            1,
+            Command::Score(ScoreCommand::InsertBeat {
+                track: t,
+                bar: 0,
+                voice: 0,
+                index,
+                duration: mc_app::DurationSpec::plain(2),
+            }),
+        ))
+        .unwrap();
+    assert_eq!(dirty(&out), [true]);
+    let out = s.undo().unwrap();
+    assert_eq!(dirty(&out), [false]);
+    let out = s.redo().unwrap();
+    assert_eq!(dirty(&out), [true]);
+}

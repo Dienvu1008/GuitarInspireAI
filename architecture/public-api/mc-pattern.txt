@@ -1,4 +1,265 @@
 pub mod mc_pattern
+pub mod mc_pattern::grid
+pub enum mc_pattern::grid::CellKind
+pub mc_pattern::grid::CellKind::Gesture(mc_pattern::GestureId)
+pub mc_pattern::grid::CellKind::Hold
+pub mc_pattern::grid::CellKind::Rest
+pub mc_pattern::grid::CellKind::Strike
+impl core::clone::Clone for mc_pattern::grid::CellKind
+pub fn mc_pattern::grid::CellKind::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::grid::CellKind
+impl core::cmp::PartialEq for mc_pattern::grid::CellKind
+pub fn mc_pattern::grid::CellKind::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::grid::CellKind
+pub fn mc_pattern::grid::CellKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::grid::CellKind
+impl core::marker::Freeze for mc_pattern::grid::CellKind
+impl core::marker::Send for mc_pattern::grid::CellKind
+impl core::marker::Sync for mc_pattern::grid::CellKind
+impl core::marker::Unpin for mc_pattern::grid::CellKind
+impl core::marker::UnsafeUnpin for mc_pattern::grid::CellKind
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::grid::CellKind
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::grid::CellKind
+pub enum mc_pattern::grid::Edit
+pub mc_pattern::grid::Edit::AddSpan
+pub mc_pattern::grid::Edit::AddSpan::first: usize
+pub mc_pattern::grid::Edit::AddSpan::lane: mc_pattern::LaneId
+pub mc_pattern::grid::Edit::AddSpan::last: usize
+pub mc_pattern::grid::Edit::AddSpan::technique: mc_pattern::Technique
+pub mc_pattern::grid::Edit::Delete
+pub mc_pattern::grid::Edit::Delete::first: usize
+pub mc_pattern::grid::Edit::Delete::lane: mc_pattern::LaneId
+pub mc_pattern::grid::Edit::Delete::last: usize
+pub mc_pattern::grid::Edit::Move
+pub mc_pattern::grid::Edit::Move::index: usize
+pub mc_pattern::grid::Edit::Move::lane: mc_pattern::LaneId
+pub mc_pattern::grid::Edit::Move::to: mc_pattern::grid::Cell
+pub mc_pattern::grid::Edit::Place
+pub mc_pattern::grid::Edit::Place::action: mc_pattern::Action
+pub mc_pattern::grid::Edit::Place::at: mc_pattern::grid::Cell
+pub mc_pattern::grid::Edit::Place::cells: u8
+pub mc_pattern::grid::Edit::Place::lane: mc_pattern::LaneId
+pub mc_pattern::grid::Edit::RemoveSpan
+pub mc_pattern::grid::Edit::RemoveSpan::index: usize
+pub mc_pattern::grid::Edit::Resize
+pub mc_pattern::grid::Edit::Resize::cells: u8
+pub mc_pattern::grid::Edit::Resize::index: usize
+pub mc_pattern::grid::Edit::Resize::lane: mc_pattern::LaneId
+pub mc_pattern::grid::Edit::Resize::parts: u8
+pub mc_pattern::grid::Edit::SetAction
+pub mc_pattern::grid::Edit::SetAction::action: mc_pattern::Action
+pub mc_pattern::grid::Edit::SetAction::index: usize
+pub mc_pattern::grid::Edit::SetAction::lane: mc_pattern::LaneId
+pub mc_pattern::grid::Edit::SetDirection
+pub mc_pattern::grid::Edit::SetDirection::direction: core::option::Option<mc_pattern::Direction>
+pub mc_pattern::grid::Edit::SetDirection::first: usize
+pub mc_pattern::grid::Edit::SetDirection::lane: mc_pattern::LaneId
+pub mc_pattern::grid::Edit::SetDirection::last: usize
+pub mc_pattern::grid::Edit::SetLength
+pub mc_pattern::grid::Edit::SetLength::length: mc_theory::rational::Rational
+pub mc_pattern::grid::Edit::SetMeta
+pub mc_pattern::grid::Edit::SetMeta::meta: mc_pattern::PatternMeta
+pub mc_pattern::grid::Edit::SetMeter
+pub mc_pattern::grid::Edit::SetMeter::meter: core::option::Option<mc_theory::time::TimeSignature>
+pub mc_pattern::grid::Edit::SetName
+pub mc_pattern::grid::Edit::SetName::name: alloc::string::String
+pub mc_pattern::grid::Edit::SetTechnique
+pub mc_pattern::grid::Edit::SetTechnique::index: usize
+pub mc_pattern::grid::Edit::SetTechnique::lane: mc_pattern::LaneId
+pub mc_pattern::grid::Edit::SetTechnique::on: bool
+pub mc_pattern::grid::Edit::SetTechnique::technique: mc_pattern::Technique
+pub mc_pattern::grid::Edit::ToggleTarget
+pub mc_pattern::grid::Edit::ToggleTarget::index: usize
+pub mc_pattern::grid::Edit::ToggleTarget::lane: mc_pattern::LaneId
+pub mc_pattern::grid::Edit::ToggleTarget::selector: mc_pattern::StringSelector
+impl core::clone::Clone for mc_pattern::grid::Edit
+pub fn mc_pattern::grid::Edit::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::grid::Edit
+impl core::cmp::PartialEq for mc_pattern::grid::Edit
+pub fn mc_pattern::grid::Edit::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::grid::Edit
+pub fn mc_pattern::grid::Edit::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::grid::Edit
+impl core::marker::Freeze for mc_pattern::grid::Edit
+impl core::marker::Send for mc_pattern::grid::Edit
+impl core::marker::Sync for mc_pattern::grid::Edit
+impl core::marker::Unpin for mc_pattern::grid::Edit
+impl core::marker::UnsafeUnpin for mc_pattern::grid::Edit
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::grid::Edit
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::grid::Edit
+pub enum mc_pattern::grid::GridError
+pub mc_pattern::grid::GridError::BadCell
+pub mc_pattern::grid::GridError::BadCell::cell: mc_pattern::grid::Cell
+pub mc_pattern::grid::GridError::BadRun
+pub mc_pattern::grid::GridError::BadRun::first: usize
+pub mc_pattern::grid::GridError::BadRun::last: usize
+pub mc_pattern::grid::GridError::BadSnap
+pub mc_pattern::grid::GridError::BadSnap::parts: u8
+pub mc_pattern::grid::GridError::LastTarget
+pub mc_pattern::grid::GridError::LastTarget::index: usize
+pub mc_pattern::grid::GridError::LastTarget::lane: mc_pattern::LaneId
+pub mc_pattern::grid::GridError::NoStrikeInRun
+pub mc_pattern::grid::GridError::NoStrikeInRun::first: usize
+pub mc_pattern::grid::GridError::NoStrikeInRun::lane: mc_pattern::LaneId
+pub mc_pattern::grid::GridError::NoStrikeInRun::last: usize
+pub mc_pattern::grid::GridError::NoSuchLane
+pub mc_pattern::grid::GridError::NoSuchLane::lane: mc_pattern::LaneId
+pub mc_pattern::grid::GridError::NoSuchSpan
+pub mc_pattern::grid::GridError::NoSuchSpan::index: usize
+pub mc_pattern::grid::GridError::NoSuchStep
+pub mc_pattern::grid::GridError::NoSuchStep::index: usize
+pub mc_pattern::grid::GridError::NoSuchStep::lane: mc_pattern::LaneId
+pub mc_pattern::grid::GridError::NotAStrike
+pub mc_pattern::grid::GridError::NotAStrike::index: usize
+pub mc_pattern::grid::GridError::NotAStrike::lane: mc_pattern::LaneId
+pub mc_pattern::grid::GridError::TimeOverflow
+pub mc_pattern::grid::GridError::UnwritableLength
+pub mc_pattern::grid::GridError::UnwritableLength::length: mc_theory::rational::Rational
+pub mc_pattern::grid::GridError::WouldReorder
+pub mc_pattern::grid::GridError::WouldReorder::index: usize
+pub mc_pattern::grid::GridError::WouldReorder::lane: mc_pattern::LaneId
+impl core::clone::Clone for mc_pattern::grid::GridError
+pub fn mc_pattern::grid::GridError::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::grid::GridError
+impl core::cmp::PartialEq for mc_pattern::grid::GridError
+pub fn mc_pattern::grid::GridError::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::grid::GridError
+pub fn mc_pattern::grid::GridError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_pattern::grid::GridError
+pub fn mc_pattern::grid::GridError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::grid::GridError
+impl core::marker::Freeze for mc_pattern::grid::GridError
+impl core::marker::Send for mc_pattern::grid::GridError
+impl core::marker::Sync for mc_pattern::grid::GridError
+impl core::marker::Unpin for mc_pattern::grid::GridError
+impl core::marker::UnsafeUnpin for mc_pattern::grid::GridError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::grid::GridError
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::grid::GridError
+pub enum mc_pattern::grid::Row
+pub mc_pattern::grid::Row::Gesture(mc_pattern::GestureId)
+pub mc_pattern::grid::Row::Selector(mc_pattern::StringSelector)
+impl core::clone::Clone for mc_pattern::grid::Row
+pub fn mc_pattern::grid::Row::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::grid::Row
+impl core::cmp::PartialEq for mc_pattern::grid::Row
+pub fn mc_pattern::grid::Row::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::grid::Row
+pub fn mc_pattern::grid::Row::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_pattern::grid::Row
+pub fn mc_pattern::grid::Row::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_pattern::grid::Row
+impl core::marker::StructuralPartialEq for mc_pattern::grid::Row
+impl core::marker::Freeze for mc_pattern::grid::Row
+impl core::marker::Send for mc_pattern::grid::Row
+impl core::marker::Sync for mc_pattern::grid::Row
+impl core::marker::Unpin for mc_pattern::grid::Row
+impl core::marker::UnsafeUnpin for mc_pattern::grid::Row
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::grid::Row
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::grid::Row
+pub struct mc_pattern::grid::Cell
+pub mc_pattern::grid::Cell::beat: u32
+pub mc_pattern::grid::Cell::cell: u8
+pub mc_pattern::grid::Cell::parts: u8
+impl core::clone::Clone for mc_pattern::grid::Cell
+pub fn mc_pattern::grid::Cell::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::grid::Cell
+impl core::cmp::PartialEq for mc_pattern::grid::Cell
+pub fn mc_pattern::grid::Cell::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::grid::Cell
+pub fn mc_pattern::grid::Cell::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_pattern::grid::Cell
+pub fn mc_pattern::grid::Cell::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_pattern::grid::Cell
+impl core::marker::StructuralPartialEq for mc_pattern::grid::Cell
+impl core::marker::Freeze for mc_pattern::grid::Cell
+impl core::marker::Send for mc_pattern::grid::Cell
+impl core::marker::Sync for mc_pattern::grid::Cell
+impl core::marker::Unpin for mc_pattern::grid::Cell
+impl core::marker::UnsafeUnpin for mc_pattern::grid::Cell
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::grid::Cell
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::grid::Cell
+pub struct mc_pattern::grid::GridSpan
+pub mc_pattern::grid::GridSpan::end: mc_theory::rational::Rational
+pub mc_pattern::grid::GridSpan::first: usize
+pub mc_pattern::grid::GridSpan::index: usize
+pub mc_pattern::grid::GridSpan::lane: mc_pattern::LaneId
+pub mc_pattern::grid::GridSpan::last: usize
+pub mc_pattern::grid::GridSpan::start: mc_theory::rational::Rational
+pub mc_pattern::grid::GridSpan::technique: mc_pattern::Technique
+impl core::clone::Clone for mc_pattern::grid::GridSpan
+pub fn mc_pattern::grid::GridSpan::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::grid::GridSpan
+impl core::cmp::PartialEq for mc_pattern::grid::GridSpan
+pub fn mc_pattern::grid::GridSpan::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::grid::GridSpan
+pub fn mc_pattern::grid::GridSpan::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::grid::GridSpan
+impl core::marker::Freeze for mc_pattern::grid::GridSpan
+impl core::marker::Send for mc_pattern::grid::GridSpan
+impl core::marker::Sync for mc_pattern::grid::GridSpan
+impl core::marker::Unpin for mc_pattern::grid::GridSpan
+impl core::marker::UnsafeUnpin for mc_pattern::grid::GridSpan
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::grid::GridSpan
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::grid::GridSpan
+pub struct mc_pattern::grid::GridStep
+pub mc_pattern::grid::GridStep::cell: core::option::Option<mc_pattern::grid::Cell>
+pub mc_pattern::grid::GridStep::direction: core::option::Option<mc_pattern::Direction>
+pub mc_pattern::grid::GridStep::end: mc_theory::rational::Rational
+pub mc_pattern::grid::GridStep::index: usize
+pub mc_pattern::grid::GridStep::kind: mc_pattern::grid::CellKind
+pub mc_pattern::grid::GridStep::lane: mc_pattern::LaneId
+pub mc_pattern::grid::GridStep::onset: mc_theory::rational::Rational
+pub mc_pattern::grid::GridStep::rows: alloc::vec::Vec<usize>
+pub mc_pattern::grid::GridStep::span_techniques: mc_pattern::TechniqueSet
+pub mc_pattern::grid::GridStep::techniques: mc_pattern::TechniqueSet
+pub mc_pattern::grid::GridStep::value: mc_theory::duration::NoteValue
+impl core::clone::Clone for mc_pattern::grid::GridStep
+pub fn mc_pattern::grid::GridStep::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::grid::GridStep
+impl core::cmp::PartialEq for mc_pattern::grid::GridStep
+pub fn mc_pattern::grid::GridStep::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::grid::GridStep
+pub fn mc_pattern::grid::GridStep::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::grid::GridStep
+impl core::marker::Freeze for mc_pattern::grid::GridStep
+impl core::marker::Send for mc_pattern::grid::GridStep
+impl core::marker::Sync for mc_pattern::grid::GridStep
+impl core::marker::Unpin for mc_pattern::grid::GridStep
+impl core::marker::UnsafeUnpin for mc_pattern::grid::GridStep
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::grid::GridStep
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::grid::GridStep
+pub struct mc_pattern::grid::GridView
+pub mc_pattern::grid::GridView::beat_length: mc_theory::rational::Rational
+pub mc_pattern::grid::GridView::lanes: alloc::vec::Vec<mc_pattern::LaneId>
+pub mc_pattern::grid::GridView::length: mc_theory::rational::Rational
+pub mc_pattern::grid::GridView::meter: core::option::Option<mc_theory::time::TimeSignature>
+pub mc_pattern::grid::GridView::rows: alloc::vec::Vec<(mc_pattern::grid::Row, alloc::string::String)>
+pub mc_pattern::grid::GridView::snaps: alloc::vec::Vec<u8>
+pub mc_pattern::grid::GridView::spans: alloc::vec::Vec<mc_pattern::grid::GridSpan>
+pub mc_pattern::grid::GridView::steps: alloc::vec::Vec<mc_pattern::grid::GridStep>
+impl core::clone::Clone for mc_pattern::grid::GridView
+pub fn mc_pattern::grid::GridView::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::grid::GridView
+impl core::cmp::PartialEq for mc_pattern::grid::GridView
+pub fn mc_pattern::grid::GridView::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::grid::GridView
+pub fn mc_pattern::grid::GridView::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::grid::GridView
+impl core::marker::Freeze for mc_pattern::grid::GridView
+impl core::marker::Send for mc_pattern::grid::GridView
+impl core::marker::Sync for mc_pattern::grid::GridView
+impl core::marker::Unpin for mc_pattern::grid::GridView
+impl core::marker::UnsafeUnpin for mc_pattern::grid::GridView
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::grid::GridView
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::grid::GridView
+pub const mc_pattern::grid::SNAPS: [u8; 6]
+pub fn mc_pattern::grid::beat_length(core::option::Option<mc_theory::time::TimeSignature>) -> mc_theory::rational::Rational
+pub fn mc_pattern::grid::cell_onset(core::option::Option<mc_theory::time::TimeSignature>, mc_pattern::grid::Cell) -> core::result::Result<mc_theory::rational::Rational, mc_pattern::grid::GridError>
+pub fn mc_pattern::grid::cells_length(core::option::Option<mc_theory::time::TimeSignature>, u8, u8) -> core::result::Result<mc_theory::rational::Rational, mc_pattern::grid::GridError>
+pub fn mc_pattern::grid::edit(&mc_pattern::PatternParts, &mc_pattern::grid::Edit) -> core::result::Result<mc_pattern::PatternParts, mc_pattern::grid::GridError>
+pub fn mc_pattern::grid::selector_label(&mc_pattern::StringSelector) -> alloc::string::String
+pub fn mc_pattern::grid::single_value(mc_theory::rational::Rational) -> core::option::Option<mc_theory::duration::NoteValue>
+pub fn mc_pattern::grid::view(&mc_pattern::PatternParts, &mc_pattern::PatternLibrary, &[u8]) -> core::result::Result<mc_pattern::grid::GridView, mc_pattern::grid::GridError>
 pub mod mc_pattern::text
 pub enum mc_pattern::text::ParseErrorKind
 pub mc_pattern::text::ParseErrorKind::BadDuration

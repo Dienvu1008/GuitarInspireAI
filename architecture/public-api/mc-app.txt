@@ -176,6 +176,50 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_app::infra::SystemEntropy
 impl core::panic::unwind_safe::UnwindSafe for mc_app::infra::SystemEntropy
 pub fn mc_app::infra::cleanup_temp_files(&std::path::Path) -> usize
 pub fn mc_app::infra::modified_unix_millis(&std::path::Path) -> core::option::Option<u64>
+pub mod mc_app::library
+pub enum mc_app::library::LibraryError
+pub mc_app::library::LibraryError::Grid(mc_pattern::grid::GridError)
+pub mc_app::library::LibraryError::Rules(alloc::vec::Vec<mc_pattern::error::PatternError>)
+impl mc_app::library::LibraryError
+pub fn mc_app::library::LibraryError::rule(&self) -> &'static str
+impl core::clone::Clone for mc_app::library::LibraryError
+pub fn mc_app::library::LibraryError::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::library::LibraryError
+impl core::cmp::PartialEq for mc_app::library::LibraryError
+pub fn mc_app::library::LibraryError::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::library::LibraryError
+pub fn mc_app::library::LibraryError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for mc_app::library::LibraryError
+pub fn mc_app::library::LibraryError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_app::library::LibraryError
+impl core::marker::Freeze for mc_app::library::LibraryError
+impl core::marker::Send for mc_app::library::LibraryError
+impl core::marker::Sync for mc_app::library::LibraryError
+impl core::marker::Unpin for mc_app::library::LibraryError
+impl core::marker::UnsafeUnpin for mc_app::library::LibraryError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::library::LibraryError
+impl core::panic::unwind_safe::UnwindSafe for mc_app::library::LibraryError
+pub struct mc_app::library::LibraryOutcome
+pub mc_app::library::LibraryOutcome::gesture: core::option::Option<mc_pattern::ids::GestureId>
+pub mc_app::library::LibraryOutcome::pattern: core::option::Option<mc_pattern::ids::PatternId>
+impl core::clone::Clone for mc_app::library::LibraryOutcome
+pub fn mc_app::library::LibraryOutcome::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::library::LibraryOutcome
+impl core::cmp::PartialEq for mc_app::library::LibraryOutcome
+pub fn mc_app::library::LibraryOutcome::eq(&self, &Self) -> bool
+impl core::default::Default for mc_app::library::LibraryOutcome
+pub fn mc_app::library::LibraryOutcome::default() -> Self
+impl core::fmt::Debug for mc_app::library::LibraryOutcome
+pub fn mc_app::library::LibraryOutcome::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::library::LibraryOutcome
+impl core::marker::StructuralPartialEq for mc_app::library::LibraryOutcome
+impl core::marker::Freeze for mc_app::library::LibraryOutcome
+impl core::marker::Send for mc_app::library::LibraryOutcome
+impl core::marker::Sync for mc_app::library::LibraryOutcome
+impl core::marker::Unpin for mc_app::library::LibraryOutcome
+impl core::marker::UnsafeUnpin for mc_app::library::LibraryOutcome
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::library::LibraryOutcome
+impl core::panic::unwind_safe::UnwindSafe for mc_app::library::LibraryOutcome
 pub mod mc_app::notation
 pub use mc_app::notation::BarLayout
 pub use mc_app::notation::Glyph
@@ -561,6 +605,7 @@ pub mc_app::AppEvent::MixChanged::track: mc_score::ids::TrackId
 pub mc_app::AppEvent::MuteChanged
 pub mc_app::AppEvent::MuteChanged::muted: bool
 pub mc_app::AppEvent::MuteChanged::track: mc_score::ids::TrackId
+pub mc_app::AppEvent::PatternLibraryChanged
 pub mc_app::AppEvent::PlaybackStateChanged
 pub mc_app::AppEvent::PlaybackStateChanged::state: mc_app::transport::PlaybackState
 pub mc_app::AppEvent::SoloChanged
@@ -611,6 +656,7 @@ pub mc_app::CommandError::Constraint::message: alloc::string::String
 pub mc_app::CommandError::Constraint::rule: &'static str
 pub mc_app::CommandError::Domain(mc_score::error::DomainError)
 pub mc_app::CommandError::Guitar(mc_guitar::error::GuitarError)
+pub mc_app::CommandError::Library(mc_app::library::LibraryError)
 pub mc_app::CommandError::NothingToRedo
 pub mc_app::CommandError::NothingToUndo
 pub mc_app::CommandError::Pattern(mc_app::pattern::ApplyError)
@@ -625,10 +671,14 @@ pub fn mc_app::CommandError::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::CommandError
 impl core::cmp::PartialEq for mc_app::CommandError
 pub fn mc_app::CommandError::eq(&self, &Self) -> bool
+impl core::convert::From<alloc::vec::Vec<mc_pattern::error::PatternError>> for mc_app::CommandError
+pub fn mc_app::CommandError::from(alloc::vec::Vec<mc_pattern::error::PatternError>) -> Self
 impl core::convert::From<mc_app::pattern::ApplyError> for mc_app::CommandError
 pub fn mc_app::CommandError::from(mc_app::pattern::ApplyError) -> Self
 impl core::convert::From<mc_guitar::error::GuitarError> for mc_app::CommandError
 pub fn mc_app::CommandError::from(mc_guitar::error::GuitarError) -> Self
+impl core::convert::From<mc_pattern::grid::GridError> for mc_app::CommandError
+pub fn mc_app::CommandError::from(mc_pattern::grid::GridError) -> Self
 impl core::convert::From<mc_score::error::DomainError> for mc_app::CommandError
 pub fn mc_app::CommandError::from(mc_score::error::DomainError) -> Self
 impl core::convert::From<mc_theory::error::TheoryError> for mc_app::CommandError
@@ -683,6 +733,25 @@ impl core::marker::Unpin for mc_app::GuitarCommand
 impl core::marker::UnsafeUnpin for mc_app::GuitarCommand
 impl core::panic::unwind_safe::RefUnwindSafe for mc_app::GuitarCommand
 impl core::panic::unwind_safe::UnwindSafe for mc_app::GuitarCommand
+pub enum mc_app::LaneLayout
+pub mc_app::LaneLayout::Strum
+pub mc_app::LaneLayout::ThumbFingers
+impl core::clone::Clone for mc_app::LaneLayout
+pub fn mc_app::LaneLayout::clone(&self) -> Self
+impl core::cmp::Eq for mc_app::LaneLayout
+impl core::cmp::PartialEq for mc_app::LaneLayout
+pub fn mc_app::LaneLayout::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_app::LaneLayout
+pub fn mc_app::LaneLayout::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_app::LaneLayout
+impl core::marker::StructuralPartialEq for mc_app::LaneLayout
+impl core::marker::Freeze for mc_app::LaneLayout
+impl core::marker::Send for mc_app::LaneLayout
+impl core::marker::Sync for mc_app::LaneLayout
+impl core::marker::Unpin for mc_app::LaneLayout
+impl core::marker::UnsafeUnpin for mc_app::LaneLayout
+impl core::panic::unwind_safe::RefUnwindSafe for mc_app::LaneLayout
+impl core::panic::unwind_safe::UnwindSafe for mc_app::LaneLayout
 pub enum mc_app::OpenError
 pub mc_app::OpenError::Load(mc_project::error::LoadError)
 pub mc_app::OpenError::Store(mc_app::ports::StoreError)
@@ -706,6 +775,34 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_app::OpenError
 impl core::panic::unwind_safe::UnwindSafe for mc_app::OpenError
 pub enum mc_app::PatternCommand
 pub mc_app::PatternCommand::ApplyPattern(mc_app::ApplyPattern)
+pub mc_app::PatternCommand::ChangeGesture
+pub mc_app::PatternCommand::ChangeGesture::gesture: mc_pattern::ids::GestureId
+pub mc_app::PatternCommand::ChangeGesture::strike: mc_pattern::model::Strike
+pub mc_app::PatternCommand::DefineGesture
+pub mc_app::PatternCommand::DefineGesture::name: alloc::string::String
+pub mc_app::PatternCommand::DefineGesture::strike: mc_pattern::model::Strike
+pub mc_app::PatternCommand::DefinePattern
+pub mc_app::PatternCommand::DefinePattern::parts: mc_pattern::model::PatternParts
+pub mc_app::PatternCommand::EditPattern
+pub mc_app::PatternCommand::EditPattern::edit: mc_pattern::grid::Edit
+pub mc_app::PatternCommand::EditPattern::pattern: mc_pattern::ids::PatternId
+pub mc_app::PatternCommand::GestureFromStep
+pub mc_app::PatternCommand::GestureFromStep::index: usize
+pub mc_app::PatternCommand::GestureFromStep::lane: mc_pattern::model::LaneId
+pub mc_app::PatternCommand::GestureFromStep::name: alloc::string::String
+pub mc_app::PatternCommand::GestureFromStep::pattern: mc_pattern::ids::PatternId
+pub mc_app::PatternCommand::NewPattern
+pub mc_app::PatternCommand::NewPattern::layout: mc_app::LaneLayout
+pub mc_app::PatternCommand::NewPattern::length: mc_theory::rational::Rational
+pub mc_app::PatternCommand::NewPattern::meter: core::option::Option<mc_theory::time::TimeSignature>
+pub mc_app::PatternCommand::NewPattern::name: alloc::string::String
+pub mc_app::PatternCommand::RemoveGesture
+pub mc_app::PatternCommand::RemoveGesture::gesture: mc_pattern::ids::GestureId
+pub mc_app::PatternCommand::RemovePattern
+pub mc_app::PatternCommand::RemovePattern::pattern: mc_pattern::ids::PatternId
+pub mc_app::PatternCommand::RenameGesture
+pub mc_app::PatternCommand::RenameGesture::gesture: mc_pattern::ids::GestureId
+pub mc_app::PatternCommand::RenameGesture::name: alloc::string::String
 impl core::clone::Clone for mc_app::PatternCommand
 pub fn mc_app::PatternCommand::clone(&self) -> Self
 impl core::cmp::PartialEq for mc_app::PatternCommand
@@ -1084,6 +1181,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_app::CommandId
 impl core::panic::unwind_safe::UnwindSafe for mc_app::CommandId
 pub struct mc_app::CommandOutcome
 pub mc_app::CommandOutcome::events: alloc::vec::Vec<mc_app::EventEnvelope>
+pub mc_app::CommandOutcome::library: core::option::Option<mc_app::library::LibraryOutcome>
 pub mc_app::CommandOutcome::pattern: core::option::Option<mc_app::pattern::PatternReport>
 pub mc_app::CommandOutcome::revision: mc_app::Revision
 impl core::clone::Clone for mc_app::CommandOutcome

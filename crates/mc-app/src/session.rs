@@ -24,6 +24,8 @@ pub struct CommandOutcome {
     pub events: Vec<EventEnvelope>,
     /// What `ApplyPattern` wrote (ADR-034 section 7); `None` for other commands.
     pub pattern: Option<crate::pattern::PatternReport>,
+    /// What a library command created (6a-5b); None for other commands.
+    pub library: Option<crate::library::LibraryOutcome>,
 }
 
 /// A tuner reading mapped to a track's strings (ADR-029 T8): the nearest open string
@@ -258,6 +260,15 @@ impl DocumentSession {
                 actual: self.revision,
             });
         }
+        if let Command::Pattern(c) = &env.command
+            && crate::library::is_library_command(c)
+        {
+            let Command::Pattern(c) = env.command else {
+                unreachable!("checked above")
+            };
+            return self.execute_library(env.id, env.coalesce_key, c);
+        }
+        let was_dirty = self.is_dirty();
         let mut next = self.score.clone(); // structural-sharing snapshot (ADR-016)
         let constraints = self.config.constraints;
         let mut report = None;
@@ -270,14 +281,50 @@ impl DocumentSession {
                 report = Some(r);
                 events
             }
+            Command::Pattern(_) => unreachable!("library commands return above"),
         };
         let before = std::mem::replace(&mut self.score, next);
         self.update_diagnostics(&before);
         let could_undo = self.history.can_undo();
         let could_redo = self.history.can_redo();
-        self.history.record(before, &self.score, env.coalesce_key);
-        let mut outcome = self.commit(Some(env.id), domain, None, could_undo, could_redo);
+        self.history
+            .record(before, None, &self.score, env.coalesce_key);
+        let mut outcome = self.commit(
+            Some(env.id),
+            domain,
+            None,
+            was_dirty,
+            could_undo,
+            could_redo,
+        );
         outcome.pattern = report;
+        Ok(outcome)
+    }
+
+    /// A library command (6a-5b): validated by mc-pattern, one undo step and one
+    /// revision; the score does not change. On error nothing changes.
+    fn execute_library(
+        &mut self,
+        id: CommandId,
+        key: Option<u64>,
+        c: PatternCommand,
+    ) -> Result<CommandOutcome, CommandError> {
+        let (next, created) = crate::library::handle(&self.patterns, c)?;
+        let was_dirty = self.is_dirty();
+        let before = std::mem::replace(&mut self.patterns, next);
+        let could_undo = self.history.can_undo();
+        let could_redo = self.history.can_redo();
+        self.history
+            .record(self.score.clone(), Some(before), &self.score, key);
+        let mut outcome = self.commit(
+            Some(id),
+            Vec::new(),
+            Some(AppEvent::PatternLibraryChanged),
+            was_dirty,
+            could_undo,
+            could_redo,
+        );
+        outcome.library = Some(created);
         Ok(outcome)
     }
 
@@ -319,36 +366,52 @@ impl DocumentSession {
         let (could_undo, could_redo) = (self.history.can_undo(), self.history.can_redo());
         let restored = self
             .history
-            .undo(self.score.clone())
+            .undo(self.score.clone(), &self.patterns)
             .ok_or(CommandError::NothingToUndo)?;
-        let events = diff::changes(&self.score, &restored);
-        let before = std::mem::replace(&mut self.score, restored);
-        self.update_diagnostics(&before);
-        Ok(self.commit(
-            None,
-            events,
-            Some(AppEvent::HistoryApplied),
-            could_undo,
-            could_redo,
-        ))
+        Ok(self.restore(restored, could_undo, could_redo))
     }
 
     pub fn redo(&mut self) -> Result<CommandOutcome, CommandError> {
         let (could_undo, could_redo) = (self.history.can_undo(), self.history.can_redo());
         let restored = self
             .history
-            .redo(self.score.clone())
+            .redo(self.score.clone(), &self.patterns)
             .ok_or(CommandError::NothingToRedo)?;
-        let events = diff::changes(&self.score, &restored);
-        let before = std::mem::replace(&mut self.score, restored);
+        Ok(self.restore(restored, could_undo, could_redo))
+    }
+
+    /// Puts back a state from the history: the score, and the library if that step
+    /// changed it.
+    fn restore(
+        &mut self,
+        state: crate::history::State,
+        could_undo: bool,
+        could_redo: bool,
+    ) -> CommandOutcome {
+        let was_dirty = self.is_dirty();
+        let events = diff::changes(&self.score, &state.score);
+        let before = std::mem::replace(&mut self.score, state.score);
         self.update_diagnostics(&before);
-        Ok(self.commit(
+        let library_changed = state.patterns.is_some();
+        if let Some(p) = state.patterns {
+            self.patterns = p;
+        }
+        let mut outcome = self.commit(
             None,
             events,
             Some(AppEvent::HistoryApplied),
+            was_dirty,
             could_undo,
             could_redo,
-        ))
+        );
+        if library_changed {
+            let extra = self.emit(
+                None,
+                vec![EventPayload::App(AppEvent::PatternLibraryChanged)],
+            );
+            outcome.events.extend(extra.events);
+        }
+        outcome
     }
 
     // ------------------------------------------------------------ transport
@@ -514,10 +577,11 @@ impl DocumentSession {
         cause: Option<CommandId>,
         domain: Vec<DomainEvent>,
         extra: Option<AppEvent>,
+        // Taken before the change: comparing after it would never see a transition.
+        was_dirty: bool,
         could_undo: bool,
         could_redo: bool,
     ) -> CommandOutcome {
-        let was_dirty = self.is_dirty();
         self.revision = Revision(self.revision.0 + 1);
         let mut payloads: Vec<EventPayload> =
             domain.into_iter().map(EventPayload::Domain).collect();
@@ -561,6 +625,7 @@ impl DocumentSession {
             revision: self.revision,
             events,
             pattern: None,
+            library: None,
         }
     }
 

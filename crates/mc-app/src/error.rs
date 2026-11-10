@@ -29,6 +29,9 @@ pub enum CommandError {
     /// The pattern engine refused `ApplyPattern` (ADR-034), including the overwrite
     /// safeguard `WouldOverwrite`.
     Pattern(crate::pattern::ApplyError),
+    /// A library command (6a-5b) was refused: an impossible grid edit, or a result that
+    /// breaks a library rule.
+    Library(crate::library::LibraryError),
 }
 
 impl CommandError {
@@ -41,6 +44,7 @@ impl CommandError {
             CommandError::Guitar(_) => "G",
             CommandError::NothingToUndo | CommandError::NothingToRedo => "E-05",
             CommandError::Pattern(e) => e.rule(),
+            CommandError::Library(e) => e.rule(),
         }
     }
 }
@@ -86,6 +90,7 @@ impl fmt::Display for CommandError {
             CommandError::NothingToUndo => write!(f, "nothing to undo"),
             CommandError::NothingToRedo => write!(f, "nothing to redo"),
             CommandError::Pattern(e) => write!(f, "{}: {e}", e.rule()),
+            CommandError::Library(e) => write!(f, "{}: {e}", e.rule()),
         }
     }
 }

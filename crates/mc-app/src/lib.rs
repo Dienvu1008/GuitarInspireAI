@@ -10,6 +10,7 @@ mod events;
 pub mod guitar;
 mod handlers;
 mod history;
+pub mod library;
 pub mod notation;
 pub mod pattern;
 pub mod ports;
@@ -22,8 +23,8 @@ pub mod infra;
 
 pub use command::{
     ApplyPattern, BeatAddress, ClipBeat, ClipNote, Command, CommandEnvelope, CommandId,
-    DurationSpec, GuitarCommand, InstrumentSpecInput, PatternCommand, Revision, ScoreCommand,
-    TrackCommand,
+    DurationSpec, GuitarCommand, InstrumentSpecInput, LaneLayout, PatternCommand, Revision,
+    ScoreCommand, TrackCommand,
 };
 pub use constraints::Constraints;
 pub use error::{CommandError, OpenError, SaveError};

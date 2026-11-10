@@ -22,6 +22,9 @@ pub enum AppEvent {
     },
     /// Undo or redo replaced content; the ranges in the accompanying domain events say where.
     HistoryApplied,
+    /// The pattern library changed (a library command, or undo or redo of one). The UI
+    /// re-queries the patterns, gestures and grid.
+    PatternLibraryChanged,
     /// The playback transport changed state (started, stopped or failed). Session state
     /// only (Q3, Q6): it never changes the revision or the document.
     PlaybackStateChanged {

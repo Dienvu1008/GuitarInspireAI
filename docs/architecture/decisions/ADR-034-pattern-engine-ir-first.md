@@ -632,6 +632,51 @@ The user accepted 6a-4 and started 6a-5. Like 6a-3, it is built in sub-slices, e
 - **Mutations:** 10 mutations of the loader, the DTO walk, the shape checks and the session (the known entry, the U1 walk of the library, the strike walk, selector fields, action fields, the dirty check, the "no entry for the sample" rule, autosave, unsaved work). 9 were caught. The tenth (returning early after a lane-shape error) gives the same result, because nothing checked after the lanes can fail on a 64-bit target.
 - **Public API:** additions in `mc-project`. Two signatures changed on purpose: `DocumentSession::sample_pattern() -> Option<PatternId>`, and `mc_project::schemas()` now returns three schemas.
 
+### Results of 6a-5b, grid edits and library commands in the core
+
+**Built:**
+- **`mc_pattern::grid`**, the grid front end (section 3, stage 1). Every edit is a pure function from a pattern to a pattern, or a typed `GridError` naming the step, span or cell. The library then validates the result like any other front end.
+  - Edits: place, move, resize and delete steps; set a step's action; toggle a target; set the direction of a run; set or clear a technique flag; add or remove a span; set the length, meter, name and meta.
+  - The view model `grid::view(pattern, library, snaps)`: the cells per beat, the rows with their labels, the lanes, every step (its cell if it is on the grid, the rows it marks, its direction, its own techniques and those from spans), and the span bands. Positions are exact rationals; the UI draws time linearly.
+- **Library commands** (`mc-app`, `PatternCommand`): `NewPattern`, `DefinePattern`, `RemovePattern`, `EditPattern`, `DefineGesture`, `GestureFromStep`, `RenameGesture`, `ChangeGesture`, `RemoveGesture`.
+  - Each is one undo step and one revision, emits `PatternLibraryChanged`, and changes nothing on error. A refusal is `CommandError::Library`, with rule `PE-14` for a grid error or `PT` for a library rule.
+  - The outcome reports a created pattern or gesture (`CommandOutcome.library`).
+- **Undo covers the library.** A history entry holds the library only for steps that changed it, so score edits never copy it. Coalesced steps keep the library from before the first one. Undo and redo of a library step emit `PatternLibraryChanged`.
+- **A pre-existing bug, fixed:** `DirtyChanged` was never sent by commands, undo or redo. The session compared the dirty state after the change on both sides. It now takes it before the change. The Dart UI reads the dirty state directly, so nothing visible changed, but the event now does what it says.
+
+**Interpretations made in 6a-5b, which the user should confirm or change:**
+1. **The grid rules live in `mc-pattern`**, not in `mc-app` or Dart (GR-05): the value of a cell, span bookkeeping, and step order.
+2. **A beat is one unit of the meter** (1/4 in 4/4, 1/8 in 6/8, 1/2 in 2/2), or a quarter without a meter. Compound meters therefore get eighth-note beats, not dotted-quarter beats.
+3. **Snaps are 1, 2, 3, 4, 6 or 8 cells per beat.** 1 (a whole beat) is added to the list of section 9. The snap is view state: the UI keeps it per beat and sends it with every cell. It is not stored in the pattern.
+4. **One written value per step.** A click or a resize over n cells gives exactly one value: plain, dotted (up to three dots), or an undotted triplet. Anything else is `UnwritableLength`, never rounded. A dotted triplet is a valid value but is never produced, because no grid length means it. A test found that 5/16 is exactly a triple-dotted triplet quarter.
+5. **Spans follow their steps.**
+   - A step placed inside a span's run widens it.
+   - Deleting steps narrows, splits nothing, or removes the spans over them; later indices move.
+   - A move never passes another step of the lane (`WouldReorder`), so a span always covers the same steps.
+6. **An edit whose result breaks a rule is refused, with nothing changed.** For example, deleting a strike that a hold continues is refused (PT-05); the user deletes the hold first, or both together.
+7. **A technique on one step is a step flag; on a run it is a span.** A direction on a run sets every strike in it and skips rests, holds and gestures; a run without a strike is refused.
+8. **`GestureFromStep`** defines the gesture from the step's whole strike (targets, direction and techniques) and puts the gesture in that step, in one undo step.
+9. **Grid rows** are Bass, Alt and Treble, then any other `Treble(n)` and strum range the pattern uses, then strings 1 to 6 (or more if the pattern uses them), Strum, and the gestures by name. A step whose onset is not on the grid of its beat is shown with no cell (`cell: None`).
+10. **On the bridge**, `PatternLibraryChanged` is sent as `HistoryApplied` until 6a-5c adds its own event kind; library commands are not on the bridge before then.
+11. `DocumentSession::patterns_mut` stays for tests and fixtures. It is not undoable, and the editor does not use it.
+
+**Evidence:**
+- `crates/mc-pattern/tests/grid.rs` (14 tests):
+  - Snaps and values: 13 cases of plain, dotted and triplet values, and refusals of 5/16 and 5/12. Beat lengths in 4/4, 6/8 and 2/2. Bad snaps and cells.
+  - Each edit and its typed errors, including span widening and shifting on place, all four span cases on delete, and `WouldReorder` both ways.
+  - The view: rows and labels with a gesture, a partial hold, a `Treble(4)` and a strum range, cells on and off the grid, span techniques only on the run, span bands, and the snap continuing after its last entry.
+  - Properties (300 cases each): deleting any run of a random valid pattern keeps every span in range; placing a rest in any cell either validates or clashes with an existing step, and every span keeps covering the same steps; every valid pattern has a view that lists each step once and marks only existing rows.
+- `crates/mc-app/tests/library.rs` (16 tests):
+  - One revision and one undo step per command, with the event.
+  - Undo and redo restore the library. Score and library steps undo independently.
+  - Refused commands change nothing (a grid error, a rule error, an unknown pattern).
+  - `GestureFromStep` in one step; a duplicate name and a non-strike are refused.
+  - Gesture rename and removal rules; dirty state and its events.
+  - Coalescing a score step and two resizes into one step.
+  - A property (120 cases) over random mixed score and library histories: every accepted step is one revision, undoing everything gives back the first score and library, and redoing everything the last ones.
+- `crates/mc-app/tests/session.rs`: dirty transitions of a command, its undo and its redo.
+- **Mutations:** 13 mutations of the grid, the history and the session. 12 were caught. The thirteenth (span techniques without an upper bound) survived; an assertion was added, and it is now caught.
+
 ## Alternatives
 
 - **DSL as the stored form.** Rejected by the user: one syntax would own the data.
