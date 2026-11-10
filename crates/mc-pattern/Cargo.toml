@@ -6,11 +6,11 @@ edition.workspace = true
 rust-version.workspace = true
 publish.workspace = true
 
-# mc-guitar (voicings, chord tones) is added in 6a-3 with binding; the FF-01 matrix
-# already allows it.
 [dependencies]
 mc-theory.workspace = true
 mc-score.workspace = true
+# Voicings for binding (6a-3, ADR-034 section 5).
+mc-guitar.workspace = true
 
 [dev-dependencies]
 proptest.workspace = true

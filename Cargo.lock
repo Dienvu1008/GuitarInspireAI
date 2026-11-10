@@ -1050,6 +1050,7 @@ dependencies = [
 name = "mc-pattern"
 version = "0.1.0"
 dependencies = [
+ "mc-guitar",
  "mc-score",
  "mc-theory",
  "proptest",

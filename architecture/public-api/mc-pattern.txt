@@ -19,6 +19,66 @@ impl core::marker::Unpin for mc_pattern::Action
 impl core::marker::UnsafeUnpin for mc_pattern::Action
 impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Action
 impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Action
+pub enum mc_pattern::BindError
+pub mc_pattern::BindError::EmptyStrike
+pub mc_pattern::BindError::EmptyStrike::step: mc_pattern::StepRef
+pub mc_pattern::BindError::FretOutOfRange
+pub mc_pattern::BindError::FretOutOfRange::fret: u8
+pub mc_pattern::BindError::FretOutOfRange::fret_count: u8
+pub mc_pattern::BindError::FretOutOfRange::string: u8
+pub mc_pattern::BindError::HoldOfShortNote
+pub mc_pattern::BindError::HoldOfShortNote::step: mc_pattern::StepRef
+pub mc_pattern::BindError::HoldOfShortNote::string: u8
+pub mc_pattern::BindError::NoAlternateBass
+pub mc_pattern::BindError::NoAlternateBass::step: mc_pattern::StepRef
+pub mc_pattern::BindError::NoSoundedStrings
+pub mc_pattern::BindError::NoTrebleStrings
+pub mc_pattern::BindError::NoTrebleStrings::step: mc_pattern::StepRef
+pub mc_pattern::BindError::SpanReachesNoAttack
+pub mc_pattern::BindError::SpanReachesNoAttack::span: usize
+pub mc_pattern::BindError::StringNotInVoicing
+pub mc_pattern::BindError::StringNotInVoicing::step: mc_pattern::StepRef
+pub mc_pattern::BindError::StringNotInVoicing::string: u8
+pub mc_pattern::BindError::StringOutOfRange
+pub mc_pattern::BindError::StringOutOfRange::step: mc_pattern::StepRef
+pub mc_pattern::BindError::StringOutOfRange::string: u8
+pub mc_pattern::BindError::StringOutOfRange::strings: u8
+pub mc_pattern::BindError::VoicingStringCount
+pub mc_pattern::BindError::VoicingStringCount::instrument: u8
+pub mc_pattern::BindError::VoicingStringCount::voicing: u8
+impl core::clone::Clone for mc_pattern::BindError
+pub fn mc_pattern::BindError::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::BindError
+impl core::cmp::PartialEq for mc_pattern::BindError
+pub fn mc_pattern::BindError::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::BindError
+pub fn mc_pattern::BindError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::BindError
+impl core::marker::Freeze for mc_pattern::BindError
+impl core::marker::Send for mc_pattern::BindError
+impl core::marker::Sync for mc_pattern::BindError
+impl core::marker::Unpin for mc_pattern::BindError
+impl core::marker::UnsafeUnpin for mc_pattern::BindError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::BindError
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::BindError
+pub enum mc_pattern::BindFailure
+pub mc_pattern::BindFailure::Bind(alloc::vec::Vec<mc_pattern::BindError>)
+pub mc_pattern::BindFailure::Library(alloc::vec::Vec<mc_pattern::PatternError>)
+impl core::clone::Clone for mc_pattern::BindFailure
+pub fn mc_pattern::BindFailure::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::BindFailure
+impl core::cmp::PartialEq for mc_pattern::BindFailure
+pub fn mc_pattern::BindFailure::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::BindFailure
+pub fn mc_pattern::BindFailure::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::BindFailure
+impl core::marker::Freeze for mc_pattern::BindFailure
+impl core::marker::Send for mc_pattern::BindFailure
+impl core::marker::Sync for mc_pattern::BindFailure
+impl core::marker::Unpin for mc_pattern::BindFailure
+impl core::marker::UnsafeUnpin for mc_pattern::BindFailure
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::BindFailure
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::BindFailure
 pub enum mc_pattern::LaneId
 pub mc_pattern::LaneId::Fingers
 pub mc_pattern::LaneId::Strum
@@ -273,6 +333,65 @@ impl core::marker::Unpin for mc_pattern::Technique
 impl core::marker::UnsafeUnpin for mc_pattern::Technique
 impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::Technique
 impl core::panic::unwind_safe::UnwindSafe for mc_pattern::Technique
+pub struct mc_pattern::BoundBeat
+pub mc_pattern::BoundBeat::duration: mc_theory::duration::NoteValue
+pub mc_pattern::BoundBeat::notes: alloc::vec::Vec<mc_pattern::BoundNote>
+pub mc_pattern::BoundBeat::onset: mc_theory::rational::Rational
+pub mc_pattern::BoundBeat::step: usize
+pub mc_pattern::BoundBeat::stroke: core::option::Option<mc_score::model::Stroke>
+impl core::clone::Clone for mc_pattern::BoundBeat
+pub fn mc_pattern::BoundBeat::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::BoundBeat
+impl core::cmp::PartialEq for mc_pattern::BoundBeat
+pub fn mc_pattern::BoundBeat::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::BoundBeat
+pub fn mc_pattern::BoundBeat::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::BoundBeat
+impl core::marker::Freeze for mc_pattern::BoundBeat
+impl core::marker::Send for mc_pattern::BoundBeat
+impl core::marker::Sync for mc_pattern::BoundBeat
+impl core::marker::Unpin for mc_pattern::BoundBeat
+impl core::marker::UnsafeUnpin for mc_pattern::BoundBeat
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::BoundBeat
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::BoundBeat
+pub struct mc_pattern::BoundLane
+pub mc_pattern::BoundLane::beats: alloc::vec::Vec<mc_pattern::BoundBeat>
+pub mc_pattern::BoundLane::lane: mc_pattern::LaneId
+impl core::clone::Clone for mc_pattern::BoundLane
+pub fn mc_pattern::BoundLane::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::BoundLane
+impl core::cmp::PartialEq for mc_pattern::BoundLane
+pub fn mc_pattern::BoundLane::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::BoundLane
+pub fn mc_pattern::BoundLane::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::BoundLane
+impl core::marker::Freeze for mc_pattern::BoundLane
+impl core::marker::Send for mc_pattern::BoundLane
+impl core::marker::Sync for mc_pattern::BoundLane
+impl core::marker::Unpin for mc_pattern::BoundLane
+impl core::marker::UnsafeUnpin for mc_pattern::BoundLane
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::BoundLane
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::BoundLane
+pub struct mc_pattern::BoundNote
+pub mc_pattern::BoundNote::effects: mc_score::model::NoteEffects
+pub mc_pattern::BoundNote::position: mc_theory::fretted::FretPosition
+pub mc_pattern::BoundNote::tie: bool
+impl core::clone::Clone for mc_pattern::BoundNote
+pub fn mc_pattern::BoundNote::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::BoundNote
+impl core::cmp::PartialEq for mc_pattern::BoundNote
+pub fn mc_pattern::BoundNote::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::BoundNote
+pub fn mc_pattern::BoundNote::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_pattern::BoundNote
+impl core::marker::StructuralPartialEq for mc_pattern::BoundNote
+impl core::marker::Freeze for mc_pattern::BoundNote
+impl core::marker::Send for mc_pattern::BoundNote
+impl core::marker::Sync for mc_pattern::BoundNote
+impl core::marker::Unpin for mc_pattern::BoundNote
+impl core::marker::UnsafeUnpin for mc_pattern::BoundNote
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::BoundNote
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::BoundNote
 pub struct mc_pattern::GestureDefinition
 impl mc_pattern::GestureDefinition
 pub fn mc_pattern::GestureDefinition::id(&self) -> mc_pattern::GestureId
@@ -397,6 +516,26 @@ impl core::marker::Unpin for mc_pattern::PatternDefinition
 impl core::marker::UnsafeUnpin for mc_pattern::PatternDefinition
 impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternDefinition
 impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternDefinition
+pub struct mc_pattern::PatternFragment
+pub mc_pattern::PatternFragment::lanes: alloc::vec::Vec<mc_pattern::BoundLane>
+pub mc_pattern::PatternFragment::length: mc_theory::rational::Rational
+pub mc_pattern::PatternFragment::meter: core::option::Option<mc_theory::time::TimeSignature>
+pub mc_pattern::PatternFragment::pattern: mc_pattern::PatternId
+impl core::clone::Clone for mc_pattern::PatternFragment
+pub fn mc_pattern::PatternFragment::clone(&self) -> Self
+impl core::cmp::Eq for mc_pattern::PatternFragment
+impl core::cmp::PartialEq for mc_pattern::PatternFragment
+pub fn mc_pattern::PatternFragment::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_pattern::PatternFragment
+pub fn mc_pattern::PatternFragment::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_pattern::PatternFragment
+impl core::marker::Freeze for mc_pattern::PatternFragment
+impl core::marker::Send for mc_pattern::PatternFragment
+impl core::marker::Sync for mc_pattern::PatternFragment
+impl core::marker::Unpin for mc_pattern::PatternFragment
+impl core::marker::UnsafeUnpin for mc_pattern::PatternFragment
+impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternFragment
+impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternFragment
 pub struct mc_pattern::PatternId(_)
 impl mc_pattern::PatternId
 pub const fn mc_pattern::PatternId::from_raw(u64) -> Self
@@ -425,6 +564,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::PatternId
 impl core::panic::unwind_safe::UnwindSafe for mc_pattern::PatternId
 pub struct mc_pattern::PatternLibrary
 impl mc_pattern::PatternLibrary
+pub fn mc_pattern::PatternLibrary::bind(&self, mc_pattern::PatternId, &mc_guitar::voicing::Voicing, &mc_theory::chord::Chord, &mc_score::model::FrettedInstrument) -> core::result::Result<mc_pattern::PatternFragment, mc_pattern::BindFailure>
 pub fn mc_pattern::PatternLibrary::change_gesture(&mut self, mc_pattern::GestureId, mc_pattern::Strike) -> core::result::Result<(), alloc::vec::Vec<mc_pattern::PatternError>>
 pub fn mc_pattern::PatternLibrary::define_gesture(&mut self, &str, mc_pattern::Strike) -> core::result::Result<mc_pattern::GestureId, alloc::vec::Vec<mc_pattern::PatternError>>
 pub fn mc_pattern::PatternLibrary::define_pattern(&mut self, mc_pattern::PatternParts) -> core::result::Result<mc_pattern::PatternId, alloc::vec::Vec<mc_pattern::PatternError>>
@@ -627,6 +767,7 @@ impl core::marker::UnsafeUnpin for mc_pattern::TechniqueSpan
 impl core::panic::unwind_safe::RefUnwindSafe for mc_pattern::TechniqueSpan
 impl core::panic::unwind_safe::UnwindSafe for mc_pattern::TechniqueSpan
 pub const mc_pattern::KEYWORDS: &[&str]
+pub fn mc_pattern::bind(&mc_pattern::ResolvedPattern, &mc_guitar::voicing::Voicing, &mc_theory::chord::Chord, &mc_score::model::FrettedInstrument) -> core::result::Result<mc_pattern::PatternFragment, alloc::vec::Vec<mc_pattern::BindError>>
 pub fn mc_pattern::check_name(&str) -> core::result::Result<(), mc_pattern::NameProblem>
 pub fn mc_pattern::covers(mc_pattern::StringSelector, mc_pattern::StringSelector) -> bool
 pub fn mc_pattern::name_key(&str) -> alloc::string::String

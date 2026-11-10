@@ -356,6 +356,49 @@ Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern
    - The **bind part of PE-9** ("a gesture used by several patterns binds identically in each; a rename changes no bound result") is checked in **6a-3**, on bound output.
    - Until then both stay open, and neither criterion is counted as met.
 
+## 16. Results of slice 6a-3a, binding (2026-11-10, for user review)
+
+**Built.** `mc_pattern::bind` (and `PatternLibrary::bind`, which resolves gestures at bind time):
+- Inputs: a resolved pattern, one voicing (`mc_guitar::Voicing`), its chord and the track's `FrettedInstrument`.
+- Output: a `PatternFragment` per lane, in pattern time. One `BoundBeat` per strike or hold, with its notes (string 1 first, each string once) and its stroke.
+- `mc-pattern` now also uses `mc-guitar`, as the FF-01 matrix already allowed.
+
+**Section 5 as implemented:**
+- **Order.** S is ordered by string number: the bass is the highest-numbered sounded string, and `Treble(n)` takes the n lowest-numbered sounded strings above it. This is what the four Alt fixtures assume.
+- **Alt.** The fifth's pitch class is root + the degree-5 interval of the chord quality, and the third's uses degree 3. Pitch classes come from tuning, capo and fret, so a capo shape is matched against the sounding chord.
+- **Up-front checks.** Before any selector, the voicing must have one entry per string (`VoicingStringCount`), sound at least one string (`NoSoundedStrings`), and stay within the instrument's frets (`FretOutOfRange`).
+
+**Interpretations made in 6a-3a, which the user should confirm or change:**
+1. **Attacks.** An attack's notes get the strike's techniques plus those of every span that covers its step. The beat gets the strike's direction.
+2. **Holds.**
+   - A hold's notes are tied, on the same strings and frets as the beat before.
+   - They keep only the let ring of the note they continue. Accent and the other flags are not repeated on a tie, and a span over a hold does not change its notes.
+   - A hold has no stroke.
+3. **A hold of a short note is rejected.**
+   - Holding a dead, palm-muted or string-percussive note gives `HoldOfShortNote { step, string }`.
+   - The score would play that tie as a new attack: short techniques end tie chains (ADR-024, ADR-035). So the hold would sound twice.
+4. **A span that reaches no attack is rejected.** A span that covers only holds and rests gives `SpanReachesNoAttack { span }`, so its technique is never silently lost.
+5. **Rests and gaps produce no beat.** Placement (6a-3b) writes them as rests (PT-09).
+
+**Evidence** (`crates/mc-pattern/tests/bind.rs`):
+- The four Alt fixtures give the stated results (C, G and Am string 4; D `NoAlternateBass`), and the fifth-then-third-then-lowest order is tested.
+- A table of 15 voicings covers standard, drop D and DADGAD tunings, with capo 0, 2 and 3, slash chords and an inversion. On each it checks Bass, Treble(1) to Treble(5), Strum, Alt, Absolute on all six strings, and that every note sits at the voicing's fret.
+- StrumRange (either order) and the `+` union are tested.
+- Each typed failure is tested: `StringOutOfRange`, `StringNotInVoicing`, `NoAlternateBass`, `NoTrebleStrings`, `EmptyStrike` and the three voicing checks.
+- Property tests:
+  - 400 random patterns on random voicings, tunings, capos and chords. On success: one beat per strike or hold, every note at the voicing's fret, attacks with exactly the strike's and spans' flags and its direction, and holds as tied continuations. On failure: only typed errors, each naming a real step.
+  - A coverage test shows success, success with holds, and every error kind.
+  - 300 cases where holds must bind: every string sounded, no short technique.
+- The bind part of PE-9: a gesture binds to the same notes and stroke in two patterns, and renames change no bound fragment.
+- Eleven mutation checks on the binder were all caught.
+
+| Id | Result in 6a-3a |
+|---|---|
+| PE-3 | Met |
+| PE-6 | Met at bind level (steps, spans and gestures to notes and beats). Placement (6a-3b) and apply (6a-3c) must keep it; checked again there |
+| PE-9 | Bind part met; with section 14 PE-9 is met, pending review of the interpretations above |
+| PT-02 | Tested (`pt02_`) |
+
 ## Alternatives
 
 - **DSL as the stored form.** Rejected by the user: one syntax would own the data.

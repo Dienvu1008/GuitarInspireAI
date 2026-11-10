@@ -114,6 +114,13 @@ pub struct ResolvedPattern {
     pub spans: Vec<TechniqueSpan>,
 }
 
+/// Why [`PatternLibrary::bind`] failed: an unknown pattern, or binding errors.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum BindFailure {
+    Library(Vec<PatternError>),
+    Bind(Vec<crate::bind::BindError>),
+}
+
 /// Patterns and gestures, with one id counter for both.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PatternLibrary {
@@ -367,6 +374,19 @@ impl PatternLibrary {
             lanes,
             spans: p.parts.spans.clone(),
         })
+    }
+
+    /// Resolves the pattern with the current gestures and binds it to one voicing
+    /// (ADR-034 sections 5 and 6: gestures are expanded at bind time).
+    pub fn bind(
+        &self,
+        id: PatternId,
+        voicing: &mc_guitar::Voicing,
+        chord: &mc_theory::Chord,
+        instrument: &mc_score::FrettedInstrument,
+    ) -> Result<crate::bind::PatternFragment, BindFailure> {
+        let resolved = self.resolve(id).map_err(BindFailure::Library)?;
+        crate::bind::bind(&resolved, voicing, chord, instrument).map_err(BindFailure::Bind)
     }
 
     /// The library as plain data, in ascending id order.
