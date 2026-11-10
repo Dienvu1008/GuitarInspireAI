@@ -261,10 +261,10 @@ Measured on the reference machine (ADR-025). Thresholds are not lowered to match
 | Slice | Content | Criteria |
 |---|---|---|
 | 6a-1 | Techniques in the score (ADR-035), format 1.1 | ADR-035 TQ-1 to TQ-11 |
-| 6a-2 | `mc-pattern`: IR, semantic validation, gestures (in memory) | PE-1, PE-2, PE-9 |
-| 6a-3 | Binding, placing, `ApplyPattern` with fit and overwrite safeguard, through `mc-app` and FFI; a minimal apply dialog for one built-in sample pattern | PE-3 to PE-8, PE-15 |
+| 6a-2 | `mc-pattern`: IR, semantic validation, gestures (in memory) | PE-1 (structural round trip), PE-2, PE-9 (expansion level); decision 15.2 |
+| 6a-3 | Binding, placing, `ApplyPattern` with fit and overwrite safeguard, through `mc-app` and FFI; a minimal apply dialog for one built-in sample pattern | PE-3 to PE-8, PE-15; the bind part of PE-9 (decision 15.2) |
 | 6a-4 | Text DSL front end and printer; confirmed corpus as goldens | PE-10, PE-11 |
-| 6a-5 | Grid editor, gesture palette, library storage (format 1.2) | PE-12 to PE-14 |
+| 6a-5 | Grid editor, gesture palette, library storage (format 1.2) | PE-12 to PE-14; the byte part of PE-1, on the stored DTO (decision 15.2) |
 | later | Section 10 items | Own ADRs and criteria |
 
 ## 13. Decisions (user review of revision 1, 2026-11-09)
@@ -291,7 +291,7 @@ The user made two amendments:
 
 Pattern 7 stays unconfirmed. Everything else is approved, and 6a-1 (ADR-035) begins.
 
-## 14. Results of slice 6a-2 (2026-11-09, for user review)
+## 14. Results of slice 6a-2 (2026-11-09; reviewed, see section 15)
 
 **Built.** A new domain crate, `mc-pattern`.
 - Dependencies: `mc-theory` and `mc-score` only; `mc-guitar` comes with binding in 6a-3. No external crate, as `allowed-deps.toml` requires.
@@ -306,7 +306,7 @@ Pattern 7 stays unconfirmed. Everything else is approved, and 6a-1 (ADR-035) beg
   - `to_parts` and `from_parts`, which revalidate everything.
 - Domain events (bounded-contexts section 4) are not emitted yet: no session consumes them before 6a-3.
 
-**Interpretations made in 6a-2, which the user should confirm or change:**
+**Interpretations made in 6a-2** (confirmed by the user, decision 15.1):
 1. **PT-05 is checked for every voicing.**
    - A hold may select only strings the held strike certainly plays on any voicing. Certain containment means one of:
      - the same selector;
@@ -342,6 +342,19 @@ Pattern 7 stays unconfirmed. Everything else is approved, and 6a-1 (ADR-035) beg
 | PE-9 | **Partly met** | Met at the expansion level: a gesture used by two patterns expands to the same strike in each; renames change no resolved result and no pattern; unknown ids, duplicate names (without case, Vietnamese included) and keywords are typed errors; a gesture in use cannot be removed; a change that would break a pattern changes nothing. **"Binds identically" needs the binder of 6a-3**, and is checked there on bound output. |
 
 Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern` builds for wasm32), FF-07, FF-34. For FF-22, the snapshot `architecture/public-api/mc-pattern.txt` is new and the weekly job now lists the crate.
+
+## 15. Decisions (user review of slice 6a-2, 2026-11-10)
+
+1. **Interpretations 1 to 5 of section 14 are kept:**
+   - PT-05 is checked for every voicing, with no gap and with narrowing;
+   - PT-08 names are letters and digits starting with a letter, with no Unicode normalization;
+   - the provisional keyword list stands;
+   - structural strike checks happen in the semantic stage;
+   - spans may cover rests and holds.
+2. **Two criteria parts move, unchanged in substance:**
+   - The **byte part of PE-1** ("round-trips through its DTO byte for byte") is checked in **6a-5**, on the stored DTO of `mc-project` (format 1.2), together with PE-13.
+   - The **bind part of PE-9** ("a gesture used by several patterns binds identically in each; a rename changes no bound result") is checked in **6a-3**, on bound output.
+   - Until then both stay open, and neither criterion is counted as met.
 
 ## Alternatives
 

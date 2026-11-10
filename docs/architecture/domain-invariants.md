@@ -123,10 +123,10 @@ These are Phase 2 domain and search conventions, not universal music-theory rule
 | PT-02 | Every selector resolves to sounded strings of the given voicing at bind time, or binding fails with a typed error | Pattern | H at bind | Bind stage | Proptest |
 | PT-03 | Within one lane, steps are in onset order and do not overlap (ADR-034) | Pattern | H | Semantic validation stage | Unit, proptest |
 | PT-04 | Durations are valid `NoteValue`s; onsets are non-negative rationals (ADR-034) | Pattern | H | Semantic validation stage | Unit |
-| PT-05 | A `Hold` follows a strike or hold in the same lane and holds only strings the held strike plays (ADR-034). 6a-2 checks this for every voicing and without a gap; see ADR-034 section 14, pending user review | Pattern | H | Semantic validation stage | Unit |
+| PT-05 | A `Hold` follows a strike or hold in the same lane and holds only strings the held strike plays (ADR-034). 6a-2 checks this for every voicing and without a gap (ADR-034 section 14, decision 15.1) | Pattern | H | Semantic validation stage | Unit |
 | PT-06 | Gesture references resolve in the library; no gesture references a gesture in 6a (ADR-034) | Pattern | H | Semantic validation stage | Unit |
 | PT-07 | Technique spans cover existing steps of one lane; combinations are kept and resolved by the ADR-035 precedence (ADR-034) | Pattern | H | Semantic validation stage | Unit |
-| PT-08 | Gesture names are unique without case and never equal a DSL keyword (ADR-034). 6a-2 also requires letters and digits, starting with a letter; see ADR-034 section 14, pending user review | Pattern | H | Library validation | Unit |
+| PT-08 | Gesture names are unique without case and never equal a DSL keyword (ADR-034). 6a-2 also requires letters and digits, starting with a letter (ADR-034 section 14, decision 15.1) | Pattern | H | Library validation | Unit |
 | PT-09 | Gaps in a lane are rests, filled by the binder (ADR-034) | Pattern | Convention | Bind stage | Proptest |
 | P-01 | Every asset reference resolves to an entry in the package | Project | H | Loader | Fixture tests |
 | P-02 | Entry hashes match the manifest | Project | H | Loader (mismatch: typed error, offer recovery) | Corruption tests |
