@@ -1,0 +1,75 @@
+﻿MuseScore check 2026-11-09T17:30:22
+MuseScore: MuseScore4 4.7.5
+E8 open+convert feature-rich -> mid: exit 0, output written
+E8 open+convert feature-rich -> musicxml: exit 0, output written
+E8 open+convert small -> mid: exit 0, output written
+E8 open+convert small -> musicxml: exit 0, output written
+E8 open+convert typical -> mid: exit 0, output written
+E8 open+convert typical -> musicxml: exit 0, output written
+E8 open+convert empty -> mid: exit 0, output written
+E8 open+convert empty -> musicxml: exit 0, output written
+E8 open+convert from-midi -> mid: exit 0, output written
+E8 open+convert from-midi -> musicxml: exit -1073741819, output MISSING
+--- E8 notes: feature-rich (ours vs MuseScore)
+notes: ours 14, MuseScore 13
+  dead (ours 1/64, velocity 40): 2
+      pitch 40 onset 1 ours 1/16 theirs 1919/480
+      pitch 40 onset 9 ours 1/16 theirs 1919/480
+  ours rings longer (let ring): 2
+      pitch 66 onset 19/6 ours 11/6 theirs 53/160
+      pitch 66 onset 67/6 ours 11/6 theirs 53/160
+  same length (MuseScore one tick early): 9
+  ours without a MuseScore note at the same pitch and onset: 1
+      pitch 67 onset 9
+  MuseScore notes without one of ours: 0
+RESULT: 1 difference(s)
+--- E8 notes: typical (ours vs MuseScore)
+notes: ours 9856, MuseScore 9856
+  ours rings longer (let ring): 480
+      pitch 40 onset 213 ours 3 theirs 239/480
+      pitch 40 onset 213 ours 3 theirs 239/480
+      pitch 40 onset 267 ours 1 theirs 239/480
+      pitch 40 onset 267 ours 1 theirs 239/480
+      pitch 40 onset 1113/2 ours 7/2 theirs 239/480
+  same length (MuseScore one tick early): 9376
+  ours without a MuseScore note at the same pitch and onset: 0
+  MuseScore notes without one of ours: 0
+RESULT: match
+--- E9 strings: feature-rich (ours vs MuseScore re-export)
+parts: ours 2, MuseScore 2
+notes with string and fret: ours 10, MuseScore 10
+  part 2 measure 2: ours {(3, 2): 1, (4, 2): 1, (5, 2): 1, (6, 0): 1} theirs {(2, 0): 1, (4, 4): 1, (5, 4): 1, (6, 2): 1}
+measures that differ: 1
+let ring (<tied type="let-ring"/>): ours 1, MuseScore 1
+RESULT: differences
+--- E9 strings: typical (ours vs MuseScore re-export)
+parts: ours 4, MuseScore 4
+notes with string and fret: ours 9600, MuseScore 9600
+measures that differ: 0
+let ring (<tied type="let-ring"/>): ours 552, MuseScore 552
+RESULT: match
+--- E9 strings: from-midi (ours vs MuseScore re-export)
+parts: ours 2, MuseScore 2
+notes with string and fret: ours 20, MuseScore 20
+measures that differ: 0
+let ring (<tied type="let-ring"/>): ours 0, MuseScore 0
+RESULT: match
+TQ-8 open+convert techniques -> musicxml: exit 0, output written
+--- TQ-8 techniques (ours vs MuseScore re-export)
+notes and rests: ours 19, MuseScore 19
+ours without a MuseScore note at the same place: 0
+  accent: ours 11, kept 3, MuseScore-only 0 -> partly kept
+  down-bow: ours 2, kept 2, MuseScore-only 0 -> kept
+  up-bow: ours 1, kept 1, MuseScore-only 0 -> kept
+  notehead x: ours 7, kept 7, MuseScore-only 0 -> kept
+  other-technical: palm mute: ours 4, kept 0, MuseScore-only 0 -> lost; MuseScore wrote instead on those notes: {'tied': 1}
+  other-technical: string percussive: ours 6, kept 0, MuseScore-only 0 -> lost
+  play mute: palm: ours 4, kept 0, MuseScore-only 0 -> lost; MuseScore wrote instead on those notes: {'tied': 1}
+  rest strum: guitarStrumDown: ours 1, kept 0, MuseScore-only 0 -> lost
+  rest strum: guitarStrumUp: ours 0, kept 0, MuseScore-only 0 -> not in our file
+  stroke on a rest: ours 1, kept 0
+RESULT: losses (evidence gap)
+TQ-8 MuseScore file (import): exit 0; accent articulations 3, down-bow 2, up-bow 1, cross noteheads 7, strum symbols 1, PalmMute spanners 0
+TQ-8 PNG: exit 0, files techniques-1.png
+E10 PNG: exit 0, files feature-rich-1.png
+E10 preview: target/musescore-check/preview.png

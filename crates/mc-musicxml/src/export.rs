@@ -522,13 +522,23 @@ fn write_stroke_marks(x: &mut Xml, stroke: Option<Stroke>) {
     }
 }
 
-/// The stroke of a rest, in its own `<technical>`.
-fn write_stroke(x: &mut Xml, stroke: Option<Stroke>) {
-    if stroke.is_some() {
-        x.open("technical", &[]);
-        write_stroke_marks(x, stroke);
-        x.close();
-    }
+/// The stroke of a rest (ADR-035 section 9): a `<direction>` whose `<other-direction>`
+/// names the SMuFL glyph `guitarStrumDown` or `guitarStrumUp`, the MusicXML 4.0
+/// mechanism for a direction symbol without its own element. It is written directly
+/// before the rest, so it sits at the rest's onset, in the rest's voice. A rest has no
+/// `<technical>` playing technique, and MuseScore 4.7.5 drops one there.
+fn write_rest_stroke(x: &mut Xml, stroke: Option<Stroke>, voice: &str) {
+    let glyph = match stroke {
+        Some(Stroke::Down) => "guitarStrumDown",
+        Some(Stroke::Up) => "guitarStrumUp",
+        None => return,
+    };
+    x.open("direction", &[("placement", "above")]);
+    x.open("direction-type", &[]);
+    x.empty("other-direction", &[("smufl", glyph)]);
+    x.close();
+    x.text("voice", &[], voice);
+    x.close();
 }
 
 fn write_tuplet_marks(x: &mut Xml, mark: Bracket) {
@@ -570,14 +580,14 @@ fn write_beat(
         }
     };
     if beat.notes.is_empty() {
+        write_rest_stroke(x, beat.stroke, voice);
         x.open("note", &[]);
         x.empty("rest", &[]);
         x.text("duration", &[], &d);
         common(x);
-        if mark != Bracket::None || beat.stroke.is_some() {
+        if mark != Bracket::None {
             x.open("notations", &[]);
             write_tuplet_marks(x, mark);
-            write_stroke(x, beat.stroke);
             x.close();
         }
         x.close();
@@ -640,8 +650,9 @@ fn write_beat(
         }
         x.text("string", &[], &position.string.get().to_string());
         x.text("fret", &[], &position.fret.0.to_string());
-        // MusicXML 4.0 has no element for these two (ADR-035): written as
-        // <other-technical> and counted. String-percussive is never <golpe/>.
+        // MusicXML 4.0 has no notation element for these two (ADR-035 section 9):
+        // the mark is written as <other-technical> text and counted. String-percussive
+        // is never <golpe/>.
         if note.effects.palm_mute {
             x.text("other-technical", &[], "palm mute");
             report.techniques_approximated += 1;
@@ -652,6 +663,13 @@ fn write_beat(
         }
         x.close();
         x.close();
+        // Palm mute as a playback technique is native: <play> inside a <note> applies
+        // to that note only, and the mute type includes "palm" (ADR-035 section 9).
+        if note.effects.palm_mute {
+            x.open("play", &[]);
+            x.text("mute", &[], "palm");
+            x.close();
+        }
         x.close();
         report.notes += 1;
     }

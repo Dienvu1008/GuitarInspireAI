@@ -18,8 +18,9 @@ Standard library only. Two commands:
   compare.py techniques OURS.musicxml THEIRS.musicxml
       ADR-035 TQ-8: for every note (matched by part, measure, string, fret and
       occurrence) and every rest (by part, measure and occurrence), which of our
-      technique marks MuseScore kept: accent, down-bow, up-bow, x notehead and the
-      <other-technical> texts. Prints per technique "kept", "lost" or "partly kept",
+      technique marks MuseScore kept: accent, down-bow, up-bow, x notehead, the
+      <other-technical> texts, <play><mute>palm</mute></play>, and a strum direction
+      (<other-direction smufl="guitarStrum...">) directly before a rest. Prints per technique "kept", "lost" or "partly kept",
       plus the elements MuseScore wrote instead on those notes. A loss is reported,
       not hidden; the exit status is 1 when anything was lost.
 
@@ -191,7 +192,8 @@ def compare_strings(ours_path: str, theirs_path: str) -> int:
 
 
 TECHNIQUES = ("accent", "down-bow", "up-bow", "notehead x",
-              "other-technical: palm mute", "other-technical: string percussive")
+              "other-technical: palm mute", "other-technical: string percussive",
+              "play mute: palm", "rest strum: guitarStrumDown", "rest strum: guitarStrumUp")
 
 
 def techniques_of(path: str):
@@ -203,9 +205,16 @@ def techniques_of(path: str):
         measures = [e for e in part if _local(e.tag) == "measure"]
         for mi, m in enumerate(measures):
             seen = Counter()
+            strum = None  # smufl glyph of a direction waiting for the next note
             for note in m:
+                if _local(note.tag) == "direction":
+                    for e in note.iter():
+                        if _local(e.tag) == "other-direction" and (e.get("smufl") or "").startswith("guitarStrum"):
+                            strum = e.get("smufl")
+                    continue
                 if _local(note.tag) != "note":
                     continue
+                before, strum = strum, None
                 tags = {}
                 for e in note.iter():
                     tags.setdefault(_local(e.tag), []).append(e)
@@ -227,11 +236,16 @@ def techniques_of(path: str):
                     found.add("notehead x")
                 for e in tags.get("other-technical", []):
                     found.add("other-technical: " + (e.text or "").strip())
+                for e in tags.get("mute", []):
+                    found.add("play mute: " + (e.text or "").strip())
+                if before and "rest" in tags:
+                    found.add("rest strum: " + before)
                 others = {t for t in tags if t not in (
                     "note", "pitch", "step", "octave", "alter", "duration", "voice",
                     "type", "chord", "notations", "technical", "string", "fret",
                     "articulations", "rest", "staff", "stem", "dot", "beam",
-                    "accent", "down-bow", "up-bow", "notehead", "other-technical")}
+                    "accent", "down-bow", "up-bow", "notehead", "other-technical",
+                    "play", "mute")}
                 out[key] = (found, others)
     return out
 
@@ -262,8 +276,9 @@ def compare_techniques(ours_path: str, theirs_path: str) -> int:
         extra = f"; MuseScore wrote instead on those notes: {dict(instead)}" if instead else ""
         print(f"  {name}: ours {len(have)}, kept {len(kept)}, MuseScore-only {len(added)} -> {verdict}{extra}")
     # Rest strokes separately, since a stroke on a rest is a corner case.
-    rests = [k for k, (f, _) in ours.items() if k[2] == "rest" and f & {"down-bow", "up-bow"}]
-    rests_kept = [k for k in rests if k in theirs and ours[k][0] & {"down-bow", "up-bow"} <= theirs[k][0]]
+    strokes = {"down-bow", "up-bow", "rest strum: guitarStrumDown", "rest strum: guitarStrumUp"}
+    rests = [k for k, (f, _) in ours.items() if k[2] == "rest" and f & strokes]
+    rests_kept = [k for k in rests if k in theirs and ours[k][0] & strokes <= theirs[k][0]]
     print(f"  stroke on a rest: ours {len(rests)}, kept {len(rests_kept)}")
     print("RESULT:", "all kept" if not lost_any else "losses (evidence gap)")
     return 0 if not lost_any else 1

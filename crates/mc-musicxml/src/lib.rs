@@ -33,9 +33,10 @@ pub struct MusicXmlReport {
     pub tempo_rounded: usize,
     /// Characters removed from names and markers because XML 1.0 forbids them.
     pub characters_removed: usize,
-    /// Notes whose technique has no MusicXML 4.0 element and is written as
-    /// `<other-technical>` text: palm mute and string-percussive (ADR-035). A note with
-    /// both counts twice.
+    /// Note techniques whose notation mark has no MusicXML 4.0 element and is written
+    /// as `<other-technical>` text: palm mute (its playback is also written natively, as
+    /// `<play><mute>palm</mute></play>`) and string-percussive (ADR-035 section 9). A
+    /// note with both counts twice.
     pub techniques_approximated: usize,
 }
 

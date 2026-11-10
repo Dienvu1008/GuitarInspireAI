@@ -62,6 +62,22 @@ $p = Start-Process -FilePath $MuseScore -ArgumentList @('-o', $target, "$out/tec
 Say ("TQ-8 open+convert techniques -> musicxml: exit {0}, output {1}" -f $p.ExitCode, $(if (Test-Path $target) { 'written' } else { 'MISSING' }))
 Say "--- TQ-8 techniques (ours vs MuseScore re-export)"
 python tools/musescore-check/compare.py techniques "$out/techniques.musicxml" $target 2>&1 | ForEach-Object { Say $_ }
+# TQ-8, import side: what MuseScore keeps in its own file, before its MusicXML exporter.
+$z = "$out/techniques.musescore.mscz"
+Remove-Item $z -ErrorAction SilentlyContinue
+$p = Start-Process -FilePath $MuseScore -ArgumentList @('-o', $z, "$out/techniques.musicxml") `
+    -NoNewWindow -Wait -PassThru -RedirectStandardError "$out/techniques.mscz.stderr.txt"
+if (Test-Path $z) {
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $zip = [IO.Compression.ZipFile]::OpenRead((Resolve-Path $z).Path)
+    $entry = $zip.Entries | Where-Object { $_.FullName -like '*.mscx' } | Select-Object -First 1
+    $reader = New-Object IO.StreamReader($entry.Open()); $mscx = $reader.ReadToEnd(); $reader.Close(); $zip.Dispose()
+    $n = { param($pattern) ([regex]::Matches($mscx, $pattern)).Count }
+    Say ("TQ-8 MuseScore file (import): exit {0}; accent articulations {1}, down-bow {2}, up-bow {3}, cross noteheads {4}, strum symbols {5}, PalmMute spanners {6}" -f `
+        $p.ExitCode, (& $n 'articAccent'), (& $n 'stringsDownBow'), (& $n 'stringsUpBow'), (& $n '<head>cross'), (& $n '<name>guitarStrum'), (& $n 'type="PalmMute"'))
+} else {
+    Say "TQ-8 MuseScore file (import): MISSING"
+}
 Remove-Item "$out/techniques*.png" -ErrorAction SilentlyContinue
 $p = Start-Process -FilePath $MuseScore -ArgumentList @('-o', "$out/techniques.png", "$out/techniques.musicxml") `
     -NoNewWindow -Wait -PassThru

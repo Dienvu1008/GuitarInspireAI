@@ -112,6 +112,7 @@ fn check(score: &Score, xml: &str, report: &MusicXmlReport) {
     let pickup_first = bars.first().is_some_and(|b| b.pickup);
     let mut notes_seen = 0usize;
     let mut approximated = 0usize;
+    let mut rest_strokes = 0usize;
     for (ti, (track, part)) in score.tracks().zip(&parts).enumerate() {
         assert_eq!(list[ti].attribute("id"), part.attribute("id"));
         let measures: Vec<_> = kids(*part, "measure").collect();
@@ -218,9 +219,29 @@ fn check(score: &Score, xml: &str, report: &MusicXmlReport) {
                     if beat.notes.is_empty() {
                         assert!(kid(first, "rest").is_some(), "E3 rest");
                         assert_eq!(xml_beat.len(), 1);
-                        let s = |s| usize::from(beat.stroke == Some(s));
-                        assert_eq!(count(first, "down-bow", None), s(Stroke::Down));
-                        assert_eq!(count(first, "up-bow", None), s(Stroke::Up));
+                        // ADR-035 section 9: a rest's stroke is the direction directly
+                        // before it (SMuFL strum glyph, same voice), never <technical>.
+                        assert!(!has(first, "technical", None), "no technical on a rest");
+                        let before = first.prev_sibling_element();
+                        // Other directions (a tempo change) may precede a rest too.
+                        let glyph = before
+                            .filter(|d| {
+                                d.tag_name().name() == "direction"
+                                    && has(*d, "other-direction", None)
+                            })
+                            .and_then(|d| {
+                                assert_eq!(num(d, "voice"), v as i64 + 1, "stroke voice");
+                                d.descendants()
+                                    .find(|c| c.tag_name().name() == "other-direction")
+                                    .and_then(|c| c.attribute("smufl"))
+                            });
+                        let want = match beat.stroke {
+                            Some(Stroke::Down) => Some("guitarStrumDown"),
+                            Some(Stroke::Up) => Some("guitarStrumUp"),
+                            None => None,
+                        };
+                        assert_eq!(glyph, want, "rest stroke direction");
+                        rest_strokes += usize::from(want.is_some());
                         continue;
                     }
                     assert_eq!(xml_beat.len(), beat.notes.len(), "E3 chord size");
@@ -286,6 +307,17 @@ fn check(score: &Score, xml: &str, report: &MusicXmlReport) {
                             expected.push("string percussive");
                         }
                         assert_eq!(others, expected, "other-technical");
+                        // Palm mute playback, natively on the note only.
+                        let mutes: Vec<_> = kids(*xn, "play")
+                            .flat_map(|p| kids(p, "mute"))
+                            .map(|m| m.text().unwrap_or(""))
+                            .collect();
+                        let want: &[&str] = if note.effects.palm_mute {
+                            &["palm"]
+                        } else {
+                            &[]
+                        };
+                        assert_eq!(mutes, want, "play/mute palm");
                         approximated += expected.len();
                         assert!(!has(*xn, "golpe", None), "never golpe");
                     }
@@ -304,6 +336,12 @@ fn check(score: &Score, xml: &str, report: &MusicXmlReport) {
     assert_eq!(notes_seen, score.note_count());
     assert_eq!(report.notes, score.note_count());
     assert_eq!(report.techniques_approximated, approximated);
+    // No stray strum directions: exactly one per stroked rest.
+    let doc = Document::parse(xml).unwrap();
+    assert_eq!(
+        count(doc.root_element(), "other-direction", None),
+        rest_strokes
+    );
 }
 
 fn export(score: &Score) -> (String, MusicXmlReport) {
@@ -816,14 +854,34 @@ fn tq7_techniques_fixture_uses_the_adr_035_mapping() {
     let root = doc.root_element();
     // Accents: 5 (chord) + 1 (eighth) + 5 (percussive chord).
     assert_eq!(count(root, "accent", None), 11);
-    // Strokes: down on beat 1, up on beat 4 of bar 1; down on a rest and on the
-    // partly muted chord in bar 2.
-    assert_eq!(count(root, "down-bow", None), 3);
+    // Strokes on notes: down on beat 1, up on beat 4 of bar 1; down on the partly muted
+    // chord in bar 2. The down-stroke on the rest of bar 2 is a direction (section 9).
+    assert_eq!(count(root, "down-bow", None), 2);
     assert_eq!(count(root, "up-bow", None), 1);
-    let rest_stroke = root.descendants().find(|n| {
-        n.tag_name().name() == "note" && kid(*n, "rest").is_some() && has(*n, "down-bow", None)
-    });
-    assert!(rest_stroke.is_some(), "a stroke on a rest is kept");
+    let strums: Vec<_> = root
+        .descendants()
+        .filter(|n| n.tag_name().name() == "other-direction")
+        .collect();
+    assert_eq!(strums.len(), 1);
+    assert_eq!(strums[0].attribute("smufl"), Some("guitarStrumDown"));
+    let direction = strums[0]
+        .ancestors()
+        .find(|n| n.tag_name().name() == "direction")
+        .unwrap();
+    let rest = direction.next_sibling_element().unwrap();
+    assert!(
+        kid(rest, "rest").is_some(),
+        "the strum direction is directly before the rest"
+    );
+    assert_eq!(text(rest, "type"), Some("eighth"));
+    assert_eq!(direction.attribute("placement"), Some("above"));
+    // Palm mute playback on each of the four palm-muted notes, and only those.
+    let mutes: Vec<_> = root
+        .descendants()
+        .filter(|n| n.tag_name().name() == "mute")
+        .map(|n| (n.parent().unwrap().tag_name().name(), n.text()))
+        .collect();
+    assert_eq!(mutes, vec![("play", Some("palm")); 4]);
     let others: Vec<_> = root
         .descendants()
         .filter(|n| n.tag_name().name() == "other-technical")

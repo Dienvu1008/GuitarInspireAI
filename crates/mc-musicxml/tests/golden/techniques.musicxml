@@ -173,6 +173,9 @@
             <other-technical>palm mute</other-technical>
           </technical>
         </notations>
+        <play>
+          <mute>palm</mute>
+        </play>
       </note>
       <note>
         <pitch>
@@ -192,6 +195,9 @@
             <other-technical>palm mute</other-technical>
           </technical>
         </notations>
+        <play>
+          <mute>palm</mute>
+        </play>
       </note>
       <note>
         <pitch>
@@ -333,17 +339,21 @@
             <other-technical>palm mute</other-technical>
           </technical>
         </notations>
+        <play>
+          <mute>palm</mute>
+        </play>
       </note>
+      <direction placement="above">
+        <direction-type>
+          <other-direction smufl="guitarStrumDown"/>
+        </direction-type>
+        <voice>1</voice>
+      </direction>
       <note>
         <rest/>
         <duration>1</duration>
         <voice>1</voice>
         <type>eighth</type>
-        <notations>
-          <technical>
-            <down-bow/>
-          </technical>
-        </notations>
       </note>
       <note>
         <pitch>
@@ -361,6 +371,9 @@
             <other-technical>palm mute</other-technical>
           </technical>
         </notations>
+        <play>
+          <mute>palm</mute>
+        </play>
       </note>
       <note>
         <chord/>

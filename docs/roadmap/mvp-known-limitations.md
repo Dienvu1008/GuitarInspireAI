@@ -130,10 +130,11 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
     - **MuseScore ignores the capo.** A track with a capo is re-fingered in MuseScore (frets shifted, notes moved to other strings), although the file follows the MusicXML definition.
     - Dead notes show as fret numbers, not X.
     - Playing techniques (ADR-035): accents and strokes on notes are kept (one accent per
-      chord); **palm mute, string-percussive and a stroke on a rest are lost** in MuseScore.
-      They are written as MusicXML 4.0 defines (palm mute and string-percussive as
-      `<other-technical>` text, because 4.0 has no element for them; the export message
-      counts them).
+      chord). A stroke on a rest is shown, but lost when MuseScore saves MusicXML again.
+      **Palm mute and string-percussive are lost** in MuseScore.
+      - The file follows MusicXML 4.0: palm mute playback as `<play><mute>palm</mute></play>`, and a stroke on a rest as a SMuFL strum symbol.
+      - The palm-mute and string-percussive marks are `<other-technical>` text, because 4.0 has no element for them; the export message counts them.
+      - MuseScore also loses its own palm mute through MusicXML.
     - A tie into a repeated section is not played again on the second pass.
     - MuseScore's own MIDI playback does not sustain let ring, although the let-ring marks are read and kept.
 - Resolved in Phase 6b-1 (ADR-030): the session marker, the "save changes?" prompt on

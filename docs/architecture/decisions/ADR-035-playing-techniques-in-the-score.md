@@ -141,26 +141,40 @@ Single machine (ADR-025). Thresholds are not lowered to match a result.
 
 ### MusicXML mapping (verified against the MusicXML 4.0 reference)
 
-| Technique | Written as | Reference |
-|---|---|---|
-| Accent | `<notations><articulations><accent/></articulations>` on each accented note | [accent](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/accent/), [articulations](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/articulations/) |
-| Down-stroke | `<technical><down-bow/>`, once per beat, on its first note | [down-bow](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/down-bow/): the reference says the symbol is also used for down-strokes on plucked instruments |
-| Up-stroke | `<technical><up-bow/>`, as above | [up-bow](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/up-bow/) |
-| Stroke on a rest | its own `<notations><technical><down-bow/>` (or `<up-bow/>`) on the rest | [technical](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/technical/) |
-| Palm mute | `<technical><other-technical>palm mute</other-technical>`; counted in `techniques_approximated` | 4.0 has no palm-mute element; [other-technical](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/other-technical/) |
-| String-percussive | `<notehead>x</notehead>` plus `<technical><other-technical>string percussive</other-technical>`; counted. Pitch, string and fret are kept | [notehead](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/notehead/), other-technical. Never [golpe](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/golpe/), which means tapping the pickguard |
-| Dead, let ring | unchanged (ADR-033) | |
+Corrected after the user review of `1290325`. The first encoding said MusicXML 4.0 has no palm-mute representation. That was wrong for playback: `<play><mute>palm</mute></play>` is native. A stroke on a rest has moved from `<technical>` to a SMuFL direction. Evidence: [benchmarks/musescore-musicxml.md](../../../benchmarks/musescore-musicxml.md), "Interop investigation".
+
+Kind: **native** = an element or value MusicXML 4.0 defines for the meaning; **approximation** = our extension, counted in `techniques_approximated`.
+
+| Technique | Written as | Kind | Reference |
+|---|---|---|---|
+| Accent | `<notations><articulations><accent/></articulations>` on each accented note | native | [accent](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/accent/), [articulations](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/articulations/) |
+| Down-stroke | `<technical><down-bow/>`, once per beat, on its first note | native | [down-bow](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/down-bow/): the reference says the symbol is also used for down-strokes on plucked instruments |
+| Up-stroke | `<technical><up-bow/>`, as above | native | [up-bow](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/up-bow/) |
+| Stroke on a rest | `<direction placement="above"><direction-type><other-direction smufl="guitarStrumDown"/>` (or `guitarStrumUp`) `</direction-type><voice>…</voice></direction>`, directly before the rest: at its onset, in its voice | native mechanism: a SMuFL glyph reference | [other-direction](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/other-direction/) (the `smufl` attribute exists "allowing application interoperability"); SMuFL `guitarStrumDown` U+E847, `guitarStrumUp` U+E846 |
+| Palm mute, playback | `<play><mute>palm</mute></play>` in each palm-muted note | native | [play](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/play/) (inside a `<note>` it "applies to the current note only"); [mute](https://www.w3.org/2021/06/musicxml40/musicxml-reference/data-types/mute/) includes `palm` |
+| Palm mute, notation mark | `<technical><other-technical>palm mute</other-technical>` per note | approximation, counted | 4.0 has no palm-mute notation element; [other-technical](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/other-technical/) |
+| String-percussive | `<notehead>x</notehead>` plus `<technical><other-technical>string percussive</other-technical>`. Pitch, string and fret are kept | x notehead native, mark approximation (counted) | [notehead](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/notehead/), other-technical. 4.0 has no element for it, and SMuFL has no pitched string-hit glyph, so a `smufl` reference would not be truthful. Never [golpe](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/golpe/), which means tapping the pickguard |
+| Dead, let ring | unchanged (ADR-033) | native | |
 
 - `<arpeggiate>` was rejected for strokes: it means a rolled chord ([arpeggiate](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/arpeggiate/)), and 6a has no strum spread.
 - Precedence is a playback rule. The file keeps every stored flag, so a dead note with let ring still has its let-ring tie.
-- `<technical>` and `<notations>` allow their children in any order in the XSD. The schema job validates the new fixture export and the new golden `techniques.musicxml` (CI, E1).
+- `<technical>` and `<notations>` allow their children in any order in the XSD; `<play>` comes after `<notations>` in a `<note>`.
+- The schema job validates the techniques fixture export and the golden `techniques.musicxml` (CI, E1). Locally, the same pinned XSD rejected `<play>` before `<notations>` and the value `palm-mute`.
+- A palm-muted note thus carries its meaning natively for playback, and a counted mark for notation.
+- A "P.M." `<words>` direction with `<dashes>` was tested as an extra visible mark. It is standard and visible in MuseScore, but MuseScore reads it as plain text, so it was **not** added; it remains a possible later choice.
+- Per-note accents stay per note in the score. Note-level dynamics were not investigated: velocity is a playback rule, not the accent articulation.
 
 ### MuseScore 4.7.5 (TQ-8)
 
 [benchmarks/musescore-musicxml.md](../../../benchmarks/musescore-musicxml.md), section TQ-8:
 - Kept: up-strokes and down-strokes on notes, and the `x` notehead (MuseScore draws digits on TAB, as for dead notes).
 - Accents: one accent per chord. A chord where only some notes are accented cannot be told apart from a fully accented one.
-- **Lost: palm mute, string-percussive (MuseScore then reads the note as a dead note), and a stroke on a rest.** This is an evidence gap. The encoding is not changed to suit MuseScore.
+- Stroke on a rest: **imported and drawn** at the rest, but **lost** on MuseScore's MusicXML re-export.
+- **Lost on import:**
+  - palm mute, both `<play><mute>palm</mute></play>` (no effect on MuseScore's MIDI either) and the mark;
+  - string-percussive (MuseScore then reads the note as a dead note).
+- MuseScore cannot round-trip even its own palm-mute line: it exports it as `<words>P.M.</words>` with a bracket and re-imports that as plain text.
+- These are MuseScore losses, recorded as an evidence gap. The encoding is not changed to suit MuseScore.
 
 ### Evidence per criterion (local, reference machine)
 
@@ -172,8 +186,8 @@ Single machine (ADR-025). Thresholds are not lowered to match a result.
 | TQ-4 | `mc-playback/tests/techniques.rs`: an exhaustive table (96 cases: 5 flags times 3 beat lengths), the cap, flags kept, the fixture render, and a stroke that changes no timing. The existing golden is unchanged | Met |
 | TQ-5 | `mc-midi` `tq5_export_carries_the_playback_velocities_and_lengths`: SMF notes (channel, on, off, key, velocity) equal the timeline; velocities 96, 120, 80, 104, 94, 40 and 70 occur | Met |
 | TQ-6 | `mc-notation` golden `techniques.txt` and three targeted tests (marks on their beats, runs over bar lines, a partial beat on its own, a break at the system end). Existing goldens unchanged | Met |
-| TQ-7 | `mc-musicxml` `tq7_...`, plus the E3 checker extended to every flag and stroke on 200 random scores (coverage counted). Six mutation checks are all caught. The XSD schema job runs in CI | Met locally; CI schema job: see the 6a-1 report |
-| TQ-8 | Above | MuseScore opens the file; **losses recorded (gap)** |
+| TQ-7 | Re-evaluated after the interop investigation. `mc-musicxml` `tq7_...` and the E3 checker on 200 random scores: `<play><mute>palm</mute></play>` exactly on palm-muted notes, a strum direction exactly before each stroked rest (glyph and voice), and no `<technical>` on a rest. Mutation checks: 6 of 6 caught on the first encoding, 5 of 5 on the new code. The pinned XSD validates every export locally (xmllint, three negative controls rejected) and in CI. The first encoding missed the native palm-mute playback value; it is now written | Met |
+| TQ-8 | Above; investigation and re-run in the benchmark | MuseScore opens the file. Rest stroke now kept on import; **palm mute, string-percussive and the rest stroke lost after re-export (gap)** |
 | TQ-9 | `editor_feature/test/inspector_test.dart`: mouse toggles, one command per change, Tab plus Space or Enter for every new control, semantic labels and checked states, stroke on a rest. Three of four mutations caught (the fourth removes a redundant guard; `SegmentedButton` already ignores the selected segment). No shortcut was added (`key_bindings.dart` unchanged) | Met |
 | TQ-10 | `mc-midi` `tq10_import_leaves_every_technique_off`; the Dart contract test runs on the real core, so the FFI carries every flag and the stroke both ways; project, clipboard and MusicXML paths are covered above. MIDI export renders techniques as velocity and length, and carries no stroke direction (it has no sound in 6a). This is documented, not silent (known limitations) | Met |
 | TQ-11 | Dart only maps flags to commands and paints glyphs. FF results: see the 6a-1 report (`cargo xtask fitness all`); FF-12 regenerated twice with 14 identical hashes; FF-22 snapshots additions only (mc-app +5, mc-notation +6, mc-playback +4, mc-project +32, mc-score +27 lines, 0 removed) | See report |
