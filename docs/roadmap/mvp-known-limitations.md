@@ -109,8 +109,11 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   - A range with a pickup bar is refused. When the range is not a whole number of
     repetitions, you choose how to fit it each time.
   - The pattern replaces voices 1 and 2 of the bars it writes; it does not insert.
-  - Holding a dead, palm-muted or string-percussive note, or letting one cross a bar line,
-    is refused, because playback would sound it twice.
+  - Holding a dead, palm-muted or string-percussive note, letting one cross a bar line, or
+    cutting one at the end of the range to a length that needs more than one note value, is
+    refused, because playback would sound it twice.
+  - If the score changes between the preview and Apply, Apply is refused and you preview
+    again.
 - A pickup bar round-trips through MIDI as a full-length bar with a trailing rest.
 - Copy and paste (Phase 6b-1, ADR-030) work on a run of beats in one voice, possibly
   across bars, selected with Shift+Left/Right or Shift+click. Paste inserts; there is no

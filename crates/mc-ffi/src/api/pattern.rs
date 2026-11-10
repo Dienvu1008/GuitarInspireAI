@@ -81,6 +81,10 @@ pub struct PatternReportDto {
 /// asks for a fit.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PatternPreviewDto {
+    /// The document revision the preview was computed at. Send it as
+    /// `expected_revision` with `ApplyPattern`: the core then refuses (E-01) if the
+    /// score changed since, and the caller must preview and confirm again.
+    pub revision: i64,
     pub needs_fit: bool,
     pub report: Option<PatternReportDto>,
 }
@@ -188,8 +192,12 @@ pub fn preview_pattern(
     args: ApplyPatternDto,
 ) -> Result<PatternPreviewDto, ApiError> {
     let a = args.to_app()?;
-    match document.lock_for_pattern().preview_pattern(&a) {
+    // One lock for the preview and its revision, so they belong together.
+    let s = document.lock_for_pattern();
+    let revision = s.revision().0 as i64;
+    match s.preview_pattern(&a) {
         Ok(p) => Ok(PatternPreviewDto {
+            revision: p.revision.0 as i64,
             needs_fit: false,
             report: Some(report_dto(&p.report)),
         }),
@@ -197,6 +205,7 @@ pub fn preview_pattern(
             if a.fit.is_none() =>
         {
             Ok(PatternPreviewDto {
+                revision,
                 needs_fit: true,
                 report: None,
             })

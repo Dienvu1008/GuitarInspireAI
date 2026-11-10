@@ -810,3 +810,73 @@ fn refusals_have_rule_ids_and_readable_messages() {
         .unwrap_err();
     assert_eq!(e.rule(), "PT-06");
 }
+
+#[test]
+fn a_confirmed_overwrite_is_refused_when_the_score_changed_after_the_preview() {
+    // The dangerous sequence: the preview finds content to replace, the user is asked,
+    // another command changes the same range, then the user confirms. The confirmation
+    // belonged to the old content, so the core must refuse (E-01) and change nothing.
+    let mut s = session(3);
+    let t = first_track(&s);
+    put(&mut s, t, 1, 0, 1);
+    let p = s.sample_pattern();
+    let preview = s.preview_pattern(&args(t, 0, 2, p)).unwrap();
+    assert_eq!(preview.report.overwritten, vec![1]);
+    assert_eq!(
+        preview.revision,
+        s.revision(),
+        "the preview carries its revision"
+    );
+    // Another command changes the very bar that was to be overwritten.
+    put(&mut s, t, 1, 0, 2);
+    let changed = json(&s.snapshot());
+    let rev = s.revision();
+    let mut confirmed = cmd(
+        80,
+        apply(ApplyPattern {
+            overwrite: true,
+            ..args(t, 0, 2, p)
+        }),
+    );
+    confirmed.expected_revision = Some(preview.revision);
+    let err = s.execute(confirmed).unwrap_err();
+    assert!(matches!(err, CommandError::StaleRevision { .. }), "{err:?}");
+    assert_eq!(err.rule(), "E-01");
+    assert_eq!(
+        json(&s.snapshot()),
+        changed,
+        "the old confirmation overwrote nothing"
+    );
+    assert_eq!(s.revision(), rev);
+    // A fresh preview and confirmation applies.
+    let again = s.preview_pattern(&args(t, 0, 2, p)).unwrap();
+    let mut ok = cmd(
+        81,
+        apply(ApplyPattern {
+            overwrite: true,
+            ..args(t, 0, 2, p)
+        }),
+    );
+    ok.expected_revision = Some(again.revision);
+    s.execute(ok).unwrap();
+}
+
+#[test]
+fn a_voice_with_only_rests_counts_as_existing_content() {
+    // Decision 18.1: any beat in a written voice, rests included, must be confirmed.
+    let mut s = session(2);
+    let t = first_track(&s);
+    add_beat(&mut s, t, 1); // a rest: a beat without notes
+    assert!(
+        s.score().track(t).unwrap().bar(1).unwrap().voices[0].beats[0]
+            .notes
+            .is_empty()
+    );
+    let p = s.sample_pattern();
+    let err = s.execute(cmd(90, apply(args(t, 0, 1, p)))).unwrap_err();
+    assert_eq!(
+        err,
+        CommandError::Pattern(ApplyError::WouldOverwrite { bars: vec![1] })
+    );
+    assert!(err.to_string().contains("content"), "{err}");
+}

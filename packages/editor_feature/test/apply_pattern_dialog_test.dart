@@ -59,6 +59,12 @@ List<BeatDto> _bar(ProviderContainer c, int bar) {
   return s.service.beats(s.activeTrack, bar, 0);
 }
 
+/// Beats as comparable text (BeatDto compares its note list by reference).
+List<String> _shape(List<BeatDto> beats) => [
+  for (final b in beats)
+    '${b.stroke}:${b.notes.map((n) => '${n.string}/${n.fret}').join(',')}',
+];
+
 bool _applyEnabled(WidgetTester tester) =>
     tester.widget<FilledButton>(_k('apply-pattern-apply')).onPressed != null;
 
@@ -128,7 +134,7 @@ void main() {
     final rev = _revision(c);
     await _tapAndSettle(tester, 'apply-pattern-apply');
     expect(find.text('Overwrite existing content?'), findsOneWidget);
-    expect(find.textContaining('Bars 2 already have notes'), findsOneWidget);
+    expect(find.textContaining('Bars 2 already contain beats'), findsOneWidget);
     await tester.tap(find.text('Cancel').last);
     await tester.pumpAndSettle();
     expect(_revision(c), rev, reason: 'cancel sends nothing');
@@ -183,7 +189,44 @@ void main() {
     expect(_applyEnabled(tester), isFalse);
   });
 
-  testWidgets('a stale preview never overwrites without asking', (
+  /// An `insertBeat` of a rest (a beat without notes) in voice 1 of [bar].
+  Future<void> rest(ProviderContainer c, int bar) async {
+    final s = c.read(editorProvider);
+    await s.service.execute(
+      CommandDto.insertBeat(
+        track: s.activeTrack,
+        bar: bar,
+        voice: 0,
+        index: 0,
+        duration: const DurationDto(base: 2, dots: 0),
+      ),
+    );
+  }
+
+  testWidgets('a voice with only rests still asks, and says so', (
+    tester,
+  ) async {
+    final c = _container();
+    addTearDown(c.dispose);
+    await rest(c, 1);
+    expect(_bar(c, 1).single.notes, isEmpty, reason: 'a rest, no notes');
+    await _open(tester, c);
+    await _tapAndSettle(tester, 'apply-pattern-find');
+    await _range(tester, '1', '2');
+    await _tapAndSettle(tester, 'apply-pattern-preview');
+    final rev = _revision(c);
+    await _tapAndSettle(tester, 'apply-pattern-apply');
+    expect(
+      find.text(
+        'Bars 2 already contain beats in the voices the pattern writes, '
+        'including rests. Replace them?',
+      ),
+      findsOneWidget,
+    );
+    expect(_revision(c), rev, reason: 'nothing sent before the answer');
+  });
+
+  testWidgets('content that appears after the preview is refused as stale', (
     tester,
   ) async {
     final c = _container();
@@ -192,28 +235,86 @@ void main() {
     await _tapAndSettle(tester, 'apply-pattern-find');
     await _range(tester, '1', '2');
     await _tapAndSettle(tester, 'apply-pattern-preview');
-    // Content appears after the preview (for example from another window).
-    final s = c.read(editorProvider);
-    await s.service.execute(
-      CommandDto.insertBeat(
-        track: s.activeTrack,
-        bar: 0,
-        voice: 0,
-        index: 0,
-        duration: const DurationDto(base: 2, dots: 0),
-      ),
-    );
-    final rev = s.service.summary().revision;
+    await rest(c, 0); // appears after the preview
+    final service = c.read(editorProvider).service;
+    final rev = service.summary().revision;
     await _tapAndSettle(tester, 'apply-pattern-apply');
+    expect(service.summary().revision, rev, reason: 'the core refused (E-01)');
     expect(
-      s.service.summary().revision,
-      rev,
-      reason: 'the core refused (PE-07)',
+      _text(tester, 'apply-pattern-error'),
+      contains('changed after the preview'),
     );
-    expect(_text(tester, 'apply-pattern-error'), contains('bars 1'));
+    expect(_applyEnabled(tester), isFalse, reason: 'the preview was dropped');
     expect(find.text('Apply pattern'), findsOneWidget);
   });
 
+  testWidgets('previewing again after a change uses the new revision', (
+    tester,
+  ) async {
+    final c = _container();
+    addTearDown(c.dispose);
+    await _open(tester, c);
+    await _tapAndSettle(tester, 'apply-pattern-find');
+    await _range(tester, '1', '2');
+    await _tapAndSettle(tester, 'apply-pattern-preview');
+    await rest(c, 3); // outside the range, but the revision moves on
+    await _tapAndSettle(tester, 'apply-pattern-preview');
+    final service = c.read(editorProvider).service;
+    final rev = service.summary().revision;
+    await _tapAndSettle(tester, 'apply-pattern-apply');
+    expect(service.summary().revision, rev + 1, reason: 'applied, not stale');
+    expect(find.text('Apply pattern'), findsNothing);
+  });
+  testWidgets(
+    'a confirmed overwrite is refused when the range changed after the preview',
+    (tester) async {
+      // The dangerous sequence: the preview finds content, the user is asked, another
+      // command changes the same range, the user presses Overwrite.
+      final c = _container();
+      addTearDown(c.dispose);
+      await rest(c, 1);
+      await _open(tester, c);
+      await _tapAndSettle(tester, 'apply-pattern-find');
+      await _range(tester, '1', '3');
+      await _tapAndSettle(tester, 'apply-pattern-preview');
+      await _tapAndSettle(tester, 'apply-pattern-apply');
+      expect(find.text('Overwrite existing content?'), findsOneWidget);
+      // While the confirmation is open, a note is added to the bar to be replaced.
+      final s = c.read(editorProvider);
+      final beat = s.service.beats(s.activeTrack, 1, 0).single;
+      await s.service.execute(
+        CommandDto.setNote(
+          beat: BeatAddressDto(
+            track: s.activeTrack,
+            bar: 1,
+            voice: 0,
+            beat: beat.id,
+          ),
+          string: 1,
+          fret: 7,
+        ),
+      );
+      final changed = _shape(_bar(c, 1));
+      final rev = s.service.summary().revision;
+      await _tapAndSettle(tester, 'apply-pattern-overwrite');
+      // The old confirmation overwrote nothing, and was not sent again.
+      expect(s.service.summary().revision, rev);
+      expect(_shape(_bar(c, 1)), changed);
+      expect(_bar(c, 1).single.notes.single.fret, 7);
+      expect(_bar(c, 0), isEmpty);
+      expect(find.text('Overwrite existing content?'), findsNothing);
+      expect(find.text('Apply pattern'), findsOneWidget, reason: 'still open');
+      expect(_text(tester, 'apply-pattern-error'), contains('Preview again'));
+      expect(_applyEnabled(tester), isFalse, reason: 'must preview again');
+      // Previewing again shows the new content; confirming again applies.
+      await _tapAndSettle(tester, 'apply-pattern-preview');
+      await _tapAndSettle(tester, 'apply-pattern-apply');
+      await _tapAndSettle(tester, 'apply-pattern-overwrite');
+      expect(s.service.summary().revision, rev + 1);
+      expect(_bar(c, 1), hasLength(4));
+      expect(find.text('Apply pattern'), findsNothing);
+    },
+  );
   testWidgets('invalid inputs are reported and nothing is applied', (
     tester,
   ) async {

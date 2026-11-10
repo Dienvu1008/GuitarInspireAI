@@ -2261,9 +2261,10 @@ twoLanes: dco_decode_bool(arr[5]),); }
 
 @protected PatternPreviewDto dco_decode_pattern_preview_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
-                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-                return PatternPreviewDto(needsFit: dco_decode_bool(arr[0]),
-report: dco_decode_opt_box_autoadd_pattern_report_dto(arr[1]),); }
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return PatternPreviewDto(revision: dco_decode_i_64(arr[0]),
+needsFit: dco_decode_bool(arr[1]),
+report: dco_decode_opt_box_autoadd_pattern_report_dto(arr[2]),); }
 
 @protected PatternReportDto dco_decode_pattern_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -3153,9 +3154,10 @@ var var_twoLanes = sse_decode_bool(deserializer);
 return PatternInfoDto(id: var_id, name: var_name, description: var_description, lengthNumerator: var_lengthNumerator, lengthDenominator: var_lengthDenominator, twoLanes: var_twoLanes); }
 
 @protected PatternPreviewDto sse_decode_pattern_preview_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_revision = sse_decode_i_64(deserializer);
 var var_needsFit = sse_decode_bool(deserializer);
 var var_report = sse_decode_opt_box_autoadd_pattern_report_dto(deserializer);
-return PatternPreviewDto(needsFit: var_needsFit, report: var_report); }
+return PatternPreviewDto(revision: var_revision, needsFit: var_needsFit, report: var_report); }
 
 @protected PatternReportDto sse_decode_pattern_report_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_first = sse_decode_u_32(deserializer);
@@ -3931,6 +3933,7 @@ sse_encode_bool(self.twoLanes, serializer);
  }
 
 @protected void sse_encode_pattern_preview_dto(PatternPreviewDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_64(self.revision, serializer);
 sse_encode_bool(self.needsFit, serializer);
 sse_encode_opt_box_autoadd_pattern_report_dto(self.report, serializer);
  }

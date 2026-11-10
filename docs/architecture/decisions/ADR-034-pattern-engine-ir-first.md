@@ -405,7 +405,7 @@ Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern
 - `bars` are the master bars of the range, in order. Their durations are nominal (time-signature lengths).
 - The result is, per bar, one beat list per lane, in voice order (Strum or Thumb = voice 1, Fingers = voice 2). Each list fills its bar exactly.
 - A `PlaceReport` lists repetitions, dropped and shortened steps (lane, repetition, step, onset, written value, new values), attacked notes, and with `WholeRepetitionsOnly` where the trailing rests begin.
-- Errors: `EmptyRange`, `PickupInRange`, `MeterMismatch`, `FitRequired`, `TupletCrossesBar`, `ShortNoteCrossesBar`, `UnwritableLength`.
+- Errors: `EmptyRange`, `PickupInRange`, `MeterMismatch`, `FitRequired`, `TupletCrossesBar`, `ShortNoteNeedsTie` (named `ShortNoteCrossesBar` in the first version; see section 20), `UnwritableLength`.
 
 **Section 7 as implemented:**
 - A whole multiple repeats with no fit. Any other length needs `Fit::RepeatAndCut` or `Fit::WholeRepetitionsOnly`; `None` gives `FitRequired`, and cancel is the caller not applying.
@@ -420,7 +420,7 @@ Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern
    - anything else is `UnwritableLength`, never rounded. Example: the gap after a lone quintuplet sixteenth.
    - Dotted values are kept only where the pattern writes them; computed pieces are not merged into dotted values.
 2. **Bar-line continuations** follow the hold rule of section 16: tied, same string and fret, only let ring kept, no stroke.
-3. **A dead, palm-muted or string-percussive note that crosses a bar line is rejected** (`ShortNoteCrossesBar`). Its tied continuation would be played as a new attack, the same reason holds of short notes are rejected in section 16.
+3. **A dead, palm-muted or string-percussive note that would need a tied continuation is rejected** (`ShortNoteNeedsTie`): it crosses a bar line, or `RepeatAndCut` shortens it to a length that needs more than one note value. Its tied continuation would be played as a new attack, the same reason holds of short notes are rejected in section 16. The first version checked only the bar-line case; section 20 records the fix.
 4. **The note count** in the report counts attacked notes only, not tied continuations.
 
 **Evidence** (`crates/mc-pattern/tests/place.rs`, 19 tests):
@@ -512,7 +512,7 @@ Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern
 
 **Interpretations made in 6a-3d, which the user should confirm or change:**
 1. **The preview is a text summary, not a TAB preview.** A TAB preview of the result needs a layout of a score that does not exist yet; it belongs to the grid editor (6a-5, PE-14).
-2. **A stale preview.** If content appears between the preview and Apply, the dialog sends `overwrite: false` (no confirmation was given), the core refuses with `PE-07`, and the dialog shows it. It never overwrites without asking.
+2. **A stale preview.** Superseded by section 20: the first version sent `overwrite: true` after a confirmation without the preview's revision, so a confirmation could be applied to content that had changed in the meantime. Apply is now sent with the preview's revision and refused with `E-01` if the score changed.
 3. **The library is not saved.** It holds only the built-in sample until 6a-5.
 
 **Evidence:**
@@ -531,6 +531,30 @@ Fitness: FF-01 (14 crates), FF-03 (the domain `clippy.toml`), FF-04 (`mc-pattern
   - semantic labels and live regions.
   - Five dialog mutations were all caught.
 - **The Windows acceptance test** "6a-3: apply the sample pattern from the Tools menu" (real core): preview, confirmation, one revision, four beats per bar with the down-strum on beat 2, and undo with Ctrl+Z.
+
+## 20. Review of slice 6a-3 and its corrections (2026-11-10)
+
+The user accepted the interpretations of sections 16 to 19, except the stale preview, and asked for three corrections, made in this order.
+
+1. **Short-technique notes that need a tie (section 17, interpretation 3).**
+   - The review described `lay_out()` as already refusing a `RepeatAndCut` cut that needs more than one note value. **It did not.** The check ran only when a piece crossed a bar line, so a palm-muted note cut to 3/8 (a quarter plus an eighth) was placed with a tied continuation, which playback sounds as a second attack. A test reproduced this before the fix.
+   - The check now covers any second value or piece. The error is `ShortNoteNeedsTie`. It is an exception to shortening: not every short-technique note can be shortened. A short note cut to a single value is still shortened.
+   - Tests: the cut to 3/8 is refused; the same cut of a normal note is tied values; a cut to 1/8 is kept. Removing the new condition makes the test fail.
+2. **Overwrite dialog wording.** The message is now "Bars … already contain beats in the voices the pattern writes, including rests. Replace them?", because a voice with only rests counts as content (decision 18.1). Tests: a rest-only voice in the core, and in the dialog with the exact wording.
+3. **Optimistic concurrency for the confirmation (replaces interpretation 19.2).**
+   - The core returns the document revision with the preview, read under the same lock (`PatternPreview.revision`, `PatternPreviewDto.revision`).
+   - The dialog keeps it and sends it as `expected_revision` with `ApplyPattern`, through a new `DocumentController.executeAt`. The core already enforced `expected_revision` (E-01).
+   - On `E-01` the dialog drops the preview and the fit, says the score changed, and asks the user to preview and confirm again. It never resends with `overwrite: true`.
+   - The rule stays in the core. Any change since the preview is refused, not only a change in the range.
+   - Tests:
+     - In the core, the dangerous sequence (the preview finds content, another command changes the same bar, the confirmation is sent): `StaleRevision`, the score unchanged.
+     - In the dialog, the same sequence with the confirmation open: the note added meanwhile survives, the dialog asks to preview again, and a fresh preview and confirmation then applies.
+     - A new preview after an unrelated change uses the new revision.
+     - Mutations that drop the revision, disable the `E-01` branch or keep the first revision are all caught.
+   - The earlier test covered only content appearing before the first Apply; it is replaced by these.
+4. **Checklist for 6a-5.**
+   - Changing the pattern clears the fit. This is done already, in the same `_changed(range: true)` call as a range change; a test needs more than one pattern and comes with the library.
+   - The grid and apply dialogs must also keep the revision rule above for every command that follows a confirmation.
 
 ## Alternatives
 

@@ -275,11 +275,11 @@ pub mc_pattern::PlaceError::MeterMismatch::meter: mc_theory::time::TimeSignature
 pub mc_pattern::PlaceError::Overflow
 pub mc_pattern::PlaceError::PickupInRange
 pub mc_pattern::PlaceError::PickupInRange::bar: usize
-pub mc_pattern::PlaceError::ShortNoteCrossesBar
-pub mc_pattern::PlaceError::ShortNoteCrossesBar::bar: usize
-pub mc_pattern::PlaceError::ShortNoteCrossesBar::lane: mc_pattern::LaneId
-pub mc_pattern::PlaceError::ShortNoteCrossesBar::repetition: usize
-pub mc_pattern::PlaceError::ShortNoteCrossesBar::step: usize
+pub mc_pattern::PlaceError::ShortNoteNeedsTie
+pub mc_pattern::PlaceError::ShortNoteNeedsTie::bar: usize
+pub mc_pattern::PlaceError::ShortNoteNeedsTie::lane: mc_pattern::LaneId
+pub mc_pattern::PlaceError::ShortNoteNeedsTie::repetition: usize
+pub mc_pattern::PlaceError::ShortNoteNeedsTie::step: usize
 pub mc_pattern::PlaceError::TupletCrossesBar
 pub mc_pattern::PlaceError::TupletCrossesBar::bar: usize
 pub mc_pattern::PlaceError::TupletCrossesBar::lane: mc_pattern::LaneId

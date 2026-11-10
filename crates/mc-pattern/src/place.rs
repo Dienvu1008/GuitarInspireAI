@@ -44,9 +44,12 @@ pub enum PlaceError {
         step: usize,
         bar: usize,
     },
-    /// A dead, palm-muted or string-percussive note would cross a bar line. The tied
-    /// continuation would be played as a new attack (ADR-024, ADR-035).
-    ShortNoteCrossesBar {
+    /// A dead, palm-muted or string-percussive note would need a tied continuation: it
+    /// crosses a bar line, or `RepeatAndCut` shortens it to a length that needs more
+    /// than one note value. The continuation would be played as a second attack
+    /// (ADR-024, ADR-035), so not every short-technique note can be shortened.
+    /// `bar` is the range bar (0-based) where the continuation would start.
+    ShortNoteNeedsTie {
         lane: LaneId,
         repetition: usize,
         step: usize,
@@ -357,23 +360,13 @@ fn lay_out(
         while piece_start < end {
             let piece_end = end.min(starts[bar + 1]);
             let crosses = piece_end < end;
-            if crosses || !first {
-                if ev.written.is_some_and(|w| w.tuplet().is_some()) {
-                    return Err(PlaceError::TupletCrossesBar {
-                        lane,
-                        repetition: ev.repetition,
-                        step: ev.step,
-                        bar,
-                    });
-                }
-                if ev.notes.iter().any(short) {
-                    return Err(PlaceError::ShortNoteCrossesBar {
-                        lane,
-                        repetition: ev.repetition,
-                        step: ev.step,
-                        bar,
-                    });
-                }
+            if (crosses || !first) && ev.written.is_some_and(|w| w.tuplet().is_some()) {
+                return Err(PlaceError::TupletCrossesBar {
+                    lane,
+                    repetition: ev.repetition,
+                    step: ev.step,
+                    bar,
+                });
             }
             let length = sub(piece_end, piece_start)?;
             let values = match (first && !crosses, ev.written) {
@@ -384,6 +377,15 @@ fn lay_out(
                     length,
                 })?,
             };
+            // Any second value, or any piece after the first, is a tied continuation.
+            if (crosses || !first || values.len() > 1) && ev.notes.iter().any(short) {
+                return Err(PlaceError::ShortNoteNeedsTie {
+                    lane,
+                    repetition: ev.repetition,
+                    step: ev.step,
+                    bar,
+                });
+            }
             for (k, value) in values.into_iter().enumerate() {
                 let attack = first && k == 0;
                 out[bar].push(FragmentBeat {

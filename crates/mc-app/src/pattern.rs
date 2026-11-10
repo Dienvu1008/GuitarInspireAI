@@ -110,8 +110,14 @@ pub struct PatternReport {
 
 /// A preview of `ApplyPattern`: the content of the written voices per bar of the range,
 /// and the report. Nothing is changed by computing it.
+///
+/// `revision` is the document revision the preview was computed at, read under the same
+/// lock. A caller that asks the user to confirm an overwrite sends it back as the
+/// command's `expected_revision`: if the score changed in between, the core refuses
+/// with `StaleRevision` (E-01) and the caller must preview and confirm again.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PatternPreview {
+    pub revision: crate::command::Revision,
     pub bars: Vec<PlacedBar>,
     pub report: PatternReport,
 }
@@ -224,6 +230,7 @@ fn plan(score: &Score, lib: &PatternLibrary, a: &ApplyPattern) -> Result<Plan, C
     Ok(Plan {
         content,
         preview: PatternPreview {
+            revision: crate::command::Revision(0),
             bars: placement.bars,
             report: PatternReport {
                 first: a.first,
@@ -241,8 +248,11 @@ pub(crate) fn preview(
     score: &Score,
     lib: &PatternLibrary,
     a: &ApplyPattern,
+    revision: crate::command::Revision,
 ) -> Result<PatternPreview, CommandError> {
-    Ok(plan(score, lib, a)?.preview)
+    let mut preview = plan(score, lib, a)?.preview;
+    preview.revision = revision;
+    Ok(preview)
 }
 
 /// Applies the pattern to `score` (the session's working copy), or refuses.

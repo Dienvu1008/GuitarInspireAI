@@ -422,8 +422,12 @@ final class FakeDocumentService implements DocumentService {
   @override
   PatternPreviewDto previewPattern(ApplyPatternDto args) =>
       patternNeedsFit && args.fit == null
-      ? const PatternPreviewDto(needsFit: true)
-      : PatternPreviewDto(needsFit: false, report: _patternReport(args));
+      ? PatternPreviewDto(revision: _revision, needsFit: true)
+      : PatternPreviewDto(
+          revision: _revision,
+          needsFit: false,
+          report: _patternReport(args),
+        );
 
   static NoteDto _note(NoteDto n, {required int fret}) => NoteDto(
     id: n.id,

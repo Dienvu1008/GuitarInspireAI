@@ -101,17 +101,21 @@ final bool twoLanes;
 /// number of repetitions and no fit was given; then `report` is `None` and the dialog
 /// asks for a fit.
 class PatternPreviewDto  {
-                final bool needsFit;
+                /// The document revision the preview was computed at. Send it as
+/// `expected_revision` with `ApplyPattern`: the core then refuses (E-01) if the
+/// score changed since, and the caller must preview and confirm again.
+final PlatformInt64 revision;
+final bool needsFit;
 final PatternReportDto? report;
 
-                const PatternPreviewDto({required this.needsFit ,this.report ,});
+                const PatternPreviewDto({required this.revision ,required this.needsFit ,this.report ,});
 
 
 
 
 
         @override
-        int get hashCode => needsFit.hashCode^report.hashCode;
+        int get hashCode => revision.hashCode^needsFit.hashCode^report.hashCode;
 
 
 
@@ -120,7 +124,7 @@ final PatternReportDto? report;
             identical(this, other) ||
             other is PatternPreviewDto &&
                 runtimeType == other.runtimeType
-                && needsFit == other.needsFit&& report == other.report;
+                && revision == other.revision&& needsFit == other.needsFit&& report == other.report;
 
             }
 

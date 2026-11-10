@@ -301,7 +301,7 @@ impl DocumentSession {
         &self,
         args: &crate::command::ApplyPattern,
     ) -> Result<crate::pattern::PatternPreview, CommandError> {
-        crate::pattern::preview(&self.score, &self.patterns, args)
+        crate::pattern::preview(&self.score, &self.patterns, args, self.revision)
     }
 
     pub fn undo(&mut self) -> Result<CommandOutcome, CommandError> {

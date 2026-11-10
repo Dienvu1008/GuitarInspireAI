@@ -410,7 +410,7 @@ fn a_short_note_across_a_bar_line_is_rejected() {
     ));
     assert_eq!(
         place(&f, &four(2), None).unwrap_err(),
-        PlaceError::ShortNoteCrossesBar {
+        PlaceError::ShortNoteNeedsTie {
             lane: LaneId::Strum,
             repetition: 0,
             step: 0,
@@ -738,4 +738,49 @@ fn the_note_count_counts_attacks_not_tied_continuations() {
     ));
     let p = place(&f, &four(2), None).unwrap();
     assert_eq!(p.report.notes, 5);
+}
+
+#[test]
+fn a_cut_short_note_that_needs_several_values_is_rejected_like_a_tie() {
+    // A palm-muted half note in a 5/8 pattern, over one 4/4 bar: the second repetition
+    // starts at 5/8, so the cut leaves 3/8, which needs a quarter plus an eighth. The
+    // second value would be a tied second attack of a short note (ADR-024, ADR-035), so
+    // the cut is refused, although no bar line is crossed.
+    let mut k = Strike::on(vec![Bass]);
+    k.techniques.palm_mute = true;
+    let f = bind_c(pattern(
+        r(5, 8),
+        Lanes::Strum(Lane {
+            steps: vec![step(r(0, 1), v(BaseValue::HALF), Action::Strike(k))],
+        }),
+    ));
+    assert_eq!(
+        place(&f, &four(1), Some(Fit::RepeatAndCut)).unwrap_err(),
+        PlaceError::ShortNoteNeedsTie {
+            lane: LaneId::Strum,
+            repetition: 1,
+            step: 0,
+            bar: 0
+        }
+    );
+    // The same cut of a normal note is fine: it is written as tied values.
+    let f = bind_c(pattern(
+        r(5, 8),
+        Lanes::Strum(Lane {
+            steps: vec![step(r(0, 1), v(BaseValue::HALF), strike(&[Bass]))],
+        }),
+    ));
+    let p = place(&f, &four(1), Some(Fit::RepeatAndCut)).unwrap();
+    assert_eq!(p.report.shortened[0].now, vec![q(), e()]);
+    // A short note cut to a single value is kept (shortened, not refused).
+    let mut k = Strike::on(vec![Bass]);
+    k.techniques.palm_mute = true;
+    let f = bind_c(pattern(
+        r(7, 8),
+        Lanes::Strum(Lane {
+            steps: vec![step(r(0, 1), v(BaseValue::HALF), Action::Strike(k))],
+        }),
+    ));
+    let p = place(&f, &four(1), Some(Fit::RepeatAndCut)).unwrap();
+    assert_eq!(p.report.shortened[0].now, vec![e()]);
 }

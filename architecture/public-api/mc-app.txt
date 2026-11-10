@@ -236,6 +236,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_app::pattern::ApplyError
 pub struct mc_app::pattern::PatternPreview
 pub mc_app::pattern::PatternPreview::bars: alloc::vec::Vec<mc_pattern::place::PlacedBar>
 pub mc_app::pattern::PatternPreview::report: mc_app::pattern::PatternReport
+pub mc_app::pattern::PatternPreview::revision: mc_app::Revision
 impl core::clone::Clone for mc_app::pattern::PatternPreview
 pub fn mc_app::pattern::PatternPreview::clone(&self) -> Self
 impl core::cmp::Eq for mc_app::pattern::PatternPreview

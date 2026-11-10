@@ -38,6 +38,11 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
   FitDto? _fit;
   bool _needsFit = false;
   PatternReportDto? _report;
+
+  /// The document revision the shown preview was computed at (from the core). Apply
+  /// is sent with it, so a confirmation never applies to content that changed after
+  /// the preview.
+  int? _previewRevision;
   String? _error;
 
   @override
@@ -64,6 +69,7 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
   /// Any input change invalidates the preview (and a range change the fit choice).
   void _changed({bool range = false}) => setState(() {
     _report = null;
+    _previewRevision = null;
     _needsFit = false;
     _error = null;
     if (range) _fit = null;
@@ -126,11 +132,13 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
       setState(() {
         _needsFit = p.needsFit;
         _report = p.report;
+        _previewRevision = p.revision;
         _error = null;
       });
     } on ApiError catch (e) {
       setState(() {
         _report = null;
+        _previewRevision = null;
         _error = e.message;
       });
     }
@@ -138,7 +146,8 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
 
   Future<void> _apply() async {
     final report = _report;
-    if (report == null) return;
+    final revision = _previewRevision;
+    if (report == null || revision == null) return;
     final overwrite = report.overwritten.isNotEmpty;
     if (overwrite) {
       final bars = report.overwritten.map((b) => b + 1).join(', ');
@@ -147,8 +156,8 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
         builder: (context) => AlertDialog(
           title: const Text('Overwrite existing content?'),
           content: Text(
-            'Bars $bars already have notes in the voices the pattern writes. '
-            'Replace them?',
+            'Bars $bars already contain beats in the voices the pattern writes, '
+            'including rests. Replace them?',
           ),
           actions: [
             TextButton(
@@ -167,14 +176,28 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
     }
     final a = _args(overwrite: overwrite);
     if (a == null) return;
-    final ok = await ref
+    final rejection = await ref
         .read(editorProvider.notifier)
-        .execute(CommandDto.applyPattern(args: a));
+        .executeAt(
+          CommandDto.applyPattern(args: a),
+          expectedRevision: revision,
+        );
     if (!mounted) return;
-    if (ok) {
+    if (rejection == null) {
       Navigator.pop(context);
+    } else if (rejection.rule == 'E-01') {
+      // The score changed after the preview: the confirmation was for old content.
+      // Drop the preview; the user previews and confirms again. Never resend.
+      setState(() {
+        _report = null;
+        _previewRevision = null;
+        _needsFit = false;
+        _error =
+            'The score changed after the preview. Preview again, and confirm the '
+            'overwrite again if it is still needed.';
+      });
     } else {
-      setState(() => _error = ref.read(editorProvider).message);
+      setState(() => _error = rejection.message);
     }
   }
 
@@ -217,7 +240,8 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
                 onChanged: (id) {
                   if (id == null) return;
                   _pattern = id;
-                  _changed();
+                  // A fit chosen for another pattern must not carry over.
+                  _changed(range: true);
                 },
               ),
               const SizedBox(height: 8),
