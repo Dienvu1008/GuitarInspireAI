@@ -161,7 +161,7 @@ Kind: **native** = an element or value MusicXML 4.0 defines for the meaning; **a
 - `<technical>` and `<notations>` allow their children in any order in the XSD; `<play>` comes after `<notations>` in a `<note>`.
 - The schema job validates the techniques fixture export and the golden `techniques.musicxml` (CI, E1). Locally, the same pinned XSD rejected `<play>` before `<notations>` and the value `palm-mute`.
 - A palm-muted note thus carries its meaning natively for playback, and a counted mark for notation.
-- A "P.M." `<words>` direction with `<dashes>` was tested as an extra visible mark. It is standard and visible in MuseScore, but MuseScore reads it as plain text, so it was **not** added; it remains a possible later choice.
+- A "P.M." `<words>` direction with `<dashes>` was tested as an extra visible mark. It is standard and visible in MuseScore, but MuseScore reads it as plain text. It is **not** written (decision 10.1).
 - Per-note accents stay per note in the score. Note-level dynamics were not investigated: velocity is a playback rule, not the accent articulation.
 
 ### MuseScore 4.7.5 (TQ-8)
@@ -197,6 +197,21 @@ Kind: **native** = an element or value MusicXML 4.0 defines for the meaning; **a
 - TAB marks (stroke, accent, `S`, "P.M.") sit in fixed rows above the staff. Metrics are unchanged, so the marks can overlap volta brackets and the stems of an upper voice.
 - The MuseScore losses above.
 - A stroke has no sound effect (no strum spread, decision 8.3), so MIDI export does not carry it.
+## 10. Decisions (user review of the interop investigation, 2026-11-09)
+
+1. **The 6a-1 export stays as it is.**
+   - A palm-muted note gets `<play><mute>palm</mute></play>` and `<other-technical>palm mute</other-technical>`.
+   - No "P.M." text direction is added, by default or otherwise.
+2. **TQ-8 stays an evidence gap.**
+3. **Possible later option, under conditions: notation compatibility annotations.** A later phase may add an opt-in export option for readers that favour display. It must:
+   - be off by default, and leave the native `<play>` and the counted mark unchanged;
+   - write "P.M." with `<dashes>` only over a run of consecutive beats with a clear palm-mute scope, that is, beats in which every sounding note is palm-muted (the TAB rule of section 5);
+   - write no shared annotation for a beat where only some notes of the chord are palm-muted. Such a beat keeps only its per-note `<play>` and mark.
+4. **What such an annotation means.**
+   - A text annotation is presentation only. It carries no playback semantics; the playback meaning stays in `<play><mute>palm</mute></play>`.
+   - It does not guarantee that the technique is recovered on re-import. MuseScore 4.7.5 reads it as a plain text line (benchmark, "Interop investigation"), and our exporter would not read it as a technique either.
+   - So it can never stand in for the per-note encoding, and it does not close TQ-8.
+
 ## Alternatives
 
 - **A body slap as this per-note flag.** Rejected by the user: a body hit has no string or pitch; it needs its own event model.
@@ -234,3 +249,5 @@ FF-11, FF-12, FF-19, FF-22, FF-32, FF-34; the schema job of ADR-033.
 - Body slap, golpe and other unpitched or muted-string percussion (a separate ADR).
 - User-adjustable render settings.
 - A technique that MusicXML or MuseScore cannot carry at all.
+- A user need for display-oriented MusicXML (the opt-in annotations of decision 10.3).
+- A MuseScore release that reads `<play><mute>palm</mute></play>`, `<other-direction smufl>` or `<other-technical>` (re-run TQ-8).
