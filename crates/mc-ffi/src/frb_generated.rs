@@ -29,6 +29,7 @@
 
 use crate::api::document::*;
 use crate::api::engine::*;
+use crate::api::guitarpro::*;
 use crate::api::midi::*;
 use crate::api::tuner::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
@@ -43,7 +44,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -194077946;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1215411450;
 
 // Section: executor
 
@@ -2005,6 +2006,201 @@ fn wire__crate__api__engine__EngineHandle_stop_impl(
         },
     )
 }
+fn wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_get_document_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "GuitarProImportResult_auto_accessor_get_document",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok = Ok::<_, ()>(api_that_guard.document.clone())?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_get_report_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "GuitarProImportResult_auto_accessor_get_report",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok = Ok::<_, ()>(api_that_guard.report.clone())?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_set_document_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "GuitarProImportResult_auto_accessor_set_document",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>,
+            >>::sse_decode(&mut deserializer);
+            let api_document = <DocumentHandle>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, true,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref_mut()),
+                        _ => unreachable!(),
+                    }
+                }
+                let mut api_that_guard = api_that_guard.unwrap();
+                let output_ok = Ok::<_, ()>({
+                    {
+                        api_that_guard.document = api_document;
+                    };
+                })?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_set_report_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "GuitarProImportResult_auto_accessor_set_report",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>,
+            >>::sse_decode(&mut deserializer);
+            let api_report =
+                <crate::api::guitarpro::GuitarProImportReportDto>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, true,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref_mut()),
+                        _ => unreachable!(),
+                    }
+                }
+                let mut api_that_guard = api_that_guard.unwrap();
+                let output_ok = Ok::<_, ()>({
+                    {
+                        api_that_guard.report = api_report;
+                    };
+                })?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__midi__ImportResult_auto_accessor_get_document_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -2446,6 +2642,61 @@ fn wire__crate__api__layout__default_metrics_impl(
         },
     )
 }
+fn wire__crate__api__guitarpro__export_guitar_pro_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "export_guitar_pro",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_document = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
+            >>::sse_decode(&mut deserializer);
+            let api_extension = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, crate::api::types::ApiError>((move || {
+                    let mut api_document_guard = None;
+                    let decode_indices_ =
+                        flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                            flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                &api_document,
+                                0,
+                                false,
+                            ),
+                        ]);
+                    for i in decode_indices_ {
+                        match i {
+                            0 => api_document_guard = Some(api_document.lockable_decode_sync_ref()),
+                            _ => unreachable!(),
+                        }
+                    }
+                    let api_document_guard = api_document_guard.unwrap();
+                    let output_ok = crate::api::guitarpro::export_guitar_pro(
+                        &*api_document_guard,
+                        api_extension,
+                    )?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__midi__export_midi_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -2594,6 +2845,71 @@ fn wire__crate__api__pattern_grid__gestures_impl(
                     Ok::<_, ()>(crate::api::pattern_grid::gestures(&*api_document_guard))?;
                 std::result::Result::Ok(output_ok)
             })())
+        },
+    )
+}
+fn wire__crate__api__guitarpro__guitar_pro_export_extension_supported_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "guitar_pro_export_extension_supported",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_extension = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Ok::<_, ()>(
+                    crate::api::guitarpro::guitar_pro_export_extension_supported(api_extension),
+                )?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__guitarpro__import_guitar_pro_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "import_guitar_pro",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_bytes = <Vec<u8>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, crate::api::types::ApiError>((move || {
+                    let output_ok = crate::api::guitarpro::import_guitar_pro(api_bytes)?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
         },
     )
 }
@@ -2908,6 +3224,9 @@ flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
     flutter_rust_bridge::for_generated::RustAutoOpaqueInner<EngineHandle>
 );
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
+    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>
+);
+flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
     flutter_rust_bridge::for_generated::RustAutoOpaqueInner<ImportResult>
 );
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
@@ -2939,6 +3258,16 @@ impl SseDecode for EngineHandle {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <RustOpaqueMoi<
             flutter_rust_bridge::for_generated::RustAutoOpaqueInner<EngineHandle>,
+        >>::sse_decode(deserializer);
+        return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
+    }
+}
+
+impl SseDecode for GuitarProImportResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <RustOpaqueMoi<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>,
         >>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
     }
@@ -2976,6 +3305,18 @@ impl SseDecode
 
 impl SseDecode
     for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<EngineHandle>>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <usize>::sse_decode(deserializer);
+        return decode_rust_opaque_moi(inner);
+    }
+}
+
+impl SseDecode
+    for RustOpaqueMoi<
+        flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>,
+    >
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -4247,6 +4588,61 @@ impl SseDecode for crate::api::pattern_grid::GridViewDto {
             lanes: var_lanes,
             steps: var_steps,
             spans: var_spans,
+        };
+    }
+}
+
+impl SseDecode for crate::api::guitarpro::GuitarProExportReportDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_version = <String>::sse_decode(deserializer);
+        let mut var_tracks = <u32>::sse_decode(deserializer);
+        let mut var_bars = <u32>::sse_decode(deserializer);
+        let mut var_notesWritten = <u32>::sse_decode(deserializer);
+        let mut var_notesDropped = <u32>::sse_decode(deserializer);
+        let mut var_issues = <Vec<String>>::sse_decode(deserializer);
+        return crate::api::guitarpro::GuitarProExportReportDto {
+            version: var_version,
+            tracks: var_tracks,
+            bars: var_bars,
+            notes_written: var_notesWritten,
+            notes_dropped: var_notesDropped,
+            issues: var_issues,
+        };
+    }
+}
+
+impl SseDecode for crate::api::guitarpro::GuitarProExportResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_bytes = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_report =
+            <crate::api::guitarpro::GuitarProExportReportDto>::sse_decode(deserializer);
+        return crate::api::guitarpro::GuitarProExportResult {
+            bytes: var_bytes,
+            report: var_report,
+        };
+    }
+}
+
+impl SseDecode for crate::api::guitarpro::GuitarProImportReportDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_version = <String>::sse_decode(deserializer);
+        let mut var_tracksImported = <u32>::sse_decode(deserializer);
+        let mut var_bars = <u32>::sse_decode(deserializer);
+        let mut var_notesInFile = <u32>::sse_decode(deserializer);
+        let mut var_notesImported = <u32>::sse_decode(deserializer);
+        let mut var_notesDropped = <u32>::sse_decode(deserializer);
+        let mut var_issues = <Vec<String>>::sse_decode(deserializer);
+        return crate::api::guitarpro::GuitarProImportReportDto {
+            version: var_version,
+            tracks_imported: var_tracksImported,
+            bars: var_bars,
+            notes_in_file: var_notesInFile,
+            notes_imported: var_notesImported,
+            notes_dropped: var_notesDropped,
+            issues: var_issues,
         };
     }
 }
@@ -5555,12 +5951,18 @@ fn pde_ffi_dispatcher_primary_impl(
         ),
         38 => wire__crate__api__engine__EngineHandle_start_impl(port, ptr, rust_vec_len, data_len),
         39 => wire__crate__api__engine__EngineHandle_stop_impl(port, ptr, rust_vec_len, data_len),
-        46 => wire__crate__api__tuner__TunerHandle_start_impl(port, ptr, rust_vec_len, data_len),
-        50 => wire__crate__api__midi__export_midi_impl(port, ptr, rust_vec_len, data_len),
-        51 => wire__crate__api__musicxml__export_musicxml_impl(port, ptr, rust_vec_len, data_len),
-        53 => wire__crate__api__midi__import_midi_impl(port, ptr, rust_vec_len, data_len),
-        54 => wire__crate__api__info__init_app_impl(port, ptr, rust_vec_len, data_len),
-        59 => wire__crate__api__pattern_grid__techniques_dto_default_impl(
+        50 => wire__crate__api__tuner__TunerHandle_start_impl(port, ptr, rust_vec_len, data_len),
+        54 => {
+            wire__crate__api__guitarpro__export_guitar_pro_impl(port, ptr, rust_vec_len, data_len)
+        }
+        55 => wire__crate__api__midi__export_midi_impl(port, ptr, rust_vec_len, data_len),
+        56 => wire__crate__api__musicxml__export_musicxml_impl(port, ptr, rust_vec_len, data_len),
+        59 => {
+            wire__crate__api__guitarpro__import_guitar_pro_impl(port, ptr, rust_vec_len, data_len)
+        }
+        60 => wire__crate__api__midi__import_midi_impl(port, ptr, rust_vec_len, data_len),
+        61 => wire__crate__api__info__init_app_impl(port, ptr, rust_vec_len, data_len),
+        66 => wire__crate__api__pattern_grid__techniques_dto_default_impl(
             port,
             ptr,
             rust_vec_len,
@@ -5648,36 +6050,61 @@ fn pde_ffi_dispatcher_sync_impl(
         }
         28 => wire__crate__api__engine__EngineHandle_last_error_impl(ptr, rust_vec_len, data_len),
         30 => wire__crate__api__engine__EngineHandle_position_impl(ptr, rust_vec_len, data_len),
-        40 => wire__crate__api__midi__ImportResult_auto_accessor_get_document_impl(
+        40 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_get_document_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        41 => wire__crate__api__midi__ImportResult_auto_accessor_get_report_impl(
+        41 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_get_report_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        42 => wire__crate__api__midi__ImportResult_auto_accessor_set_document_impl(
+        42 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_set_document_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        43 => wire__crate__api__midi__ImportResult_auto_accessor_set_report_impl(
+        43 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_set_report_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        44 => wire__crate__api__tuner__TunerHandle_failed_impl(ptr, rust_vec_len, data_len),
-        45 => wire__crate__api__tuner__TunerHandle_reading_impl(ptr, rust_vec_len, data_len),
-        47 => wire__crate__api__tuner__TunerHandle_stop_impl(ptr, rust_vec_len, data_len),
-        48 => wire__crate__api__info__core_version_impl(ptr, rust_vec_len, data_len),
-        49 => wire__crate__api__layout__default_metrics_impl(ptr, rust_vec_len, data_len),
-        52 => wire__crate__api__pattern_grid__gestures_impl(ptr, rust_vec_len, data_len),
-        55 => wire__crate__api__pattern_grid__pattern_grid_impl(ptr, rust_vec_len, data_len),
-        56 => wire__crate__api__pattern__patterns_impl(ptr, rust_vec_len, data_len),
-        57 => wire__crate__api__pattern__preview_pattern_impl(ptr, rust_vec_len, data_len),
-        58 => wire__crate__api__pattern__sample_pattern_impl(ptr, rust_vec_len, data_len),
+        44 => wire__crate__api__midi__ImportResult_auto_accessor_get_document_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        45 => wire__crate__api__midi__ImportResult_auto_accessor_get_report_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        46 => wire__crate__api__midi__ImportResult_auto_accessor_set_document_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        47 => wire__crate__api__midi__ImportResult_auto_accessor_set_report_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        48 => wire__crate__api__tuner__TunerHandle_failed_impl(ptr, rust_vec_len, data_len),
+        49 => wire__crate__api__tuner__TunerHandle_reading_impl(ptr, rust_vec_len, data_len),
+        51 => wire__crate__api__tuner__TunerHandle_stop_impl(ptr, rust_vec_len, data_len),
+        52 => wire__crate__api__info__core_version_impl(ptr, rust_vec_len, data_len),
+        53 => wire__crate__api__layout__default_metrics_impl(ptr, rust_vec_len, data_len),
+        57 => wire__crate__api__pattern_grid__gestures_impl(ptr, rust_vec_len, data_len),
+        58 => wire__crate__api__guitarpro__guitar_pro_export_extension_supported_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        62 => wire__crate__api__pattern_grid__pattern_grid_impl(ptr, rust_vec_len, data_len),
+        63 => wire__crate__api__pattern__patterns_impl(ptr, rust_vec_len, data_len),
+        64 => wire__crate__api__pattern__preview_pattern_impl(ptr, rust_vec_len, data_len),
+        65 => wire__crate__api__pattern__sample_pattern_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -5710,6 +6137,26 @@ impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<
 
 impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<EngineHandle>> for EngineHandle {
     fn into_into_dart(self) -> FrbWrapper<EngineHandle> {
+        self.into()
+    }
+}
+
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<GuitarProImportResult> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
+            .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for FrbWrapper<GuitarProImportResult>
+{
+}
+
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<GuitarProImportResult>>
+    for GuitarProImportResult
+{
+    fn into_into_dart(self) -> FrbWrapper<GuitarProImportResult> {
         self.into()
     }
 }
@@ -6973,6 +7420,78 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::pattern_grid::GridViewDto>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::guitarpro::GuitarProExportReportDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.version.into_into_dart().into_dart(),
+            self.tracks.into_into_dart().into_dart(),
+            self.bars.into_into_dart().into_dart(),
+            self.notes_written.into_into_dart().into_dart(),
+            self.notes_dropped.into_into_dart().into_dart(),
+            self.issues.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::guitarpro::GuitarProExportReportDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::guitarpro::GuitarProExportReportDto>
+    for crate::api::guitarpro::GuitarProExportReportDto
+{
+    fn into_into_dart(self) -> crate::api::guitarpro::GuitarProExportReportDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::guitarpro::GuitarProExportResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.bytes.into_into_dart().into_dart(),
+            self.report.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::guitarpro::GuitarProExportResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::guitarpro::GuitarProExportResult>
+    for crate::api::guitarpro::GuitarProExportResult
+{
+    fn into_into_dart(self) -> crate::api::guitarpro::GuitarProExportResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::guitarpro::GuitarProImportReportDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.version.into_into_dart().into_dart(),
+            self.tracks_imported.into_into_dart().into_dart(),
+            self.bars.into_into_dart().into_dart(),
+            self.notes_in_file.into_into_dart().into_dart(),
+            self.notes_imported.into_into_dart().into_dart(),
+            self.notes_dropped.into_into_dart().into_dart(),
+            self.issues.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::guitarpro::GuitarProImportReportDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::guitarpro::GuitarProImportReportDto>
+    for crate::api::guitarpro::GuitarProImportReportDto
+{
+    fn into_into_dart(self) -> crate::api::guitarpro::GuitarProImportReportDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::layout::HitBeatDto {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -7771,6 +8290,18 @@ impl SseEncode for EngineHandle {
     }
 }
 
+impl SseEncode for GuitarProImportResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <RustOpaqueMoi<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>,
+        >>::sse_encode(
+            flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self),
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for ImportResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -7798,6 +8329,19 @@ impl SseEncode
 
 impl SseEncode
     for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<EngineHandle>>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        let (ptr, size) = self.sse_encode_raw();
+        <usize>::sse_encode(ptr, serializer);
+        <i32>::sse_encode(size, serializer);
+    }
+}
+
+impl SseEncode
+    for RustOpaqueMoi<
+        flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>,
+    >
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -8760,6 +9304,39 @@ impl SseEncode for crate::api::pattern_grid::GridViewDto {
     }
 }
 
+impl SseEncode for crate::api::guitarpro::GuitarProExportReportDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.version, serializer);
+        <u32>::sse_encode(self.tracks, serializer);
+        <u32>::sse_encode(self.bars, serializer);
+        <u32>::sse_encode(self.notes_written, serializer);
+        <u32>::sse_encode(self.notes_dropped, serializer);
+        <Vec<String>>::sse_encode(self.issues, serializer);
+    }
+}
+
+impl SseEncode for crate::api::guitarpro::GuitarProExportResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.bytes, serializer);
+        <crate::api::guitarpro::GuitarProExportReportDto>::sse_encode(self.report, serializer);
+    }
+}
+
+impl SseEncode for crate::api::guitarpro::GuitarProImportReportDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.version, serializer);
+        <u32>::sse_encode(self.tracks_imported, serializer);
+        <u32>::sse_encode(self.bars, serializer);
+        <u32>::sse_encode(self.notes_in_file, serializer);
+        <u32>::sse_encode(self.notes_imported, serializer);
+        <u32>::sse_encode(self.notes_dropped, serializer);
+        <Vec<String>>::sse_encode(self.issues, serializer);
+    }
+}
+
 impl SseEncode for crate::api::layout::HitBeatDto {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -9688,6 +10265,7 @@ mod io {
     use super::*;
     use crate::api::document::*;
     use crate::api::engine::*;
+    use crate::api::guitarpro::*;
     use crate::api::midi::*;
     use crate::api::tuner::*;
     use flutter_rust_bridge::for_generated::byteorder::{
@@ -9726,6 +10304,20 @@ mod io {
         ptr: *const std::ffi::c_void,
     ) {
         MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<EngineHandle>>::decrement_strong_count(ptr as _);
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_core_bridge_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>>::increment_strong_count(ptr as _);
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_core_bridge_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>>::decrement_strong_count(ptr as _);
     }
 
     #[unsafe(no_mangle)]
@@ -9770,6 +10362,7 @@ mod web {
     use super::*;
     use crate::api::document::*;
     use crate::api::engine::*;
+    use crate::api::guitarpro::*;
     use crate::api::midi::*;
     use crate::api::tuner::*;
     use flutter_rust_bridge::for_generated::byteorder::{
@@ -9810,6 +10403,20 @@ mod web {
         ptr: *const std::ffi::c_void,
     ) {
         MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<EngineHandle>>::decrement_strong_count(ptr as _);
+    }
+
+    #[wasm_bindgen]
+    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>>::increment_strong_count(ptr as _);
+    }
+
+    #[wasm_bindgen]
+    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<GuitarProImportResult>>::decrement_strong_count(ptr as _);
     }
 
     #[wasm_bindgen]
