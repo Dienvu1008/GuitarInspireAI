@@ -53,8 +53,9 @@ jobs:
       - run: cargo xtask fitness freshness
 
   fuzz:
-    # FF-15 (Important, ADR-023): fuzz the MIDI importer for a bounded time. A crash is
-    # minimized and committed as an mc-midi regression fixture (then part of FF-11).
+    # FF-15 (Important, ADR-023, ADR-036): fuzz the MIDI and Guitar Pro importers for a
+    # bounded time each. A crash is minimized and committed as a regression fixture or
+    # test of the adapter (then part of FF-11).
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -66,6 +67,14 @@ jobs:
         working-directory: fuzz
         # A fixed budget so the scheduled run finishes; -max_total_time is seconds.
         run: cargo +nightly fuzz run import_smf -- -max_total_time=300 -rss_limit_mb=4096
+      - name: Fuzz the Guitar Pro importer
+        # FF-15 for mc-guitarpro (ADR-036 G5). The corpus is seeded with copies of the
+        # S10 fixtures, so libfuzzer never writes into the committed fixture folder.
+        working-directory: fuzz
+        run: |
+          mkdir -p corpus/import_gp
+          cp ../crates/mc-guitarpro/tests/fixtures/tuxguitar/*.gp? corpus/import_gp/
+          cargo +nightly fuzz run import_gp corpus/import_gp -- -max_total_time=300 -rss_limit_mb=4096
 
   portability:
     # ADR-004: macOS and Linux keep building and passing tests before their port phase.
