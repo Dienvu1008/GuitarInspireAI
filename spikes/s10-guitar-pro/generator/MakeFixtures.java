@@ -310,6 +310,59 @@ public class MakeFixtures {
         return s;
     }
 
+    /** A chord diagram on a beat (very common in real files). */
+    static TGSong f15() {
+        TGSong s = song(1);
+        TGMeasure a = s.getTrack(0).getMeasure(0);
+        put(a, 0, 0, dur(4), C_CHORD);
+        TGChord chord = F.newChord(6);
+        chord.setName("C");
+        chord.setFirstFret(0);
+        int[] frets = {0, 1, 0, 2, 3, -1}; // string 1 first
+        for (int i = 0; i < 6; i++) chord.addFretValue(i, frets[i]);
+        beatAt(a, 0).setChord(chord);
+        fill(s);
+        return s;
+    }
+
+    /** A text on a beat. */
+    static TGSong f16() {
+        TGSong s = song(1);
+        TGMeasure a = s.getTrack(0).getMeasure(0);
+        put(a, 0, 0, dur(4), new int[] {1, 0});
+        TGText text = F.newText();
+        text.setValue("Intro");
+        beatAt(a, 0).setText(text);
+        fill(s);
+        return s;
+    }
+
+    /** One bar that is the ending of passes 1 and 2, then the ending of pass 3. */
+    static TGSong f17() {
+        TGSong s = song(4);
+        s.getMeasureHeader(0).setRepeatOpen(true);
+        s.getMeasureHeader(1).setRepeatClose(2);
+        s.getMeasureHeader(1).setRepeatAlternative(1 | 2);
+        s.getMeasureHeader(2).setRepeatAlternative(4);
+        TGTrack t = s.getTrack(0);
+        for (int bar = 0; bar < 4; bar++) put(t.getMeasure(bar), 0, 0, dur(1), new int[] {1, bar});
+        fill(s);
+        return s;
+    }
+
+    /** Lyrics on the first track. */
+    static TGSong f18() {
+        TGSong s = song(1);
+        TGTrack t = s.getTrack(0);
+        for (int k = 0; k < 4; k++) put(t.getMeasure(0), k * Q, 0, dur(4), new int[] {1, k});
+        TGLyric lyric = F.newLyric();
+        lyric.setFrom(1);
+        lyric.setLyrics("Một hai ba bốn");
+        t.setLyrics(lyric);
+        fill(s);
+        return s;
+    }
+
     // ------------------------------------------------------------- writing
 
     static GTPOutputStream writer(String ext, GTPSettings settings) {
@@ -386,6 +439,10 @@ public class MakeFixtures {
         fixtures.put("f12-unsupported", MakeFixtures::f12);
         fixtures.put("f13-seven-string", MakeFixtures::f13);
         fixtures.put("f14-percussion", MakeFixtures::f14);
+        fixtures.put("f15-chord-diagram", MakeFixtures::f15);
+        fixtures.put("f16-beat-text", MakeFixtures::f16);
+        fixtures.put("f17-combined-endings", MakeFixtures::f17);
+        fixtures.put("f18-lyrics", MakeFixtures::f18);
         for (Map.Entry<String, java.util.function.Supplier<TGSong>> e : fixtures.entrySet()) {
             for (String ext : new String[] {"gp5", "gp4", "gp3"}) {
                 File file = new File(dir, e.getKey() + "." + ext);

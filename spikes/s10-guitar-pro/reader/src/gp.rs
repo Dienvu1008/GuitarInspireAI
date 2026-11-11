@@ -17,9 +17,28 @@ pub fn read(c: &mut Cursor) -> Res<Song> {
     };
     c.mark("info");
     let names: &[&str] = if v == 5 {
-        &["title", "subtitle", "artist", "album", "words", "music", "copyright", "tab", "instructions"]
+        &[
+            "title",
+            "subtitle",
+            "artist",
+            "album",
+            "words",
+            "music",
+            "copyright",
+            "tab",
+            "instructions",
+        ]
     } else {
-        &["title", "subtitle", "artist", "album", "words", "copyright", "tab", "instructions"]
+        &[
+            "title",
+            "subtitle",
+            "artist",
+            "album",
+            "words",
+            "copyright",
+            "tab",
+            "instructions",
+        ]
     };
     for name in names {
         let s = c.int_byte_string()?;
@@ -39,10 +58,11 @@ pub fn read(c: &mut Cursor) -> Res<Song> {
     }
     if v >= 4 {
         c.mark("lyrics");
-        c.i32()?;
+        song.lyrics_track = c.i32()?;
         for _ in 0..5 {
-            c.i32()?;
-            c.int_string()?;
+            let bar = c.i32()?;
+            let text = c.int_string()?;
+            song.lyrics.push((bar, text));
         }
     }
     if v == 5 {
@@ -106,7 +126,10 @@ pub fn read(c: &mut Cursor) -> Res<Song> {
         }
     }
     if c.remaining() != 0 && std::env::var("S10_LENIENT").is_err() {
-        return c.fail(format!("{} bytes left after the last measure", c.remaining()));
+        return c.fail(format!(
+            "{} bytes left after the last measure",
+            c.remaining()
+        ));
     }
     Ok(song)
 }
@@ -192,7 +215,7 @@ fn beat(c: &mut Cursor, v: u8) -> Res<Beat> {
         b.tuplet = Some(c.i32()?);
     }
     if flags & 0x02 != 0 {
-        return c.fail("chord diagram: not handled by the spike");
+        b.chord = Some(chord(c, v)?);
     }
     if flags & 0x04 != 0 {
         b.text = Some(c.int_byte_string()?);
@@ -216,6 +239,46 @@ fn beat(c: &mut Cursor, v: u8) -> Res<Beat> {
         }
     }
     Ok(b)
+}
+
+/// Chord diagram. A header byte selects the old (0) or new (1) layout.
+fn chord(c: &mut Cursor, v: u8) -> Res<Chord> {
+    let mut ch = Chord::default();
+    match c.u8()? {
+        0 => {
+            // Old layout, from the format description only (no fixture has it):
+            // name, first fret, six frets.
+            ch.name = c.int_byte_string()?;
+            ch.first_fret = c.i32()?;
+            for _ in 0..6 {
+                ch.frets.push(c.i32()?);
+            }
+        }
+        1 if v >= 4 => {
+            // (bytes) f15.gp4 and f15.gp5 have the same 107-byte layout, header
+            // included: Bytes where the GP3 description lists Ints, 7 frets, 5 barres.
+            c.skip(1 + 3)?; // sharp, blank
+            c.skip(3)?; // root, type, extension (Bytes)
+            c.skip(4 + 4)?; // bass, tonality
+            c.skip(1)?; // add
+            ch.name = c.byte_string_fixed(22)?;
+            c.skip(3)?; // fifth, ninth, eleventh alterations (Bytes)
+            ch.first_fret = c.i32()?;
+            for _ in 0..7 {
+                ch.frets.push(c.i32()?);
+            }
+            c.skip(1 + 5 * 3)?; // barre count, barre frets, starts, ends
+            c.skip(7 + 1)?; // omissions, blank
+            c.skip(7 + 1)?; // fingering, show fingering
+        }
+        1 => {
+            // The GP3 new layout has Ints instead of Bytes; TuxGuitar's GP3 writer
+            // drops chord diagrams, so no fixture shows it. Refuse rather than guess.
+            return c.fail("GP3 new-layout chord diagram: layout not verified");
+        }
+        h => return c.fail(format!("chord diagram header {h}")),
+    }
+    Ok(ch)
 }
 
 fn beat_effects(c: &mut Cursor, v: u8, b: &mut Beat) -> Res<()> {

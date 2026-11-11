@@ -1,7 +1,7 @@
 # S10: Guitar Pro import and export (spike, in progress)
 
 Purpose: Entry gate of Phase 6d ([technical-spikes.md](../../docs/research/technical-spikes.md) S10). Read GP3 to GP5 files into a test model, find the format and legal risks, and estimate the effort, so that ADR-036 (the Guitar Pro adapter) can be written with its acceptance criteria fixed first.
-Status: In progress. Fixtures generated (section 4); the reader is next.
+Status: Done for GP3, GP4 and GP5 5.00 as written by TuxGuitar (section 6). The open points are in section 7; they go into ADR-036 as conditions, not as met criteria.
 Related: [technology-evaluation.md](../../docs/research/technology-evaluation.md) (usage categories), [ADR-015](../../docs/architecture/decisions/ADR-015-dependency-license-policy.md), risk R-14 in [risk-register.md](../../docs/roadmap/risk-register.md).
 
 ## 1. Decisions taken before the spike (user, 2026-11-11)
@@ -27,9 +27,9 @@ Related: [technology-evaluation.md](../../docs/research/technology-evaluation.md
 
 Every later source is added here before it is used.
 
-## 4. Fixtures to create in TuxGuitar (user)
+## 4. Fixtures
 
-Each file is small (one to four bars), so that a change is easy to find in the bytes. Save each one as **GP5**, and where TuxGuitar allows, also as **GP4** and **GP3** (File > Save as, choose the format; or the File format converter in Tools). Name them `fNN-name.gp5` and so on, and put them in `spikes/s10-guitar-pro/fixtures/tuxguitar/`.
+Each file is small (one to four bars), so that a change is easy to find in the bytes. Each exists as `.gp5`, `.gp4` and `.gp3` in `fixtures/tuxguitar/`. They were planned to be made by hand in TuxGuitar; with the user's consent they are generated through TuxGuitar's API instead (`fixtures/tuxguitar/README.md`). f15 to f18 were added after the first reader run, for features common in real files.
 
 Defaults unless a file says otherwise: one guitar track, standard tuning, 4/4, 120 BPM, key C.
 
@@ -49,14 +49,18 @@ Defaults unless a file says otherwise: one guitar track, standard tuning, 4/4, 1
 | f12-unsupported | Bar 1: a bend, a slide, a hammer-on, a natural harmonic. Bar 2: a vibrato, a grace note, a tremolo picking, a tap. These are for the import report |
 | f13-seven-string | One 7-string guitar track (low B), one note on string 7 |
 | f14-percussion | One drum track with a few hits (the importer should refuse or report it) |
+| f15-chord-diagram | Bar 1: the C chord with a chord diagram "C" (x32010) on its beat |
+| f16-beat-text | Bar 1: a note with the beat text "Intro" |
+| f17-combined-endings | Four bars: repeat start on bar 1, repeat end on bar 2 (play three times), bar 2 is the ending of passes 1 and 2, bar 3 the ending of pass 3 |
+| f18-lyrics | Four notes and the lyrics "Một hai ba bốn" from bar 1 on track 1 |
 
-Please also say whether each file may be committed to the repository and under which license (for example CC0-1.0, since you are the author).
+All files are CC0-1.0 (see the fixture README).
 
 ## 5. Method
 
 1. A throwaway reader in this folder (own Cargo workspace, excluded from the production workspace), reading GP5 then GP3 and GP4 into a small test model: song info, tempo, key, measure headers, tracks (strings, tuning, capo, frets), and per measure and voice the beats (duration, tuplet, rest, stroke) and notes (string, fret, tie, dead, accent, palm mute, let ring, ghost).
 2. Every section read is checked against the fixture it was made for: offsets are logged, and the reader must consume every byte of every file.
-3. A writer for GP5 of the same model; files written by it are reopened in TuxGuitar (by hand, recorded) and by the reader (round trip).
+3. A writer for GP5 of the same model; files written by it are read again by our reader (round trip) and by TuxGuitar's own GP5 reader (`generator/ReadSummary.java`, which prints TuxGuitar's view in the reader's text form).
 4. A mapping table: each Guitar Pro feature to our score model (kept, approximated, or reported as dropped), for the ADR.
 5. A fuzz-style run over mutated fixtures: the reader never panics and never allocates without bound.
 
@@ -64,9 +68,10 @@ Please also say whether each file may be committed to the repository and under w
 
 ### 6.1 Reader (`reader/`, step 1 and 2 of section 5)
 
-- One code path for GP3, GP4 and GP5 5.00, with the version as a parameter (`reader/src/gp.rs`, about 450 lines, no dependency). Every count is bounded before allocating.
-- **All 42 fixtures are read to their last byte** (a file with bytes left over is an error).
-- **The content is right**, checked by hand against the generator for all 14 GP5 files: notes, chords, durations with dots and triplets, every note flag, strokes, two tracks with drop D and a capo, meters, key, tempo and a tempo change, repeats, alternate endings and a marker, two voices, text, seven strings, percussion. Unsupported effects (bend, slide, hammer-on, harmonics, vibrato, grace, tremolo picking, tap) are recognised and named, for the import report.
+- One code path for GP3, GP4 and GP5 5.00, with the version as a parameter (`reader/src/gp.rs`, 450 lines, no dependency). Every count is bounded before allocating.
+- **All 54 fixtures are read to their last byte** (a file with bytes left over is an error).
+- **The content is right**, checked by hand against the generator for all 18 GP5 files: notes, chords, durations with dots and triplets, every note flag, strokes, two tracks with drop D and a capo, meters, key, tempo and a tempo change, repeats, alternate endings and a marker, two voices, song text, seven strings, percussion, a chord diagram, a beat text, combined endings, lyrics. Unsupported effects (bend, slide, hammer-on, harmonics, vibrato, grace, tremolo picking, tap) are recognised and named, for the import report.
+- **Checked against TuxGuitar's own readers:** for all 54 files, the 103 voice lines TuxGuitar reads (duration, rest, every note with its flags) are identical to ours.
 - **Cross-version check:** the GP3, GP4 and GP5 file of each song read to the same content, except for the differences below, each explained by the format or by TuxGuitar's writers.
 
 ### 6.2 Facts found by byte analysis (corrections to the format description)
@@ -79,6 +84,8 @@ Please also say whether each file may be committed to the repository and under w
 | GP5 measure header | Ending written with the GP3 order | After the marker (bit order 0x20 before 0x10) |
 | GP5 tracks | 2 blank bytes after the tracks for 5.00 | One before the first track and one after the last |
 | GP3 beat effects | An Int follows the slap byte only for the tremolo bar | An Int follows for every kind (f12.gp3, a tap) |
+| GP4 and GP5 chord diagram (new layout) | Described for GP3: Ints for root, type, extension and the alterations, 6 frets, 2 barres | 107 bytes in both versions (f15): header, sharp, 3 blank, root, type and extension as **Bytes**, bass and tonality Ints, add, name (length + 22), three alteration **Bytes**, first fret, **7** frets, barre count and **5** barres (frets, starts, ends as Bytes), 7 omissions, a blank, 7 fingerings, show fingering |
+| Alternate ending byte | "Number of the alternate ending" | A **bitmask of passes** (f17: 3 = passes 1 and 2, 4 = pass 3; f09's 1 and 2 are the same rule). Seen in GP4 and GP5; TuxGuitar's GP3 writer drops endings, so GP3 is not shown |
 
 ### 6.3 Differences between versions (rules for the importer)
 
@@ -88,16 +95,63 @@ Please also say whether each file may be committed to the repository and under w
 - **Pick stroke** (GP4, GP5): 2 for down, 1 for up. GP3 has none.
 - **One voice** in GP3 and GP4; TuxGuitar merges voice 2 into voice 1 when it writes them (f10).
 - **Lost by the older formats or by TuxGuitar's writers:** heavy accent in GP4; accent, palm mute and staccato in GP3; alternate endings in GP3; tremolo picking in GP3 (f05, f09, f12).
-- **Text** is UTF-8 in every TuxGuitar file (f11, "Bài hát"). The reader decodes UTF-8 when the bytes are valid UTF-8, and Latin-1 otherwise; the choice for files written by Guitar Pro is [open].
+- **Text** is UTF-8 in every TuxGuitar file (f11 "Bài hát", f18 "Một hai ba bốn"). The reader decodes UTF-8 when the bytes are valid UTF-8, and Latin-1 otherwise; the choice for files written by Guitar Pro is [open].
+- **Chord diagrams:** TuxGuitar's GP3 writer drops them (f15.gp3 has the same bytes as f03.gp3). The GP3 new layout and the old layout (header 0) are therefore not shown by any fixture. The reader reads the old layout as described and **refuses** a GP3 new-layout diagram with a typed error rather than guess.
+- **Lyrics** exist in GP4 and GP5 only (one track, five lines with a start bar each).
+- **Repeat end with combined endings** (f17): GP5 stores 3 plays, GP4 2 repeats; same rule as above.
 
-### 6.4 Still to do in the spike
+### 6.4 Writer, round trip and robustness (steps 3 and 5 of section 5)
 
-- A GP5 writer for the same model; round trip through our reader, and files opened in TuxGuitar.
-- A mutation run over the fixtures: the reader never panics.
-- The mapping table to our score model, and the effort estimate, for ADR-036.
+- **GP5 writer** (`reader/src/write.rs`, 360 lines): writes the spike model as GP5 5.00. Sections the model does not hold (page setup, MIDI channels, track display data) are written with TuxGuitar's values.
+- **Round trip:** all 18 GP5 fixtures read, written by us and read again give the same model (effects the model does not keep are excluded from the comparison).
+- **TuxGuitar reads our files:** all 18 load in TuxGuitar's GP5 reader, and its view of our files is **identical** to its view of the originals: 79 of 79 lines (tracks, strings, capo, every voice line, the chord diagram "C", the beat text, the endings 1, 2, 1+2, 3, the repeat counts and the lyrics).
+- **Mutation run** (`--mutate`, deterministic): 2000 mutations of each of the 54 fixtures and of the 18 written files, 144 000 inputs in total: 60 548 read, 83 452 typed errors, **0 panics**. The 108 000 fixture mutations ran in 0.17 s (release build).
 
-## 7. Risks to assess
+### 6.5 Mapping to our score model (for ADR-036)
 
-- **Legal:** proprietary format; interoperability by our own implementation; the trademark. See section 2.
-- **Format:** sections whose meaning is unknown (RSE, page setup, chord diagrams) must still be skipped exactly; version differences between 5.00 and 5.10; the 8-bit text encoding (which code page TuxGuitar and Guitar Pro use).
-- **Evidence:** TuxGuitar may write GP files differently from Guitar Pro itself. Without files written by Guitar Pro, compatibility with Guitar Pro's own files is an evidence gap.
+Kept means an exact mapping; approximated means the import report says what changed; reported means dropped with a line in the import report.
+
+| Guitar Pro | Our model | Import | Export |
+|---|---|---|---|
+| Tracks, name, strings (up to 7), tuning, frets, capo | `TrackData`, `FrettedInstrument` | Kept (frets checked against C-01) | Kept |
+| Percussion track | No non-fretted instrument | Track refused, reported | None |
+| Bars: time signature (carried forward), key, repeat start, repeat end, marker | `MasterBar` | Kept; GP3/GP4 repeat count + 1 | Kept |
+| Alternate endings (bitmask) | `alternate_endings` (passes) | Kept, bits to passes | Kept |
+| Double bar, triplet feel | None | Reported | Not written |
+| Tempo and tempo changes in the mix table | `TempoChange` | Kept | Kept |
+| Durations, dots, tuplets (enters) | `NoteValue` | Kept; the tuplet's normal count from the standard table | Kept where the format allows (one dot) |
+| Rest, empty beat | Beat without notes; empty beat skipped | Kept | Kept |
+| Voices (2 in GP5, 1 in GP3/GP4) | `BarContent.voices` | Kept | Kept; GP3/GP4 export of voice 2 refused or reported |
+| Note string and fret, tie, dead, accent, palm mute, let ring | `Note`, `NoteEffects` | Kept | Kept |
+| Ghost, heavy accent, staccato, velocity | None | Approximated (heavy accent as accent) or reported | Not written |
+| Pick stroke | `Stroke` | Kept (2 down, 1 up) | Kept |
+| Brush (strum with speed) | `Stroke` | Reported until its direction is confirmed [open] | Written as pick stroke |
+| Chord diagram, beat text, lyrics | None | Reported (name kept in the report) | Not written |
+| Bend, slide, hammer-on, harmonics, vibrato, grace, tremolo picking, trill, tap, slap, tremolo bar, fade in, rasgueado, fingering | None | Reported per kind | Not written |
+| Mix table (instrument, volume, pan, effects) | None | Reported | Not written |
+| Song info (title, artist and so on), notice | None in the score | Reported, or kept in project metadata if ADR-036 decides it | Written from metadata if any |
+| RSE, page setup, MIDI channels | None | Skipped exactly | TuxGuitar's values |
+
+The importer builds the score through `ScoreBuilder` (GR-09), so every invariant is checked; a file that breaks one is refused with a typed error, never repaired silently.
+
+### 6.6 Effort estimate for 6d (GP3, GP4, GP5 read; GP5 write)
+
+About **3 to 4 weeks** of one developer, within a 3 to 6 week range:
+
+- `mc-guitarpro` crate: reader and writer rebuilt from the spike with tests per fixture, about 1.5 weeks.
+- Mapping to `ScoreBuilder` and back, the import report, version rules, about 1 week.
+- Application command, file dialog and report UI in Flutter, about 0.5 week.
+- Fuzz target in `fuzz/`, fitness function entries, documentation, about 0.5 week.
+
+GP3 and GP4 export would add about 0.5 week; GP7/8 and GPX are not in this estimate.
+
+## 7. Risks and open questions
+
+- **Legal:** proprietary format; interoperability by our own implementation; the trademark. See section 2. Not legal advice; a legal review is advised before a commercial release.
+- **Evidence gap, files written by Guitar Pro:** every fixture was written by TuxGuitar. Guitar Pro's own files may differ in padding values, optional sections and text encoding. Until such files exist, ADR-036 can only claim compatibility with "GP3 to GP5 files as TuxGuitar 2.0.1 writes them".
+- **GP5 5.10:** TuxGuitar writes only 5.00. 5.10 adds sections (RSE master effect and more); the reader refuses 5.10 with a typed error today. [open]
+- **Brush direction:** the byte order is known, the meaning of each byte is not (section 6.3). [open]
+- **Text encoding** of Guitar Pro's own files (a Windows code page is assumed). [open]
+- **Chord diagram layouts** not shown by a fixture: the old layout (read as described, unverified) and the GP3 new layout (refused). [open]
+- **GP3 and GP4 export** was not built in the spike; the layouts are the reader's, so the risk is low, but it is not shown.
+- **Fuzzing** here is a simple mutation loop; the production crate needs a `cargo-fuzz` target in `fuzz/`.

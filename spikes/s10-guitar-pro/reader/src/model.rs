@@ -6,6 +6,10 @@ pub struct Song {
     pub info: Vec<(String, String)>,
     pub tempo: i32,
     pub key: i32,
+    /// Track the lyrics belong to (as stored, GP4/GP5 only).
+    pub lyrics_track: i32,
+    /// Five lyric lines: (start bar, text), as stored.
+    pub lyrics: Vec<(i32, String)>,
     pub headers: Vec<Header>,
     pub tracks: Vec<Track>,
     /// [track][measure]
@@ -19,7 +23,8 @@ pub struct Header {
     pub repeat_start: bool,
     /// Total plays of the repeated section, 0 when the bar ends no repeat.
     pub repeat_end: u8,
-    /// Alternate ending number, 0 for none.
+    /// Alternate endings as a bitmask of passes (bit 0 = pass 1), 0 for none
+    /// (bytes: f17 stores 3 for "passes 1 and 2").
     pub alternative: u8,
     pub marker: Option<String>,
     pub key: Option<(i8, i8)>,
@@ -58,6 +63,7 @@ pub struct Beat {
     /// Pick stroke: -1 down... as stored (0 none).
     pub pick_stroke: i8,
     pub text: Option<String>,
+    pub chord: Option<Chord>,
     pub tempo_change: Option<i32>,
     /// Effects the reader skipped, by name.
     pub unsupported: Vec<String>,
@@ -78,4 +84,14 @@ pub struct Note {
     pub staccato: bool,
     pub velocity: Option<i8>,
     pub unsupported: Vec<String>,
+}
+
+/// A chord diagram: what a score model could keep. Root, type, alterations,
+/// barres and fingering are read and dropped.
+#[derive(Debug, Default, Clone, PartialEq)]
+pub struct Chord {
+    pub name: String,
+    pub first_fret: i32,
+    /// Fret per string, string 1 first, -1 for a string not played.
+    pub frets: Vec<i32>,
 }

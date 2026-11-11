@@ -24,10 +24,6 @@ impl<'a> Cursor<'a> {
         }
     }
 
-    pub fn len(&self) -> usize {
-        self.data.len()
-    }
-
     pub fn remaining(&self) -> usize {
         self.data.len() - self.pos
     }
@@ -116,12 +112,6 @@ impl<'a> Cursor<'a> {
             return self.fail(format!("string length {len} over its buffer of {size}"));
         }
         Ok(Self::text(&buf[..len]))
-    }
-
-    /// ByteSizeString without padding.
-    pub fn byte_string(&mut self) -> Res<String> {
-        let len = self.u8()? as usize;
-        Ok(Self::text(self.bytes(len)?))
     }
 
     /// IntSizeString: an Int length, then the bytes.
