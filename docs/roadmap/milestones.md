@@ -39,3 +39,9 @@ Phase 6a (no milestone of its own; part of M6 and later) was accepted on 2026-11
 - Five evidence gaps are conditions of acceptance: MuseScore losing three techniques on re-export (TQ-8); no dragging in the grid editor (PE-14); PE-15 measured once; the older-reader check done by hand; and the editor's command queue covered only by the Windows integration test.
 - It was merged from `phase-6a-pattern-engine`.
 - Evidence: [phase-6a-exit-report.md](phase-6a-exit-report.md). Next: Phase 6c or 6d, in the order the user chooses (entry gates S11 and S10).
+
+Phase 6d (no milestone of its own; part of M6 and later) was accepted on 2026-11-11.
+- It delivered Guitar Pro GP3, GP4 and GP5 (5.00) import with a report, and export to the same three versions (added by the user), with an own clean-room adapter `mc-guitarpro` (ADR-036). All evidence comes from a single machine and from files written by TuxGuitar 2.0.1.
+- Five evidence gaps are conditions of acceptance: the fuzz target not yet run; no file written by Guitar Pro itself; TuxGuitar's palm mute and let ring limit; GP5 5.10, GPX and GP7+ refused; and no legal review.
+- It was merged from `phase-6d-guitar-pro`.
+- Evidence: [phase-6d-exit-report.md](phase-6d-exit-report.md). Next: Phase 6c (standard notation and PDF, entry gate S11).

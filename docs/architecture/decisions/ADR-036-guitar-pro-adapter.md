@@ -1,6 +1,6 @@
 # ADR-036 Guitar Pro import and export adapter `mc-guitarpro` (Phase 6d)
 
-Status: Accepted (2026-11-11); results in section 8 (2026-11-11).
+Status: Accepted (2026-11-11); results in section 8 (2026-11-11). On 2026-11-11 the user confirmed the eight choices of section 7 and the reading of G1 in clarification 1 (section 9).
 - The acceptance criteria in section 6 were fixed before any code.
 - On 2026-11-11 the user asked for this ADR to be drafted and the work continued ("soạn luôn và tiếp tục"). The choices in section 7 are therefore the agent's recommendations, applied so the work can go on. The user may change any of them at review; a change is recorded in section 7 and the code follows it.
 Date: 2026-11-11
@@ -251,6 +251,12 @@ Single machine (ADR-025). The TuxGuitar procedure and the timing numbers are in 
 7. **The FFI also exposes `guitar_pro_export_extension_supported`**. Dart uses it to ask the core, not to decide itself.
 8. **An empty track name** is imported as "Track N", as the MIDI importer does.
 9. **An empty (status 0) beat in a GP3 or GP4 file** is skipped on import, as the format description says. TuxGuitar reads one as a rest. No fixture contains one, because TuxGuitar writes an empty bar of those versions with no beats.
+
+## 9. User decisions after the results (2026-11-11)
+
+1. **A file with only percussion tracks stays refused** with `NoGuitarTracks` (choice 7.5). G1 is read as "imports as specified" (clarification 1). Importing such a file as a score with no notes was offered and not chosen.
+2. **The eight choices of section 7 are confirmed as written.** They are no longer only the agent's recommendations.
+3. **Phase 6d is merged into `main` now.** The first weekly fuzz run (G5) is not waited for and stays a condition of acceptance ([phase-6d-exit-report.md](../../roadmap/phase-6d-exit-report.md)).
 
 ## Alternatives
 
