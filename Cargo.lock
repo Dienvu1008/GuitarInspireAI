@@ -1018,6 +1018,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mc-guitarpro"
+version = "0.1.0"
+dependencies = [
+ "mc-score",
+ "mc-theory",
+ "proptest",
+]
+
+[[package]]
 name = "mc-midi"
 version = "0.1.0"
 dependencies = [

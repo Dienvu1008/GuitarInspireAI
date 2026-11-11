@@ -2,3 +2,8 @@
 # `git diff --exit-code` passes on every platform regardless of core.autocrlf.
 crates/mc-ffi/src/frb_generated.rs text eol=lf
 packages/core_bridge/lib/src/generated/** text eol=lf
+
+# Guitar Pro test files are binary (ADR-036): no line-ending conversion, no text diff.
+*.gp3 binary
+*.gp4 binary
+*.gp5 binary

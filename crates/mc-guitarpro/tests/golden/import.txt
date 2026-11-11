@@ -1,0 +1,428 @@
+== f01-empty.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 0 of 0 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+== f01-empty.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 0 of 0 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+== f01-empty.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 0 of 0 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+== f02-one-note.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f02-one-note.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f02-one-note.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f03-chord.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 5 of 5 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 rest | 1/4 rest | 1/4 rest
+== f03-chord.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 5 of 5 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 rest | 1/4 rest | 1/4 rest
+== f03-chord.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 5 of 5 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 rest | 1/4 rest | 1/4 rest
+== f04-durations.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 2 notes 10 of 10 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/2 (1/0) | 1/4 (1/1) | 1/8 (1/2) | 1/16 (1/3) | 1/16 (1/5)
+  bar 2 voice 1: 1/4. (2/0) | 1/8 (2/1) | 1/8 3:2 (2/3) | 1/8 3:2 (2/5) | 1/8 3:2 (2/7) | 1/4 rest
+== f04-durations.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 2 notes 10 of 10 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/2 (1/0) | 1/4 (1/1) | 1/8 (1/2) | 1/16 (1/3) | 1/16 (1/5)
+  bar 2 voice 1: 1/4. (2/0) | 1/8 (2/1) | 1/8 3:2 (2/3) | 1/8 3:2 (2/5) | 1/8 3:2 (2/7) | 1/4 rest
+== f04-durations.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 2 notes 10 of 10 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/2 (1/0) | 1/4 (1/1) | 1/8 (1/2) | 1/16 (1/3) | 1/16 (1/5)
+  bar 2 voice 1: 1/4. (2/0) | 1/8 (2/1) | 1/8 3:2 (2/3) | 1/8 3:2 (2/5) | 1/8 3:2 (2/7) | 1/4 rest
+== f05-note-effects.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 3 notes 10 of 10 dropped 0
+issue: ghost note not kept: 1 (first in bar 2)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (2/5) | 1/4 (2/5) | 1/4 (2/5) | 1/4 (2/5 dead)
+  bar 2 voice 1: 1/4 (2/5) | 1/4 (2/5 ring) | 1/4 (2/5) | 1/4 (2/5)
+  bar 3 voice 1: 1/2 (2/5) | 1/2 (2/5 tie)
+== f05-note-effects.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 3 notes 10 of 10 dropped 0
+issue: ghost note not kept: 1 (first in bar 2)
+issue: staccato not kept: 1 (first in bar 2)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (2/5) | 1/4 (2/5 acc) | 1/4 (2/5) | 1/4 (2/5 dead)
+  bar 2 voice 1: 1/4 (2/5 pm) | 1/4 (2/5 ring) | 1/4 (2/5) | 1/4 (2/5)
+  bar 3 voice 1: 1/2 (2/5) | 1/2 (2/5 tie)
+== f05-note-effects.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 3 notes 10 of 10 dropped 0
+issue: ghost note not kept: 1 (first in bar 2)
+issue: staccato not kept: 1 (first in bar 2)
+issue: heavy accent kept as an accent: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (2/5) | 1/4 (2/5 acc) | 1/4 (2/5 acc) | 1/4 (2/5 dead)
+  bar 2 voice 1: 1/4 (2/5 pm) | 1/4 (2/5 ring) | 1/4 (2/5) | 1/4 (2/5)
+  bar 3 voice 1: 1/2 (2/5) | 1/2 (2/5 tie)
+== f06-strokes.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 20 of 20 dropped 0
+issue: brush kept as a stroke, without its speed: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 down (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 (1/0, 2/1, 3/0, 4/2, 5/3)
+== f06-strokes.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 20 of 20 dropped 0
+issue: brush kept as a stroke, without its speed: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 down (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 up (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 down (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 (1/0, 2/1, 3/0, 4/2, 5/3)
+== f06-strokes.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 20 of 20 dropped 0
+issue: brush kept as a stroke, without its speed: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 down (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 up (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 down (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 (1/0, 2/1, 3/0, 4/2, 5/3)
+== f07-tracks.gp3
+FICHIER GUITAR PRO v3.00 | tracks 2 bars 2 notes 4 of 4 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "Lead" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/1) | 1/4 rest | 1/4 rest | 1/4 rest
+  bar 2 voice 1: 1/4 (1/2) | 1/4 rest | 1/4 rest | 1/4 rest
+track 2 "Rhythm" tuning [64, 59, 55, 50, 45, 38] frets 24 capo 2
+  bar 1 voice 1: 1/4 (6/0) | 1/4 rest | 1/4 rest | 1/4 rest
+  bar 2 voice 1: 1/4 (6/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f07-tracks.gp4
+FICHIER GUITAR PRO v4.00 | tracks 2 bars 2 notes 4 of 4 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "Lead" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/1) | 1/4 rest | 1/4 rest | 1/4 rest
+  bar 2 voice 1: 1/4 (1/2) | 1/4 rest | 1/4 rest | 1/4 rest
+track 2 "Rhythm" tuning [64, 59, 55, 50, 45, 38] frets 24 capo 2
+  bar 1 voice 1: 1/4 (6/0) | 1/4 rest | 1/4 rest | 1/4 rest
+  bar 2 voice 1: 1/4 (6/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f07-tracks.gp5
+FICHIER GUITAR PRO v5.00 | tracks 2 bars 2 notes 4 of 4 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "Lead" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/1) | 1/4 rest | 1/4 rest | 1/4 rest
+  bar 2 voice 1: 1/4 (1/2) | 1/4 rest | 1/4 rest | 1/4 rest
+track 2 "Rhythm" tuning [64, 59, 55, 50, 45, 38] frets 24 capo 2
+  bar 1 voice 1: 1/4 (6/0) | 1/4 rest | 1/4 rest | 1/4 rest
+  bar 2 voice 1: 1/4 (6/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f08-meter-key-tempo.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 3 notes 3 of 3 dropped 0
+bar 1: 4/4 key 1 Major
+bar 2: 3/4 key 1 Major
+bar 3: 6/8 key 1 Major
+tempo 90 at bar 1 + 0
+tempo 140 at bar 3 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (3/0) | 1/4 rest | 1/4 rest | 1/4 rest
+  bar 2 voice 1: 1/4 (3/0) | 1/2 rest
+  bar 3 voice 1: 1/4 (3/0) | 1/2 rest
+== f08-meter-key-tempo.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 3 notes 3 of 3 dropped 0
+bar 1: 4/4 key 1 Major
+bar 2: 3/4 key 1 Major
+bar 3: 6/8 key 1 Major
+tempo 90 at bar 1 + 0
+tempo 140 at bar 3 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (3/0) | 1/4 rest | 1/4 rest | 1/4 rest
+  bar 2 voice 1: 1/4 (3/0) | 1/2 rest
+  bar 3 voice 1: 1/4 (3/0) | 1/2 rest
+== f08-meter-key-tempo.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 3 notes 3 of 3 dropped 0
+bar 1: 4/4 key 1 Major
+bar 2: 3/4 key 1 Major
+bar 3: 6/8 key 1 Major
+tempo 90 at bar 1 + 0
+tempo 140 at bar 3 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (3/0) | 1/4 rest | 1/4 rest | 1/4 rest
+  bar 2 voice 1: 1/4 (3/0) | 1/2 rest
+  bar 3 voice 1: 1/4 (3/0) | 1/2 rest
+== f09-repeats.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 6 notes 6 of 6 dropped 0
+bar 1: 4/4 key 0 Major
+bar 2: |:, marker "Chorus"
+bar 4: :| x2
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/1 (1/0)
+  bar 2 voice 1: 1/1 (1/1)
+  bar 3 voice 1: 1/1 (1/2)
+  bar 4 voice 1: 1/1 (1/3)
+  bar 5 voice 1: 1/1 (1/4)
+  bar 6 voice 1: 1/1 (1/5)
+== f09-repeats.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 6 notes 6 of 6 dropped 0
+bar 1: 4/4 key 0 Major
+bar 2: |:, marker "Chorus"
+bar 4: :| x2, volta [1]
+bar 5: volta [2]
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/1 (1/0)
+  bar 2 voice 1: 1/1 (1/1)
+  bar 3 voice 1: 1/1 (1/2)
+  bar 4 voice 1: 1/1 (1/3)
+  bar 5 voice 1: 1/1 (1/4)
+  bar 6 voice 1: 1/1 (1/5)
+== f09-repeats.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 6 notes 6 of 6 dropped 0
+bar 1: 4/4 key 0 Major
+bar 2: |:, marker "Chorus"
+bar 4: :| x2, volta [1]
+bar 5: volta [2]
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/1 (1/0)
+  bar 2 voice 1: 1/1 (1/1)
+  bar 3 voice 1: 1/1 (1/2)
+  bar 4 voice 1: 1/1 (1/3)
+  bar 5 voice 1: 1/1 (1/4)
+  bar 6 voice 1: 1/1 (1/5)
+== f10-two-voices.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 5 of 5 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0, 6/3) | 1/4 (1/1) | 1/4 (1/2) | 1/4 (1/3)
+== f10-two-voices.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 5 of 5 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0, 6/3) | 1/4 (1/1) | 1/4 (1/2) | 1/4 (1/3)
+== f10-two-voices.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 5 of 5 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 (1/1) | 1/4 (1/2) | 1/4 (1/3)
+  bar 1 voice 2: 1/2 (6/3) | 1/2 rest
+== f11-text.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+issue: song information not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f11-text.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+issue: song information not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f11-text.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+issue: song information not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f12-unsupported.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 2 notes 8 of 8 dropped 0
+issue: bend not kept: 1 (first in bar 1)
+issue: hammer-on or pull-off not kept: 1 (first in bar 1)
+issue: slide not kept: 1 (first in bar 1)
+issue: harmonic not kept: 1 (first in bar 1)
+issue: vibrato not kept: 1 (first in bar 2)
+issue: grace note not kept: 1 (first in bar 2)
+issue: tap not kept: 1 (first in bar 2)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (3/7) | 1/4 (3/7) | 1/4 (3/9) | 1/4 (3/12)
+  bar 2 voice 1: 1/4 (2/8) | 1/4 (2/8) | 1/4 (2/8) | 1/4 (2/12)
+== f12-unsupported.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 2 notes 8 of 8 dropped 0
+issue: bend not kept: 1 (first in bar 1)
+issue: hammer-on or pull-off not kept: 1 (first in bar 1)
+issue: slide not kept: 1 (first in bar 1)
+issue: harmonic not kept: 1 (first in bar 1)
+issue: vibrato not kept: 1 (first in bar 2)
+issue: grace note not kept: 1 (first in bar 2)
+issue: tremolo picking not kept: 1 (first in bar 2)
+issue: tap not kept: 1 (first in bar 2)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (3/7) | 1/4 (3/7) | 1/4 (3/9) | 1/4 (3/12)
+  bar 2 voice 1: 1/4 (2/8) | 1/4 (2/8) | 1/4 (2/8) | 1/4 (2/12)
+== f12-unsupported.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 2 notes 8 of 8 dropped 0
+issue: bend not kept: 1 (first in bar 1)
+issue: hammer-on or pull-off not kept: 1 (first in bar 1)
+issue: slide not kept: 1 (first in bar 1)
+issue: harmonic not kept: 1 (first in bar 1)
+issue: vibrato not kept: 1 (first in bar 2)
+issue: grace note not kept: 1 (first in bar 2)
+issue: tremolo picking not kept: 1 (first in bar 2)
+issue: tap not kept: 1 (first in bar 2)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (3/7) | 1/4 (3/7) | 1/4 (3/9) | 1/4 (3/12)
+  bar 2 voice 1: 1/4 (2/8) | 1/4 (2/8) | 1/4 (2/8) | 1/4 (2/12)
+== f13-seven-string.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "Seven strings" tuning [64, 59, 55, 50, 45, 40, 35] frets 24 capo 0
+  bar 1 voice 1: 1/4 (7/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f13-seven-string.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "Seven strings" tuning [64, 59, 55, 50, 45, 40, 35] frets 24 capo 0
+  bar 1 voice 1: 1/4 (7/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f13-seven-string.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "Seven strings" tuning [64, 59, 55, 50, 45, 40, 35] frets 24 capo 0
+  bar 1 voice 1: 1/4 (7/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f14-percussion.gp3
+error: the file has only percussion tracks
+== f14-percussion.gp4
+error: the file has only percussion tracks
+== f14-percussion.gp5
+error: the file has only percussion tracks
+== f15-chord-diagram.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 5 of 5 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 rest | 1/4 rest | 1/4 rest
+== f15-chord-diagram.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 5 of 5 dropped 0
+issue: chord diagram not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 rest | 1/4 rest | 1/4 rest
+== f15-chord-diagram.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 5 of 5 dropped 0
+issue: chord diagram not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0, 2/1, 3/0, 4/2, 5/3) | 1/4 rest | 1/4 rest | 1/4 rest
+== f16-beat-text.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+issue: beat text not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f16-beat-text.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+issue: beat text not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f16-beat-text.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 1 of 1 dropped 0
+issue: beat text not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 rest | 1/4 rest | 1/4 rest
+== f17-combined-endings.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 4 notes 4 of 4 dropped 0
+bar 1: 4/4 key 0 Major, |:
+bar 2: :| x3
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/1 (1/0)
+  bar 2 voice 1: 1/1 (1/1)
+  bar 3 voice 1: 1/1 (1/2)
+  bar 4 voice 1: 1/1 (1/3)
+== f17-combined-endings.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 4 notes 4 of 4 dropped 0
+bar 1: 4/4 key 0 Major, |:
+bar 2: :| x3, volta [1, 2]
+bar 3: volta [3]
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/1 (1/0)
+  bar 2 voice 1: 1/1 (1/1)
+  bar 3 voice 1: 1/1 (1/2)
+  bar 4 voice 1: 1/1 (1/3)
+== f17-combined-endings.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 4 notes 4 of 4 dropped 0
+bar 1: 4/4 key 0 Major, |:
+bar 2: :| x3, volta [1, 2]
+bar 3: volta [3]
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/1 (1/0)
+  bar 2 voice 1: 1/1 (1/1)
+  bar 3 voice 1: 1/1 (1/2)
+  bar 4 voice 1: 1/1 (1/3)
+== f18-lyrics.gp3
+FICHIER GUITAR PRO v3.00 | tracks 1 bars 1 notes 4 of 4 dropped 0
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 (1/1) | 1/4 (1/2) | 1/4 (1/3)
+== f18-lyrics.gp4
+FICHIER GUITAR PRO v4.00 | tracks 1 bars 1 notes 4 of 4 dropped 0
+issue: lyrics not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 (1/1) | 1/4 (1/2) | 1/4 (1/3)
+== f18-lyrics.gp5
+FICHIER GUITAR PRO v5.00 | tracks 1 bars 1 notes 4 of 4 dropped 0
+issue: lyrics not kept: 1 (first in bar 1)
+bar 1: 4/4 key 0 Major
+tempo 120 at bar 1 + 0
+track 1 "track 1" tuning [64, 59, 55, 50, 45, 40] frets 24 capo 0
+  bar 1 voice 1: 1/4 (1/0) | 1/4 (1/1) | 1/4 (1/2) | 1/4 (1/3)

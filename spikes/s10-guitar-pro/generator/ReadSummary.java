@@ -8,6 +8,7 @@ import app.tuxguitar.io.base.TGSongStreamContext;
 import app.tuxguitar.io.gtp.*;
 import app.tuxguitar.song.factory.TGFactory;
 import app.tuxguitar.song.models.*;
+import app.tuxguitar.song.models.effects.*;
 
 import java.io.*;
 import java.util.*;
@@ -82,6 +83,11 @@ public class ReadSummary {
                                 TGVoice voice = b.getVoice(v);
                                 if (voice.isEmpty()) continue;
                                 String x = dur(voice.getDuration());
+                                // The pick stroke belongs to the whole beat in TuxGuitar's
+                                // model; it is printed on voice 1 only.
+                                int pick = b.getPickStroke().getDirection();
+                                if (v == 0 && pick == TGPickStroke.PICK_STROKE_DOWN) x += " down";
+                                if (v == 0 && pick == TGPickStroke.PICK_STROKE_UP) x += " up";
                                 if (voice.isRestVoice()) x += " rest";
                                 List<TGNote> notes = new ArrayList<>(voice.getNotes());
                                 notes.sort(Comparator.comparingInt(TGNote::getString));
