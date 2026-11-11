@@ -1,0 +1,10 @@
+[package]
+name = "s10-gp-reader"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# Throwaway spike (spikes/README.md): its own workspace, no dependencies.
+[workspace]
+
+[dependencies]

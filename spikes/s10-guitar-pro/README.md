@@ -62,7 +62,39 @@ Please also say whether each file may be committed to the repository and under w
 
 ## 6. Results
 
-Pending (after the fixtures).
+### 6.1 Reader (`reader/`, step 1 and 2 of section 5)
+
+- One code path for GP3, GP4 and GP5 5.00, with the version as a parameter (`reader/src/gp.rs`, about 450 lines, no dependency). Every count is bounded before allocating.
+- **All 42 fixtures are read to their last byte** (a file with bytes left over is an error).
+- **The content is right**, checked by hand against the generator for all 14 GP5 files: notes, chords, durations with dots and triplets, every note flag, strokes, two tracks with drop D and a capo, meters, key, tempo and a tempo change, repeats, alternate endings and a marker, two voices, text, seven strings, percussion. Unsupported effects (bend, slide, hammer-on, harmonics, vibrato, grace, tremolo picking, tap) are recognised and named, for the import report.
+- **Cross-version check:** the GP3, GP4 and GP5 file of each song read to the same content, except for the differences below, each explained by the format or by TuxGuitar's writers.
+
+### 6.2 Facts found by byte analysis (corrections to the format description)
+
+| Where | Description | Bytes of the fixtures |
+|---|---|---|
+| GP5 song | RSE master effect, then page setup somewhere | 5.00: page setup directly after the lyrics, no RSE master effect |
+| GP5 song | Octave is an Int | A Byte (f01, f08: the MIDI channels start one byte after the key) |
+| GP5 measure header | A blank byte when the alternate-ending flag is set | A blank byte when it is **not** set (f09: bars 4 and 5 have an ending and no blank) |
+| GP5 measure header | Ending written with the GP3 order | After the marker (bit order 0x20 before 0x10) |
+| GP5 tracks | 2 blank bytes after the tracks for 5.00 | One before the first track and one after the last |
+| GP3 beat effects | An Int follows the slap byte only for the tremolo bar | An Int follows for every kind (f12.gp3, a tap) |
+
+### 6.3 Differences between versions (rules for the importer)
+
+- **Time signature parts are written only when they change** (GP4, f08: bar 2 carries the numerator 3 and no denominator). The importer must carry the previous numerator and denominator forward.
+- **Repeat count:** GP5 stores the number of plays (2), GP3 and GP4 the number of repeats (1), for the same song (f09).
+- **Brush bytes:** GP3 and GP4 store (up, down) and GP5 (down, up), as the description says; TuxGuitar's "stroke down" lands in the byte the description calls "up" in both. The byte order is consistent; **which direction it means needs a file written by Guitar Pro** [open].
+- **Pick stroke** (GP4, GP5): 2 for down, 1 for up. GP3 has none.
+- **One voice** in GP3 and GP4; TuxGuitar merges voice 2 into voice 1 when it writes them (f10).
+- **Lost by the older formats or by TuxGuitar's writers:** heavy accent in GP4; accent, palm mute and staccato in GP3; alternate endings in GP3; tremolo picking in GP3 (f05, f09, f12).
+- **Text** is UTF-8 in every TuxGuitar file (f11, "Bài hát"). The reader decodes UTF-8 when the bytes are valid UTF-8, and Latin-1 otherwise; the choice for files written by Guitar Pro is [open].
+
+### 6.4 Still to do in the spike
+
+- A GP5 writer for the same model; round trip through our reader, and files opened in TuxGuitar.
+- A mutation run over the fixtures: the reader never panics.
+- The mapping table to our score model, and the effort estimate, for ADR-036.
 
 ## 7. Risks to assess
 
