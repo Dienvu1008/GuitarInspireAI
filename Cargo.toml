@@ -27,6 +27,7 @@ mc-playback = { path = "crates/mc-playback" }
 mc-dsp = { path = "crates/mc-dsp" }
 mc-midi = { path = "crates/mc-midi" }
 mc-musicxml = { path = "crates/mc-musicxml" }
+mc-guitarpro = { path = "crates/mc-guitarpro" }
 mc-audio = { path = "crates/mc-audio" }
 mc-project = { path = "crates/mc-project" }
 mc-app = { path = "crates/mc-app" }

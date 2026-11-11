@@ -766,3 +766,43 @@ mod grid_bridge {
         assert!(gestures(&d).is_empty());
     }
 }
+
+// ------------------------------------------------------------ Guitar Pro (ADR-036)
+
+#[test]
+fn guitar_pro_import_and_export_through_the_bridge() {
+    use mc_ffi::api::guitarpro::*;
+    let bytes =
+        include_bytes!("../../mc-guitarpro/tests/fixtures/tuxguitar/f12-unsupported.gp5").to_vec();
+    let result = import_guitar_pro(bytes).unwrap();
+    assert_eq!(result.report.version, "FICHIER GUITAR PRO v5.00");
+    assert_eq!(
+        (
+            result.report.notes_in_file,
+            result.report.notes_imported,
+            result.report.notes_dropped
+        ),
+        (8, 8, 0)
+    );
+    assert!(
+        result
+            .report
+            .issues
+            .iter()
+            .any(|i| i.starts_with("bend not kept: 1"))
+    );
+
+    for ext in ["gp5", ".gp4", "GP3"] {
+        assert!(guitar_pro_export_extension_supported(ext.into()));
+        let out = export_guitar_pro(&result.document, ext.into()).unwrap();
+        assert_eq!(out.report.notes_written, 8);
+        let back = import_guitar_pro(out.bytes).unwrap();
+        assert_eq!(back.report.notes_imported, 8);
+    }
+    assert!(!guitar_pro_export_extension_supported("gpx".into()));
+    let e = export_guitar_pro(&result.document, "gpx".into()).unwrap_err();
+    assert_eq!(e.rule, "guitar-pro-export");
+    let e = import_guitar_pro(b"PK\x03\x04".to_vec()).unwrap_err();
+    assert_eq!(e.rule, "guitar-pro-import");
+    assert!(e.message.contains("Guitar Pro 7"), "{}", e.message);
+}

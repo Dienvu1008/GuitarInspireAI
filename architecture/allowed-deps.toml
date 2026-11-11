@@ -47,8 +47,9 @@ dev_external = ["proptest", "criterion"]
 [mc-cli]
 layer = "adapter"
 phase = 1
-# mc-midi added in Phase 4 (ADR-023); mc-musicxml in Phase 6 (ADR-033).
-internal = ["mc-app", "mc-project", "mc-midi", "mc-musicxml"]
+# mc-midi added in Phase 4 (ADR-023); mc-musicxml in Phase 6 (ADR-033); mc-guitarpro in
+# Phase 6d (ADR-036).
+internal = ["mc-app", "mc-project", "mc-midi", "mc-musicxml", "mc-guitarpro"]
 external = []
 dev_external = []
 
@@ -71,8 +72,9 @@ dev_external = []
 [mc-ffi]
 layer = "adapter"
 phase = 3
-# mc-midi added in Phase 4 (ADR-023); mc-musicxml in Phase 6 (ADR-033).
-internal = ["mc-app", "mc-audio", "mc-midi", "mc-musicxml"]
+# mc-midi added in Phase 4 (ADR-023); mc-musicxml in Phase 6 (ADR-033); mc-guitarpro in
+# Phase 6d (ADR-036).
+internal = ["mc-app", "mc-audio", "mc-midi", "mc-musicxml", "mc-guitarpro"]
 external = ["flutter_rust_bridge"]
 dev_external = []
 
@@ -107,6 +109,15 @@ internal = ["mc-theory", "mc-score"]
 external = []
 # roxmltree: test-only XML parsing of the exported files (MIT OR Apache-2.0, ADR-033).
 dev_external = ["proptest", "roxmltree"]
+
+[mc-guitarpro]
+layer = "adapter"
+phase = 6
+# Guitar Pro GP3 to GP5 import and export (ADR-036). Own clean-room reader and writer,
+# no external dependency.
+internal = ["mc-theory", "mc-score"]
+external = []
+dev_external = ["proptest"]
 
 [mc-dsp]
 layer = "domain"

@@ -138,6 +138,10 @@ fn run(args: &[String]) -> Result<(), String> {
             &positional(rest, 0, "source")?,
             &positional(rest, 1, "output path")?,
         )?,
+        "export-gp" => interchange::export_gp(
+            &positional(rest, 0, "source")?,
+            &positional(rest, 1, "output path")?,
+        )?,
         "new" => {
             let out = output_path(&positional(rest, 0, "output path")?);
             let bars = flag(rest, "--bars")

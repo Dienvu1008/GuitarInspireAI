@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:guitar_inspire/src/guitar_pro_menu.dart';
 import 'package:guitar_inspire/src/musicxml_menu.dart';
 import 'package:guitar_inspire/src/playback_wiring.dart';
 import 'package:guitar_inspire/src/shell.dart';
@@ -50,6 +51,17 @@ final class _Dialogs implements FileDialogs {
     List<int> bytes, {
     required String suggestedName,
   }) async => midiSavePath;
+
+  List<int>? guitarProBytes;
+  String? guitarProSavePath;
+  @override
+  Future<List<int>?> pickGuitarProToImport() async => guitarProBytes;
+  @override
+  Future<String?> pickGuitarProToSave({required String suggestedName}) async =>
+      guitarProSavePath;
+  @override
+  Future<void> writeFile(String path, List<int> bytes) =>
+      File(path).writeAsBytes(bytes);
 }
 
 final class _Paths implements AppPaths {
@@ -97,6 +109,7 @@ void main() {
           appPathsProvider.overrideWithValue(_Paths(recoveryDir)),
           midiServiceProvider.overrideWithValue(CoreBridge.midi),
           musicXmlServiceProvider.overrideWithValue(CoreBridge.musicXml),
+          guitarProServiceProvider.overrideWithValue(CoreBridge.guitarPro),
         ],
         // Autosave is triggered explicitly in the recovery test.
         child: const StartupGate(autosavePoll: Duration(hours: 1)),
@@ -318,6 +331,57 @@ void main() {
     expect(RegExp('<part id=').allMatches(text).length, 2);
     expect(again.report.notes, 1);
     expect(text, contains('<fret>5</fret>'));
+  });
+
+  // ADR-036 G13: File > Import Guitar Pro... then File > Export Guitar Pro... in the
+  // built app with the real core. The S10 fixture f07 (two tracks, drop D, capo 2)
+  // opens as the document; the export to .gp4 writes exactly what the core produces,
+  // and the written file imports again with the same tracks and notes.
+  testWidgets('G13: import and export Guitar Pro from the File menu', (
+    tester,
+  ) async {
+    final fixture = File(
+      '${Directory.current.parent.path}/crates/mc-guitarpro/tests/fixtures/'
+      'tuxguitar/f07-tracks.gp5',
+    );
+    final dialogs = _Dialogs()
+      ..guitarProBytes = await fixture.readAsBytes()
+      ..guitarProSavePath = '${tmp.path}${Platform.pathSeparator}song.gp4';
+    final c = await start(tester, dialogs, '${tmp.path}/recovery-g13');
+    EditorState s() => c.read(editorProvider);
+
+    await tester.tap(find.text('File'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('import-guitar-pro')));
+    await _until(tester, () => s().summary.tracks.length == 2);
+    expect(s().summary.tracks.map((t) => t.name), ['Lead', 'Rhythm']);
+    expect(s().summary.masterBars.length, 2);
+    expect(find.textContaining('4 of 4 note(s) from Guitar Pro'), findsOne);
+
+    await tester.tap(find.text('File'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('export-guitar-pro')));
+    final out = File(dialogs.guitarProSavePath!);
+    await _until(tester, () => out.existsSync());
+    await _until(
+      tester,
+      () => find.textContaining('to Guitar Pro (GP4)').evaluate().isNotEmpty,
+    );
+
+    final written = await out.readAsBytes();
+    final again = await CoreBridge.guitarPro.exportGuitarPro(
+      s().service,
+      'gp4',
+    );
+    expect(written, again.bytes, reason: 'the file is what the core produced');
+    final back = await CoreBridge.guitarPro.importGuitarPro(written);
+    expect(back.report.version, 'FICHIER GUITAR PRO v4.06');
+    expect(back.report.notesImported, 4);
+    expect(back.document.summary().tracks.map((t) => t.name), [
+      'Lead',
+      'Rhythm',
+    ]);
+    back.document.close();
   });
 
   // ADR-034 (slice 6a-3): Tools > Apply pattern... in the built app with the real

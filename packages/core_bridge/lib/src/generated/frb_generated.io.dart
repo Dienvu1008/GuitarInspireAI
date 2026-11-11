@@ -5,6 +5,7 @@
 
 import 'api/document.dart';
 import 'api/engine.dart';
+import 'api/guitarpro.dart';
 import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/midi.dart';
@@ -34,6 +35,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_EngineHandlePtr => wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandlePtr;
 
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_GuitarProImportResultPtr => wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResultPtr;
+
 CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_ImportResultPtr => wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResultPtr;
 
 CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandlePtr;
@@ -46,15 +49,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected EngineHandle dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw);
 
+@protected GuitarProImportResult dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(dynamic raw);
+
 @protected ImportResult dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
 
 @protected TunerHandle dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(dynamic raw);
+
+@protected GuitarProImportResult dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(dynamic raw);
 
 @protected ImportResult dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
 
 @protected DocumentHandle dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw);
 
 @protected EngineHandle dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw);
+
+@protected GuitarProImportResult dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(dynamic raw);
 
 @protected ImportResult dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
 
@@ -63,6 +72,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected DocumentHandle dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(dynamic raw);
 
 @protected EngineHandle dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw);
+
+@protected GuitarProImportResult dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(dynamic raw);
 
 @protected ImportResult dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw);
 
@@ -179,6 +190,12 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected GridStrikeDto dco_decode_grid_strike_dto(dynamic raw);
 
 @protected GridViewDto dco_decode_grid_view_dto(dynamic raw);
+
+@protected GuitarProExportReportDto dco_decode_guitar_pro_export_report_dto(dynamic raw);
+
+@protected GuitarProExportResult dco_decode_guitar_pro_export_result(dynamic raw);
+
+@protected GuitarProImportReportDto dco_decode_guitar_pro_import_report_dto(dynamic raw);
 
 @protected HitBeatDto dco_decode_hit_beat_dto(dynamic raw);
 
@@ -360,15 +377,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected EngineHandle sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer);
 
+@protected GuitarProImportResult sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(SseDeserializer deserializer);
+
 @protected ImportResult sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
 
 @protected TunerHandle sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(SseDeserializer deserializer);
+
+@protected GuitarProImportResult sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(SseDeserializer deserializer);
 
 @protected ImportResult sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
 
 @protected DocumentHandle sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer);
 
 @protected EngineHandle sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer);
+
+@protected GuitarProImportResult sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(SseDeserializer deserializer);
 
 @protected ImportResult sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
 
@@ -377,6 +400,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected DocumentHandle sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(SseDeserializer deserializer);
 
 @protected EngineHandle sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer);
+
+@protected GuitarProImportResult sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(SseDeserializer deserializer);
 
 @protected ImportResult sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer);
 
@@ -493,6 +518,12 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected GridStrikeDto sse_decode_grid_strike_dto(SseDeserializer deserializer);
 
 @protected GridViewDto sse_decode_grid_view_dto(SseDeserializer deserializer);
+
+@protected GuitarProExportReportDto sse_decode_guitar_pro_export_report_dto(SseDeserializer deserializer);
+
+@protected GuitarProExportResult sse_decode_guitar_pro_export_result(SseDeserializer deserializer);
+
+@protected GuitarProImportReportDto sse_decode_guitar_pro_import_report_dto(SseDeserializer deserializer);
 
 @protected HitBeatDto sse_decode_hit_beat_dto(SseDeserializer deserializer);
 
@@ -674,15 +705,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer);
 
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(GuitarProImportResult self, SseSerializer serializer);
+
 @protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
 
 @protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(TunerHandle self, SseSerializer serializer);
+
+@protected void sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(GuitarProImportResult self, SseSerializer serializer);
 
 @protected void sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
 
 @protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer);
 
 @protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer);
+
+@protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(GuitarProImportResult self, SseSerializer serializer);
 
 @protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
 
@@ -691,6 +728,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(DocumentHandle self, SseSerializer serializer);
 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer);
+
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(GuitarProImportResult self, SseSerializer serializer);
 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer);
 
@@ -807,6 +846,12 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_grid_strike_dto(GridStrikeDto self, SseSerializer serializer);
 
 @protected void sse_encode_grid_view_dto(GridViewDto self, SseSerializer serializer);
+
+@protected void sse_encode_guitar_pro_export_report_dto(GuitarProExportReportDto self, SseSerializer serializer);
+
+@protected void sse_encode_guitar_pro_export_result(GuitarProExportResult self, SseSerializer serializer);
+
+@protected void sse_encode_guitar_pro_import_report_dto(GuitarProImportReportDto self, SseSerializer serializer);
 
 @protected void sse_encode_hit_beat_dto(HitBeatDto self, SseSerializer serializer);
 
@@ -1045,6 +1090,28 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
             late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandlePtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle');
             late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle = _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandlePtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+            
+            void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(
+              ffi.Pointer<ffi.Void> ptr,
+            ) {
+              return _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(
+                ptr,
+              );
+            }
+
+            late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResultPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult');
+            late final _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult = _rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResultPtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+            
+            void rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(
+              ffi.Pointer<ffi.Void> ptr,
+            ) {
+              return _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(
+                ptr,
+              );
+            }
+
+            late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResultPtr = _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>('frbgen_core_bridge_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult');
+            late final _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult = _rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResultPtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
             
             void rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(
               ffi.Pointer<ffi.Void> ptr,

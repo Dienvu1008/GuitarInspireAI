@@ -11,6 +11,7 @@ import 'generated/api/pattern.dart' as pattern_api;
 import 'generated/api/pattern_grid.dart' as grid_api;
 import 'generated/api/types.dart';
 import 'generated/frb_generated.dart';
+import 'guitar_pro_service.dart' show GuitarProService, RustGuitarProService;
 import 'musicxml_service.dart' show MusicXmlService, RustMusicXmlService;
 import 'playback_service.dart' show MidiService, PlaybackFactory;
 import 'rust_playback_service.dart' show RustMidiService, RustPlaybackFactory;
@@ -46,6 +47,9 @@ abstract final class CoreBridge {
 
   /// MusicXML export (ADR-033); no audio device needed.
   static MusicXmlService get musicXml => const RustMusicXmlService();
+
+  /// Guitar Pro import and export (ADR-036); no audio device needed.
+  static GuitarProService get guitarPro => const RustGuitarProService();
 
   /// A tuner factory bound to [document] (ADR-029). Call `start()` on it to open the
   /// microphone; independent of the playback engine.

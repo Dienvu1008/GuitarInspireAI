@@ -5,6 +5,7 @@
 
 import 'api/document.dart';
 import 'api/engine.dart';
+import 'api/guitarpro.dart';
 import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/midi.dart';
@@ -78,7 +79,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
                   String get codegenVersion => '2.13.0';
 
                   @override
-                  int get rustContentHash => -194077946;
+                  int get rustContentHash => -1215411450;
 
                   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
                     stem: 'mc_ffi',
@@ -168,6 +169,14 @@ Future<EngineHandle> crateApiEngineEngineHandleStart({String? soundfontPath });
 
 Future<OutcomeDto> crateApiEngineEngineHandleStop({required EngineHandle that , required DocumentHandle document });
 
+DocumentHandle crateApiGuitarproGuitarProImportResultAutoAccessorGetDocument({required GuitarProImportResult that });
+
+GuitarProImportReportDto crateApiGuitarproGuitarProImportResultAutoAccessorGetReport({required GuitarProImportResult that });
+
+void crateApiGuitarproGuitarProImportResultAutoAccessorSetDocument({required GuitarProImportResult that , required DocumentHandle document });
+
+void crateApiGuitarproGuitarProImportResultAutoAccessorSetReport({required GuitarProImportResult that , required GuitarProImportReportDto report });
+
 DocumentHandle crateApiMidiImportResultAutoAccessorGetDocument({required ImportResult that });
 
 ImportReportDto crateApiMidiImportResultAutoAccessorGetReport({required ImportResult that });
@@ -188,11 +197,17 @@ String crateApiInfoCoreVersion();
 
 MetricsDto crateApiLayoutDefaultMetrics();
 
+Future<GuitarProExportResult> crateApiGuitarproExportGuitarPro({required DocumentHandle document , required String extension_ });
+
 Future<ExportResult> crateApiMidiExportMidi({required DocumentHandle document });
 
 Future<MusicXmlExportResult> crateApiMusicxmlExportMusicxml({required DocumentHandle document });
 
 List<GestureInfoDto> crateApiPatternGridGestures({required DocumentHandle document });
+
+bool crateApiGuitarproGuitarProExportExtensionSupported({required String extension_ });
+
+Future<GuitarProImportResult> crateApiGuitarproImportGuitarPro({required List<int> bytes });
 
 Future<ImportResult> crateApiMidiImportMidi({required List<int> bytes });
 
@@ -219,6 +234,12 @@ RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_EngineHand
 RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_EngineHandle;
 
 CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_EngineHandlePtr;
+
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_GuitarProImportResult;
+
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_GuitarProImportResult;
+
+CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_GuitarProImportResultPtr;
 
 RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_ImportResult;
 
@@ -1277,11 +1298,113 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
         );
         
 
+@override DocumentHandle crateApiGuitarproGuitarProImportResultAutoAccessorGetDocument({required GuitarProImportResult that })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(that, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiGuitarproGuitarProImportResultAutoAccessorGetDocumentConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiGuitarproGuitarProImportResultAutoAccessorGetDocumentConstMeta => const TaskConstMeta(
+            debugName: "GuitarProImportResult_auto_accessor_get_document",
+            argNames: ["that"],
+        );
+        
+
+@override GuitarProImportReportDto crateApiGuitarproGuitarProImportResultAutoAccessorGetReport({required GuitarProImportResult that })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(that, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 41)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_guitar_pro_import_report_dto,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiGuitarproGuitarProImportResultAutoAccessorGetReportConstMeta,
+            argValues: [that],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiGuitarproGuitarProImportResultAutoAccessorGetReportConstMeta => const TaskConstMeta(
+            debugName: "GuitarProImportResult_auto_accessor_get_report",
+            argNames: ["that"],
+        );
+        
+
+@override void crateApiGuitarproGuitarProImportResultAutoAccessorSetDocument({required GuitarProImportResult that , required DocumentHandle document })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(that, serializer);
+sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 42)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiGuitarproGuitarProImportResultAutoAccessorSetDocumentConstMeta,
+            argValues: [that, document],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiGuitarproGuitarProImportResultAutoAccessorSetDocumentConstMeta => const TaskConstMeta(
+            debugName: "GuitarProImportResult_auto_accessor_set_document",
+            argNames: ["that", "document"],
+        );
+        
+
+@override void crateApiGuitarproGuitarProImportResultAutoAccessorSetReport({required GuitarProImportResult that , required GuitarProImportReportDto report })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(that, serializer);
+sse_encode_guitar_pro_import_report_dto(report, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 43)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiGuitarproGuitarProImportResultAutoAccessorSetReportConstMeta,
+            argValues: [that, report],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiGuitarproGuitarProImportResultAutoAccessorSetReportConstMeta => const TaskConstMeta(
+            debugName: "GuitarProImportResult_auto_accessor_set_report",
+            argNames: ["that", "report"],
+        );
+        
+
 @override DocumentHandle crateApiMidiImportResultAutoAccessorGetDocument({required ImportResult that })  { return handler.executeSync(SyncTask(
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 44)!;
             
             },
             codec: 
@@ -1306,7 +1429,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 41)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 45)!;
             
             },
             codec: 
@@ -1332,7 +1455,7 @@ sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInn
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
 sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 42)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 46)!;
             
             },
             codec: 
@@ -1358,7 +1481,7 @@ sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueI
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(that, serializer);
 sse_encode_import_report_dto(report, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 43)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 47)!;
             
             },
             codec: 
@@ -1383,7 +1506,7 @@ sse_encode_import_report_dto(report, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 44)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 48)!;
             
             },
             codec: 
@@ -1410,7 +1533,7 @@ sse_encode_import_report_dto(report, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(that, serializer);
 sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(track, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 45)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 49)!;
             
             },
             codec: 
@@ -1435,7 +1558,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 46, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 50, port: port_);
             
             },
             codec: 
@@ -1460,7 +1583,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(that, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 47)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 51)!;
             
             },
             codec: 
@@ -1485,7 +1608,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 48)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 52)!;
             
             },
             codec: 
@@ -1510,7 +1633,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 49)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 53)!;
             
             },
             codec: 
@@ -1531,11 +1654,37 @@ sse_encode_i_64(track, serializer);
         );
         
 
+@override Future<GuitarProExportResult> crateApiGuitarproExportGuitarPro({required DocumentHandle document , required String extension_ })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+sse_encode_String(extension_, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 54, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_guitar_pro_export_result,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiGuitarproExportGuitarProConstMeta,
+            argValues: [document, extension_],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiGuitarproExportGuitarProConstMeta => const TaskConstMeta(
+            debugName: "export_guitar_pro",
+            argNames: ["document", "extension_"],
+        );
+        
+
 @override Future<ExportResult> crateApiMidiExportMidi({required DocumentHandle document })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 50, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 55, port: port_);
             
             },
             codec: 
@@ -1560,7 +1709,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 51, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 56, port: port_);
             
             },
             codec: 
@@ -1585,7 +1734,7 @@ sse_encode_i_64(track, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 52)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 57)!;
             
             },
             codec: 
@@ -1606,11 +1755,61 @@ sse_encode_i_64(track, serializer);
         );
         
 
+@override bool crateApiGuitarproGuitarProExportExtensionSupported({required String extension_ })  { return handler.executeSync(SyncTask(
+            callFfi: () {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(extension_, serializer);
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 58)!;
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: null,
+        )
+        ,
+            constMeta: kCrateApiGuitarproGuitarProExportExtensionSupportedConstMeta,
+            argValues: [extension_],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiGuitarproGuitarProExportExtensionSupportedConstMeta => const TaskConstMeta(
+            debugName: "guitar_pro_export_extension_supported",
+            argNames: ["extension_"],
+        );
+        
+
+@override Future<GuitarProImportResult> crateApiGuitarproImportGuitarPro({required List<int> bytes })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_list_prim_u_8_loose(bytes, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 59, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiGuitarproImportGuitarProConstMeta,
+            argValues: [bytes],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiGuitarproImportGuitarProConstMeta => const TaskConstMeta(
+            debugName: "import_guitar_pro",
+            argNames: ["bytes"],
+        );
+        
+
 @override Future<ImportResult> crateApiMidiImportMidi({required List<int> bytes })  { return handler.executeNormal(NormalTask(
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_list_prim_u_8_loose(bytes, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 53, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 60, port: port_);
             
             },
             codec: 
@@ -1635,7 +1834,7 @@ sse_encode_i_64(track, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 54, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 61, port: port_);
             
             },
             codec: 
@@ -1662,7 +1861,7 @@ sse_encode_i_64(track, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(pattern, serializer);
 sse_encode_list_prim_u_8_loose(snaps, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 55)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 62)!;
             
             },
             codec: 
@@ -1687,7 +1886,7 @@ sse_encode_list_prim_u_8_loose(snaps, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 56)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 63)!;
             
             },
             codec: 
@@ -1713,7 +1912,7 @@ sse_encode_list_prim_u_8_loose(snaps, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 57)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 64)!;
             
             },
             codec: 
@@ -1738,7 +1937,7 @@ sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 58)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 65)!;
             
             },
             codec: 
@@ -1763,7 +1962,7 @@ sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 59, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 66, port: port_);
             
             },
             codec: 
@@ -1792,6 +1991,10 @@ RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_EngineHand
 
 RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_EngineHandle => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle;
 
+RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_GuitarProImportResult => wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult;
+
+RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_GuitarProImportResult => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult;
+
 RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_ImportResult => wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult;
 
 RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_ImportResult => wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult;
@@ -1811,11 +2014,17 @@ return DocumentHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
 @protected EngineHandle dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return EngineHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
 
+@protected GuitarProImportResult dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return GuitarProImportResultImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
 @protected ImportResult dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return ImportResultImpl.frbInternalDcoDecode(raw as List<dynamic>); }
 
 @protected TunerHandle dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return TunerHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected GuitarProImportResult dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return GuitarProImportResultImpl.frbInternalDcoDecode(raw as List<dynamic>); }
 
 @protected ImportResult dco_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return ImportResultImpl.frbInternalDcoDecode(raw as List<dynamic>); }
@@ -1825,6 +2034,9 @@ return DocumentHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
 
 @protected EngineHandle dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return EngineHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected GuitarProImportResult dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return GuitarProImportResultImpl.frbInternalDcoDecode(raw as List<dynamic>); }
 
 @protected ImportResult dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return ImportResultImpl.frbInternalDcoDecode(raw as List<dynamic>); }
@@ -1837,6 +2049,9 @@ return DocumentHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
 
 @protected EngineHandle dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return EngineHandleImpl.frbInternalDcoDecode(raw as List<dynamic>); }
+
+@protected GuitarProImportResult dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return GuitarProImportResultImpl.frbInternalDcoDecode(raw as List<dynamic>); }
 
 @protected ImportResult dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return ImportResultImpl.frbInternalDcoDecode(raw as List<dynamic>); }
@@ -2251,6 +2466,33 @@ rows: dco_decode_list_grid_row_dto(arr[7]),
 lanes: dco_decode_list_pattern_lane_dto(arr[8]),
 steps: dco_decode_list_grid_step_dto(arr[9]),
 spans: dco_decode_list_grid_span_dto(arr[10]),); }
+
+@protected GuitarProExportReportDto dco_decode_guitar_pro_export_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+                return GuitarProExportReportDto(version: dco_decode_String(arr[0]),
+tracks: dco_decode_u_32(arr[1]),
+bars: dco_decode_u_32(arr[2]),
+notesWritten: dco_decode_u_32(arr[3]),
+notesDropped: dco_decode_u_32(arr[4]),
+issues: dco_decode_list_String(arr[5]),); }
+
+@protected GuitarProExportResult dco_decode_guitar_pro_export_result(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 2) throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+                return GuitarProExportResult(bytes: dco_decode_list_prim_u_8_strict(arr[0]),
+report: dco_decode_guitar_pro_export_report_dto(arr[1]),); }
+
+@protected GuitarProImportReportDto dco_decode_guitar_pro_import_report_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 7) throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+                return GuitarProImportReportDto(version: dco_decode_String(arr[0]),
+tracksImported: dco_decode_u_32(arr[1]),
+bars: dco_decode_u_32(arr[2]),
+notesInFile: dco_decode_u_32(arr[3]),
+notesImported: dco_decode_u_32(arr[4]),
+notesDropped: dco_decode_u_32(arr[5]),
+issues: dco_decode_list_String(arr[6]),); }
 
 @protected HitBeatDto dco_decode_hit_beat_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -2705,11 +2947,17 @@ return DocumentHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), s
 @protected EngineHandle sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return EngineHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
 
+@protected GuitarProImportResult sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return GuitarProImportResultImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
 @protected ImportResult sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return ImportResultImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
 
 @protected TunerHandle sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return TunerHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected GuitarProImportResult sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return GuitarProImportResultImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
 
 @protected ImportResult sse_decode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return ImportResultImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
@@ -2719,6 +2967,9 @@ return DocumentHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), s
 
 @protected EngineHandle sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return EngineHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected GuitarProImportResult sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return GuitarProImportResultImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
 
 @protected ImportResult sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return ImportResultImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
@@ -2731,6 +2982,9 @@ return DocumentHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), s
 
 @protected EngineHandle sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return EngineHandleImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
+
+@protected GuitarProImportResult sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+return GuitarProImportResultImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
 
 @protected ImportResult sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 return ImportResultImpl.frbInternalSseDecode(sse_decode_usize(deserializer), sse_decode_i_32(deserializer)); }
@@ -3218,6 +3472,30 @@ var var_lanes = sse_decode_list_pattern_lane_dto(deserializer);
 var var_steps = sse_decode_list_grid_step_dto(deserializer);
 var var_spans = sse_decode_list_grid_span_dto(deserializer);
 return GridViewDto(name: var_name, lengthNumerator: var_lengthNumerator, lengthDenominator: var_lengthDenominator, meter: var_meter, beatNumerator: var_beatNumerator, beatDenominator: var_beatDenominator, snaps: var_snaps, rows: var_rows, lanes: var_lanes, steps: var_steps, spans: var_spans); }
+
+@protected GuitarProExportReportDto sse_decode_guitar_pro_export_report_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_version = sse_decode_String(deserializer);
+var var_tracks = sse_decode_u_32(deserializer);
+var var_bars = sse_decode_u_32(deserializer);
+var var_notesWritten = sse_decode_u_32(deserializer);
+var var_notesDropped = sse_decode_u_32(deserializer);
+var var_issues = sse_decode_list_String(deserializer);
+return GuitarProExportReportDto(version: var_version, tracks: var_tracks, bars: var_bars, notesWritten: var_notesWritten, notesDropped: var_notesDropped, issues: var_issues); }
+
+@protected GuitarProExportResult sse_decode_guitar_pro_export_result(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_bytes = sse_decode_list_prim_u_8_strict(deserializer);
+var var_report = sse_decode_guitar_pro_export_report_dto(deserializer);
+return GuitarProExportResult(bytes: var_bytes, report: var_report); }
+
+@protected GuitarProImportReportDto sse_decode_guitar_pro_import_report_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_version = sse_decode_String(deserializer);
+var var_tracksImported = sse_decode_u_32(deserializer);
+var var_bars = sse_decode_u_32(deserializer);
+var var_notesInFile = sse_decode_u_32(deserializer);
+var var_notesImported = sse_decode_u_32(deserializer);
+var var_notesDropped = sse_decode_u_32(deserializer);
+var var_issues = sse_decode_list_String(deserializer);
+return GuitarProImportReportDto(version: var_version, tracksImported: var_tracksImported, bars: var_bars, notesInFile: var_notesInFile, notesImported: var_notesImported, notesDropped: var_notesDropped, issues: var_issues); }
 
 @protected HitBeatDto sse_decode_hit_beat_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_id = sse_decode_i_64(deserializer);
@@ -3866,11 +4144,17 @@ sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: true), 
 @protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_usize((self as EngineHandleImpl).frbInternalSseEncode(move: true), serializer); }
 
+@protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(GuitarProImportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as GuitarProImportResultImpl).frbInternalSseEncode(move: true), serializer); }
+
 @protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_usize((self as ImportResultImpl).frbInternalSseEncode(move: true), serializer); }
 
 @protected void sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTunerHandle(TunerHandle self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_usize((self as TunerHandleImpl).frbInternalSseEncode(move: true), serializer); }
+
+@protected void sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(GuitarProImportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as GuitarProImportResultImpl).frbInternalSseEncode(move: false), serializer); }
 
 @protected void sse_encode_Auto_RefMut_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_usize((self as ImportResultImpl).frbInternalSseEncode(move: false), serializer); }
@@ -3880,6 +4164,9 @@ sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: false),
 
 @protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_usize((self as EngineHandleImpl).frbInternalSseEncode(move: false), serializer); }
+
+@protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(GuitarProImportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as GuitarProImportResultImpl).frbInternalSseEncode(move: false), serializer); }
 
 @protected void sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_usize((self as ImportResultImpl).frbInternalSseEncode(move: false), serializer); }
@@ -3892,6 +4179,9 @@ sse_encode_usize((self as DocumentHandleImpl).frbInternalSseEncode(move: null), 
 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerEngineHandle(EngineHandle self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_usize((self as EngineHandleImpl).frbInternalSseEncode(move: null), serializer); }
+
+@protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerGuitarProImportResult(GuitarProImportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_usize((self as GuitarProImportResultImpl).frbInternalSseEncode(move: null), serializer); }
 
 @protected void sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerImportResult(ImportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_usize((self as ImportResultImpl).frbInternalSseEncode(move: null), serializer); }
@@ -4366,6 +4656,30 @@ sse_encode_list_grid_row_dto(self.rows, serializer);
 sse_encode_list_pattern_lane_dto(self.lanes, serializer);
 sse_encode_list_grid_step_dto(self.steps, serializer);
 sse_encode_list_grid_span_dto(self.spans, serializer);
+ }
+
+@protected void sse_encode_guitar_pro_export_report_dto(GuitarProExportReportDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.version, serializer);
+sse_encode_u_32(self.tracks, serializer);
+sse_encode_u_32(self.bars, serializer);
+sse_encode_u_32(self.notesWritten, serializer);
+sse_encode_u_32(self.notesDropped, serializer);
+sse_encode_list_String(self.issues, serializer);
+ }
+
+@protected void sse_encode_guitar_pro_export_result(GuitarProExportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_prim_u_8_strict(self.bytes, serializer);
+sse_encode_guitar_pro_export_report_dto(self.report, serializer);
+ }
+
+@protected void sse_encode_guitar_pro_import_report_dto(GuitarProImportReportDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_String(self.version, serializer);
+sse_encode_u_32(self.tracksImported, serializer);
+sse_encode_u_32(self.bars, serializer);
+sse_encode_u_32(self.notesInFile, serializer);
+sse_encode_u_32(self.notesImported, serializer);
+sse_encode_u_32(self.notesDropped, serializer);
+sse_encode_list_String(self.issues, serializer);
  }
 
 @protected void sse_encode_hit_beat_dto(HitBeatDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -5045,6 +5359,34 @@ sse_encode_i_32(self.highestFret, serializer);
 
 
  Future<OutcomeDto>  stop({required DocumentHandle document })=>RustLib.instance.api.crateApiEngineEngineHandleStop(that: this, document: document);
+
+
+            }
+            @sealed class GuitarProImportResultImpl extends RustOpaque implements GuitarProImportResult {
+                // Not to be used by end users
+                GuitarProImportResultImpl.frbInternalDcoDecode(List<dynamic> wire):
+                    super.frbInternalDcoDecode(wire, _kStaticData);
+
+                // Not to be used by end users
+                GuitarProImportResultImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative):
+                    super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+                static final _kStaticData = RustArcStaticData(
+                    rustArcIncrementStrongCount: RustLib.instance.api.rust_arc_increment_strong_count_GuitarProImportResult,
+                    rustArcDecrementStrongCount: RustLib.instance.api.rust_arc_decrement_strong_count_GuitarProImportResult,
+                    rustArcDecrementStrongCountPtr: RustLib.instance.api.rust_arc_decrement_strong_count_GuitarProImportResultPtr,
+                );
+
+                 DocumentHandle get document=>RustLib.instance.api.crateApiGuitarproGuitarProImportResultAutoAccessorGetDocument(that: this, );
+
+
+ GuitarProImportReportDto get report=>RustLib.instance.api.crateApiGuitarproGuitarProImportResultAutoAccessorGetReport(that: this, );
+
+
+  set document(DocumentHandle document)=>RustLib.instance.api.crateApiGuitarproGuitarProImportResultAutoAccessorSetDocument(that: this, document: document);
+
+
+  set report(GuitarProImportReportDto report)=>RustLib.instance.api.crateApiGuitarproGuitarProImportResultAutoAccessorSetReport(that: this, report: report);
 
 
             }

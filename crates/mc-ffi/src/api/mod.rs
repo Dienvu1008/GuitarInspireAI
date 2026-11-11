@@ -3,6 +3,7 @@
 
 pub mod document;
 pub mod engine;
+pub mod guitarpro;
 pub mod info;
 pub mod layout;
 pub mod midi;
