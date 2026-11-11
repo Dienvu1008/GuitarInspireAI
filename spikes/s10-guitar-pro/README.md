@@ -1,0 +1,71 @@
+# S10: Guitar Pro import and export (spike, in progress)
+
+Purpose: Entry gate of Phase 6d ([technical-spikes.md](../../docs/research/technical-spikes.md) S10). Read GP3 to GP5 files into a test model, find the format and legal risks, and estimate the effort, so that ADR-036 (the Guitar Pro adapter) can be written with its acceptance criteria fixed first.
+Status: In progress. Waiting for the fixture files of section 4.
+Related: [technology-evaluation.md](../../docs/research/technology-evaluation.md) (usage categories), [ADR-015](../../docs/architecture/decisions/ADR-015-dependency-license-policy.md), risk R-14 in [risk-register.md](../../docs/roadmap/risk-register.md).
+
+## 1. Decisions taken before the spike (user, 2026-11-11)
+
+- **Own implementation, no Guitar Pro library.** The `guitarpro` crate (MIT) was not chosen: its code may derive from copyleft readers (PyGuitarPro is LGPL-3.0, alphaTab MPL-2.0, TuxGuitar LGPL-2.1), and its MIT label cannot be relied on without an audit of about 32 000 lines.
+- **Scope and order:** GP5 read and write, then GP3 and GP4 read and write. GP7/8 (`.gp`) and GPX (GP6) are deferred until lawful sample files exist.
+- **Fixtures come from TuxGuitar 2.0.1** (the user has no Guitar Pro). TuxGuitar writes GP3, GP4 and GP5; it only reads GPX and `.gp`.
+
+## 2. Clean-room rules for this spike and for 6d
+
+- Format knowledge comes from descriptions of the format (facts about the byte layout) and from byte analysis of fixture files the user made. No code, comments or text is copied from any reader, and no copyleft source code is read while writing the reader.
+- The Guitar Pro application is never decompiled or disassembled.
+- Fixtures are files the user created; no song files from the internet (tablatures of songs are copyrighted).
+- "Guitar Pro" is a trademark of Arobas Music. The product only names it to describe compatibility, with no logo and a statement that it is not affiliated.
+- This is a technical assessment, not legal advice. A legal review is advised before a commercial release.
+
+## 3. Sources studied (category (a)/(b) of technology-evaluation.md)
+
+| Source | What was used | License of the source |
+|---|---|---|
+| PyGuitarPro documentation, "Guitar Pro File Format" page (readthedocs, version 0.11), studied 2026-11-11 | Structure of GP3, GP4 and GP5: primitive types, order of song sections, flag bits of measure headers, tracks, beats, notes and effects | Project LGPL-3.0. Only facts about the format were taken; no text or code |
+| TuxGuitar 2.0.1 (installed application) | Used as a black box to write fixtures | LGPL-2.1. Not read as source |
+
+Every later source is added here before it is used.
+
+## 4. Fixtures to create in TuxGuitar (user)
+
+Each file is small (one to four bars), so that a change is easy to find in the bytes. Save each one as **GP5**, and where TuxGuitar allows, also as **GP4** and **GP3** (File > Save as, choose the format; or the File format converter in Tools). Name them `fNN-name.gp5` and so on, and put them in `spikes/s10-guitar-pro/fixtures/tuxguitar/`.
+
+Defaults unless a file says otherwise: one guitar track, standard tuning, 4/4, 120 BPM, key C.
+
+| File | Content |
+|---|---|
+| f01-empty | A new document, unchanged (one empty bar) |
+| f02-one-note | Bar 1: string 1 fret 0, a quarter note; the rest of the bar rests |
+| f03-chord | Bar 1: a C chord x32010 (string 5 fret 3, string 4 fret 2, string 3 open, string 2 fret 1, string 1 open) as one quarter |
+| f04-durations | Bar 1: a half, a quarter, an eighth, two sixteenths. Bar 2: a dotted quarter, an eighth, then three triplet eighths, then a quarter rest |
+| f05-note-effects | Bar 1: four quarters on string 2 fret 5: plain, accented, heavy accented, dead note. Bar 2: palm mute, let ring, ghost note, staccato. Bar 3: a half tied to a half on the same string |
+| f06-strokes | Bar 1: four C chords, quarters: stroke down, stroke up, brush down, no stroke |
+| f07-tracks | Two tracks. Track 1 "Lead": standard tuning. Track 2 "Rhythm": drop D (D A D G B E), capo on fret 2, one note per bar |
+| f08-meter-key-tempo | Bar 1: 4/4, key G, tempo 90. Bar 2: 3/4. Bar 3: 6/8, tempo change to 140. One note per bar |
+| f09-repeats | Six bars: repeat start at bar 2, repeat end at bar 4 (play twice), alternate endings 1 on bar 4 and 2 on bar 5, a marker "Chorus" on bar 2 |
+| f10-two-voices | Bar 1: voice 1 four quarters on string 1, voice 2 a half note bass and a half rest |
+| f11-text | Title "Fixture text", artist "Tester", a Vietnamese title in the album field "Bài hát" |
+| f12-unsupported | Bar 1: a bend, a slide, a hammer-on, a natural harmonic. Bar 2: a vibrato, a grace note, a tremolo picking, a tap. These are for the import report |
+| f13-seven-string | One 7-string guitar track (low B), one note on string 7 |
+| f14-percussion | One drum track with a few hits (the importer should refuse or report it) |
+
+Please also say whether each file may be committed to the repository and under which license (for example CC0-1.0, since you are the author).
+
+## 5. Method
+
+1. A throwaway reader in this folder (own Cargo workspace, excluded from the production workspace), reading GP5 then GP3 and GP4 into a small test model: song info, tempo, key, measure headers, tracks (strings, tuning, capo, frets), and per measure and voice the beats (duration, tuplet, rest, stroke) and notes (string, fret, tie, dead, accent, palm mute, let ring, ghost).
+2. Every section read is checked against the fixture it was made for: offsets are logged, and the reader must consume every byte of every file.
+3. A writer for GP5 of the same model; files written by it are reopened in TuxGuitar (by hand, recorded) and by the reader (round trip).
+4. A mapping table: each Guitar Pro feature to our score model (kept, approximated, or reported as dropped), for the ADR.
+5. A fuzz-style run over mutated fixtures: the reader never panics and never allocates without bound.
+
+## 6. Results
+
+Pending (after the fixtures).
+
+## 7. Risks to assess
+
+- **Legal:** proprietary format; interoperability by our own implementation; the trademark. See section 2.
+- **Format:** sections whose meaning is unknown (RSE, page setup, chord diagrams) must still be skipped exactly; version differences between 5.00 and 5.10; the 8-bit text encoding (which code page TuxGuitar and Guitar Pro use).
+- **Evidence:** TuxGuitar may write GP files differently from Guitar Pro itself. Without files written by Guitar Pro, compatibility with Guitar Pro's own files is an evidence gap.
