@@ -144,7 +144,16 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
 
 ## Interchange and storage
 
-- MIDI import and export. No Guitar Pro. No SQLite library index.
+- MIDI import and export. No SQLite library index.
+- **Guitar Pro import and export** (Phase 6d, [ADR-036](../architecture/decisions/ADR-036-guitar-pro-adapter.md)). File > Import Guitar Pro... opens `.gp3`, `.gp4` and `.gp5` files. File > Export Guitar Pro... writes the version of the chosen extension. Its limits:
+  - **Versions:** GP3, GP4 and GP5 version 5.00 only. GP5 version 5.10, Guitar Pro 6 (`.gpx`) and Guitar Pro 7 and later (`.gp`) are refused with a message naming the version.
+  - **Checked only against files written by TuxGuitar 2.0.1, and against TuxGuitar's reader**, on one machine. No file written by Guitar Pro itself was available, so files saved by Guitar Pro may differ and may be refused or misread. Guitar Pro itself was not checked.
+  - **Effects the score does not hold are dropped, and the import message lists them by kind, with a count and the first bar.** These are bends, slides, hammer-ons, harmonics, vibrato, grace notes, trills, tremolo picking, taps, slaps, the tremolo bar, ghost notes, staccato, dynamics, chord diagrams, beat texts, lyrics, mix-table changes, and song information such as title and artist. Percussion tracks are skipped.
+  - A heavy accent becomes an accent. A brush stroke becomes a stroke without its speed, in the direction TuxGuitar reads it; whether Guitar Pro means the same direction is not known.
+  - **Export:** one dot per beat; nothing shorter than a 64th; at most 2 voices in GP5 and 1 in GP3 and GP4; no string-percussive. GP3 also has no accent, palm mute or stroke. A pickup becomes a short bar. A tempo change that does not fall on a beat moves to a beat in the same bar. The export message counts each of these, and the dropped notes.
+  - **Text** is read as UTF-8, or as Windows-1252 when it is not valid UTF-8, and written as UTF-8 (as TuxGuitar does). Guitar Pro may show non-ASCII names garbled.
+  - **TuxGuitar** cannot hold palm mute and let ring on the same note. It keeps only the palm mute from our files.
+  - "Guitar Pro" is a trademark of Arobas Music. GuitarInspireAI is not affiliated with or endorsed by Arobas Music; the name only describes file compatibility.
 - **MusicXML export** (Phase 6b-4, [ADR-033](../architecture/decisions/ADR-033-musicxml-export-adapter.md)): File > Export MusicXML... writes MusicXML 4.0 as an uncompressed `.musicxml` file. Its limits:
   - **Export only**: MusicXML files cannot be opened or imported.
   - **TAB staves only**, one per track, as the app shows them. No standard-notation staff; standard notation is Phase 6c.
@@ -168,5 +177,5 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
 
 ## Not in the MVP at all
 
-Standard notation, PDF, MusicXML (export added in Phase 6b-4), Guitar Pro, mixer (added in Phase 6b-3), audio tracks, recording, vocal
+Standard notation, PDF, MusicXML (export added in Phase 6b-4), Guitar Pro (GP3 to GP5 added in Phase 6d), mixer (added in Phase 6b-3), audio tracks, recording, vocal
 analysis, any AI or ML feature, plugins, SDK, mobile and Web.

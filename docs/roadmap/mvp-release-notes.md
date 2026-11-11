@@ -108,3 +108,12 @@ The "Play it back" item above lists per-track mute. In the M5 build the mute con
   delete steps by mouse or keyboard; set strokes and techniques on a step or a run; make
   a gesture from a strike. Every edit is one undo step.
 - **Patterns are saved with the project** (format 1.2), and the apply dialog uses them.
+
+## Added in Phase 6d
+
+- **Guitar Pro import and export** (ADR-036). File > Import Guitar Pro... opens `.gp3`, `.gp4` and `.gp5` (version 5.00) files as a new document. File > Export Guitar Pro... writes the version of the extension you choose.
+  - Kept: tracks, tuning (up to 7 strings), capo, time and key signatures, repeats, endings, markers, tempo changes, two voices (GP5), ties, tuplets, dead notes, let ring, accents, palm mute and strokes.
+  - What a file holds and the score cannot (bends, slides, chord diagrams, lyrics, song information and more) is listed in the import message, never dropped silently.
+  - Checked against files written by TuxGuitar 2.0.1 and TuxGuitar's reader only; files saved by Guitar Pro itself were not available.
+  - "Guitar Pro" is a trademark of Arobas Music; GuitarInspireAI is not affiliated with it.
+  - See [mvp-known-limitations.md](mvp-known-limitations.md).

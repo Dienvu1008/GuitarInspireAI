@@ -39,7 +39,8 @@ Therefore the native format holds the canonical model, and all others are adapte
 |---|---|---|---|
 | MIDI (SMF type 0 and 1) | Import and export | 4 | Import needs string assignment (deterministic lowest-fret or playability heuristic) and quantization; reported |
 | MusicXML | Export (6b), import later | 6b | Export of TAB technique subset |
-| Guitar Pro GP3 to GP5, GPX, GP7+ | Import | 6d | Unsupported effects reported; S10 |
+| Guitar Pro GP3 to GP5 (5.00) | Import and export | 6d | Own clean-room adapter `mc-guitarpro` ([ADR-036](decisions/ADR-036-guitar-pro-adapter.md)); unsupported effects reported; S10 |
+| Guitar Pro GP5 5.10, GPX (GP6), GP7+ | Not supported (refused with a typed error) | Later | Needs lawful sample files (ADR-036 choice 7.8) |
 | WAV | Import and export (rendered audio) | 4 (export), 8 (import) | |
 | FLAC | Import (8), export later | 8 | Decoder license check [To verify] |
 | MP3 | Import | 8 | Decoder via `symphonia` (MPL-2.0 [To verify]) evaluation in S7; patents expired [To verify] |

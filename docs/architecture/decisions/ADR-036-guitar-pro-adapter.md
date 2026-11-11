@@ -1,6 +1,6 @@
 # ADR-036 Guitar Pro import and export adapter `mc-guitarpro` (Phase 6d)
 
-Status: Accepted (2026-11-11).
+Status: Accepted (2026-11-11); results in section 8 (2026-11-11).
 - The acceptance criteria in section 6 were fixed before any code.
 - On 2026-11-11 the user asked for this ADR to be drafted and the work continued ("soạn luôn và tiếp tục"). The choices in section 7 are therefore the agent's recommendations, applied so the work can go on. The user may change any of them at review; a change is recorded in section 7 and the code follows it.
 Date: 2026-11-11
@@ -204,6 +204,53 @@ Measured on the reference machine (single machine, ADR-025). Thresholds are not 
    - Writing them on the strength of the description alone would be unverified. They are counted.
 7. **Chord diagrams in an unverified layout** (the GP3 new layout) make the import fail with a typed error naming the cause. Their length is not known, so skipping them would misread the rest of the file. The old layout is read as described and its test is a hand-built file, marked as unverified against a real file.
 8. **GP5 5.10 is refused** until a lawful 5.10 sample exists. A reader for it written from the description alone could not be checked.
+
+## 8. Results (2026-11-11)
+
+Implemented in:
+- `9e47f04` (6d-1): the crate;
+- `7010a1c` (6d-2): CLI, FFI and the Dart service;
+- `e4edfd7` (6d-3): the app;
+- `3b4dcb9` (6d-4): the fuzz target;
+- the 6d-5 commit: docs and the TuxGuitar procedure.
+
+Single machine (ADR-025). The TuxGuitar procedure and the timing numbers are in [benchmarks/tuxguitar-guitarpro.md](../../../benchmarks/tuxguitar-guitarpro.md).
+
+| Id | Result | Evidence |
+|---|---|---|
+| G1 | **Met, read with choice 7.5 (see clarification 1).** 51 of the 54 fixtures import. The three `f14-percussion` files hold only a percussion track and are refused with `NoGuitarTracks`, as choice 7.5 specifies. The import of all 54 was checked by hand against the generator, then frozen as a reviewed golden. The main facts of each fixture are also asserted directly. | `g1_every_fixture_imports_as_reviewed`, `g1_fixture_facts`, `tests/golden/import.txt` |
+| G2 | Met. Notes in the file = imported + dropped on every fixture. Each feature of f12, f11 and f15 to f18 is reported with its count and first bar. A percussion track next to a guitar track is skipped and its 2 notes counted. | `g2_*` |
+| G3 | Met. One test per version rule. | `g3_*` |
+| G4 | Met. 11 unit tests on hand-built files: ties, notes outside the track, notes in rests, H-12 repairs, repeat counts, tempo, fret count and capo, time signature and key, tuplets, and both chord layouts. The old chord layout is checked only on a hand-built block. | `src/import.rs` tests |
+| G5 | **Met except the first fuzz run.** 102 600 mutated fixtures and 2 000 arbitrary inputs: 0 panics, 0 invalid scores. Each limit has a test. The `import_gp` target compiles and is in the weekly job, but it **has not run yet**: cargo-fuzz runs on the Linux weekly job (Mondays, or by hand from the Actions tab). | `g5_*`, `fuzz/fuzz_targets/import_gp.rs` |
+| G6 | Met. Each unsupported or short input gives a typed error that names the cause: 5.10, 2.21, `CLIPBOARD`, ZIP, GPX, empty, short, truncated. | `g6_unsupported_files_are_named` |
+| G7 | Met. These round-trip through GP5, GP4 and GP3, and every fact the version holds is unchanged: `feature_rich`, `techniques`, `reference(TYPICAL)`, the 51 imported fixtures, and 200 random scores. | `g7_*` |
+| G8 | Met. Written + dropped = `note_count` every time. The random scores reach all 15 counted export cases. Three deliberate breakages are each caught by the tests: let ring dropped on export; the GP3/GP4 repeat rule removed; the brush direction swapped. | `g8_random_scores_cover_every_counted_case` |
+| G9 | **Met, with one TuxGuitar limit.** TuxGuitar opens all 9 files, and 1 847 of its 1 849 lines equal our re-import. The 2 others are a note with both palm mute and let ring, which TuxGuitar's note model cannot hold (verified on its API: each setter clears the other). | benchmarks file |
+| G10 | Met | `g10_output_is_deterministic_and_matches_the_goldens` |
+| G11 | Met. Median times, release mode: TYPICAL export 1.2 ms and import 3.4 ms; LARGE export 26.1 ms and import 73.1 ms. | `g11_timing`, benchmarks file |
+| G12 | Met. Open-string spelling comes from `SpelledPitch::from_semitone_sharp` (mc-theory). The H-12 repair asks `Score::from_parts` which bars break the rule; the rule is not copied. The tuplet table only decodes the format, which stores the "enters" count alone. Dart passes the file extension and the core decides the version. | code review |
+| G13 | Met. Widget tests cover the menu items, cancel and failure paths (8). Fake and core pass one contract (9 tests). The Windows integration test imports f07 from the File menu, exports `.gp4` byte-equal to the core's output, and re-imports it with the same tracks and notes; 7 of 7 integration tests pass. | `guitar_pro_menu_test.dart`, contract, `acceptance_test.dart` |
+| G14 | Met. FF-01 passes with the new row and edges. cargo-deny passes, with no new external dependency. FF-34 passes. FF-12: a second codegen run is identical. `.giproj` is unchanged. | fitness functions, cargo-deny |
+| G15 | **Met, with clarification 6.** Known limitations, release notes, data-architecture and the crate documentation state the scope, the evidence and the non-affiliation statement. | docs |
+
+### Clarifications from implementation
+
+1. **G1 and choice 7.5 contradict each other** for a file with only percussion tracks: G1 says every fixture imports, while 7.5 says such a file is refused. The implementation follows 7.5, and G1 is read as "imports as specified". The user may choose instead to import such a file as a score with no notes.
+2. **Where an export puts a tempo change** (refines section 4, "moved to the next beat"):
+   1. The beat that starts exactly at the change's position, in any track. This counts as not moved.
+   2. Else the next beat of the first track that starts inside the bar's nominal length. A beat beyond it, in an overfull bar, would be read back as part of the next bar.
+   3. Else the first beat of the bar.
+   4. Else, in GP5, an empty beat at the start of the bar. GP3 and GP4 instead use a beat of another track, or drop the change and count it, because TuxGuitar reads an empty beat as a rest there (G9).
+   
+   Two changes that end up on one beat keep the later one, and the replacement is counted. The importer never reads two changes at one position.
+3. **Marker colour** is skipped, not counted (section 3 said "counted"). Every marker has a colour, so the count would always equal the number of markers and tell the user nothing.
+4. **Dynamics** are counted only when a note's velocity differs from TuxGuitar's default byte, 6. Export writes 6 on every note, as TuxGuitar does.
+5. **Notes within a beat** are written and compared in string order. Guitar Pro stores them that way, so their order in our score is not a fact the format holds.
+6. **G15's "About text"**: the app has no About screen. The statement is in the docs and the crate documentation, and it goes into the About text when one is added.
+7. **The FFI also exposes `guitar_pro_export_extension_supported`**. Dart uses it to ask the core, not to decide itself.
+8. **An empty track name** is imported as "Track N", as the MIDI importer does.
+9. **An empty (status 0) beat in a GP3 or GP4 file** is skipped on import, as the format description says. TuxGuitar reads one as a rest. No fixture contains one, because TuxGuitar writes an empty bar of those versions with no beats.
 
 ## Alternatives
 
