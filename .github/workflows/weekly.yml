@@ -11,14 +11,6 @@ on:
 permissions:
   contents: read
 
-env:
-  # One pinned nightly for the jobs that need it (public-api, fuzz). An unpinned nightly
-  # changes the rustdoc JSON and the sanitizer runtime under the pinned tools from week
-  # to week (cargo-public-api 0.52.0, cargo-fuzz 0.13.1). This one was checked on the
-  # reference machine on 2026-11-11: all nine public-api snapshots equal, and both fuzz
-  # targets run for 300 s without a crash. Move it forward on purpose, with a re-check.
-  NIGHTLY: nightly-2026-10-31
-
 jobs:
   public-api:
     # FF-22 (Important): public API of library crates against architecture/public-api/.
@@ -28,14 +20,14 @@ jobs:
       - name: Toolchains
         run: |
           rustup show active-toolchain || rustup toolchain install
-          rustup toolchain install ${{ env.NIGHTLY }} --profile minimal
+          rustup toolchain install nightly --profile minimal
       - name: Install cargo-public-api
         run: cargo install cargo-public-api --version 0.52.0 --locked
       - name: Diff against snapshots
         shell: pwsh
         run: |
           foreach ($c in 'mc-theory','mc-score','mc-guitar','mc-notation','mc-playback','mc-project','mc-app','mc-dsp','mc-pattern') {
-            cargo "+$env:NIGHTLY" public-api -p $c --simplified | Out-File -Encoding utf8NoBOM "architecture/public-api/$c.txt"
+            cargo +nightly public-api -p $c --simplified | Out-File -Encoding utf8NoBOM "architecture/public-api/$c.txt"
             if ($LASTEXITCODE -ne 0) { Write-Error "cargo public-api failed for $c"; exit 1 }
           }
           # The full diff, so a failure can be read in the log.
@@ -70,13 +62,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Toolchain
-        run: rustup toolchain install ${{ env.NIGHTLY }} --profile minimal
+        run: rustup toolchain install nightly --profile minimal
       - name: Install cargo-fuzz
         run: cargo install cargo-fuzz --version 0.13.1 --locked
       - name: Fuzz the MIDI importer
         working-directory: fuzz
         # A fixed budget so the scheduled run finishes; -max_total_time is seconds.
-        run: cargo +${{ env.NIGHTLY }} fuzz run import_smf -- -max_total_time=300 -rss_limit_mb=4096
+        run: cargo +nightly fuzz run import_smf -- -max_total_time=300 -rss_limit_mb=4096
       - name: Fuzz the Guitar Pro importer
         # FF-15 for mc-guitarpro (ADR-036 G5). The corpus is seeded with copies of the
         # S10 fixtures, so libfuzzer never writes into the committed fixture folder.
@@ -84,7 +76,7 @@ jobs:
         run: |
           mkdir -p corpus/import_gp
           cp ../crates/mc-guitarpro/tests/fixtures/tuxguitar/*.gp? corpus/import_gp/
-          cargo +${{ env.NIGHTLY }} fuzz run import_gp corpus/import_gp -- -max_total_time=300 -rss_limit_mb=4096
+          cargo +nightly fuzz run import_gp corpus/import_gp -- -max_total_time=300 -rss_limit_mb=4096
 
   portability:
     # ADR-004: macOS and Linux keep building and passing tests before their port phase.
