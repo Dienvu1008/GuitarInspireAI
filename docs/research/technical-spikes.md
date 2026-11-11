@@ -1,7 +1,7 @@
 # Technical Spikes
 
 Purpose: Define the proof-of-concept experiments (S1 to S12) that answer questions documentation cannot, with question, timebox, success criteria and the phase gate each one unblocks.
-Status: S1, S2, S4, S5 and S7 executed in M0 (results below). S3 executed in Phase 5 (synthetic and latency measured; real-guitar pending; see ADR-029). S6, S8 to S12 not started.
+Status: S1, S2, S4, S5 and S7 executed in M0 (results below). S3 executed in Phase 5 (synthetic and latency measured; real-guitar pending; see ADR-029). S10 executed in Phase 6d for GP3 to GP5 (see ADR-036). S6, S8, S9, S11 and S12 not started.
 Related documents: [implementation-phases.md](../roadmap/implementation-phases.md), [dependency-map.md](../roadmap/dependency-map.md), [technology-evaluation.md](technology-evaluation.md), [audio-dsp-architecture.md](../architecture/audio-dsp-architecture.md), [risk-register.md](../roadmap/risk-register.md).
 
 Rules:
@@ -137,3 +137,32 @@ Spike `spikes/s3-tuner/` (throwaway, own workspace). Owned MPM and YIN, window 2
 | A10 typed errors, no crash | Default input opened (48 kHz); outcomes `Ok`/`NoInputDevice`/`PermissionDenied`/`DeviceBusyOrConfig`; stream error surfaced as a typed error | Pass (automated path); privacy/busy cases in the MVP manual script |
 
 Findings: a spike MPM bug (missing initial-lobe skip gave E2 ~427 kHz) was fixed before measuring; 5b must include the same skip. Recommendation: MPM (provisional until the real-guitar set is recorded; the agent cannot capture a physical instrument — the developer records it per `spikes/s3-tuner/results/README.md` and fills ADR-029 §5). The decision rule for MPM-vs-YIN was fixed in ADR-029 before the run.
+
+### S10 Guitar Pro import (Phase 6d, 2026-11-11; Pass for GP3 to GP5 5.00, GP7 and GPX not assessed)
+
+Spike: `spikes/s10-guitar-pro/`. It is throwaway and has its own workspace. The full results are in its README, section 6, and the decision is [ADR-036](../architecture/decisions/ADR-036-guitar-pro-adapter.md).
+
+**Scope set by the user**
+- Own clean-room reader and writer, with no Guitar Pro library.
+- GP3, GP4 and GP5 now. GP7/8 and GPX are deferred until lawful sample files exist, so "GP7 structure" in the question was not assessed.
+
+**Fixtures**
+- 54 files, written by TuxGuitar 2.0.1's own writers through its public API (CC0-1.0).
+- The user has no Guitar Pro.
+
+| Criterion | Result |
+|---|---|
+| Parse fixture files of each version into a test model | Pass for GP3, GP4 and GP5 5.00. All 54 files read to the last byte. The 103 voice lines equal TuxGuitar's own reading. Eight corrections to the public format description were found by byte analysis. |
+| Writer (added by the user) | A GP5 writer round-trips all 18 GP5 files. TuxGuitar reads our files identically to the originals (79 of 79 lines). |
+| Robustness | 144 000 mutated inputs: 0 panics. |
+| Risk note | Done (spike section 7; R-14). |
+| Effort estimate | 3 to 4 weeks within 3 to 6 (spike section 6.6). |
+
+**Open points** (ADR-036 conditions):
+- No file written by Guitar Pro itself.
+- No GP5 5.10 file.
+- The meaning of the brush direction bytes.
+- The text encoding of Guitar Pro's own files.
+- The two chord layouts no fixture shows.
+
+**Effort:** well inside the 3-day timebox.
