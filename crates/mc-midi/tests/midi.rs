@@ -525,6 +525,54 @@ fn a_header_that_panics_the_midly_parser_is_a_typed_error() {
     );
 }
 
+/// FF-15 regression (weekly fuzz job, 2026-11-09): libfuzzer aborts on any panic, even
+/// one that `catch_unwind` would catch, so an SMPTE header whose frame byte is 0x80 must
+/// be refused before midly reads it. Plain and RMID-wrapped files; no panic may occur.
+#[test]
+fn smpte_headers_are_refused_without_any_panic() {
+    use std::cell::Cell;
+    thread_local! { static PANICKED: Cell<bool> = const { Cell::new(false) }; }
+    let previous = std::panic::take_hook();
+    std::panic::set_hook(Box::new(|_| PANICKED.with(|p| p.set(true))));
+
+    let mut smf: Vec<u8> = Vec::new();
+    smf.extend_from_slice(b"MThd");
+    smf.extend_from_slice(&[0, 0, 0, 6, 0, 1, 0, 1, 0x80, 0x00]);
+    smf.extend_from_slice(b"MTrk");
+    smf.extend_from_slice(&[0, 0, 0, 4, 0x00, 0xFF, 0x2F, 0x00]);
+    let mut rmid: Vec<u8> = Vec::new();
+    rmid.extend_from_slice(b"RIFF");
+    rmid.extend_from_slice(&(4 + 8 + smf.len() as u32).to_le_bytes());
+    rmid.extend_from_slice(b"RMID");
+    rmid.extend_from_slice(b"data");
+    rmid.extend_from_slice(&(smf.len() as u32).to_le_bytes());
+    rmid.extend_from_slice(&smf);
+    // A 25 fps SMPTE header (frame byte 0xE7) is refused the same way.
+    let mut fps25 = smf.clone();
+    fps25[12] = 0xE7;
+    let results: Vec<_> = [&smf, &rmid, &fps25].map(|b| import_smf(b)).into();
+    // midly also reads a header chunk met while collecting the tracks (found by the
+    // fuzzer after the first fix): a valid file followed by a second, bad header.
+    let mut second: Vec<u8> = Vec::new();
+    second.extend_from_slice(b"MThd");
+    second.extend_from_slice(&[0, 0, 0, 6, 0, 0, 0, 1, 0x01, 0xE0]);
+    second.extend_from_slice(b"MTrk");
+    second.extend_from_slice(&[0, 0, 0, 4, 0x00, 0xFF, 0x2F, 0x00]);
+    second.extend_from_slice(b"MThd");
+    second.extend_from_slice(&[0, 0, 0, 6, 0, 0, 0, 1, 0x80, 0x00]);
+    let later = import_smf(&second);
+
+    std::panic::set_hook(previous);
+    assert!(
+        !PANICKED.with(Cell::get),
+        "a panic occurred inside the importer"
+    );
+    for r in results {
+        assert!(matches!(r, Err(ImportError::UnsupportedTiming)), "{r:?}");
+    }
+    assert!(matches!(later, Err(ImportError::Malformed(_))), "{later:?}");
+}
+
 /// Found by the property test (it hung): a very short note whose onset snaps onto the
 /// end of the last bar used to start outside every bar and loop forever. It must finish
 /// quickly, drop that note and report it.

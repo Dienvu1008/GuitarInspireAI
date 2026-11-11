@@ -192,13 +192,85 @@ struct Segment {
 }
 
 /// Read a Standard MIDI File into a validated score and a report.
+/// The header chunks that midly 0.5.3 (pinned) would read, checked before it reads
+/// them. midly reads every `MThd` chunk it walks past: the first as the file header,
+/// later ones while collecting the tracks. Its lookup is followed exactly: an RMID file
+/// is unwrapped to its `data` chunk (RIFF chunks, little-endian lengths, odd lengths
+/// padded); then the chunks are walked in order (big-endian lengths, a short last chunk
+/// takes the rest of the file). Any other input is left to midly, which rejects it with
+/// an error.
+/// - The first `MThd` with SMPTE timing (bit 15 of the division word): refused as
+///   unsupported, which is what the import does with SMPTE timing anyway.
+/// - A later `MThd` whose frame byte is 0x80 (the one that makes midly panic): the file
+///   has two headers, so it is malformed.
+fn header_hazard(bytes: &[u8]) -> Option<ImportError> {
+    fn riff_chunks(mut raw: &[u8]) -> impl Iterator<Item = (&[u8], &[u8])> {
+        std::iter::from_fn(move || {
+            if raw.len() < 8 {
+                return None;
+            }
+            let id = &raw[..4];
+            let len = u32::from_le_bytes([raw[4], raw[5], raw[6], raw[7]]) as usize;
+            raw = &raw[8..];
+            let data = &raw[..len.min(raw.len())];
+            raw = &raw[data.len()..];
+            if len % 2 == 1 && !raw.is_empty() {
+                raw = &raw[1..];
+            }
+            Some((id, data))
+        })
+    }
+    let smf = if bytes.starts_with(b"RIFF") {
+        let (_, riff) = riff_chunks(bytes).next()?;
+        if riff.get(..4) != Some(b"RMID") {
+            return None;
+        }
+        riff_chunks(&riff[4..]).find(|(id, _)| *id == b"data")?.1
+    } else if bytes.starts_with(b"MThd") {
+        bytes
+    } else {
+        return None;
+    };
+    let mut rest = smf;
+    let mut first = true;
+    while rest.len() >= 8 {
+        let id = &rest[..4];
+        let len = u32::from_be_bytes([rest[4], rest[5], rest[6], rest[7]]) as usize;
+        rest = &rest[8..];
+        let data = &rest[..len.min(rest.len())];
+        rest = &rest[data.len()..];
+        match id {
+            b"MThd" if data.len() >= 6 => {
+                if first && data[4] & 0x80 != 0 {
+                    return Some(ImportError::UnsupportedTiming);
+                }
+                if !first && data[4] == 0x80 {
+                    return Some(ImportError::Malformed(
+                        "a second MIDI header chunk with an invalid SMPTE frame rate".into(),
+                    ));
+                }
+                first = false;
+            }
+            b"MThd" | b"MTrk" => first = false,
+            _ => {}
+        }
+    }
+    None
+}
+
 pub fn import_smf(bytes: &[u8]) -> Result<(Score, ImportReport), ImportError> {
     if bytes.len() > MAX_FILE_BYTES {
         return Err(ImportError::TooLarge { bytes: bytes.len() });
     }
-    // midly 0.5.3 panics on some malformed SMPTE timing headers (negating i8::MIN) rather
-    // than returning an error. mc-midi reads untrusted files (IM-01), so a parser bug
-    // must become a typed error here, not a crash of the whole process.
+    // midly 0.5.3 panics on an SMPTE timing header whose frame byte is 0x80 (negating
+    // i8::MIN) rather than returning an error. SMPTE timing is refused anyway, so such a
+    // header is refused before midly reads it (found again by FF-15: libfuzzer aborts on
+    // any panic, even a caught one). The catch_unwind stays as a second guard: mc-midi
+    // reads untrusted files (IM-01), so a parser bug must become a typed error, not a
+    // crash of the whole process.
+    if let Some(e) = header_hazard(bytes) {
+        return Err(e);
+    }
     let parsed = std::panic::catch_unwind(|| Smf::parse(bytes).map_err(|e| e.to_string()));
     let smf = match parsed {
         Ok(Ok(smf)) => smf,
