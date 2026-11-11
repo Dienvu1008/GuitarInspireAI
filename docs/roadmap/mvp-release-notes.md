@@ -99,3 +99,12 @@ The "Play it back" item above lists per-track mute. In the M5 build the mute con
   the core reads and writes patterns as text, and the confirmed reference patterns are
   checked against their TAB and their playback. It has no user interface yet; see
   [mvp-known-limitations.md](mvp-known-limitations.md).
+
+## Added in Phase 6a-5
+
+- **Pattern editor** (ADR-034): Tools > Pattern editor... makes picking and strumming
+  patterns on a grid of targets (bass, alternate bass, treble, strings, strum, your
+  gestures) and cells, with a snap per beat (including triplets). Place, move, resize and
+  delete steps by mouse or keyboard; set strokes and techniques on a step or a run; make
+  a gesture from a strike. Every edit is one undo step.
+- **Patterns are saved with the project** (format 1.2), and the apply dialog uses them.

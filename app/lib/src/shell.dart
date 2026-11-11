@@ -254,6 +254,12 @@ class _MenuBar extends ConsumerWidget {
                   onPressed: () => showApplyPatternDialog(context),
                   child: const Text('Apply pattern...'),
                 ),
+                // ADR-034 (6a-5): the grid editor and the gesture palette.
+                MenuItemButton(
+                  key: const ValueKey('tools-pattern-editor'),
+                  onPressed: () => showPatternEditor(context),
+                  child: const Text('Pattern editor...'),
+                ),
               ],
               child: const Text('Tools'),
             ),

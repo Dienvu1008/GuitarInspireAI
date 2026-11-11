@@ -682,19 +682,73 @@ The user accepted 6a-4 and started 6a-5. Like 6a-3, it is built in sub-slices, e
 The plan was refined: 6a-5c is the bridge only, and the Flutter grid editor moves to 6a-5d with the palette (table above).
 
 **Built:**
-- **mc-ffi**, with no music rule:
-  - pattern_grid(document, pattern, snaps) and gestures(document), both synchronous queries (pi/pattern_grid.rs).
-  - CommandDto variants for every library command: NewPattern, RemovePattern, EditPattern with a GridEditDto, DefineGesture, GestureFromStep, RenameGesture, ChangeGesture, RemoveGesture.
-  - OutcomeDto.created_pattern and created_gesture, and the event kind PatternLibraryChanged, which replaces the temporary HistoryApplied mapping of 6a-5b.
+- **`mc-ffi`**, with no music rule:
+  - `pattern_grid(document, pattern, snaps)` and `gestures(document)`, both synchronous queries (`api/pattern_grid.rs`).
+  - `CommandDto` variants for every library command: `NewPattern`, `RemovePattern`, `EditPattern` with a `GridEditDto`, `DefineGesture`, `GestureFromStep`, `RenameGesture`, `ChangeGesture`, `RemoveGesture`.
+  - `OutcomeDto.created_pattern` and `created_gesture`, and the event kind `PatternLibraryChanged`, which replaces the temporary `HistoryApplied` mapping of 6a-5b.
   - The DTOs convert plain values only. A string 0 or a bad meter is refused as a value; every other rule is the core's.
-  - Bindings were regenerated twice: 17 files with identical hashes (FF-12). The new module adds pattern_grid.dart and its freezed file.
-- **core_bridge:** DocumentService.patternGrid and gestures, in the real service, the fake and the fake's wrapper.
-  - The fake's library (ake_pattern_library.dart) is a placeholder. It keeps what it is sent and shows every step as an eighth. It decides no value, does not check holds, and refuses only what it cannot address, a bad snap, two steps starting together, a duplicate gesture name and the removal of a gesture in use.
+  - Bindings were regenerated twice: 17 files with identical hashes (FF-12). The new module adds `pattern_grid.dart` and its freezed file.
+- **`core_bridge`:** `DocumentService.patternGrid` and `gestures`, in the real service, the fake and the fake's wrapper.
+  - The fake's library (`fake_pattern_library.dart`) is a placeholder. It keeps what it is sent and shows every step as an eighth. It decides no value, does not check holds, and refuses only what it cannot address, a bad snap, two steps starting together or a move past a neighbour, a duplicate gesture name and the removal of a gesture in use.
   - It reports a step's cell in the snap of the view, like the core. The contract test found that the first version echoed the cell a step was placed with.
 
 **Evidence:**
-- crates/mc-ffi/tests/api.rs (3 new tests): grid edits as commands, one revision each; a triplet eighth decided by the core; rows and cells of the view; spans; undo with the event. Refusals with their rules (PE-14 for a snap of 5, string 0 and 5/16; PT for an overlap and an unknown pattern), with nothing changed. A gesture from a strike in the palette and the grid, a rename, and the removal rule.
-- The Dart contract test "ADR-034 (6a-5): the pattern grid is edited by commands and undone" passes against the fake and against the real core. It covers new pattern, place, the default snap, cells relative to the view's snap, the PE-14 and PT refusals, a span, a gesture from a step, and undo with PatternLibraryChanged.
+- `crates/mc-ffi/tests/api.rs` (3 new tests): grid edits as commands, one revision each; a triplet eighth decided by the core; rows and cells of the view; spans; undo with the event. Refusals with their rules (`PE-14` for a snap of 5, string 0 and 5/16; `PT` for an overlap and an unknown pattern), with nothing changed. A gesture from a strike in the palette and the grid, a rename, and the removal rule.
+- The Dart contract test "ADR-034 (6a-5): the pattern grid is edited by commands and undone" passes against the fake and against the real core. It covers new pattern, place, the default snap, cells relative to the view's snap, the `PE-14` and `PT` refusals, a span, a gesture from a step, and undo with `PatternLibraryChanged`.
+
+### Results of 6a-5d, the grid editor, the palette and the apply dialog
+
+**Built** (`packages/editor_feature`, Tools > Pattern editor...):
+- **The grid.** One colour band per lane (all its steps, also rests and holds), then the core's rows (targets and gestures), and the cells of each beat with a snap per beat (1, 2, 3, 4, 6 or 8). Each cell is a widget with a semantic label such as "Bass, beat 2, cell 1 of 3: Strum strike 2, ↓ >, selected".
+- **Mouse:**
+  - A click on an empty cell places a one-cell strike on that row's target or gesture in the edited lane; on a step it selects it.
+  - Shift+click extends the selection to a run; Ctrl+click adds or removes the row's target on a strike.
+  - Palette buttons: techniques, directions, delete, earlier and later, shorter and longer, rest and hold at the cursor, a gesture from the selected strike, and the gestures (place, rename, remove).
+- **Keyboard:** arrows move the cursor; Shift+arrows extend the selection; Enter or Space places or selects; Ctrl+Enter toggles a target; Delete deletes; Alt+Left and Alt+Right move a step; ] and [ resize it.
+  - Letters: A, P, X, L and S set techniques; D, U and N set or clear the direction; R and H place a rest or a hold; G makes a gesture.
+  - Ctrl+Z and Ctrl+Y undo and redo inside the dialog.
+- **New and delete pattern.** A new pattern takes a name, one or two lanes, bars and a meter. Two-lane patterns have a lane switch.
+- **Errors** from the core are shown in a live region.
+- **Actions run one at a time.** Each starts on the view of the revision it starts at, as the shell's key handler does (Q-15). The real-core integration test found the need: D then ] sent the second command with the revision the first was changing, and the core refused it (E-01). The fake completes commands at once, so the widget tests could not show it.
+- **The apply dialog uses the stored library.** It chooses the sample if it is still there, otherwise the first pattern. With no pattern it says so, and Preview is disabled.
+
+**Interpretations made in 6a-5d, which the user should confirm or change:**
+1. **No drag.** Section 9 says "drag sets its duration". Steps are resized and moved one cell at a time, with keys (`]` `[` and Alt+arrows) or palette buttons, so both work by mouse and keyboard. Dragging can be added later without a core change.
+2. **A click places one cell.** A longer step is made by resizing.
+3. **The cell-to-command mapping is in Dart, and it is not a music rule.** Dart computes which cell was clicked, the step under it, the next cell for a move, and a step's length in cells of its start beat for a resize (`cells + 1`). The core decides whether the result is a written value, where the step starts, and every rule.
+4. **Rests and full holds appear only in the lane band**, because they mark no target row.
+5. **The editor is a dialog** of at most 1040 by 680, with its own undo keys. It is not a panel of the main window.
+
+**Evidence:**
+- `packages/editor_feature/test/pattern_editor_test.dart` (9 tests):
+  - a new pattern, then place, select, resize and delete by mouse, each one command;
+  - mouse only: move and resize with the palette;
+  - a snap of 3 on one beat;
+  - a technique as a flag on one step and as a span on a run, plus a direction;
+  - a gesture from a strike, in the palette and the grid; removal of a used gesture refused and shown; rename;
+  - keyboard only: place, move, rest, undo and redo;
+  - a refused edit shown with nothing changed;
+  - semantic labels of cells and the grid, and the error as a live region;
+  - a two-lane pattern with the lane switch.
+- `apply_pattern_dialog_test.dart` (3 new tests):
+  - changing the pattern clears the preview and the fit, and the next preview asks again (the 6a-5 checklist of section 20);
+  - without the sample, the first pattern is chosen;
+  - an empty library says so and cannot preview.
+- The Windows integration test "6a-5: make a pattern in the grid, save, reopen and apply it", with the real core:
+  - a bass by mouse and a treble by mouse and keys, made a down-stroke and resized to a quarter (values from the core);
+  - saved, a new document, reopened: the same grid;
+  - applied to bar 1 from the apply dialog: two attacks, one with the down-stroke.
+  - All 6 acceptance tests pass.
+- **Dart mutations:** 8 mutations of the editor and the dialog (run versus step techniques, target toggling, move direction, resize, the cell label, the step under a cell, the sample fallback, and the fit reset on a pattern change). All 8 were caught.
+
+### Criteria of 6a-5
+
+| Id | Result | Evidence and gaps |
+|---|---|---|
+| PE-1 (byte part) | **Met** | The library DTO round-trips byte for byte for random valid libraries (property, 200 cases), and the fixture does too (6a-5a) |
+| PE-12 | **Met, with interpretation 3 of 6a-5d** | The editor, palette and dialogs send commands and draw core view models; the fake decides no value and checks no hold. FF-01 passes with only the planned `project -> pattern` edge; FF-05 passes |
+| PE-13 | **Met** | Format 1.2 round trip, fixture, schema snapshot, U1 at every level, the 1.1 CLI check by hand (U1, U2, Save As), session save and reopen (6a-5a), and the integration test |
+| PE-14 | **Met, except dragging** (interpretation 1 of 6a-5d) | Place, move, resize, delete; a snap per beat including 3; techniques on a run; a gesture from a strike; the apply dialog's preview, overwrite and fit; mouse and keyboard; semantic labels. Widget tests and the Windows integration test |
 
 ## Alternatives
 

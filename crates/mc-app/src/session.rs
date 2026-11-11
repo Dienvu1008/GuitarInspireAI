@@ -301,7 +301,7 @@ impl DocumentSession {
         Ok(outcome)
     }
 
-    /// A library command (6a-5b): validated by mc-pattern, one undo step and one
+    /// A library command (6a-5b): validated by `mc-pattern`, one undo step and one
     /// revision; the score does not change. On error nothing changes.
     fn execute_library(
         &mut self,

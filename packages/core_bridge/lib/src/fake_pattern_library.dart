@@ -154,7 +154,8 @@ final class FakePatternLibrary {
     final i = _gestureIndex(id);
     final used = _patterns.any(
       (p) => p.steps.any(
-        (s) => s.action is GridActionDto_Gesture &&
+        (s) =>
+            s.action is GridActionDto_Gesture &&
             (s.action as GridActionDto_Gesture).gesture == id,
       ),
     );
@@ -193,7 +194,12 @@ final class FakePatternLibrary {
     final p = _pattern(pattern);
     _generation++;
     switch (e) {
-      case GridEditDto_Place(:final lane, :final at, :final cells, :final action):
+      case GridEditDto_Place(
+        :final lane,
+        :final at,
+        :final cells,
+        :final action,
+      ):
         _checkSnap(at.parts);
         if (at.cell >= at.parts || cells < 1) _refuse('PE-14', 'bad cell');
         final steps = p.lane(lane);
@@ -212,9 +218,21 @@ final class FakePatternLibrary {
         }
       case GridEditDto_Move(:final lane, :final index, :final to):
         _checkSnap(to.parts);
-        p.step(lane, index).cell = to;
-        p.lane(lane).sort((a, b) => _compare(a.cell, b.cell));
-      case GridEditDto_Resize(:final lane, :final index, :final parts, :final cells):
+        final steps = p.lane(lane);
+        p.step(lane, index);
+        // As in the core: a move never passes, or lands on, a neighbour.
+        final before = index == 0 || _compare(steps[index - 1].cell, to) < 0;
+        final after =
+            index + 1 >= steps.length ||
+            _compare(to, steps[index + 1].cell) < 0;
+        if (!before || !after) _refuse('PE-14', 'would pass another step');
+        steps[index].cell = to;
+      case GridEditDto_Resize(
+        :final lane,
+        :final index,
+        :final parts,
+        :final cells,
+      ):
         _checkSnap(parts);
         p.step(lane, index).cells = cells;
       case GridEditDto_Delete(:final lane, :final first, :final last):
@@ -240,7 +258,12 @@ final class FakePatternLibrary {
             techniques: a.strike.techniques,
           ),
         );
-      case GridEditDto_SetDirection(:final lane, :final first, :final last, :final direction):
+      case GridEditDto_SetDirection(
+        :final lane,
+        :final first,
+        :final last,
+        :final direction,
+      ):
         for (var i = first; i <= last; i++) {
           final s = p.step(lane, i);
           final a = s.action;
@@ -254,7 +277,12 @@ final class FakePatternLibrary {
             );
           }
         }
-      case GridEditDto_SetTechnique(:final lane, :final index, :final technique, :final on_):
+      case GridEditDto_SetTechnique(
+        :final lane,
+        :final index,
+        :final technique,
+        :final on_,
+      ):
         final s = p.step(lane, index);
         final a = s.action;
         if (a is! GridActionDto_Strike) _refuse('PE-14', 'not a strike');
@@ -265,7 +293,12 @@ final class FakePatternLibrary {
             techniques: _with(a.strike.techniques, technique, on_),
           ),
         );
-      case GridEditDto_AddSpan(:final lane, :final first, :final last, :final technique):
+      case GridEditDto_AddSpan(
+        :final lane,
+        :final first,
+        :final last,
+        :final technique,
+      ):
         if (first > last || last >= p.lane(lane).length) {
           _refuse('PE-14', 'bad run');
         }
@@ -303,7 +336,11 @@ final class FakePatternLibrary {
     return x.compareTo(y);
   }
 
-  static GridSelectorDto _sel(SelectorKindDto kind, {int count = 0, int string = 0}) =>
+  static GridSelectorDto _sel(
+    SelectorKindDto kind, {
+    int count = 0,
+    int string = 0,
+  }) =>
       GridSelectorDto(kind: kind, count: count, string: string, from: 0, to: 0);
 
   GridViewDto view(int id, List<int> snaps) {
@@ -418,9 +455,7 @@ final class FakePatternLibrary {
       meter: p.meter,
       beatNumerator: 1,
       beatDenominator: beatDen,
-      snaps: Uint8List.fromList([
-        for (var b = 0; b < beats; b++) snapOf(b),
-      ]),
+      snaps: Uint8List.fromList([for (var b = 0; b < beats; b++) snapOf(b)]),
       rows: rows,
       lanes: p.lanes,
       steps: steps,
@@ -519,6 +554,4 @@ final class _Pattern {
     fingers: [for (final s in fingers) s.copy()],
     spans: [for (final s in spans) s.copy()],
   );
-
-
 }

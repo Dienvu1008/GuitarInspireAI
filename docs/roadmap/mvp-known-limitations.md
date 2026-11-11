@@ -97,14 +97,17 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   - Files that use them are format 1.1. An older build opens them but cannot save over
     them (use Save As); it loses the techniques.
 - Repeat editing is limited to simple start and end markers.
-- **Patterns (Phase 6a-3, ADR-034).** Tools > Apply pattern... applies a picking or
-  strumming pattern to a range of whole bars of the active track, for one chord voicing.
-  Limits:
-  - Only one built-in sample pattern ("Boom-chick", alternating bass) is available. Making
-    and editing patterns, user gestures and the text notation come in later slices.
-  - The pattern library is saved with the project from format 1.2 (Phase 6a-5). A file
-    with a changed library cannot be saved over by an older build (it offers Save As).
-    Library changes are not undoable yet.
+- **Patterns (Phases 6a-3 to 6a-5, ADR-034).** Tools > Pattern editor... makes and edits
+  patterns on a grid, with user gestures; Tools > Apply pattern... applies one to a range
+  of whole bars of the active track, for one chord voicing. Limits:
+  - The pattern library belongs to the project (format 1.2). There is no library shared
+    between projects. A file with a changed library cannot be saved over by an older build
+    (it offers Save As).
+  - The grid places a step one cell long; a longer step is made by resizing it (] and [).
+    A step gets exactly one written value, so some lengths (for example 5/16) cannot be
+    made; the editor says so.
+  - Deleting a strike that a hold continues is refused; delete the hold first.
+  - A beat is one unit of the meter (an eighth in 6/8).
   - The preview is a text summary (repetitions, notes, bars replaced, steps cut at the
     end), not a TAB preview.
   - One voicing for the whole range; there is no chord track.

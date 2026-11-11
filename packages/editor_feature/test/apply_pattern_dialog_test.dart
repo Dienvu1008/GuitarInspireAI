@@ -189,6 +189,84 @@ void main() {
     expect(_applyEnabled(tester), isFalse);
   });
 
+  // ADR-034 section 20, checklist for 6a-5: changing the pattern clears the fit. It
+  // needs a second pattern, which the stored library now allows.
+  testWidgets('changing the pattern clears the preview and the fit', (
+    tester,
+  ) async {
+    final c = _container();
+    addTearDown(c.dispose);
+    await c
+        .read(editorProvider)
+        .service
+        .execute(
+          const CommandDto.newPattern(
+            name: 'Second',
+            twoLanes: false,
+            lengthNumerator: 1,
+            lengthDenominator: 1,
+          ),
+        );
+    await _open(tester, c);
+    _factory.created.first.patternNeedsFit = true;
+    await _tapAndSettle(tester, 'apply-pattern-find');
+    await _range(tester, '1', '2');
+    await _tapAndSettle(tester, 'apply-pattern-preview');
+    await tester.tap(find.text('Whole repetitions only'));
+    await tester.pumpAndSettle();
+    expect(_applyEnabled(tester), isTrue);
+    await _tapAndSettle(tester, 'apply-pattern-pattern');
+    await tester.tap(find.text('Second').last);
+    await tester.pumpAndSettle();
+    expect(_applyEnabled(tester), isFalse, reason: 'the preview is gone');
+    expect(_k('apply-pattern-fit'), findsNothing);
+    await _tapAndSettle(tester, 'apply-pattern-preview');
+    expect(_k('apply-pattern-fit'), findsOneWidget, reason: 'asks again');
+    expect(_applyEnabled(tester), isFalse, reason: 'no remembered fit');
+  });
+
+  testWidgets('without the sample, the first pattern is chosen', (
+    tester,
+  ) async {
+    final c = _container();
+    addTearDown(c.dispose);
+    final service = c.read(editorProvider).service;
+    await service.execute(
+      const CommandDto.newPattern(
+        name: 'Mine',
+        twoLanes: false,
+        lengthNumerator: 1,
+        lengthDenominator: 1,
+      ),
+    );
+    await service.execute(
+      CommandDto.removePattern(pattern: service.samplePattern()),
+    );
+    expect(service.samplePattern(), -1);
+    await _open(tester, c);
+    expect(find.text('Mine'), findsOneWidget);
+    await _tapAndSettle(tester, 'apply-pattern-find');
+    await _range(tester, '1', '1');
+    await _tapAndSettle(tester, 'apply-pattern-preview');
+    expect(_applyEnabled(tester), isTrue);
+  });
+
+  testWidgets('an empty library says so and cannot preview', (tester) async {
+    final c = _container();
+    addTearDown(c.dispose);
+    final service = c.read(editorProvider).service;
+    await service.execute(
+      CommandDto.removePattern(pattern: service.samplePattern()),
+    );
+    await _open(tester, c);
+    expect(_k('apply-pattern-empty'), findsOneWidget);
+    expect(_k('apply-pattern-pattern'), findsNothing);
+    expect(
+      tester.widget<OutlinedButton>(_k('apply-pattern-preview')).onPressed,
+      isNull,
+    );
+  });
+
   /// An `insertBeat` of a rest (a beat without notes) in voice 1 of [bar].
   Future<void> rest(ProviderContainer c, int bar) async {
     final s = c.read(editorProvider);

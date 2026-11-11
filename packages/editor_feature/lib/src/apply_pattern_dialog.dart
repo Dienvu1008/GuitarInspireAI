@@ -29,7 +29,10 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
   late final int _track;
   late final int _barCount;
   late final List<PatternInfoDto> _patterns;
-  late int _pattern;
+
+  /// The chosen pattern; null when the library has none (6a-5: the library is the
+  /// document's, so the sample may be gone).
+  int? _pattern;
   final _chord = TextEditingController(text: 'C');
   final _first = TextEditingController();
   final _last = TextEditingController();
@@ -53,7 +56,12 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
     _track = s.activeTrack;
     _barCount = s.summary.masterBars.length;
     _patterns = _service.patterns();
-    _pattern = _service.samplePattern();
+    final sample = _service.samplePattern();
+    _pattern = _patterns.any((p) => p.id == sample)
+        ? sample
+        : _patterns.isEmpty
+        ? null
+        : _patterns.first.id;
     _first.text = '${s.cursor.bar + 1}';
     _last.text = '${math.min(s.cursor.bar + 4, _barCount)}';
   }
@@ -95,6 +103,14 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
   /// The arguments, or null with an error shown when an input is missing or not a bar
   /// number. Bars are 1-based in the dialog and 0-based in the command.
   ApplyPatternDto? _args({bool overwrite = false}) {
+    final pattern = _pattern;
+    if (pattern == null) {
+      setState(
+        () => _error =
+            'The library has no pattern. Make one in the pattern editor.',
+      );
+      return null;
+    }
     final v = _voicings;
     if (v == null || v.voicings.isEmpty) {
       setState(() => _error = 'Find the voicings of a chord first.');
@@ -116,7 +132,7 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
       track: _track,
       first: first - 1,
       last: last - 1,
-      pattern: _pattern,
+      pattern: pattern,
       frets: v.voicings[_voicing].frets,
       chord: v.symbol,
       fit: _fit,
@@ -229,21 +245,27 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DropdownButtonFormField<int>(
-                key: const ValueKey('apply-pattern-pattern'),
-                initialValue: _pattern,
-                decoration: const InputDecoration(labelText: 'Pattern'),
-                items: [
-                  for (final p in _patterns)
-                    DropdownMenuItem(value: p.id, child: Text(p.name)),
-                ],
-                onChanged: (id) {
-                  if (id == null) return;
-                  _pattern = id;
-                  // A fit chosen for another pattern must not carry over.
-                  _changed(range: true);
-                },
-              ),
+              if (_patterns.isEmpty)
+                const Text(
+                  'The library has no pattern. Make one in the pattern editor.',
+                  key: ValueKey('apply-pattern-empty'),
+                )
+              else
+                DropdownButtonFormField<int>(
+                  key: const ValueKey('apply-pattern-pattern'),
+                  initialValue: _pattern,
+                  decoration: const InputDecoration(labelText: 'Pattern'),
+                  items: [
+                    for (final p in _patterns)
+                      DropdownMenuItem(value: p.id, child: Text(p.name)),
+                  ],
+                  onChanged: (id) {
+                    if (id == null) return;
+                    _pattern = id;
+                    // A fit chosen for another pattern must not carry over.
+                    _changed(range: true);
+                  },
+                ),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -372,7 +394,7 @@ class _ApplyPatternDialogState extends ConsumerState<ApplyPatternDialog> {
         ),
         OutlinedButton(
           key: const ValueKey('apply-pattern-preview'),
-          onPressed: _preview,
+          onPressed: _pattern == null ? null : _preview,
           child: const Text('Preview'),
         ),
         FilledButton(

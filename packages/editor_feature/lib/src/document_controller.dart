@@ -268,6 +268,22 @@ final class DocumentController extends Notifier<EditorState> {
     () => state.service.execute(command, expectedRevision: expectedRevision),
   );
 
+  /// Like [executeAt], but also gives back the outcome on success, for commands that
+  /// create something (a pattern or a gesture id, ADR-034 6a-5).
+  Future<(OutcomeDto?, ApiError?)> executeForOutcome(
+    CommandDto command, {
+    required int expectedRevision,
+  }) async {
+    OutcomeDto? out;
+    final rejection = await _attempt(() async {
+      out = await state.service.execute(
+        command,
+        expectedRevision: expectedRevision,
+      );
+    });
+    return (out, rejection);
+  }
+
   /// Makes [track] the edited track. A hidden track becomes shown, since the active
   /// track always is (ADR-031 5.3).
   void selectTrack(int track) => state = state.copyWith(
