@@ -1,0 +1,4 @@
+// Corpus 5: down and up strokes on eighths (G, 4/4). Up-strokes play Treble(4).
+"name": "Down and up strokes on eighths"
+"length": 1
+strum: D Strum:8 U Treble(4):8 D Strum:8 U Treble(4):8 D Strum:8 U Treble(4):8 D Strum:8 U Treble(4):8

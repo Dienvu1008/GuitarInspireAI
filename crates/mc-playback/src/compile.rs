@@ -17,8 +17,63 @@ const CHANNEL_ORDER: [u8; 15] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 
 const TICK_FALLBACK: u64 = 215_040;
 /// Maximum LCM before falling back.
 const TICK_MAX: u64 = 1 << 20;
-/// Dead-note length: 1/64 of a whole note (ADR-024 item 2).
+/// Dead-note length: 1/64 of a whole note (ADR-024 item 2). Also the string-percussive
+/// length (ADR-035).
 const DEAD_DENOM: i64 = 64;
+/// Longest palm-muted note: 1/16 of a whole note (ADR-035).
+const PALM_MUTE_DENOM: i64 = 16;
+
+/// The technique that decides how a note sounds (ADR-035 precedence:
+/// string-percussive > dead > palm mute > let ring > normal). Every flag stays stored on
+/// the note; only the sound follows the winner.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Sound {
+    StringPercussive,
+    Dead,
+    PalmMute,
+    LetRing,
+    Normal,
+}
+
+impl Sound {
+    fn of(e: mc_score::NoteEffects) -> Sound {
+        if e.string_percussive {
+            Sound::StringPercussive
+        } else if e.dead {
+            Sound::Dead
+        } else if e.palm_mute {
+            Sound::PalmMute
+        } else if e.let_ring {
+            Sound::LetRing
+        } else {
+            Sound::Normal
+        }
+    }
+
+    fn velocity(self, accent: bool) -> Velocity {
+        let v = match self {
+            Sound::StringPercussive => Velocity::STRING_PERCUSSIVE,
+            Sound::Dead => Velocity::DEAD,
+            Sound::PalmMute => Velocity::PALM_MUTE,
+            Sound::LetRing | Sound::Normal => Velocity::NORMAL,
+        };
+        if accent { v.accented() } else { v }
+    }
+
+    /// Length limit as a fraction of a whole note, if the technique has one.
+    fn limit(self) -> Option<i64> {
+        match self {
+            Sound::StringPercussive | Sound::Dead => Some(DEAD_DENOM),
+            Sound::PalmMute => Some(PALM_MUTE_DENOM),
+            Sound::LetRing | Sound::Normal => None,
+        }
+    }
+
+    /// Short techniques end their chain: a tie from them does not extend the note.
+    fn is_short(self) -> bool {
+        self.limit().is_some()
+    }
+}
 
 /// Options for [`compile`]. `#[non_exhaustive]`: build it with [`CompileOptions::new`]
 /// and set fields, so later options do not break callers.
@@ -299,6 +354,8 @@ struct SoundingNote {
     off_index: usize,
     /// True while the chain can still be extended by a tie on the next beat.
     let_ring: bool,
+    /// The chain started with a short technique (dead, palm mute, string-percussive):
+    /// a tie does not extend it (ADR-024 for dead, ADR-035 for the others).
     dead: bool,
 }
 
@@ -402,23 +459,21 @@ fn compile_track(
                     // channel (unison on two strings, overlapping voices, let-ring tails)
                     // are clipped afterwards in resolve_overlaps, so one channel never
                     // sounds a key twice at once.
-                    let dead = note.effects.dead;
-                    let off_tick = if dead {
-                        let dead_end = onset
-                            .checked_add(Rational::new(1, DEAD_DENOM).expect("1/64 valid"))
+                    let sound = Sound::of(note.effects);
+                    let dead = sound.is_short();
+                    let off_tick = if let Some(denom) = sound.limit() {
+                        // The earlier of the technique limit and the written beat end.
+                        let limit_end = onset
+                            .checked_add(Rational::new(1, denom).expect("non-zero"))
                             .and_then(to_tick)
                             .unwrap_or(beat_end_tick);
-                        dead_end.min(beat_end_tick)
-                    } else if note.effects.let_ring {
+                        limit_end.min(beat_end_tick)
+                    } else if sound == Sound::LetRing {
                         pb.start.0 + pb.length.0
                     } else {
                         beat_end_tick
                     };
-                    let velocity = if dead {
-                        Velocity::DEAD
-                    } else {
-                        Velocity::NORMAL
-                    };
+                    let velocity = sound.velocity(note.effects.accent);
                     let off_index = builder.push_note(
                         beat_start_tick,
                         off_tick,
@@ -440,7 +495,7 @@ fn compile_track(
                         on_at: beat_start_tick,
                         off_at: off_tick,
                         off_index,
-                        let_ring: note.effects.let_ring && !dead,
+                        let_ring: sound == Sound::LetRing,
                         dead,
                     });
                 }

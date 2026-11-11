@@ -7,5 +7,7 @@ pub mod info;
 pub mod layout;
 pub mod midi;
 pub mod musicxml;
+pub mod pattern;
+pub mod pattern_grid;
 pub mod tuner;
 pub mod types;

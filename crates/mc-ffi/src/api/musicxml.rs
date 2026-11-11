@@ -22,6 +22,9 @@ pub struct MusicXmlReportDto {
     pub tempo_rounded: u32,
     /// Characters removed from names and markers (not allowed in XML).
     pub characters_removed: u32,
+    /// Note techniques written as `<other-technical>` text because MusicXML 4.0 has no
+    /// element for them: palm mute and string-percussive (ADR-035).
+    pub techniques_approximated: u32,
 }
 
 /// The result of exporting: the UTF-8 file bytes and what was written.
@@ -42,6 +45,7 @@ fn report_dto(r: &MusicXmlReport) -> MusicXmlReportDto {
         tuplets_without_bracket: n(r.tuplets_without_bracket),
         tempo_rounded: n(r.tempo_rounded),
         characters_removed: n(r.characters_removed),
+        techniques_approximated: n(r.techniques_approximated),
     }
 }
 

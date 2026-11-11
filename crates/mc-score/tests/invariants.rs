@@ -30,6 +30,7 @@ fn h01_ids_are_unique_and_duplicates_are_rejected_on_load() {
         id: BeatId::from_raw(7),
         value: q(),
         notes: vec![],
+        stroke: None,
     };
     let parts = ScoreParts {
         master_bars: vec![MasterBar::default()],
@@ -439,7 +440,7 @@ fn note_effects_and_removal() {
         n,
         NoteEffects {
             let_ring: true,
-            dead: false,
+            ..NoteEffects::default()
         },
     )
     .unwrap();

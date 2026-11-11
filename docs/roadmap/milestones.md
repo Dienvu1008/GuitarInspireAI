@@ -33,3 +33,9 @@ Phase 6b (no milestone of its own; part of M6 and later) was accepted on 2026-11
 - Five evidence gaps are conditions of acceptance: edit latency in an intermittent slow state; the FF-18 glitch baseline no longer reproducing; one tie-into-repeat note that MuseScore plays differently; MuseScore ignoring the capo; and a possible M3 test flake.
 - It was merged from `phase-6-editor-depth`.
 - Evidence: [phase-6b-exit-report.md](phase-6b-exit-report.md). Next: Phase 6a (pattern engine).
+
+Phase 6a (no milestone of its own; part of M6 and later) was accepted on 2026-11-11.
+- It delivered playing techniques in the score (accent, palm mute, string-percussive, stroke direction; format 1.1) and the pattern engine: patterns bound to a chord voicing and applied over bars, the text syntax with the user-confirmed corpus, and the pattern editor with gestures, saved with the project (format 1.2). All evidence comes from a single machine.
+- Five evidence gaps are conditions of acceptance: MuseScore losing three techniques on re-export (TQ-8); no dragging in the grid editor (PE-14); PE-15 measured once; the older-reader check done by hand; and the editor's command queue covered only by the Windows integration test.
+- It was merged from `phase-6a-pattern-engine`.
+- Evidence: [phase-6a-exit-report.md](phase-6a-exit-report.md). Next: Phase 6c or 6d, in the order the user chooses (entry gates S11 and S10).

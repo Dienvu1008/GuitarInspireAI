@@ -6,10 +6,12 @@
 import '../frb_generated.dart';
 import 'layout.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'pattern.dart';
+import 'pattern_grid.dart';
 import 'types.dart';
 
 
-            // These functions are ignored because they are not marked as `pub`: `app_info`, `chord_result_dto`, `discard_own_recovery`, `event_dto`, `from_imported_score`, `lock_for_layout`, `lock_for_transport`, `lock`, `master_bar_dto`, `outcome_dto`, `playback_state_dto`, `recovery_dir`, `recovery_entry_dto`, `score_snapshot`, `summary_dto`, `to_command`, `with_session`, `wrap`
+            // These functions are ignored because they are not marked as `pub`: `app_info`, `chord_result_dto`, `discard_own_recovery`, `event_dto`, `from_imported_score`, `lock_for_layout`, `lock_for_pattern`, `lock_for_transport`, `lock`, `master_bar_dto`, `outcome_dto`, `playback_state_dto`, `recovery_dir`, `recovery_entry_dto`, `score_snapshot`, `summary_dto`, `to_command`, `with_session`, `wrap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `DartEventSink`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `eq`, `fmt`, `fmt`, `publish`
 

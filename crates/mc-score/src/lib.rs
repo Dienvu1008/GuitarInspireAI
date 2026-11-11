@@ -28,7 +28,7 @@ pub use events::DomainEvent;
 pub use ids::{BeatId, NoteId, TrackId};
 pub use model::{
     BarContent, Beat, FrettedInstrument, InstrumentSpec, MasterBar, Note, NoteEffects, NoteKind,
-    TempoChange, Track, TrackData, Voice,
+    Stroke, TempoChange, Track, TrackData, Voice,
 };
 pub use repeats::PlaybackOrder;
 pub use score::{Score, ScoreParts};

@@ -283,5 +283,101 @@ fn notation_layout(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, commands, guitar_queries, notation_layout);
+/// ADR-034 PE-15: binding, placing and applying a 4-bar pattern to 64 bars takes at
+/// most 20 ms in release on the reference machine. Thumb and Fingers, so two voices are
+/// written; each sample starts from a fresh session (overwrite confirmed).
+fn pattern_apply(c: &mut Criterion) {
+    use mc_app::{ApplyPattern, PatternCommand};
+    use mc_pattern::{
+        Action, Lane, Lanes, PatternMeta, PatternParts, Step, Strike, StringSelector,
+    };
+    use mc_theory::{BaseValue, NoteValue, Rational};
+    let q = NoteValue::plain(BaseValue::QUARTER);
+    let e = NoteValue::plain(BaseValue::EIGHTH);
+    let at = |n: i64, d: i64| Rational::new(n, d).unwrap();
+    let s = |n: u8| StringSelector::Absolute(mc_theory::fretted::StringIndex::new(n).unwrap());
+    let strike = |t: StringSelector| Action::Strike(Strike::on(vec![t]));
+    let thumb = (0..16)
+        .map(|k| Step {
+            onset: at(k, 4),
+            duration: q,
+            action: strike(if k % 2 == 0 {
+                StringSelector::Bass
+            } else {
+                StringSelector::Alt
+            }),
+        })
+        .collect();
+    let fingers = (0..32)
+        .map(|k| Step {
+            onset: at(k, 8),
+            duration: e,
+            action: strike(s(1 + (k % 3) as u8)),
+        })
+        .collect();
+    let parts = PatternParts {
+        name: "Four bars".into(),
+        length: at(4, 1),
+        meter: None,
+        lanes: Lanes::ThumbFingers {
+            thumb: Lane { steps: thumb },
+            fingers: Lane { steps: fingers },
+        },
+        spans: Vec::new(),
+        meta: PatternMeta::default(),
+    };
+    let make = |score: mc_score::Score| {
+        let mut s = DocumentSession::new(DocumentId(3), score, SessionConfig::default(), &C, &E);
+        let p = s.patterns_mut().define_pattern(parts.clone()).unwrap();
+        let track = s.score().track_at(0).unwrap().id();
+        let cmd = Command::Pattern(PatternCommand::ApplyPattern(ApplyPattern {
+            track,
+            first: 0,
+            last: 63,
+            pattern: p,
+            voicing: vec![Some(0), Some(1), Some(0), Some(2), Some(3), None],
+            chord: "C".into(),
+            fit: None,
+            overwrite: true,
+        }));
+        (s, cmd)
+    };
+    let mut group = c.benchmark_group("pattern");
+    group.sample_size(20);
+    for (name, score) in [
+        ("empty-64", mc_app::new_score("T", 64).unwrap()),
+        ("typical", reference(TYPICAL)),
+    ] {
+        let mut samples = Vec::new();
+        for i in 0..200u64 {
+            let (mut s, cmd) = make(score.clone());
+            let t = Instant::now();
+            black_box(s.execute(CommandEnvelope::new(i, cmd)).expect("applies"));
+            samples.push(t.elapsed().as_nanos());
+        }
+        percentiles(
+            &format!("PE-15 apply 4-bar pattern to 64 bars ({name})"),
+            samples,
+        );
+        group.bench_function(BenchmarkId::new("apply_pattern_64_bars", name), |b| {
+            b.iter_batched(
+                || make(score.clone()),
+                |(mut s, cmd)| {
+                    black_box(s.execute(CommandEnvelope::new(1, cmd)).expect("applies"));
+                    s
+                },
+                criterion::BatchSize::LargeInput,
+            )
+        });
+    }
+    group.finish();
+}
+
+criterion_group!(
+    benches,
+    commands,
+    guitar_queries,
+    notation_layout,
+    pattern_apply
+);
 criterion_main!(benches);

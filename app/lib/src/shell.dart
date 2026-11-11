@@ -247,6 +247,19 @@ class _MenuBar extends ConsumerWidget {
                       ref.read(chordVisibleProvider.notifier).toggle(),
                   child: const Text('Chord finder'),
                 ),
+                const Divider(),
+                // ADR-034: apply a pattern of the session library (6a-3: the sample).
+                MenuItemButton(
+                  key: const ValueKey('tools-apply-pattern'),
+                  onPressed: () => showApplyPatternDialog(context),
+                  child: const Text('Apply pattern...'),
+                ),
+                // ADR-034 (6a-5): the grid editor and the gesture palette.
+                MenuItemButton(
+                  key: const ValueKey('tools-pattern-editor'),
+                  onPressed: () => showPatternEditor(context),
+                  child: const Text('Pattern editor...'),
+                ),
               ],
               child: const Text('Tools'),
             ),

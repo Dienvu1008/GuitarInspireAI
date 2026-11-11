@@ -68,3 +68,43 @@ The "Play it back" item above lists per-track mute. In the M5 build the mute con
   - Export only.
   - Checked with MuseScore 4.7.5 on one machine. MuseScore ignores the capo, so a track with a capo is re-fingered there.
   - See [mvp-known-limitations.md](mvp-known-limitations.md).
+
+## Added in Phase 6a-1
+
+- **Playing techniques** (ADR-035): accent, palm mute and string-percussive per note, and a
+  down or up stroke per beat, set in the inspector with the mouse or the keyboard (Tab,
+  Space, Enter).
+  - Playback and MIDI export: accent is louder; palm mute, dead and string-percussive
+    notes are short and softer.
+  - TAB: `>`, "P.M." with a dashed line, stroke arrows, and `x` with `S`.
+  - MusicXML export: written as MusicXML 4.0 defines, where it can.
+  - Project files that use these are format 1.1; older builds open them read-only (Save As).
+  - See [mvp-known-limitations.md](mvp-known-limitations.md).
+
+## Added in Phase 6a-3
+
+- **Apply a pattern** (ADR-034): Tools > Apply pattern... fills a range of bars of the
+  active track with a picking or strumming pattern for a chord voicing you choose from the
+  chord finder.
+  - A preview shows what will be written; the dialog asks before it replaces existing
+    notes, and asks how to fit the pattern when the range is not a whole number of
+    repetitions.
+  - One undo step.
+  - This slice has one built-in sample pattern. See
+    [mvp-known-limitations.md](mvp-known-limitations.md).
+
+## Added in Phase 6a-4
+
+- **Pattern text notation** (ADR-034, [pattern-text-syntax.md](../architecture/pattern-text-syntax.md)):
+  the core reads and writes patterns as text, and the confirmed reference patterns are
+  checked against their TAB and their playback. It has no user interface yet; see
+  [mvp-known-limitations.md](mvp-known-limitations.md).
+
+## Added in Phase 6a-5
+
+- **Pattern editor** (ADR-034): Tools > Pattern editor... makes picking and strumming
+  patterns on a grid of targets (bass, alternate bass, treble, strings, strum, your
+  gestures) and cells, with a snap per beat (including triplets). Place, move, resize and
+  delete steps by mouse or keyboard; set strokes and techniques on a step or a run; make
+  a gesture from a strike. Every edit is one undo step.
+- **Patterns are saved with the project** (format 1.2), and the apply dialog uses them.

@@ -9,6 +9,8 @@ publish.workspace = true
 [dependencies]
 mc-theory.workspace = true
 mc-score.workspace = true
+# The pattern library in format 1.2 (ADR-034 section 8).
+mc-pattern.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 zip.workspace = true
@@ -17,6 +19,7 @@ schemars.workspace = true
 
 [dev-dependencies]
 mc-score = { workspace = true, features = ["fixtures"] }
+mc-pattern = { workspace = true, features = ["fixtures"] }
 proptest.workspace = true
 criterion.workspace = true
 

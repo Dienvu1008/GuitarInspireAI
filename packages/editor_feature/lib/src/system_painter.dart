@@ -155,8 +155,60 @@ final class SystemPainter extends CustomPainter {
           }
         case GlyphKindDto_StringName(:final name):
           _centered(canvas, name, g.x, g.y, scale: 0.75, color: colors.staff);
+        // ADR-035 technique marks; the core decides where they go.
+        case GlyphKindDto_Accent():
+          _centered(canvas, '>', g.x, g.y, scale: 0.9);
+        case GlyphKindDto_Stroke(:final up):
+          _paintArrow(canvas, g.x, g.y, up: up);
+        case GlyphKindDto_StringPercussive():
+          _centered(canvas, 'S', g.x, g.y, scale: 0.75);
+        case GlyphKindDto_PalmMute(:final run):
+          _paintPalmMute(canvas, g.x, g.y, g.width, run: run, ink: ink);
       }
     }
+  }
+
+  /// A stroke arrow drawn with lines (no font glyph needed): ↓ for down, ↑ for up.
+  void _paintArrow(Canvas canvas, double x, double y, {required bool up}) {
+    final pen = Paint()
+      ..color = colors.ink
+      ..strokeWidth = 1.2;
+    final h = fontSize * 0.45;
+    final head = fontSize * 0.22;
+    final tip = Offset(x, up ? y - h : y + h);
+    canvas.drawLine(Offset(x, up ? y + h : y - h), tip, pen);
+    final back = up ? head : -head;
+    canvas.drawLine(tip, Offset(x - head, tip.dy + back), pen);
+    canvas.drawLine(tip, Offset(x + head, tip.dy + back), pen);
+  }
+
+  /// "P.M." at the start of the glyph box. A run continues as a dashed line to the
+  /// end of the box, with a short end tick; a lone label has no line.
+  void _paintPalmMute(
+    Canvas canvas,
+    double x,
+    double y,
+    double width, {
+    required bool run,
+    required Paint ink,
+  }) {
+    final label = _label('P.M.', scale: 0.7);
+    final start = x - width / 2;
+    final end = x + width / 2;
+    if (!run) {
+      label.paint(canvas, Offset(x - label.width / 2, y - label.height / 2));
+      return;
+    }
+    label.paint(canvas, Offset(start, y - label.height / 2));
+    final from = start + label.width + 2;
+    if (from >= end) return;
+    const dash = 4.0;
+    const gap = 3.0;
+    for (var dx = from; dx < end; dx += dash + gap) {
+      final to = dx + dash < end ? dx + dash : end;
+      canvas.drawLine(Offset(dx, y), Offset(to, y), ink);
+    }
+    canvas.drawLine(Offset(end, y - 3), Offset(end, y + 3), ink);
   }
 
   /// Simple rest symbols: whole and half as blocks, shorter values as a slash with

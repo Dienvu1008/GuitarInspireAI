@@ -197,7 +197,7 @@ fn golden_rhythm_and_note_kinds() {
         dead_note,
         NoteEffects {
             dead: true,
-            let_ring: false,
+            ..NoteEffects::default()
         },
     )
     .unwrap();
@@ -379,4 +379,162 @@ fn unknown_track_and_bad_metrics_are_errors() {
         ..metrics()
     };
     assert!(layout_tab(&s, t, &bad).is_err());
+}
+
+// ---------------------------------------------------------- ADR-035 TQ-6
+
+fn glyphs(l: &TabLayout) -> Vec<(usize, GlyphKind, f32, f32, f32)> {
+    l.systems
+        .iter()
+        .flat_map(|s| {
+            s.glyphs
+                .iter()
+                .map(move |g| (s.index, g.kind.clone(), g.x, g.y, g.width))
+        })
+        .collect()
+}
+
+#[test]
+fn golden_techniques() {
+    let s = mc_score::fixtures::techniques();
+    let t = s.track_at(0).unwrap().id();
+    let l = layout_tab(&s, t, &metrics()).unwrap();
+    check_golden("techniques", include_str!("golden/techniques.txt"), &l);
+}
+
+#[test]
+fn tq6_marks_appear_on_the_beats_that_carry_them() {
+    let s = mc_score::fixtures::techniques();
+    let t = s.track_at(0).unwrap().id();
+    let l = layout_tab(&s, t, &metrics()).unwrap();
+    let g = glyphs(&l);
+    let count = |k: &GlyphKind| g.iter().filter(|x| &x.1 == k).count();
+    // Accents: the bar-0 chord, the second palm-muted eighth, the percussive chord.
+    assert_eq!(count(&GlyphKind::Accent), 3);
+    // Strokes: down (bar 0), up (bar 0), down on the rest and on the chord (bar 1).
+    assert_eq!(count(&GlyphKind::Stroke { up: false }), 3);
+    assert_eq!(count(&GlyphKind::Stroke { up: true }), 1);
+    // "S": the bar-0 chord and the bar-1 note.
+    assert_eq!(count(&GlyphKind::StringPercussive), 2);
+    // Every mark sits above the staff.
+    let top = l.systems[0].staff_top;
+    for (_, k, _, y, _) in &g {
+        if matches!(
+            k,
+            GlyphKind::Accent
+                | GlyphKind::Stroke { .. }
+                | GlyphKind::StringPercussive
+                | GlyphKind::PalmMute { .. }
+        ) {
+            assert!(*y < top, "{k:?} at y {y} is not above the staff ({top})");
+        }
+    }
+    // String-percussive and dead notes are drawn as x; the others as numbers.
+    let x_frets = g
+        .iter()
+        .filter(|x| matches!(x.1, GlyphKind::Fret { dead: true, .. }))
+        .count();
+    assert_eq!(
+        x_frets,
+        5 + 1 + 1,
+        "5 percussive chord notes, 1 dead, 1 percussive"
+    );
+}
+
+#[test]
+fn tq6_palm_mute_runs_join_over_bar_lines_and_a_partial_beat_stands_alone() {
+    let (mut s, t) = new_score(2);
+    let pm = NoteEffects {
+        palm_mute: true,
+        ..NoteEffects::default()
+    };
+    let mute_all = |s: &mut Score, r: BeatRef| {
+        let ids: Vec<_> = s.track(t).unwrap().bar(r.bar).unwrap().voices[0]
+            .beats
+            .iter()
+            .find(|b| b.id == r.beat)
+            .unwrap()
+            .notes
+            .iter()
+            .map(|n| n.id)
+            .collect();
+        for id in ids {
+            s.set_note_effects(r, id, pm).unwrap();
+        }
+    };
+    // Bar 0: two plain quarters, then two muted quarters. Bar 1: two muted quarters,
+    // a rest, then a chord with one muted note.
+    beat(&mut s, t, 0, 0, v(2), &[(5, 3)]);
+    beat(&mut s, t, 0, 0, v(2), &[(5, 3)]);
+    for _ in 0..2 {
+        let r = beat(&mut s, t, 0, 0, v(2), &[(5, 3)]);
+        mute_all(&mut s, r);
+    }
+    for _ in 0..2 {
+        let r = beat(&mut s, t, 1, 0, v(2), &[(5, 3)]);
+        mute_all(&mut s, r);
+    }
+    beat(&mut s, t, 1, 0, v(2), &[]);
+    let partial = beat(&mut s, t, 1, 0, v(2), &[(4, 2), (5, 3)]);
+    let first = s.track(t).unwrap().bar(1).unwrap().voices[0].beats[3].notes[0].id;
+    s.set_note_effects(partial, first, pm).unwrap();
+
+    let l = layout_tab(&s, t, &metrics()).unwrap();
+    assert_eq!(l.systems.len(), 1, "both bars on one system");
+    let pms: Vec<_> = glyphs(&l)
+        .into_iter()
+        .filter(|g| matches!(g.1, GlyphKind::PalmMute { .. }))
+        .collect();
+    assert_eq!(pms.len(), 2, "{pms:?}");
+    let run = pms
+        .iter()
+        .find(|g| g.1 == GlyphKind::PalmMute { run: true })
+        .unwrap();
+    let lone = pms
+        .iter()
+        .find(|g| g.1 == GlyphKind::PalmMute { run: false })
+        .unwrap();
+    // The run covers four beats across the bar line: from beat 3 of bar 0 to beat 2 of
+    // bar 1. Its extent spans the bar line.
+    let bar1_x = l.systems[0].bars[1].x;
+    assert!(run.2 - run.4 / 2.0 < bar1_x && run.2 + run.4 / 2.0 > bar1_x);
+    // The lone label is right of the run (the rest broke it).
+    assert!(lone.2 > run.2 + run.4 / 2.0);
+}
+
+#[test]
+fn tq6_a_palm_mute_run_is_broken_at_the_system_end() {
+    let (mut s, t) = new_score(8);
+    let pm = NoteEffects {
+        palm_mute: true,
+        ..NoteEffects::default()
+    };
+    for bar in 0..8 {
+        for _ in 0..4 {
+            let r = beat(&mut s, t, bar, 0, v(2), &[(5, 3)]);
+            let id = s.track(t).unwrap().bar(bar).unwrap().voices[0]
+                .beats
+                .iter()
+                .find(|b| b.id == r.beat)
+                .unwrap()
+                .notes[0]
+                .id;
+            s.set_note_effects(r, id, pm).unwrap();
+        }
+    }
+    // A narrow page forces several systems.
+    let narrow = LayoutMetrics {
+        width: 400.0,
+        ..metrics()
+    };
+    let l = layout_tab(&s, t, &narrow).unwrap();
+    assert!(l.systems.len() > 1);
+    for sys in &l.systems {
+        let runs = sys
+            .glyphs
+            .iter()
+            .filter(|g| g.kind == GlyphKind::PalmMute { run: true })
+            .count();
+        assert_eq!(runs, 1, "one run per system, ended at the system end");
+    }
 }

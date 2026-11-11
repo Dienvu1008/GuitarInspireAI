@@ -84,6 +84,15 @@ final double width;
  const factory GlyphKindDto.barNumber({   required int number , }) = GlyphKindDto_BarNumber;
  const factory GlyphKindDto.tabClef() = GlyphKindDto_TabClef;
  const factory GlyphKindDto.stringName({   required int string ,  required String name , }) = GlyphKindDto_StringName;
+ /// Accent mark above the staff (ADR-035).
+const factory GlyphKindDto.accent() = GlyphKindDto_Accent;
+ /// Stroke arrow above the staff: down or up (ADR-035).
+const factory GlyphKindDto.stroke({   required bool up , }) = GlyphKindDto_Stroke;
+ /// "S" mark of a string-percussive beat (ADR-035).
+const factory GlyphKindDto.stringPercussive() = GlyphKindDto_StringPercussive;
+ /// "P.M." label; `run` means a dashed line over the glyph width follows the label
+/// (ADR-035).
+const factory GlyphKindDto.palmMute({   required bool run , }) = GlyphKindDto_PalmMute;
 
                     
 

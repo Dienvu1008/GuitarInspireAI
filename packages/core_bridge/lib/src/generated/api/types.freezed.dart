@@ -56,7 +56,7 @@ extension CommandDtoPatterns on CommandDto {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CommandDto_InsertMasterBars value)?  insertMasterBars,TResult Function( CommandDto_RemoveMasterBars value)?  removeMasterBars,TResult Function( CommandDto_SetMasterBar value)?  setMasterBar,TResult Function( CommandDto_SetTempo value)?  setTempo,TResult Function( CommandDto_RemoveTempo value)?  removeTempo,TResult Function( CommandDto_InsertBeat value)?  insertBeat,TResult Function( CommandDto_RemoveBeat value)?  removeBeat,TResult Function( CommandDto_SetBeatDuration value)?  setBeatDuration,TResult Function( CommandDto_SetNote value)?  setNote,TResult Function( CommandDto_RemoveNote value)?  removeNote,TResult Function( CommandDto_SetTie value)?  setTie,TResult Function( CommandDto_SetNoteEffects value)?  setNoteEffects,TResult Function( CommandDto_AddVoice value)?  addVoice,TResult Function( CommandDto_RemoveVoice value)?  removeVoice,TResult Function( CommandDto_ShiftFrets value)?  shiftFrets,TResult Function( CommandDto_AddTrack value)?  addTrack,TResult Function( CommandDto_RemoveTrack value)?  removeTrack,TResult Function( CommandDto_RenameTrack value)?  renameTrack,TResult Function( CommandDto_SetInstrument value)?  setInstrument,TResult Function( CommandDto_MoveTrack value)?  moveTrack,TResult Function( CommandDto_Retune value)?  retune,TResult Function( CommandDto_PasteBeats value)?  pasteBeats,TResult Function( CommandDto_RemoveBeats value)?  removeBeats,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CommandDto_InsertMasterBars value)?  insertMasterBars,TResult Function( CommandDto_RemoveMasterBars value)?  removeMasterBars,TResult Function( CommandDto_SetMasterBar value)?  setMasterBar,TResult Function( CommandDto_SetTempo value)?  setTempo,TResult Function( CommandDto_RemoveTempo value)?  removeTempo,TResult Function( CommandDto_InsertBeat value)?  insertBeat,TResult Function( CommandDto_RemoveBeat value)?  removeBeat,TResult Function( CommandDto_SetBeatDuration value)?  setBeatDuration,TResult Function( CommandDto_SetNote value)?  setNote,TResult Function( CommandDto_RemoveNote value)?  removeNote,TResult Function( CommandDto_SetTie value)?  setTie,TResult Function( CommandDto_SetNoteEffects value)?  setNoteEffects,TResult Function( CommandDto_SetBeatStroke value)?  setBeatStroke,TResult Function( CommandDto_AddVoice value)?  addVoice,TResult Function( CommandDto_RemoveVoice value)?  removeVoice,TResult Function( CommandDto_ShiftFrets value)?  shiftFrets,TResult Function( CommandDto_AddTrack value)?  addTrack,TResult Function( CommandDto_RemoveTrack value)?  removeTrack,TResult Function( CommandDto_RenameTrack value)?  renameTrack,TResult Function( CommandDto_SetInstrument value)?  setInstrument,TResult Function( CommandDto_MoveTrack value)?  moveTrack,TResult Function( CommandDto_ApplyPattern value)?  applyPattern,TResult Function( CommandDto_NewPattern value)?  newPattern,TResult Function( CommandDto_RemovePattern value)?  removePattern,TResult Function( CommandDto_EditPattern value)?  editPattern,TResult Function( CommandDto_DefineGesture value)?  defineGesture,TResult Function( CommandDto_GestureFromStep value)?  gestureFromStep,TResult Function( CommandDto_RenameGesture value)?  renameGesture,TResult Function( CommandDto_ChangeGesture value)?  changeGesture,TResult Function( CommandDto_RemoveGesture value)?  removeGesture,TResult Function( CommandDto_Retune value)?  retune,TResult Function( CommandDto_PasteBeats value)?  pasteBeats,TResult Function( CommandDto_RemoveBeats value)?  removeBeats,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars() when insertMasterBars != null:
@@ -71,7 +71,8 @@ return setBeatDuration(_that);case CommandDto_SetNote() when setNote != null:
 return setNote(_that);case CommandDto_RemoveNote() when removeNote != null:
 return removeNote(_that);case CommandDto_SetTie() when setTie != null:
 return setTie(_that);case CommandDto_SetNoteEffects() when setNoteEffects != null:
-return setNoteEffects(_that);case CommandDto_AddVoice() when addVoice != null:
+return setNoteEffects(_that);case CommandDto_SetBeatStroke() when setBeatStroke != null:
+return setBeatStroke(_that);case CommandDto_AddVoice() when addVoice != null:
 return addVoice(_that);case CommandDto_RemoveVoice() when removeVoice != null:
 return removeVoice(_that);case CommandDto_ShiftFrets() when shiftFrets != null:
 return shiftFrets(_that);case CommandDto_AddTrack() when addTrack != null:
@@ -79,7 +80,16 @@ return addTrack(_that);case CommandDto_RemoveTrack() when removeTrack != null:
 return removeTrack(_that);case CommandDto_RenameTrack() when renameTrack != null:
 return renameTrack(_that);case CommandDto_SetInstrument() when setInstrument != null:
 return setInstrument(_that);case CommandDto_MoveTrack() when moveTrack != null:
-return moveTrack(_that);case CommandDto_Retune() when retune != null:
+return moveTrack(_that);case CommandDto_ApplyPattern() when applyPattern != null:
+return applyPattern(_that);case CommandDto_NewPattern() when newPattern != null:
+return newPattern(_that);case CommandDto_RemovePattern() when removePattern != null:
+return removePattern(_that);case CommandDto_EditPattern() when editPattern != null:
+return editPattern(_that);case CommandDto_DefineGesture() when defineGesture != null:
+return defineGesture(_that);case CommandDto_GestureFromStep() when gestureFromStep != null:
+return gestureFromStep(_that);case CommandDto_RenameGesture() when renameGesture != null:
+return renameGesture(_that);case CommandDto_ChangeGesture() when changeGesture != null:
+return changeGesture(_that);case CommandDto_RemoveGesture() when removeGesture != null:
+return removeGesture(_that);case CommandDto_Retune() when retune != null:
 return retune(_that);case CommandDto_PasteBeats() when pasteBeats != null:
 return pasteBeats(_that);case CommandDto_RemoveBeats() when removeBeats != null:
 return removeBeats(_that);case _:
@@ -100,7 +110,7 @@ return removeBeats(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CommandDto_InsertMasterBars value)  insertMasterBars,required TResult Function( CommandDto_RemoveMasterBars value)  removeMasterBars,required TResult Function( CommandDto_SetMasterBar value)  setMasterBar,required TResult Function( CommandDto_SetTempo value)  setTempo,required TResult Function( CommandDto_RemoveTempo value)  removeTempo,required TResult Function( CommandDto_InsertBeat value)  insertBeat,required TResult Function( CommandDto_RemoveBeat value)  removeBeat,required TResult Function( CommandDto_SetBeatDuration value)  setBeatDuration,required TResult Function( CommandDto_SetNote value)  setNote,required TResult Function( CommandDto_RemoveNote value)  removeNote,required TResult Function( CommandDto_SetTie value)  setTie,required TResult Function( CommandDto_SetNoteEffects value)  setNoteEffects,required TResult Function( CommandDto_AddVoice value)  addVoice,required TResult Function( CommandDto_RemoveVoice value)  removeVoice,required TResult Function( CommandDto_ShiftFrets value)  shiftFrets,required TResult Function( CommandDto_AddTrack value)  addTrack,required TResult Function( CommandDto_RemoveTrack value)  removeTrack,required TResult Function( CommandDto_RenameTrack value)  renameTrack,required TResult Function( CommandDto_SetInstrument value)  setInstrument,required TResult Function( CommandDto_MoveTrack value)  moveTrack,required TResult Function( CommandDto_Retune value)  retune,required TResult Function( CommandDto_PasteBeats value)  pasteBeats,required TResult Function( CommandDto_RemoveBeats value)  removeBeats,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CommandDto_InsertMasterBars value)  insertMasterBars,required TResult Function( CommandDto_RemoveMasterBars value)  removeMasterBars,required TResult Function( CommandDto_SetMasterBar value)  setMasterBar,required TResult Function( CommandDto_SetTempo value)  setTempo,required TResult Function( CommandDto_RemoveTempo value)  removeTempo,required TResult Function( CommandDto_InsertBeat value)  insertBeat,required TResult Function( CommandDto_RemoveBeat value)  removeBeat,required TResult Function( CommandDto_SetBeatDuration value)  setBeatDuration,required TResult Function( CommandDto_SetNote value)  setNote,required TResult Function( CommandDto_RemoveNote value)  removeNote,required TResult Function( CommandDto_SetTie value)  setTie,required TResult Function( CommandDto_SetNoteEffects value)  setNoteEffects,required TResult Function( CommandDto_SetBeatStroke value)  setBeatStroke,required TResult Function( CommandDto_AddVoice value)  addVoice,required TResult Function( CommandDto_RemoveVoice value)  removeVoice,required TResult Function( CommandDto_ShiftFrets value)  shiftFrets,required TResult Function( CommandDto_AddTrack value)  addTrack,required TResult Function( CommandDto_RemoveTrack value)  removeTrack,required TResult Function( CommandDto_RenameTrack value)  renameTrack,required TResult Function( CommandDto_SetInstrument value)  setInstrument,required TResult Function( CommandDto_MoveTrack value)  moveTrack,required TResult Function( CommandDto_ApplyPattern value)  applyPattern,required TResult Function( CommandDto_NewPattern value)  newPattern,required TResult Function( CommandDto_RemovePattern value)  removePattern,required TResult Function( CommandDto_EditPattern value)  editPattern,required TResult Function( CommandDto_DefineGesture value)  defineGesture,required TResult Function( CommandDto_GestureFromStep value)  gestureFromStep,required TResult Function( CommandDto_RenameGesture value)  renameGesture,required TResult Function( CommandDto_ChangeGesture value)  changeGesture,required TResult Function( CommandDto_RemoveGesture value)  removeGesture,required TResult Function( CommandDto_Retune value)  retune,required TResult Function( CommandDto_PasteBeats value)  pasteBeats,required TResult Function( CommandDto_RemoveBeats value)  removeBeats,}){
 final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars():
@@ -115,7 +125,8 @@ return setBeatDuration(_that);case CommandDto_SetNote():
 return setNote(_that);case CommandDto_RemoveNote():
 return removeNote(_that);case CommandDto_SetTie():
 return setTie(_that);case CommandDto_SetNoteEffects():
-return setNoteEffects(_that);case CommandDto_AddVoice():
+return setNoteEffects(_that);case CommandDto_SetBeatStroke():
+return setBeatStroke(_that);case CommandDto_AddVoice():
 return addVoice(_that);case CommandDto_RemoveVoice():
 return removeVoice(_that);case CommandDto_ShiftFrets():
 return shiftFrets(_that);case CommandDto_AddTrack():
@@ -123,7 +134,16 @@ return addTrack(_that);case CommandDto_RemoveTrack():
 return removeTrack(_that);case CommandDto_RenameTrack():
 return renameTrack(_that);case CommandDto_SetInstrument():
 return setInstrument(_that);case CommandDto_MoveTrack():
-return moveTrack(_that);case CommandDto_Retune():
+return moveTrack(_that);case CommandDto_ApplyPattern():
+return applyPattern(_that);case CommandDto_NewPattern():
+return newPattern(_that);case CommandDto_RemovePattern():
+return removePattern(_that);case CommandDto_EditPattern():
+return editPattern(_that);case CommandDto_DefineGesture():
+return defineGesture(_that);case CommandDto_GestureFromStep():
+return gestureFromStep(_that);case CommandDto_RenameGesture():
+return renameGesture(_that);case CommandDto_ChangeGesture():
+return changeGesture(_that);case CommandDto_RemoveGesture():
+return removeGesture(_that);case CommandDto_Retune():
 return retune(_that);case CommandDto_PasteBeats():
 return pasteBeats(_that);case CommandDto_RemoveBeats():
 return removeBeats(_that);}
@@ -140,7 +160,7 @@ return removeBeats(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CommandDto_InsertMasterBars value)?  insertMasterBars,TResult? Function( CommandDto_RemoveMasterBars value)?  removeMasterBars,TResult? Function( CommandDto_SetMasterBar value)?  setMasterBar,TResult? Function( CommandDto_SetTempo value)?  setTempo,TResult? Function( CommandDto_RemoveTempo value)?  removeTempo,TResult? Function( CommandDto_InsertBeat value)?  insertBeat,TResult? Function( CommandDto_RemoveBeat value)?  removeBeat,TResult? Function( CommandDto_SetBeatDuration value)?  setBeatDuration,TResult? Function( CommandDto_SetNote value)?  setNote,TResult? Function( CommandDto_RemoveNote value)?  removeNote,TResult? Function( CommandDto_SetTie value)?  setTie,TResult? Function( CommandDto_SetNoteEffects value)?  setNoteEffects,TResult? Function( CommandDto_AddVoice value)?  addVoice,TResult? Function( CommandDto_RemoveVoice value)?  removeVoice,TResult? Function( CommandDto_ShiftFrets value)?  shiftFrets,TResult? Function( CommandDto_AddTrack value)?  addTrack,TResult? Function( CommandDto_RemoveTrack value)?  removeTrack,TResult? Function( CommandDto_RenameTrack value)?  renameTrack,TResult? Function( CommandDto_SetInstrument value)?  setInstrument,TResult? Function( CommandDto_MoveTrack value)?  moveTrack,TResult? Function( CommandDto_Retune value)?  retune,TResult? Function( CommandDto_PasteBeats value)?  pasteBeats,TResult? Function( CommandDto_RemoveBeats value)?  removeBeats,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CommandDto_InsertMasterBars value)?  insertMasterBars,TResult? Function( CommandDto_RemoveMasterBars value)?  removeMasterBars,TResult? Function( CommandDto_SetMasterBar value)?  setMasterBar,TResult? Function( CommandDto_SetTempo value)?  setTempo,TResult? Function( CommandDto_RemoveTempo value)?  removeTempo,TResult? Function( CommandDto_InsertBeat value)?  insertBeat,TResult? Function( CommandDto_RemoveBeat value)?  removeBeat,TResult? Function( CommandDto_SetBeatDuration value)?  setBeatDuration,TResult? Function( CommandDto_SetNote value)?  setNote,TResult? Function( CommandDto_RemoveNote value)?  removeNote,TResult? Function( CommandDto_SetTie value)?  setTie,TResult? Function( CommandDto_SetNoteEffects value)?  setNoteEffects,TResult? Function( CommandDto_SetBeatStroke value)?  setBeatStroke,TResult? Function( CommandDto_AddVoice value)?  addVoice,TResult? Function( CommandDto_RemoveVoice value)?  removeVoice,TResult? Function( CommandDto_ShiftFrets value)?  shiftFrets,TResult? Function( CommandDto_AddTrack value)?  addTrack,TResult? Function( CommandDto_RemoveTrack value)?  removeTrack,TResult? Function( CommandDto_RenameTrack value)?  renameTrack,TResult? Function( CommandDto_SetInstrument value)?  setInstrument,TResult? Function( CommandDto_MoveTrack value)?  moveTrack,TResult? Function( CommandDto_ApplyPattern value)?  applyPattern,TResult? Function( CommandDto_NewPattern value)?  newPattern,TResult? Function( CommandDto_RemovePattern value)?  removePattern,TResult? Function( CommandDto_EditPattern value)?  editPattern,TResult? Function( CommandDto_DefineGesture value)?  defineGesture,TResult? Function( CommandDto_GestureFromStep value)?  gestureFromStep,TResult? Function( CommandDto_RenameGesture value)?  renameGesture,TResult? Function( CommandDto_ChangeGesture value)?  changeGesture,TResult? Function( CommandDto_RemoveGesture value)?  removeGesture,TResult? Function( CommandDto_Retune value)?  retune,TResult? Function( CommandDto_PasteBeats value)?  pasteBeats,TResult? Function( CommandDto_RemoveBeats value)?  removeBeats,}){
 final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars() when insertMasterBars != null:
@@ -155,7 +175,8 @@ return setBeatDuration(_that);case CommandDto_SetNote() when setNote != null:
 return setNote(_that);case CommandDto_RemoveNote() when removeNote != null:
 return removeNote(_that);case CommandDto_SetTie() when setTie != null:
 return setTie(_that);case CommandDto_SetNoteEffects() when setNoteEffects != null:
-return setNoteEffects(_that);case CommandDto_AddVoice() when addVoice != null:
+return setNoteEffects(_that);case CommandDto_SetBeatStroke() when setBeatStroke != null:
+return setBeatStroke(_that);case CommandDto_AddVoice() when addVoice != null:
 return addVoice(_that);case CommandDto_RemoveVoice() when removeVoice != null:
 return removeVoice(_that);case CommandDto_ShiftFrets() when shiftFrets != null:
 return shiftFrets(_that);case CommandDto_AddTrack() when addTrack != null:
@@ -163,7 +184,16 @@ return addTrack(_that);case CommandDto_RemoveTrack() when removeTrack != null:
 return removeTrack(_that);case CommandDto_RenameTrack() when renameTrack != null:
 return renameTrack(_that);case CommandDto_SetInstrument() when setInstrument != null:
 return setInstrument(_that);case CommandDto_MoveTrack() when moveTrack != null:
-return moveTrack(_that);case CommandDto_Retune() when retune != null:
+return moveTrack(_that);case CommandDto_ApplyPattern() when applyPattern != null:
+return applyPattern(_that);case CommandDto_NewPattern() when newPattern != null:
+return newPattern(_that);case CommandDto_RemovePattern() when removePattern != null:
+return removePattern(_that);case CommandDto_EditPattern() when editPattern != null:
+return editPattern(_that);case CommandDto_DefineGesture() when defineGesture != null:
+return defineGesture(_that);case CommandDto_GestureFromStep() when gestureFromStep != null:
+return gestureFromStep(_that);case CommandDto_RenameGesture() when renameGesture != null:
+return renameGesture(_that);case CommandDto_ChangeGesture() when changeGesture != null:
+return changeGesture(_that);case CommandDto_RemoveGesture() when removeGesture != null:
+return removeGesture(_that);case CommandDto_Retune() when retune != null:
 return retune(_that);case CommandDto_PasteBeats() when pasteBeats != null:
 return pasteBeats(_that);case CommandDto_RemoveBeats() when removeBeats != null:
 return removeBeats(_that);case _:
@@ -183,7 +213,7 @@ return removeBeats(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int at,  int count)?  insertMasterBars,TResult Function( int at,  int count)?  removeMasterBars,TResult Function( int index,  MasterBarDto bar)?  setMasterBar,TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)?  setTempo,TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)?  removeTempo,TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)?  insertBeat,TResult Function( BeatAddressDto beat)?  removeBeat,TResult Function( BeatAddressDto beat,  DurationDto duration)?  setBeatDuration,TResult Function( BeatAddressDto beat,  int string,  int fret)?  setNote,TResult Function( BeatAddressDto beat,  PlatformInt64 note)?  removeNote,TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)?  setTie,TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead)?  setNoteEffects,TResult Function( PlatformInt64 track,  int bar)?  addVoice,TResult Function( PlatformInt64 track,  int bar,  int voice)?  removeVoice,TResult Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)?  shiftFrets,TResult Function( String name,  InstrumentDto instrument)?  addTrack,TResult Function( PlatformInt64 track)?  removeTrack,TResult Function( PlatformInt64 track,  String name)?  renameTrack,TResult Function( PlatformInt64 track,  InstrumentDto instrument)?  setInstrument,TResult Function( PlatformInt64 track,  int to)?  moveTrack,TResult Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)?  retune,TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)?  pasteBeats,TResult Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)?  removeBeats,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( int at,  int count)?  insertMasterBars,TResult Function( int at,  int count)?  removeMasterBars,TResult Function( int index,  MasterBarDto bar)?  setMasterBar,TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)?  setTempo,TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)?  removeTempo,TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)?  insertBeat,TResult Function( BeatAddressDto beat)?  removeBeat,TResult Function( BeatAddressDto beat,  DurationDto duration)?  setBeatDuration,TResult Function( BeatAddressDto beat,  int string,  int fret)?  setNote,TResult Function( BeatAddressDto beat,  PlatformInt64 note)?  removeNote,TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)?  setTie,TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead,  bool accent,  bool palmMute,  bool stringPercussive)?  setNoteEffects,TResult Function( BeatAddressDto beat,  StrokeDto? stroke)?  setBeatStroke,TResult Function( PlatformInt64 track,  int bar)?  addVoice,TResult Function( PlatformInt64 track,  int bar,  int voice)?  removeVoice,TResult Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)?  shiftFrets,TResult Function( String name,  InstrumentDto instrument)?  addTrack,TResult Function( PlatformInt64 track)?  removeTrack,TResult Function( PlatformInt64 track,  String name)?  renameTrack,TResult Function( PlatformInt64 track,  InstrumentDto instrument)?  setInstrument,TResult Function( PlatformInt64 track,  int to)?  moveTrack,TResult Function( ApplyPatternDto args)?  applyPattern,TResult Function( String name,  bool twoLanes,  PlatformInt64 lengthNumerator,  PlatformInt64 lengthDenominator,  MeterDto? meter)?  newPattern,TResult Function( PlatformInt64 pattern)?  removePattern,TResult Function( PlatformInt64 pattern,  GridEditDto edit)?  editPattern,TResult Function( String name,  GridStrikeDto strike)?  defineGesture,TResult Function( PlatformInt64 pattern,  PatternLaneDto lane,  int index,  String name)?  gestureFromStep,TResult Function( PlatformInt64 gesture,  String name)?  renameGesture,TResult Function( PlatformInt64 gesture,  GridStrikeDto strike)?  changeGesture,TResult Function( PlatformInt64 gesture)?  removeGesture,TResult Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)?  retune,TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)?  pasteBeats,TResult Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)?  removeBeats,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars() when insertMasterBars != null:
 return insertMasterBars(_that.at,_that.count);case CommandDto_RemoveMasterBars() when removeMasterBars != null:
@@ -197,7 +227,8 @@ return setBeatDuration(_that.beat,_that.duration);case CommandDto_SetNote() when
 return setNote(_that.beat,_that.string,_that.fret);case CommandDto_RemoveNote() when removeNote != null:
 return removeNote(_that.beat,_that.note);case CommandDto_SetTie() when setTie != null:
 return setTie(_that.beat,_that.note,_that.tie);case CommandDto_SetNoteEffects() when setNoteEffects != null:
-return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead);case CommandDto_AddVoice() when addVoice != null:
+return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead,_that.accent,_that.palmMute,_that.stringPercussive);case CommandDto_SetBeatStroke() when setBeatStroke != null:
+return setBeatStroke(_that.beat,_that.stroke);case CommandDto_AddVoice() when addVoice != null:
 return addVoice(_that.track,_that.bar);case CommandDto_RemoveVoice() when removeVoice != null:
 return removeVoice(_that.track,_that.bar,_that.voice);case CommandDto_ShiftFrets() when shiftFrets != null:
 return shiftFrets(_that.track,_that.fromBar,_that.toBar,_that.delta);case CommandDto_AddTrack() when addTrack != null:
@@ -205,7 +236,16 @@ return addTrack(_that.name,_that.instrument);case CommandDto_RemoveTrack() when 
 return removeTrack(_that.track);case CommandDto_RenameTrack() when renameTrack != null:
 return renameTrack(_that.track,_that.name);case CommandDto_SetInstrument() when setInstrument != null:
 return setInstrument(_that.track,_that.instrument);case CommandDto_MoveTrack() when moveTrack != null:
-return moveTrack(_that.track,_that.to);case CommandDto_Retune() when retune != null:
+return moveTrack(_that.track,_that.to);case CommandDto_ApplyPattern() when applyPattern != null:
+return applyPattern(_that.args);case CommandDto_NewPattern() when newPattern != null:
+return newPattern(_that.name,_that.twoLanes,_that.lengthNumerator,_that.lengthDenominator,_that.meter);case CommandDto_RemovePattern() when removePattern != null:
+return removePattern(_that.pattern);case CommandDto_EditPattern() when editPattern != null:
+return editPattern(_that.pattern,_that.edit);case CommandDto_DefineGesture() when defineGesture != null:
+return defineGesture(_that.name,_that.strike);case CommandDto_GestureFromStep() when gestureFromStep != null:
+return gestureFromStep(_that.pattern,_that.lane,_that.index,_that.name);case CommandDto_RenameGesture() when renameGesture != null:
+return renameGesture(_that.gesture,_that.name);case CommandDto_ChangeGesture() when changeGesture != null:
+return changeGesture(_that.gesture,_that.strike);case CommandDto_RemoveGesture() when removeGesture != null:
+return removeGesture(_that.gesture);case CommandDto_Retune() when retune != null:
 return retune(_that.track,_that.instrument,_that.keepPitches);case CommandDto_PasteBeats() when pasteBeats != null:
 return pasteBeats(_that.track,_that.bar,_that.voice,_that.index,_that.beats);case CommandDto_RemoveBeats() when removeBeats != null:
 return removeBeats(_that.track,_that.voice,_that.fromBar,_that.fromIndex,_that.toBar,_that.toIndex);case _:
@@ -226,7 +266,7 @@ return removeBeats(_that.track,_that.voice,_that.fromBar,_that.fromIndex,_that.t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int at,  int count)  insertMasterBars,required TResult Function( int at,  int count)  removeMasterBars,required TResult Function( int index,  MasterBarDto bar)  setMasterBar,required TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)  setTempo,required TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)  removeTempo,required TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)  insertBeat,required TResult Function( BeatAddressDto beat)  removeBeat,required TResult Function( BeatAddressDto beat,  DurationDto duration)  setBeatDuration,required TResult Function( BeatAddressDto beat,  int string,  int fret)  setNote,required TResult Function( BeatAddressDto beat,  PlatformInt64 note)  removeNote,required TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)  setTie,required TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead)  setNoteEffects,required TResult Function( PlatformInt64 track,  int bar)  addVoice,required TResult Function( PlatformInt64 track,  int bar,  int voice)  removeVoice,required TResult Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)  shiftFrets,required TResult Function( String name,  InstrumentDto instrument)  addTrack,required TResult Function( PlatformInt64 track)  removeTrack,required TResult Function( PlatformInt64 track,  String name)  renameTrack,required TResult Function( PlatformInt64 track,  InstrumentDto instrument)  setInstrument,required TResult Function( PlatformInt64 track,  int to)  moveTrack,required TResult Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)  retune,required TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)  pasteBeats,required TResult Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)  removeBeats,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( int at,  int count)  insertMasterBars,required TResult Function( int at,  int count)  removeMasterBars,required TResult Function( int index,  MasterBarDto bar)  setMasterBar,required TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)  setTempo,required TResult Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)  removeTempo,required TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)  insertBeat,required TResult Function( BeatAddressDto beat)  removeBeat,required TResult Function( BeatAddressDto beat,  DurationDto duration)  setBeatDuration,required TResult Function( BeatAddressDto beat,  int string,  int fret)  setNote,required TResult Function( BeatAddressDto beat,  PlatformInt64 note)  removeNote,required TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)  setTie,required TResult Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead,  bool accent,  bool palmMute,  bool stringPercussive)  setNoteEffects,required TResult Function( BeatAddressDto beat,  StrokeDto? stroke)  setBeatStroke,required TResult Function( PlatformInt64 track,  int bar)  addVoice,required TResult Function( PlatformInt64 track,  int bar,  int voice)  removeVoice,required TResult Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)  shiftFrets,required TResult Function( String name,  InstrumentDto instrument)  addTrack,required TResult Function( PlatformInt64 track)  removeTrack,required TResult Function( PlatformInt64 track,  String name)  renameTrack,required TResult Function( PlatformInt64 track,  InstrumentDto instrument)  setInstrument,required TResult Function( PlatformInt64 track,  int to)  moveTrack,required TResult Function( ApplyPatternDto args)  applyPattern,required TResult Function( String name,  bool twoLanes,  PlatformInt64 lengthNumerator,  PlatformInt64 lengthDenominator,  MeterDto? meter)  newPattern,required TResult Function( PlatformInt64 pattern)  removePattern,required TResult Function( PlatformInt64 pattern,  GridEditDto edit)  editPattern,required TResult Function( String name,  GridStrikeDto strike)  defineGesture,required TResult Function( PlatformInt64 pattern,  PatternLaneDto lane,  int index,  String name)  gestureFromStep,required TResult Function( PlatformInt64 gesture,  String name)  renameGesture,required TResult Function( PlatformInt64 gesture,  GridStrikeDto strike)  changeGesture,required TResult Function( PlatformInt64 gesture)  removeGesture,required TResult Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)  retune,required TResult Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)  pasteBeats,required TResult Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)  removeBeats,}) {final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars():
 return insertMasterBars(_that.at,_that.count);case CommandDto_RemoveMasterBars():
@@ -240,7 +280,8 @@ return setBeatDuration(_that.beat,_that.duration);case CommandDto_SetNote():
 return setNote(_that.beat,_that.string,_that.fret);case CommandDto_RemoveNote():
 return removeNote(_that.beat,_that.note);case CommandDto_SetTie():
 return setTie(_that.beat,_that.note,_that.tie);case CommandDto_SetNoteEffects():
-return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead);case CommandDto_AddVoice():
+return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead,_that.accent,_that.palmMute,_that.stringPercussive);case CommandDto_SetBeatStroke():
+return setBeatStroke(_that.beat,_that.stroke);case CommandDto_AddVoice():
 return addVoice(_that.track,_that.bar);case CommandDto_RemoveVoice():
 return removeVoice(_that.track,_that.bar,_that.voice);case CommandDto_ShiftFrets():
 return shiftFrets(_that.track,_that.fromBar,_that.toBar,_that.delta);case CommandDto_AddTrack():
@@ -248,7 +289,16 @@ return addTrack(_that.name,_that.instrument);case CommandDto_RemoveTrack():
 return removeTrack(_that.track);case CommandDto_RenameTrack():
 return renameTrack(_that.track,_that.name);case CommandDto_SetInstrument():
 return setInstrument(_that.track,_that.instrument);case CommandDto_MoveTrack():
-return moveTrack(_that.track,_that.to);case CommandDto_Retune():
+return moveTrack(_that.track,_that.to);case CommandDto_ApplyPattern():
+return applyPattern(_that.args);case CommandDto_NewPattern():
+return newPattern(_that.name,_that.twoLanes,_that.lengthNumerator,_that.lengthDenominator,_that.meter);case CommandDto_RemovePattern():
+return removePattern(_that.pattern);case CommandDto_EditPattern():
+return editPattern(_that.pattern,_that.edit);case CommandDto_DefineGesture():
+return defineGesture(_that.name,_that.strike);case CommandDto_GestureFromStep():
+return gestureFromStep(_that.pattern,_that.lane,_that.index,_that.name);case CommandDto_RenameGesture():
+return renameGesture(_that.gesture,_that.name);case CommandDto_ChangeGesture():
+return changeGesture(_that.gesture,_that.strike);case CommandDto_RemoveGesture():
+return removeGesture(_that.gesture);case CommandDto_Retune():
 return retune(_that.track,_that.instrument,_that.keepPitches);case CommandDto_PasteBeats():
 return pasteBeats(_that.track,_that.bar,_that.voice,_that.index,_that.beats);case CommandDto_RemoveBeats():
 return removeBeats(_that.track,_that.voice,_that.fromBar,_that.fromIndex,_that.toBar,_that.toIndex);}
@@ -265,7 +315,7 @@ return removeBeats(_that.track,_that.voice,_that.fromBar,_that.fromIndex,_that.t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int at,  int count)?  insertMasterBars,TResult? Function( int at,  int count)?  removeMasterBars,TResult? Function( int index,  MasterBarDto bar)?  setMasterBar,TResult? Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)?  setTempo,TResult? Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)?  removeTempo,TResult? Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)?  insertBeat,TResult? Function( BeatAddressDto beat)?  removeBeat,TResult? Function( BeatAddressDto beat,  DurationDto duration)?  setBeatDuration,TResult? Function( BeatAddressDto beat,  int string,  int fret)?  setNote,TResult? Function( BeatAddressDto beat,  PlatformInt64 note)?  removeNote,TResult? Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)?  setTie,TResult? Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead)?  setNoteEffects,TResult? Function( PlatformInt64 track,  int bar)?  addVoice,TResult? Function( PlatformInt64 track,  int bar,  int voice)?  removeVoice,TResult? Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)?  shiftFrets,TResult? Function( String name,  InstrumentDto instrument)?  addTrack,TResult? Function( PlatformInt64 track)?  removeTrack,TResult? Function( PlatformInt64 track,  String name)?  renameTrack,TResult? Function( PlatformInt64 track,  InstrumentDto instrument)?  setInstrument,TResult? Function( PlatformInt64 track,  int to)?  moveTrack,TResult? Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)?  retune,TResult? Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)?  pasteBeats,TResult? Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)?  removeBeats,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( int at,  int count)?  insertMasterBars,TResult? Function( int at,  int count)?  removeMasterBars,TResult? Function( int index,  MasterBarDto bar)?  setMasterBar,TResult? Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen,  int bpm)?  setTempo,TResult? Function( int bar,  PlatformInt64 offsetNum,  PlatformInt64 offsetDen)?  removeTempo,TResult? Function( PlatformInt64 track,  int bar,  int voice,  int index,  DurationDto duration)?  insertBeat,TResult? Function( BeatAddressDto beat)?  removeBeat,TResult? Function( BeatAddressDto beat,  DurationDto duration)?  setBeatDuration,TResult? Function( BeatAddressDto beat,  int string,  int fret)?  setNote,TResult? Function( BeatAddressDto beat,  PlatformInt64 note)?  removeNote,TResult? Function( BeatAddressDto beat,  PlatformInt64 note,  bool tie)?  setTie,TResult? Function( BeatAddressDto beat,  PlatformInt64 note,  bool letRing,  bool dead,  bool accent,  bool palmMute,  bool stringPercussive)?  setNoteEffects,TResult? Function( BeatAddressDto beat,  StrokeDto? stroke)?  setBeatStroke,TResult? Function( PlatformInt64 track,  int bar)?  addVoice,TResult? Function( PlatformInt64 track,  int bar,  int voice)?  removeVoice,TResult? Function( PlatformInt64 track,  int fromBar,  int toBar,  int delta)?  shiftFrets,TResult? Function( String name,  InstrumentDto instrument)?  addTrack,TResult? Function( PlatformInt64 track)?  removeTrack,TResult? Function( PlatformInt64 track,  String name)?  renameTrack,TResult? Function( PlatformInt64 track,  InstrumentDto instrument)?  setInstrument,TResult? Function( PlatformInt64 track,  int to)?  moveTrack,TResult? Function( ApplyPatternDto args)?  applyPattern,TResult? Function( String name,  bool twoLanes,  PlatformInt64 lengthNumerator,  PlatformInt64 lengthDenominator,  MeterDto? meter)?  newPattern,TResult? Function( PlatformInt64 pattern)?  removePattern,TResult? Function( PlatformInt64 pattern,  GridEditDto edit)?  editPattern,TResult? Function( String name,  GridStrikeDto strike)?  defineGesture,TResult? Function( PlatformInt64 pattern,  PatternLaneDto lane,  int index,  String name)?  gestureFromStep,TResult? Function( PlatformInt64 gesture,  String name)?  renameGesture,TResult? Function( PlatformInt64 gesture,  GridStrikeDto strike)?  changeGesture,TResult? Function( PlatformInt64 gesture)?  removeGesture,TResult? Function( PlatformInt64 track,  InstrumentDto instrument,  bool keepPitches)?  retune,TResult? Function( PlatformInt64 track,  int bar,  int voice,  int index,  List<ClipBeatDto> beats)?  pasteBeats,TResult? Function( PlatformInt64 track,  int voice,  int fromBar,  int fromIndex,  int toBar,  int toIndex)?  removeBeats,}) {final _that = this;
 switch (_that) {
 case CommandDto_InsertMasterBars() when insertMasterBars != null:
 return insertMasterBars(_that.at,_that.count);case CommandDto_RemoveMasterBars() when removeMasterBars != null:
@@ -279,7 +329,8 @@ return setBeatDuration(_that.beat,_that.duration);case CommandDto_SetNote() when
 return setNote(_that.beat,_that.string,_that.fret);case CommandDto_RemoveNote() when removeNote != null:
 return removeNote(_that.beat,_that.note);case CommandDto_SetTie() when setTie != null:
 return setTie(_that.beat,_that.note,_that.tie);case CommandDto_SetNoteEffects() when setNoteEffects != null:
-return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead);case CommandDto_AddVoice() when addVoice != null:
+return setNoteEffects(_that.beat,_that.note,_that.letRing,_that.dead,_that.accent,_that.palmMute,_that.stringPercussive);case CommandDto_SetBeatStroke() when setBeatStroke != null:
+return setBeatStroke(_that.beat,_that.stroke);case CommandDto_AddVoice() when addVoice != null:
 return addVoice(_that.track,_that.bar);case CommandDto_RemoveVoice() when removeVoice != null:
 return removeVoice(_that.track,_that.bar,_that.voice);case CommandDto_ShiftFrets() when shiftFrets != null:
 return shiftFrets(_that.track,_that.fromBar,_that.toBar,_that.delta);case CommandDto_AddTrack() when addTrack != null:
@@ -287,7 +338,16 @@ return addTrack(_that.name,_that.instrument);case CommandDto_RemoveTrack() when 
 return removeTrack(_that.track);case CommandDto_RenameTrack() when renameTrack != null:
 return renameTrack(_that.track,_that.name);case CommandDto_SetInstrument() when setInstrument != null:
 return setInstrument(_that.track,_that.instrument);case CommandDto_MoveTrack() when moveTrack != null:
-return moveTrack(_that.track,_that.to);case CommandDto_Retune() when retune != null:
+return moveTrack(_that.track,_that.to);case CommandDto_ApplyPattern() when applyPattern != null:
+return applyPattern(_that.args);case CommandDto_NewPattern() when newPattern != null:
+return newPattern(_that.name,_that.twoLanes,_that.lengthNumerator,_that.lengthDenominator,_that.meter);case CommandDto_RemovePattern() when removePattern != null:
+return removePattern(_that.pattern);case CommandDto_EditPattern() when editPattern != null:
+return editPattern(_that.pattern,_that.edit);case CommandDto_DefineGesture() when defineGesture != null:
+return defineGesture(_that.name,_that.strike);case CommandDto_GestureFromStep() when gestureFromStep != null:
+return gestureFromStep(_that.pattern,_that.lane,_that.index,_that.name);case CommandDto_RenameGesture() when renameGesture != null:
+return renameGesture(_that.gesture,_that.name);case CommandDto_ChangeGesture() when changeGesture != null:
+return changeGesture(_that.gesture,_that.strike);case CommandDto_RemoveGesture() when removeGesture != null:
+return removeGesture(_that.gesture);case CommandDto_Retune() when retune != null:
 return retune(_that.track,_that.instrument,_that.keepPitches);case CommandDto_PasteBeats() when pasteBeats != null:
 return pasteBeats(_that.track,_that.bar,_that.voice,_that.index,_that.beats);case CommandDto_RemoveBeats() when removeBeats != null:
 return removeBeats(_that.track,_that.voice,_that.fromBar,_that.fromIndex,_that.toBar,_that.toIndex);case _:
@@ -1086,13 +1146,16 @@ as bool,
 
 
 class CommandDto_SetNoteEffects extends CommandDto {
-  const CommandDto_SetNoteEffects({required this.beat, required this.note, required this.letRing, required this.dead}): super._();
+  const CommandDto_SetNoteEffects({required this.beat, required this.note, required this.letRing, required this.dead, required this.accent, required this.palmMute, required this.stringPercussive}): super._();
   
 
  final  BeatAddressDto beat;
  final  PlatformInt64 note;
  final  bool letRing;
  final  bool dead;
+ final  bool accent;
+ final  bool palmMute;
+ final  bool stringPercussive;
 
 /// Create a copy of CommandDto
 /// with the given fields replaced by the non-null parameter values.
@@ -1104,18 +1167,18 @@ $CommandDto_SetNoteEffectsCopyWith<CommandDto_SetNoteEffects> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_SetNoteEffects&&(identical(other.beat, beat) || other.beat == beat)&&(identical(other.note, note) || other.note == note)&&(identical(other.letRing, letRing) || other.letRing == letRing)&&(identical(other.dead, dead) || other.dead == dead));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_SetNoteEffects&&(identical(other.beat, beat) || other.beat == beat)&&(identical(other.note, note) || other.note == note)&&(identical(other.letRing, letRing) || other.letRing == letRing)&&(identical(other.dead, dead) || other.dead == dead)&&(identical(other.accent, accent) || other.accent == accent)&&(identical(other.palmMute, palmMute) || other.palmMute == palmMute)&&(identical(other.stringPercussive, stringPercussive) || other.stringPercussive == stringPercussive));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,beat,note,letRing,dead);
+    return Object.hash(runtimeType,beat,note,letRing,dead,accent,palmMute,stringPercussive);
 }
 
 @override
 String toString() {
-    return 'CommandDto.setNoteEffects(beat: $beat, note: $note, letRing: $letRing, dead: $dead)';
+    return 'CommandDto.setNoteEffects(beat: $beat, note: $note, letRing: $letRing, dead: $dead, accent: $accent, palmMute: $palmMute, stringPercussive: $stringPercussive)';
 }
 
 
@@ -1126,7 +1189,7 @@ abstract mixin class $CommandDto_SetNoteEffectsCopyWith<$Res> implements $Comman
   factory $CommandDto_SetNoteEffectsCopyWith(CommandDto_SetNoteEffects value, $Res Function(CommandDto_SetNoteEffects) _then) = _$CommandDto_SetNoteEffectsCopyWithImpl;
 @useResult
 $Res call({
- BeatAddressDto beat, PlatformInt64 note, bool letRing, bool dead
+ BeatAddressDto beat, PlatformInt64 note, bool letRing, bool dead, bool accent, bool palmMute, bool stringPercussive
 });
 
 
@@ -1143,13 +1206,86 @@ class _$CommandDto_SetNoteEffectsCopyWithImpl<$Res>
 
 /// Create a copy of CommandDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? beat = null,Object? note = null,Object? letRing = null,Object? dead = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? beat = null,Object? note = null,Object? letRing = null,Object? dead = null,Object? accent = null,Object? palmMute = null,Object? stringPercussive = null,}) {
   return _then(CommandDto_SetNoteEffects(
 beat: null == beat ? _self.beat : beat // ignore: cast_nullable_to_non_nullable
 as BeatAddressDto,note: null == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
 as PlatformInt64,letRing: null == letRing ? _self.letRing : letRing // ignore: cast_nullable_to_non_nullable
 as bool,dead: null == dead ? _self.dead : dead // ignore: cast_nullable_to_non_nullable
+as bool,accent: null == accent ? _self.accent : accent // ignore: cast_nullable_to_non_nullable
+as bool,palmMute: null == palmMute ? _self.palmMute : palmMute // ignore: cast_nullable_to_non_nullable
+as bool,stringPercussive: null == stringPercussive ? _self.stringPercussive : stringPercussive // ignore: cast_nullable_to_non_nullable
 as bool,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CommandDto_SetBeatStroke extends CommandDto {
+  const CommandDto_SetBeatStroke({required this.beat, this.stroke}): super._();
+  
+
+ final  BeatAddressDto beat;
+ final  StrokeDto? stroke;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_SetBeatStrokeCopyWith<CommandDto_SetBeatStroke> get copyWith => _$CommandDto_SetBeatStrokeCopyWithImpl<CommandDto_SetBeatStroke>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_SetBeatStroke&&(identical(other.beat, beat) || other.beat == beat)&&(identical(other.stroke, stroke) || other.stroke == stroke));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,beat,stroke);
+}
+
+@override
+String toString() {
+    return 'CommandDto.setBeatStroke(beat: $beat, stroke: $stroke)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_SetBeatStrokeCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_SetBeatStrokeCopyWith(CommandDto_SetBeatStroke value, $Res Function(CommandDto_SetBeatStroke) _then) = _$CommandDto_SetBeatStrokeCopyWithImpl;
+@useResult
+$Res call({
+ BeatAddressDto beat, StrokeDto? stroke
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_SetBeatStrokeCopyWithImpl<$Res>
+    implements $CommandDto_SetBeatStrokeCopyWith<$Res> {
+  _$CommandDto_SetBeatStrokeCopyWithImpl(this._self, this._then);
+
+  final CommandDto_SetBeatStroke _self;
+  final $Res Function(CommandDto_SetBeatStroke) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? beat = null,Object? stroke = freezed,}) {
+  return _then(CommandDto_SetBeatStroke(
+beat: null == beat ? _self.beat : beat // ignore: cast_nullable_to_non_nullable
+as BeatAddressDto,stroke: freezed == stroke ? _self.stroke : stroke // ignore: cast_nullable_to_non_nullable
+as StrokeDto?,
   ));
 }
 
@@ -1723,6 +1859,650 @@ as int,
 /// @nodoc
 
 
+class CommandDto_ApplyPattern extends CommandDto {
+  const CommandDto_ApplyPattern({required this.args}): super._();
+  
+
+ final  ApplyPatternDto args;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_ApplyPatternCopyWith<CommandDto_ApplyPattern> get copyWith => _$CommandDto_ApplyPatternCopyWithImpl<CommandDto_ApplyPattern>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_ApplyPattern&&(identical(other.args, args) || other.args == args));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,args);
+}
+
+@override
+String toString() {
+    return 'CommandDto.applyPattern(args: $args)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_ApplyPatternCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_ApplyPatternCopyWith(CommandDto_ApplyPattern value, $Res Function(CommandDto_ApplyPattern) _then) = _$CommandDto_ApplyPatternCopyWithImpl;
+@useResult
+$Res call({
+ ApplyPatternDto args
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_ApplyPatternCopyWithImpl<$Res>
+    implements $CommandDto_ApplyPatternCopyWith<$Res> {
+  _$CommandDto_ApplyPatternCopyWithImpl(this._self, this._then);
+
+  final CommandDto_ApplyPattern _self;
+  final $Res Function(CommandDto_ApplyPattern) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? args = null,}) {
+  return _then(CommandDto_ApplyPattern(
+args: null == args ? _self.args : args // ignore: cast_nullable_to_non_nullable
+as ApplyPatternDto,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CommandDto_NewPattern extends CommandDto {
+  const CommandDto_NewPattern({required this.name, required this.twoLanes, required this.lengthNumerator, required this.lengthDenominator, this.meter}): super._();
+  
+
+ final  String name;
+/// Thumb and fingers (voices 1 and 2); otherwise one strum lane.
+ final  bool twoLanes;
+ final  PlatformInt64 lengthNumerator;
+ final  PlatformInt64 lengthDenominator;
+ final  MeterDto? meter;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_NewPatternCopyWith<CommandDto_NewPattern> get copyWith => _$CommandDto_NewPatternCopyWithImpl<CommandDto_NewPattern>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_NewPattern&&(identical(other.name, name) || other.name == name)&&(identical(other.twoLanes, twoLanes) || other.twoLanes == twoLanes)&&(identical(other.lengthNumerator, lengthNumerator) || other.lengthNumerator == lengthNumerator)&&(identical(other.lengthDenominator, lengthDenominator) || other.lengthDenominator == lengthDenominator)&&(identical(other.meter, meter) || other.meter == meter));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,name,twoLanes,lengthNumerator,lengthDenominator,meter);
+}
+
+@override
+String toString() {
+    return 'CommandDto.newPattern(name: $name, twoLanes: $twoLanes, lengthNumerator: $lengthNumerator, lengthDenominator: $lengthDenominator, meter: $meter)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_NewPatternCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_NewPatternCopyWith(CommandDto_NewPattern value, $Res Function(CommandDto_NewPattern) _then) = _$CommandDto_NewPatternCopyWithImpl;
+@useResult
+$Res call({
+ String name, bool twoLanes, PlatformInt64 lengthNumerator, PlatformInt64 lengthDenominator, MeterDto? meter
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_NewPatternCopyWithImpl<$Res>
+    implements $CommandDto_NewPatternCopyWith<$Res> {
+  _$CommandDto_NewPatternCopyWithImpl(this._self, this._then);
+
+  final CommandDto_NewPattern _self;
+  final $Res Function(CommandDto_NewPattern) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? name = null,Object? twoLanes = null,Object? lengthNumerator = null,Object? lengthDenominator = null,Object? meter = freezed,}) {
+  return _then(CommandDto_NewPattern(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,twoLanes: null == twoLanes ? _self.twoLanes : twoLanes // ignore: cast_nullable_to_non_nullable
+as bool,lengthNumerator: null == lengthNumerator ? _self.lengthNumerator : lengthNumerator // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,lengthDenominator: null == lengthDenominator ? _self.lengthDenominator : lengthDenominator // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,meter: freezed == meter ? _self.meter : meter // ignore: cast_nullable_to_non_nullable
+as MeterDto?,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CommandDto_RemovePattern extends CommandDto {
+  const CommandDto_RemovePattern({required this.pattern}): super._();
+  
+
+ final  PlatformInt64 pattern;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_RemovePatternCopyWith<CommandDto_RemovePattern> get copyWith => _$CommandDto_RemovePatternCopyWithImpl<CommandDto_RemovePattern>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_RemovePattern&&(identical(other.pattern, pattern) || other.pattern == pattern));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,pattern);
+}
+
+@override
+String toString() {
+    return 'CommandDto.removePattern(pattern: $pattern)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_RemovePatternCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_RemovePatternCopyWith(CommandDto_RemovePattern value, $Res Function(CommandDto_RemovePattern) _then) = _$CommandDto_RemovePatternCopyWithImpl;
+@useResult
+$Res call({
+ PlatformInt64 pattern
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_RemovePatternCopyWithImpl<$Res>
+    implements $CommandDto_RemovePatternCopyWith<$Res> {
+  _$CommandDto_RemovePatternCopyWithImpl(this._self, this._then);
+
+  final CommandDto_RemovePattern _self;
+  final $Res Function(CommandDto_RemovePattern) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? pattern = null,}) {
+  return _then(CommandDto_RemovePattern(
+pattern: null == pattern ? _self.pattern : pattern // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CommandDto_EditPattern extends CommandDto {
+  const CommandDto_EditPattern({required this.pattern, required this.edit}): super._();
+  
+
+ final  PlatformInt64 pattern;
+ final  GridEditDto edit;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_EditPatternCopyWith<CommandDto_EditPattern> get copyWith => _$CommandDto_EditPatternCopyWithImpl<CommandDto_EditPattern>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_EditPattern&&(identical(other.pattern, pattern) || other.pattern == pattern)&&(identical(other.edit, edit) || other.edit == edit));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,pattern,edit);
+}
+
+@override
+String toString() {
+    return 'CommandDto.editPattern(pattern: $pattern, edit: $edit)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_EditPatternCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_EditPatternCopyWith(CommandDto_EditPattern value, $Res Function(CommandDto_EditPattern) _then) = _$CommandDto_EditPatternCopyWithImpl;
+@useResult
+$Res call({
+ PlatformInt64 pattern, GridEditDto edit
+});
+
+
+$GridEditDtoCopyWith<$Res> get edit;
+
+}
+/// @nodoc
+class _$CommandDto_EditPatternCopyWithImpl<$Res>
+    implements $CommandDto_EditPatternCopyWith<$Res> {
+  _$CommandDto_EditPatternCopyWithImpl(this._self, this._then);
+
+  final CommandDto_EditPattern _self;
+  final $Res Function(CommandDto_EditPattern) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? pattern = null,Object? edit = null,}) {
+  return _then(CommandDto_EditPattern(
+pattern: null == pattern ? _self.pattern : pattern // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,edit: null == edit ? _self.edit : edit // ignore: cast_nullable_to_non_nullable
+as GridEditDto,
+  ));
+}
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$GridEditDtoCopyWith<$Res> get edit {
+  
+  return $GridEditDtoCopyWith<$Res>(_self.edit, (value) {
+    return _then(_self.copyWith(edit: value));
+  });
+}
+}
+
+/// @nodoc
+
+
+class CommandDto_DefineGesture extends CommandDto {
+  const CommandDto_DefineGesture({required this.name, required this.strike}): super._();
+  
+
+ final  String name;
+ final  GridStrikeDto strike;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_DefineGestureCopyWith<CommandDto_DefineGesture> get copyWith => _$CommandDto_DefineGestureCopyWithImpl<CommandDto_DefineGesture>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_DefineGesture&&(identical(other.name, name) || other.name == name)&&(identical(other.strike, strike) || other.strike == strike));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,name,strike);
+}
+
+@override
+String toString() {
+    return 'CommandDto.defineGesture(name: $name, strike: $strike)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_DefineGestureCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_DefineGestureCopyWith(CommandDto_DefineGesture value, $Res Function(CommandDto_DefineGesture) _then) = _$CommandDto_DefineGestureCopyWithImpl;
+@useResult
+$Res call({
+ String name, GridStrikeDto strike
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_DefineGestureCopyWithImpl<$Res>
+    implements $CommandDto_DefineGestureCopyWith<$Res> {
+  _$CommandDto_DefineGestureCopyWithImpl(this._self, this._then);
+
+  final CommandDto_DefineGesture _self;
+  final $Res Function(CommandDto_DefineGesture) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? name = null,Object? strike = null,}) {
+  return _then(CommandDto_DefineGesture(
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,strike: null == strike ? _self.strike : strike // ignore: cast_nullable_to_non_nullable
+as GridStrikeDto,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CommandDto_GestureFromStep extends CommandDto {
+  const CommandDto_GestureFromStep({required this.pattern, required this.lane, required this.index, required this.name}): super._();
+  
+
+ final  PlatformInt64 pattern;
+ final  PatternLaneDto lane;
+ final  int index;
+ final  String name;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_GestureFromStepCopyWith<CommandDto_GestureFromStep> get copyWith => _$CommandDto_GestureFromStepCopyWithImpl<CommandDto_GestureFromStep>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_GestureFromStep&&(identical(other.pattern, pattern) || other.pattern == pattern)&&(identical(other.lane, lane) || other.lane == lane)&&(identical(other.index, index) || other.index == index)&&(identical(other.name, name) || other.name == name));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,pattern,lane,index,name);
+}
+
+@override
+String toString() {
+    return 'CommandDto.gestureFromStep(pattern: $pattern, lane: $lane, index: $index, name: $name)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_GestureFromStepCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_GestureFromStepCopyWith(CommandDto_GestureFromStep value, $Res Function(CommandDto_GestureFromStep) _then) = _$CommandDto_GestureFromStepCopyWithImpl;
+@useResult
+$Res call({
+ PlatformInt64 pattern, PatternLaneDto lane, int index, String name
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_GestureFromStepCopyWithImpl<$Res>
+    implements $CommandDto_GestureFromStepCopyWith<$Res> {
+  _$CommandDto_GestureFromStepCopyWithImpl(this._self, this._then);
+
+  final CommandDto_GestureFromStep _self;
+  final $Res Function(CommandDto_GestureFromStep) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? pattern = null,Object? lane = null,Object? index = null,Object? name = null,}) {
+  return _then(CommandDto_GestureFromStep(
+pattern: null == pattern ? _self.pattern : pattern // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,lane: null == lane ? _self.lane : lane // ignore: cast_nullable_to_non_nullable
+as PatternLaneDto,index: null == index ? _self.index : index // ignore: cast_nullable_to_non_nullable
+as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CommandDto_RenameGesture extends CommandDto {
+  const CommandDto_RenameGesture({required this.gesture, required this.name}): super._();
+  
+
+ final  PlatformInt64 gesture;
+ final  String name;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_RenameGestureCopyWith<CommandDto_RenameGesture> get copyWith => _$CommandDto_RenameGestureCopyWithImpl<CommandDto_RenameGesture>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_RenameGesture&&(identical(other.gesture, gesture) || other.gesture == gesture)&&(identical(other.name, name) || other.name == name));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,gesture,name);
+}
+
+@override
+String toString() {
+    return 'CommandDto.renameGesture(gesture: $gesture, name: $name)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_RenameGestureCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_RenameGestureCopyWith(CommandDto_RenameGesture value, $Res Function(CommandDto_RenameGesture) _then) = _$CommandDto_RenameGestureCopyWithImpl;
+@useResult
+$Res call({
+ PlatformInt64 gesture, String name
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_RenameGestureCopyWithImpl<$Res>
+    implements $CommandDto_RenameGestureCopyWith<$Res> {
+  _$CommandDto_RenameGestureCopyWithImpl(this._self, this._then);
+
+  final CommandDto_RenameGesture _self;
+  final $Res Function(CommandDto_RenameGesture) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? gesture = null,Object? name = null,}) {
+  return _then(CommandDto_RenameGesture(
+gesture: null == gesture ? _self.gesture : gesture // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CommandDto_ChangeGesture extends CommandDto {
+  const CommandDto_ChangeGesture({required this.gesture, required this.strike}): super._();
+  
+
+ final  PlatformInt64 gesture;
+ final  GridStrikeDto strike;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_ChangeGestureCopyWith<CommandDto_ChangeGesture> get copyWith => _$CommandDto_ChangeGestureCopyWithImpl<CommandDto_ChangeGesture>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_ChangeGesture&&(identical(other.gesture, gesture) || other.gesture == gesture)&&(identical(other.strike, strike) || other.strike == strike));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,gesture,strike);
+}
+
+@override
+String toString() {
+    return 'CommandDto.changeGesture(gesture: $gesture, strike: $strike)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_ChangeGestureCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_ChangeGestureCopyWith(CommandDto_ChangeGesture value, $Res Function(CommandDto_ChangeGesture) _then) = _$CommandDto_ChangeGestureCopyWithImpl;
+@useResult
+$Res call({
+ PlatformInt64 gesture, GridStrikeDto strike
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_ChangeGestureCopyWithImpl<$Res>
+    implements $CommandDto_ChangeGestureCopyWith<$Res> {
+  _$CommandDto_ChangeGestureCopyWithImpl(this._self, this._then);
+
+  final CommandDto_ChangeGesture _self;
+  final $Res Function(CommandDto_ChangeGesture) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? gesture = null,Object? strike = null,}) {
+  return _then(CommandDto_ChangeGesture(
+gesture: null == gesture ? _self.gesture : gesture // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,strike: null == strike ? _self.strike : strike // ignore: cast_nullable_to_non_nullable
+as GridStrikeDto,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class CommandDto_RemoveGesture extends CommandDto {
+  const CommandDto_RemoveGesture({required this.gesture}): super._();
+  
+
+ final  PlatformInt64 gesture;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CommandDto_RemoveGestureCopyWith<CommandDto_RemoveGesture> get copyWith => _$CommandDto_RemoveGestureCopyWithImpl<CommandDto_RemoveGesture>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CommandDto_RemoveGesture&&(identical(other.gesture, gesture) || other.gesture == gesture));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,gesture);
+}
+
+@override
+String toString() {
+    return 'CommandDto.removeGesture(gesture: $gesture)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CommandDto_RemoveGestureCopyWith<$Res> implements $CommandDtoCopyWith<$Res> {
+  factory $CommandDto_RemoveGestureCopyWith(CommandDto_RemoveGesture value, $Res Function(CommandDto_RemoveGesture) _then) = _$CommandDto_RemoveGestureCopyWithImpl;
+@useResult
+$Res call({
+ PlatformInt64 gesture
+});
+
+
+
+
+}
+/// @nodoc
+class _$CommandDto_RemoveGestureCopyWithImpl<$Res>
+    implements $CommandDto_RemoveGestureCopyWith<$Res> {
+  _$CommandDto_RemoveGestureCopyWithImpl(this._self, this._then);
+
+  final CommandDto_RemoveGesture _self;
+  final $Res Function(CommandDto_RemoveGesture) _then;
+
+/// Create a copy of CommandDto
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? gesture = null,}) {
+  return _then(CommandDto_RemoveGesture(
+gesture: null == gesture ? _self.gesture : gesture // ignore: cast_nullable_to_non_nullable
+as PlatformInt64,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
 class CommandDto_Retune extends CommandDto {
   const CommandDto_Retune({required this.track, required this.instrument, required this.keepPitches}): super._();
   
@@ -1996,7 +2776,7 @@ extension EventKindDtoPatterns on EventKindDto {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( EventKindDto_TrackAdded value)?  trackAdded,TResult Function( EventKindDto_TrackRemoved value)?  trackRemoved,TResult Function( EventKindDto_TrackChanged value)?  trackChanged,TResult Function( EventKindDto_TracksReordered value)?  tracksReordered,TResult Function( EventKindDto_MasterBarsInserted value)?  masterBarsInserted,TResult Function( EventKindDto_MasterBarsRemoved value)?  masterBarsRemoved,TResult Function( EventKindDto_MasterBarsChanged value)?  masterBarsChanged,TResult Function( EventKindDto_BarContentChanged value)?  barContentChanged,TResult Function( EventKindDto_TempoMapChanged value)?  tempoMapChanged,TResult Function( EventKindDto_TiesRemoved value)?  tiesRemoved,TResult Function( EventKindDto_DocumentSaved value)?  documentSaved,TResult Function( EventKindDto_DirtyChanged value)?  dirtyChanged,TResult Function( EventKindDto_UndoAvailabilityChanged value)?  undoAvailabilityChanged,TResult Function( EventKindDto_HistoryApplied value)?  historyApplied,TResult Function( EventKindDto_PlaybackStateChanged value)?  playbackStateChanged,TResult Function( EventKindDto_SoloChanged value)?  soloChanged,TResult Function( EventKindDto_MixChanged value)?  mixChanged,TResult Function( EventKindDto_MuteChanged value)?  muteChanged,TResult Function( EventKindDto_TempoFactorChanged value)?  tempoFactorChanged,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( EventKindDto_TrackAdded value)?  trackAdded,TResult Function( EventKindDto_TrackRemoved value)?  trackRemoved,TResult Function( EventKindDto_TrackChanged value)?  trackChanged,TResult Function( EventKindDto_TracksReordered value)?  tracksReordered,TResult Function( EventKindDto_MasterBarsInserted value)?  masterBarsInserted,TResult Function( EventKindDto_MasterBarsRemoved value)?  masterBarsRemoved,TResult Function( EventKindDto_MasterBarsChanged value)?  masterBarsChanged,TResult Function( EventKindDto_BarContentChanged value)?  barContentChanged,TResult Function( EventKindDto_TempoMapChanged value)?  tempoMapChanged,TResult Function( EventKindDto_TiesRemoved value)?  tiesRemoved,TResult Function( EventKindDto_DocumentSaved value)?  documentSaved,TResult Function( EventKindDto_DirtyChanged value)?  dirtyChanged,TResult Function( EventKindDto_UndoAvailabilityChanged value)?  undoAvailabilityChanged,TResult Function( EventKindDto_HistoryApplied value)?  historyApplied,TResult Function( EventKindDto_PatternLibraryChanged value)?  patternLibraryChanged,TResult Function( EventKindDto_PlaybackStateChanged value)?  playbackStateChanged,TResult Function( EventKindDto_SoloChanged value)?  soloChanged,TResult Function( EventKindDto_MixChanged value)?  mixChanged,TResult Function( EventKindDto_MuteChanged value)?  muteChanged,TResult Function( EventKindDto_TempoFactorChanged value)?  tempoFactorChanged,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded() when trackAdded != null:
@@ -2013,7 +2793,8 @@ return tiesRemoved(_that);case EventKindDto_DocumentSaved() when documentSaved !
 return documentSaved(_that);case EventKindDto_DirtyChanged() when dirtyChanged != null:
 return dirtyChanged(_that);case EventKindDto_UndoAvailabilityChanged() when undoAvailabilityChanged != null:
 return undoAvailabilityChanged(_that);case EventKindDto_HistoryApplied() when historyApplied != null:
-return historyApplied(_that);case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
+return historyApplied(_that);case EventKindDto_PatternLibraryChanged() when patternLibraryChanged != null:
+return patternLibraryChanged(_that);case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
 return playbackStateChanged(_that);case EventKindDto_SoloChanged() when soloChanged != null:
 return soloChanged(_that);case EventKindDto_MixChanged() when mixChanged != null:
 return mixChanged(_that);case EventKindDto_MuteChanged() when muteChanged != null:
@@ -2036,7 +2817,7 @@ return tempoFactorChanged(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( EventKindDto_TrackAdded value)  trackAdded,required TResult Function( EventKindDto_TrackRemoved value)  trackRemoved,required TResult Function( EventKindDto_TrackChanged value)  trackChanged,required TResult Function( EventKindDto_TracksReordered value)  tracksReordered,required TResult Function( EventKindDto_MasterBarsInserted value)  masterBarsInserted,required TResult Function( EventKindDto_MasterBarsRemoved value)  masterBarsRemoved,required TResult Function( EventKindDto_MasterBarsChanged value)  masterBarsChanged,required TResult Function( EventKindDto_BarContentChanged value)  barContentChanged,required TResult Function( EventKindDto_TempoMapChanged value)  tempoMapChanged,required TResult Function( EventKindDto_TiesRemoved value)  tiesRemoved,required TResult Function( EventKindDto_DocumentSaved value)  documentSaved,required TResult Function( EventKindDto_DirtyChanged value)  dirtyChanged,required TResult Function( EventKindDto_UndoAvailabilityChanged value)  undoAvailabilityChanged,required TResult Function( EventKindDto_HistoryApplied value)  historyApplied,required TResult Function( EventKindDto_PlaybackStateChanged value)  playbackStateChanged,required TResult Function( EventKindDto_SoloChanged value)  soloChanged,required TResult Function( EventKindDto_MixChanged value)  mixChanged,required TResult Function( EventKindDto_MuteChanged value)  muteChanged,required TResult Function( EventKindDto_TempoFactorChanged value)  tempoFactorChanged,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( EventKindDto_TrackAdded value)  trackAdded,required TResult Function( EventKindDto_TrackRemoved value)  trackRemoved,required TResult Function( EventKindDto_TrackChanged value)  trackChanged,required TResult Function( EventKindDto_TracksReordered value)  tracksReordered,required TResult Function( EventKindDto_MasterBarsInserted value)  masterBarsInserted,required TResult Function( EventKindDto_MasterBarsRemoved value)  masterBarsRemoved,required TResult Function( EventKindDto_MasterBarsChanged value)  masterBarsChanged,required TResult Function( EventKindDto_BarContentChanged value)  barContentChanged,required TResult Function( EventKindDto_TempoMapChanged value)  tempoMapChanged,required TResult Function( EventKindDto_TiesRemoved value)  tiesRemoved,required TResult Function( EventKindDto_DocumentSaved value)  documentSaved,required TResult Function( EventKindDto_DirtyChanged value)  dirtyChanged,required TResult Function( EventKindDto_UndoAvailabilityChanged value)  undoAvailabilityChanged,required TResult Function( EventKindDto_HistoryApplied value)  historyApplied,required TResult Function( EventKindDto_PatternLibraryChanged value)  patternLibraryChanged,required TResult Function( EventKindDto_PlaybackStateChanged value)  playbackStateChanged,required TResult Function( EventKindDto_SoloChanged value)  soloChanged,required TResult Function( EventKindDto_MixChanged value)  mixChanged,required TResult Function( EventKindDto_MuteChanged value)  muteChanged,required TResult Function( EventKindDto_TempoFactorChanged value)  tempoFactorChanged,}){
 final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded():
@@ -2053,7 +2834,8 @@ return tiesRemoved(_that);case EventKindDto_DocumentSaved():
 return documentSaved(_that);case EventKindDto_DirtyChanged():
 return dirtyChanged(_that);case EventKindDto_UndoAvailabilityChanged():
 return undoAvailabilityChanged(_that);case EventKindDto_HistoryApplied():
-return historyApplied(_that);case EventKindDto_PlaybackStateChanged():
+return historyApplied(_that);case EventKindDto_PatternLibraryChanged():
+return patternLibraryChanged(_that);case EventKindDto_PlaybackStateChanged():
 return playbackStateChanged(_that);case EventKindDto_SoloChanged():
 return soloChanged(_that);case EventKindDto_MixChanged():
 return mixChanged(_that);case EventKindDto_MuteChanged():
@@ -2072,7 +2854,7 @@ return tempoFactorChanged(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( EventKindDto_TrackAdded value)?  trackAdded,TResult? Function( EventKindDto_TrackRemoved value)?  trackRemoved,TResult? Function( EventKindDto_TrackChanged value)?  trackChanged,TResult? Function( EventKindDto_TracksReordered value)?  tracksReordered,TResult? Function( EventKindDto_MasterBarsInserted value)?  masterBarsInserted,TResult? Function( EventKindDto_MasterBarsRemoved value)?  masterBarsRemoved,TResult? Function( EventKindDto_MasterBarsChanged value)?  masterBarsChanged,TResult? Function( EventKindDto_BarContentChanged value)?  barContentChanged,TResult? Function( EventKindDto_TempoMapChanged value)?  tempoMapChanged,TResult? Function( EventKindDto_TiesRemoved value)?  tiesRemoved,TResult? Function( EventKindDto_DocumentSaved value)?  documentSaved,TResult? Function( EventKindDto_DirtyChanged value)?  dirtyChanged,TResult? Function( EventKindDto_UndoAvailabilityChanged value)?  undoAvailabilityChanged,TResult? Function( EventKindDto_HistoryApplied value)?  historyApplied,TResult? Function( EventKindDto_PlaybackStateChanged value)?  playbackStateChanged,TResult? Function( EventKindDto_SoloChanged value)?  soloChanged,TResult? Function( EventKindDto_MixChanged value)?  mixChanged,TResult? Function( EventKindDto_MuteChanged value)?  muteChanged,TResult? Function( EventKindDto_TempoFactorChanged value)?  tempoFactorChanged,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( EventKindDto_TrackAdded value)?  trackAdded,TResult? Function( EventKindDto_TrackRemoved value)?  trackRemoved,TResult? Function( EventKindDto_TrackChanged value)?  trackChanged,TResult? Function( EventKindDto_TracksReordered value)?  tracksReordered,TResult? Function( EventKindDto_MasterBarsInserted value)?  masterBarsInserted,TResult? Function( EventKindDto_MasterBarsRemoved value)?  masterBarsRemoved,TResult? Function( EventKindDto_MasterBarsChanged value)?  masterBarsChanged,TResult? Function( EventKindDto_BarContentChanged value)?  barContentChanged,TResult? Function( EventKindDto_TempoMapChanged value)?  tempoMapChanged,TResult? Function( EventKindDto_TiesRemoved value)?  tiesRemoved,TResult? Function( EventKindDto_DocumentSaved value)?  documentSaved,TResult? Function( EventKindDto_DirtyChanged value)?  dirtyChanged,TResult? Function( EventKindDto_UndoAvailabilityChanged value)?  undoAvailabilityChanged,TResult? Function( EventKindDto_HistoryApplied value)?  historyApplied,TResult? Function( EventKindDto_PatternLibraryChanged value)?  patternLibraryChanged,TResult? Function( EventKindDto_PlaybackStateChanged value)?  playbackStateChanged,TResult? Function( EventKindDto_SoloChanged value)?  soloChanged,TResult? Function( EventKindDto_MixChanged value)?  mixChanged,TResult? Function( EventKindDto_MuteChanged value)?  muteChanged,TResult? Function( EventKindDto_TempoFactorChanged value)?  tempoFactorChanged,}){
 final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded() when trackAdded != null:
@@ -2089,7 +2871,8 @@ return tiesRemoved(_that);case EventKindDto_DocumentSaved() when documentSaved !
 return documentSaved(_that);case EventKindDto_DirtyChanged() when dirtyChanged != null:
 return dirtyChanged(_that);case EventKindDto_UndoAvailabilityChanged() when undoAvailabilityChanged != null:
 return undoAvailabilityChanged(_that);case EventKindDto_HistoryApplied() when historyApplied != null:
-return historyApplied(_that);case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
+return historyApplied(_that);case EventKindDto_PatternLibraryChanged() when patternLibraryChanged != null:
+return patternLibraryChanged(_that);case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
 return playbackStateChanged(_that);case EventKindDto_SoloChanged() when soloChanged != null:
 return soloChanged(_that);case EventKindDto_MixChanged() when mixChanged != null:
 return mixChanged(_that);case EventKindDto_MuteChanged() when muteChanged != null:
@@ -2111,7 +2894,7 @@ return tempoFactorChanged(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( PlatformInt64 track)?  trackAdded,TResult Function( PlatformInt64 track)?  trackRemoved,TResult Function( PlatformInt64 track)?  trackChanged,TResult Function()?  tracksReordered,TResult Function( int at,  int count)?  masterBarsInserted,TResult Function( int at,  int count)?  masterBarsRemoved,TResult Function( int start,  int end)?  masterBarsChanged,TResult Function( PlatformInt64 track,  int start,  int end)?  barContentChanged,TResult Function()?  tempoMapChanged,TResult Function( PlatformInt64 track,  Int64List notes)?  tiesRemoved,TResult Function()?  documentSaved,TResult Function( bool dirty)?  dirtyChanged,TResult Function( bool canUndo,  bool canRedo)?  undoAvailabilityChanged,TResult Function()?  historyApplied,TResult Function( PlaybackStateDto state)?  playbackStateChanged,TResult Function( PlatformInt64 track,  bool soloed)?  soloChanged,TResult Function( PlatformInt64 track,  int volume,  int pan)?  mixChanged,TResult Function( PlatformInt64 track,  bool muted)?  muteChanged,TResult Function( int hundredths)?  tempoFactorChanged,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( PlatformInt64 track)?  trackAdded,TResult Function( PlatformInt64 track)?  trackRemoved,TResult Function( PlatformInt64 track)?  trackChanged,TResult Function()?  tracksReordered,TResult Function( int at,  int count)?  masterBarsInserted,TResult Function( int at,  int count)?  masterBarsRemoved,TResult Function( int start,  int end)?  masterBarsChanged,TResult Function( PlatformInt64 track,  int start,  int end)?  barContentChanged,TResult Function()?  tempoMapChanged,TResult Function( PlatformInt64 track,  Int64List notes)?  tiesRemoved,TResult Function()?  documentSaved,TResult Function( bool dirty)?  dirtyChanged,TResult Function( bool canUndo,  bool canRedo)?  undoAvailabilityChanged,TResult Function()?  historyApplied,TResult Function()?  patternLibraryChanged,TResult Function( PlaybackStateDto state)?  playbackStateChanged,TResult Function( PlatformInt64 track,  bool soloed)?  soloChanged,TResult Function( PlatformInt64 track,  int volume,  int pan)?  mixChanged,TResult Function( PlatformInt64 track,  bool muted)?  muteChanged,TResult Function( int hundredths)?  tempoFactorChanged,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded() when trackAdded != null:
 return trackAdded(_that.track);case EventKindDto_TrackRemoved() when trackRemoved != null:
@@ -2127,7 +2910,8 @@ return tiesRemoved(_that.track,_that.notes);case EventKindDto_DocumentSaved() wh
 return documentSaved();case EventKindDto_DirtyChanged() when dirtyChanged != null:
 return dirtyChanged(_that.dirty);case EventKindDto_UndoAvailabilityChanged() when undoAvailabilityChanged != null:
 return undoAvailabilityChanged(_that.canUndo,_that.canRedo);case EventKindDto_HistoryApplied() when historyApplied != null:
-return historyApplied();case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
+return historyApplied();case EventKindDto_PatternLibraryChanged() when patternLibraryChanged != null:
+return patternLibraryChanged();case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
 return playbackStateChanged(_that.state);case EventKindDto_SoloChanged() when soloChanged != null:
 return soloChanged(_that.track,_that.soloed);case EventKindDto_MixChanged() when mixChanged != null:
 return mixChanged(_that.track,_that.volume,_that.pan);case EventKindDto_MuteChanged() when muteChanged != null:
@@ -2150,7 +2934,7 @@ return tempoFactorChanged(_that.hundredths);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( PlatformInt64 track)  trackAdded,required TResult Function( PlatformInt64 track)  trackRemoved,required TResult Function( PlatformInt64 track)  trackChanged,required TResult Function()  tracksReordered,required TResult Function( int at,  int count)  masterBarsInserted,required TResult Function( int at,  int count)  masterBarsRemoved,required TResult Function( int start,  int end)  masterBarsChanged,required TResult Function( PlatformInt64 track,  int start,  int end)  barContentChanged,required TResult Function()  tempoMapChanged,required TResult Function( PlatformInt64 track,  Int64List notes)  tiesRemoved,required TResult Function()  documentSaved,required TResult Function( bool dirty)  dirtyChanged,required TResult Function( bool canUndo,  bool canRedo)  undoAvailabilityChanged,required TResult Function()  historyApplied,required TResult Function( PlaybackStateDto state)  playbackStateChanged,required TResult Function( PlatformInt64 track,  bool soloed)  soloChanged,required TResult Function( PlatformInt64 track,  int volume,  int pan)  mixChanged,required TResult Function( PlatformInt64 track,  bool muted)  muteChanged,required TResult Function( int hundredths)  tempoFactorChanged,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( PlatformInt64 track)  trackAdded,required TResult Function( PlatformInt64 track)  trackRemoved,required TResult Function( PlatformInt64 track)  trackChanged,required TResult Function()  tracksReordered,required TResult Function( int at,  int count)  masterBarsInserted,required TResult Function( int at,  int count)  masterBarsRemoved,required TResult Function( int start,  int end)  masterBarsChanged,required TResult Function( PlatformInt64 track,  int start,  int end)  barContentChanged,required TResult Function()  tempoMapChanged,required TResult Function( PlatformInt64 track,  Int64List notes)  tiesRemoved,required TResult Function()  documentSaved,required TResult Function( bool dirty)  dirtyChanged,required TResult Function( bool canUndo,  bool canRedo)  undoAvailabilityChanged,required TResult Function()  historyApplied,required TResult Function()  patternLibraryChanged,required TResult Function( PlaybackStateDto state)  playbackStateChanged,required TResult Function( PlatformInt64 track,  bool soloed)  soloChanged,required TResult Function( PlatformInt64 track,  int volume,  int pan)  mixChanged,required TResult Function( PlatformInt64 track,  bool muted)  muteChanged,required TResult Function( int hundredths)  tempoFactorChanged,}) {final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded():
 return trackAdded(_that.track);case EventKindDto_TrackRemoved():
@@ -2166,7 +2950,8 @@ return tiesRemoved(_that.track,_that.notes);case EventKindDto_DocumentSaved():
 return documentSaved();case EventKindDto_DirtyChanged():
 return dirtyChanged(_that.dirty);case EventKindDto_UndoAvailabilityChanged():
 return undoAvailabilityChanged(_that.canUndo,_that.canRedo);case EventKindDto_HistoryApplied():
-return historyApplied();case EventKindDto_PlaybackStateChanged():
+return historyApplied();case EventKindDto_PatternLibraryChanged():
+return patternLibraryChanged();case EventKindDto_PlaybackStateChanged():
 return playbackStateChanged(_that.state);case EventKindDto_SoloChanged():
 return soloChanged(_that.track,_that.soloed);case EventKindDto_MixChanged():
 return mixChanged(_that.track,_that.volume,_that.pan);case EventKindDto_MuteChanged():
@@ -2185,7 +2970,7 @@ return tempoFactorChanged(_that.hundredths);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( PlatformInt64 track)?  trackAdded,TResult? Function( PlatformInt64 track)?  trackRemoved,TResult? Function( PlatformInt64 track)?  trackChanged,TResult? Function()?  tracksReordered,TResult? Function( int at,  int count)?  masterBarsInserted,TResult? Function( int at,  int count)?  masterBarsRemoved,TResult? Function( int start,  int end)?  masterBarsChanged,TResult? Function( PlatformInt64 track,  int start,  int end)?  barContentChanged,TResult? Function()?  tempoMapChanged,TResult? Function( PlatformInt64 track,  Int64List notes)?  tiesRemoved,TResult? Function()?  documentSaved,TResult? Function( bool dirty)?  dirtyChanged,TResult? Function( bool canUndo,  bool canRedo)?  undoAvailabilityChanged,TResult? Function()?  historyApplied,TResult? Function( PlaybackStateDto state)?  playbackStateChanged,TResult? Function( PlatformInt64 track,  bool soloed)?  soloChanged,TResult? Function( PlatformInt64 track,  int volume,  int pan)?  mixChanged,TResult? Function( PlatformInt64 track,  bool muted)?  muteChanged,TResult? Function( int hundredths)?  tempoFactorChanged,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( PlatformInt64 track)?  trackAdded,TResult? Function( PlatformInt64 track)?  trackRemoved,TResult? Function( PlatformInt64 track)?  trackChanged,TResult? Function()?  tracksReordered,TResult? Function( int at,  int count)?  masterBarsInserted,TResult? Function( int at,  int count)?  masterBarsRemoved,TResult? Function( int start,  int end)?  masterBarsChanged,TResult? Function( PlatformInt64 track,  int start,  int end)?  barContentChanged,TResult? Function()?  tempoMapChanged,TResult? Function( PlatformInt64 track,  Int64List notes)?  tiesRemoved,TResult? Function()?  documentSaved,TResult? Function( bool dirty)?  dirtyChanged,TResult? Function( bool canUndo,  bool canRedo)?  undoAvailabilityChanged,TResult? Function()?  historyApplied,TResult? Function()?  patternLibraryChanged,TResult? Function( PlaybackStateDto state)?  playbackStateChanged,TResult? Function( PlatformInt64 track,  bool soloed)?  soloChanged,TResult? Function( PlatformInt64 track,  int volume,  int pan)?  mixChanged,TResult? Function( PlatformInt64 track,  bool muted)?  muteChanged,TResult? Function( int hundredths)?  tempoFactorChanged,}) {final _that = this;
 switch (_that) {
 case EventKindDto_TrackAdded() when trackAdded != null:
 return trackAdded(_that.track);case EventKindDto_TrackRemoved() when trackRemoved != null:
@@ -2201,7 +2986,8 @@ return tiesRemoved(_that.track,_that.notes);case EventKindDto_DocumentSaved() wh
 return documentSaved();case EventKindDto_DirtyChanged() when dirtyChanged != null:
 return dirtyChanged(_that.dirty);case EventKindDto_UndoAvailabilityChanged() when undoAvailabilityChanged != null:
 return undoAvailabilityChanged(_that.canUndo,_that.canRedo);case EventKindDto_HistoryApplied() when historyApplied != null:
-return historyApplied();case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
+return historyApplied();case EventKindDto_PatternLibraryChanged() when patternLibraryChanged != null:
+return patternLibraryChanged();case EventKindDto_PlaybackStateChanged() when playbackStateChanged != null:
 return playbackStateChanged(_that.state);case EventKindDto_SoloChanged() when soloChanged != null:
 return soloChanged(_that.track,_that.soloed);case EventKindDto_MixChanged() when mixChanged != null:
 return mixChanged(_that.track,_that.volume,_that.pan);case EventKindDto_MuteChanged() when muteChanged != null:
@@ -3028,6 +3814,38 @@ int get hashCode => runtimeType.hashCode;
 @override
 String toString() {
     return 'EventKindDto.historyApplied()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class EventKindDto_PatternLibraryChanged extends EventKindDto {
+  const EventKindDto_PatternLibraryChanged(): super._();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is EventKindDto_PatternLibraryChanged);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+    return 'EventKindDto.patternLibraryChanged()';
 }
 
 

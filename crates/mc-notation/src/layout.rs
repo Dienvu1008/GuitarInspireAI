@@ -539,6 +539,47 @@ struct Out {
     lines: Vec<Line>,
     glyphs: Vec<Glyph>,
     hits: Vec<HitRegion>,
+    /// Beat count per voice in written order across the system, so palm-mute runs can
+    /// join over bar lines and end at the system end (ADR-035).
+    seq: Vec<usize>,
+    /// Palm-muted beats of the system: (voice, sequence, x, every note muted).
+    palm: Vec<(usize, usize, f32, bool)>,
+}
+
+impl Out {
+    /// "P.M." glyphs: one per run of consecutive fully muted beats of a voice, and
+    /// one per partly muted beat. Runs never cross the end of the system.
+    fn emit_palm_mute(&mut self, y: f32, m: &LayoutMetrics) {
+        let label = m.digit_width * 3.0;
+        let mut marks = std::mem::take(&mut self.palm);
+        marks.sort_by_key(|m| (m.0, m.1));
+        let mut i = 0;
+        while i < marks.len() {
+            let (voice, _, x, full) = marks[i];
+            if !full {
+                self.glyph(GlyphKind::PalmMute { run: false }, x, y, label);
+                i += 1;
+                continue;
+            }
+            let mut j = i;
+            while j + 1 < marks.len()
+                && marks[j + 1].0 == voice
+                && marks[j + 1].1 == marks[j].1 + 1
+                && marks[j + 1].3
+            {
+                j += 1;
+            }
+            let (start, end) = (x - label / 2.0, marks[j].2 + label / 2.0);
+            let width = (end - start).max(label);
+            self.glyph(
+                GlyphKind::PalmMute { run: true },
+                start + width / 2.0,
+                y,
+                width,
+            );
+            i = j + 1;
+        }
+    }
 }
 
 impl Out {
@@ -585,6 +626,8 @@ impl Ctx<'_> {
             lines: Vec::new(),
             glyphs: Vec::new(),
             hits: Vec::new(),
+            seq: Vec::new(),
+            palm: Vec::new(),
         };
         let top = self.staff_top();
         let bottom = self.staff_bottom();
@@ -639,6 +682,7 @@ impl Ctx<'_> {
             });
             x += width;
         }
+        out.emit_palm_mute(top - m.above_staff * 0.6, m);
         let staff_start = m.margin_left;
         for s in 1..=self.strings {
             let sy = self.string_y(s);
@@ -795,18 +839,20 @@ impl Ctx<'_> {
                 let center = bx + bw / 2.0;
                 for note in &beat.notes {
                     let p = note.position();
+                    let x_mark = note.effects.dead || note.effects.string_percussive;
                     out.glyph(
                         GlyphKind::Fret {
                             fret: p.fret.0,
                             tied: note.tie,
-                            dead: note.effects.dead,
+                            dead: x_mark,
                             let_ring: note.effects.let_ring,
                         },
                         center,
                         self.string_y(p.string.get()),
-                        fret_glyph_width(p.fret.0, note.tie, note.effects.dead, m),
+                        fret_glyph_width(p.fret.0, note.tie, x_mark, m),
                     );
                 }
+                self.emit_technique_marks(out, v, beat, center);
                 for s in 1..=self.strings {
                     out.hits.push(HitRegion {
                         rect: self.string_rect(bx, bw, s),
@@ -839,6 +885,44 @@ impl Ctx<'_> {
                     target: HitTarget::Append { voice: v },
                 });
             }
+        }
+    }
+
+    /// Marks above the staff for one beat (ADR-035): stroke arrow, accent and "S" in
+    /// one row; palm mute is collected for the system's "P.M." row.
+    fn emit_technique_marks(&self, out: &mut Out, voice: usize, beat: &Beat, center: f32) {
+        let m = self.m;
+        let row = self.staff_top() - m.above_staff * 0.3;
+        if let Some(stroke) = beat.stroke {
+            out.glyph(
+                GlyphKind::Stroke {
+                    up: stroke == mc_score::Stroke::Up,
+                },
+                center - m.digit_width,
+                row,
+                m.digit_width,
+            );
+        }
+        if beat.notes.iter().any(|n| n.effects.accent) {
+            out.glyph(GlyphKind::Accent, center, row, m.digit_width);
+        }
+        if beat.notes.iter().any(|n| n.effects.string_percussive) {
+            out.glyph(
+                GlyphKind::StringPercussive,
+                center + m.digit_width,
+                row,
+                m.digit_width,
+            );
+        }
+        if out.seq.len() <= voice {
+            out.seq.resize(voice + 1, 0);
+        }
+        let seq = out.seq[voice];
+        out.seq[voice] += 1;
+        let muted = beat.notes.iter().filter(|n| n.effects.palm_mute).count();
+        if muted > 0 {
+            out.palm
+                .push((voice, seq, center, muted == beat.notes.len()));
         }
     }
 

@@ -1,0 +1,36 @@
+# FF-03 domain purity (GR-03, GR-11, ADR-014). Template for every domain-layer crate.
+# Each domain crate has a byte-identical copy at crates/<crate>/clippy.toml; FF-03
+# (cargo xtask fitness purity) fails if a copy is missing or differs. Clippy runs with
+# -D warnings in CI, so any use of these items in a domain crate blocks the merge.
+# Time, randomness, files, threads and environment come in through parameters or ports.
+
+disallowed-methods = [
+    { path = "std::fs::read", reason = "domain crates do no file I/O" },
+    { path = "std::fs::read_to_string", reason = "domain crates do no file I/O" },
+    { path = "std::fs::write", reason = "domain crates do no file I/O" },
+    { path = "std::fs::read_dir", reason = "domain crates do no file I/O" },
+    { path = "std::fs::create_dir_all", reason = "domain crates do no file I/O" },
+    { path = "std::fs::remove_file", reason = "domain crates do no file I/O" },
+    { path = "std::fs::rename", reason = "domain crates do no file I/O" },
+    { path = "std::fs::copy", reason = "domain crates do no file I/O" },
+    { path = "std::fs::metadata", reason = "domain crates do no file I/O" },
+    { path = "std::thread::spawn", reason = "domain crates are single-threaded and WASM-compatible" },
+    { path = "std::thread::sleep", reason = "domain crates never block" },
+    { path = "std::time::Instant::now", reason = "time comes from a port or parameter" },
+    { path = "std::time::SystemTime::now", reason = "time comes from a port or parameter" },
+    { path = "std::env::var", reason = "configuration comes through parameters" },
+    { path = "std::env::vars", reason = "configuration comes through parameters" },
+    { path = "std::process::exit", reason = "domain crates return errors" },
+]
+
+disallowed-types = [
+    { path = "std::fs::File", reason = "domain crates do no file I/O" },
+    { path = "std::fs::OpenOptions", reason = "domain crates do no file I/O" },
+    { path = "std::net::TcpStream", reason = "no network in domain crates" },
+    { path = "std::net::TcpListener", reason = "no network in domain crates" },
+    { path = "std::net::UdpSocket", reason = "no network in domain crates" },
+    { path = "std::time::Instant", reason = "time comes from a port or parameter" },
+    { path = "std::time::SystemTime", reason = "time comes from a port or parameter" },
+    { path = "std::sync::Mutex", reason = "domain crates are single-threaded; synchronization belongs to the application layer" },
+    { path = "std::sync::RwLock", reason = "domain crates are single-threaded; synchronization belongs to the application layer" },
+]

@@ -3,8 +3,8 @@
 //! (`Arc::make_mut`): only the edited track spine and bars are copied.
 
 use crate::model::{
-    BarContent, Beat, InstrumentSpec, MasterBar, Note, NoteEffects, NoteKind, TempoChange, Track,
-    Voice,
+    BarContent, Beat, InstrumentSpec, MasterBar, Note, NoteEffects, NoteKind, Stroke, TempoChange,
+    Track, Voice,
 };
 use crate::validate::{check_instrument, check_note, tempo_offset_valid, tie_is_valid};
 use crate::{BeatId, DomainError, DomainEvent, NoteId, Score, TrackId, repeats};
@@ -37,11 +37,12 @@ pub struct FragmentNote {
     pub effects: NoteEffects,
 }
 
-/// A beat of a clipboard fragment: its written value and its notes, no ids.
+/// A beat of a clipboard fragment: its written value, its notes and its stroke, no ids.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FragmentBeat {
     pub value: NoteValue,
     pub notes: Vec<FragmentNote>,
+    pub stroke: Option<Stroke>,
 }
 
 struct Located {
@@ -421,6 +422,7 @@ impl Score {
                 id,
                 value,
                 notes: Vec::new(),
+                stroke: None,
             },
         );
         Ok((id, self.content_events(t, bar..bar + 1)))
@@ -437,6 +439,18 @@ impl Score {
     pub fn set_beat_value(&mut self, r: BeatRef, value: NoteValue) -> Result<Events, DomainError> {
         let l = self.locate(r)?;
         self.bar_mut(l.track, l.bar).voices[l.voice].beats[l.beat].value = value;
+        Ok(self.content_events(l.track, l.bar..l.bar + 1))
+    }
+
+    /// Sets or clears the stroke direction of a beat (ADR-035). Allowed on any beat,
+    /// rests included; it changes no timing.
+    pub fn set_beat_stroke(
+        &mut self,
+        r: BeatRef,
+        stroke: Option<Stroke>,
+    ) -> Result<Events, DomainError> {
+        let l = self.locate(r)?;
+        self.bar_mut(l.track, l.bar).voices[l.voice].beats[l.beat].stroke = stroke;
         Ok(self.content_events(l.track, l.bar..l.bar + 1))
     }
 
@@ -639,6 +653,7 @@ impl Score {
                             effects: n.effects,
                         })
                         .collect(),
+                    stroke: beat.stroke,
                 });
             }
         }
@@ -711,11 +726,110 @@ impl Score {
                 id,
                 value: beat.value,
                 notes,
+                stroke: beat.stroke,
             });
         }
         let target = &mut self.bar_mut(t, bar).voices[voice].beats;
         drop(target.splice(index..index, built));
         Ok(self.content_events(t, bar..bar + 1))
+    }
+
+    /// Replaces whole voices of consecutive bars of one track, starting at bar `first`
+    /// (ADR-034 `ApplyPattern`). `content[k]` lists `(voice, beats)` for bar
+    /// `first + k`. A voice index equal to the bar's voice count adds that voice; other
+    /// voices and every other bar are kept. All or nothing: everything is checked
+    /// before anything is written (H-03, H-04, H-05, H-10). Ties are normalized once
+    /// over the written bars and the bar after them; cleared ties are reported (H-06).
+    pub fn replace_voices(
+        &mut self,
+        track: TrackId,
+        first: usize,
+        content: &[Vec<(usize, Vec<FragmentBeat>)>],
+    ) -> Result<Events, DomainError> {
+        let t = self.track_index(track)?;
+        if content.is_empty() || first + content.len() > self.master_bars.len() {
+            return Err(DomainError::InvalidPosition(format!(
+                "bars {first} to {} of {}",
+                first + content.len(),
+                self.master_bars.len()
+            )));
+        }
+        let inst = self.tracks[t].fretted().clone();
+        for (k, voices) in content.iter().enumerate() {
+            let bar = first + k;
+            let mut count = self.bar_ref(t, bar)?.voices.len();
+            let mut seen = Vec::new();
+            for (v, beats) in voices {
+                if seen.contains(v) {
+                    return Err(DomainError::InvalidPosition(format!(
+                        "bar {bar}: voice {v} given twice"
+                    )));
+                }
+                seen.push(*v);
+                if *v > count {
+                    return Err(DomainError::NotFound(format!("voice {v} in bar {bar}")));
+                }
+                if *v == count {
+                    count += 1;
+                }
+                for (i, beat) in beats.iter().enumerate() {
+                    let mut strings = Vec::with_capacity(beat.notes.len());
+                    for n in &beat.notes {
+                        let probe = Note {
+                            id: NoteId::from_raw(0),
+                            kind: NoteKind::Fretted(n.position),
+                            tie: false,
+                            effects: n.effects,
+                        };
+                        check_note(&inst, &probe).map_err(|(rule, m)| {
+                            DomainError::invariant(rule, format!("bar {bar} beat {i}: {m}"))
+                        })?;
+                        if strings.contains(&n.position.string) {
+                            return Err(DomainError::invariant(
+                                "H-05",
+                                format!(
+                                    "bar {bar} beat {i}: two notes on string {}",
+                                    n.position.string.get()
+                                ),
+                            ));
+                        }
+                        strings.push(n.position.string);
+                    }
+                }
+            }
+        }
+        // Everything is valid: from here on the replacement cannot fail.
+        for (k, voices) in content.iter().enumerate() {
+            let bar = first + k;
+            for (v, beats) in voices {
+                let mut built = Vec::with_capacity(beats.len());
+                for beat in beats {
+                    let id = BeatId::from_raw(self.allocate_id());
+                    let mut notes = Vec::with_capacity(beat.notes.len());
+                    for n in &beat.notes {
+                        notes.push(Note {
+                            id: NoteId::from_raw(self.allocate_id()),
+                            kind: NoteKind::Fretted(n.position),
+                            tie: n.tie,
+                            effects: n.effects,
+                        });
+                    }
+                    notes.sort_by_key(|n| n.position().string.get());
+                    built.push(Beat {
+                        id,
+                        value: beat.value,
+                        notes,
+                        stroke: beat.stroke,
+                    });
+                }
+                let target = &mut self.bar_mut(t, bar).voices;
+                if *v == target.len() {
+                    target.push(Voice::default());
+                }
+                target[*v].beats = built;
+            }
+        }
+        Ok(self.content_events(t, first..first + content.len()))
     }
 
     /// Removes the beats of one voice from `start` to `end` (both inclusive, possibly

@@ -3,7 +3,7 @@
 //! amendment 2). Conversions into application types live here; every musical rule is
 //! checked by the core, never by this module.
 
-use mc_app::types::{BeatId, NoteEffects, NoteId, TrackId};
+use mc_app::types::{BeatId, NoteEffects, NoteId, Stroke, TrackId};
 use mc_app::{
     BeatAddress, ClipBeat, ClipNote, CommandError, DurationSpec, InstrumentSpecInput, OpenError,
     SaveError,
@@ -191,11 +191,20 @@ pub enum CommandDto {
         note: i64,
         tie: bool,
     },
+    /// Every flag of the note (ADR-035): send them all, the ones not changed included.
     SetNoteEffects {
         beat: BeatAddressDto,
         note: i64,
         let_ring: bool,
         dead: bool,
+        accent: bool,
+        palm_mute: bool,
+        string_percussive: bool,
+    },
+    /// Sets (`Some`) or clears (`None`) the stroke direction of a beat (ADR-035).
+    SetBeatStroke {
+        beat: BeatAddressDto,
+        stroke: Option<StrokeDto>,
     },
     AddVoice {
         track: i64,
@@ -232,6 +241,51 @@ pub enum CommandDto {
         track: i64,
         to: u32,
     },
+    /// Applies a pattern of the session library (ADR-034 section 7). See
+    /// `preview_pattern` for what it would write.
+    ApplyPattern {
+        args: crate::api::pattern::ApplyPatternDto,
+    },
+    /// Library commands (ADR-034, 6a-5): each is one undo step and one revision and
+    /// changes only the pattern library. A created id is in OutcomeDto.
+    NewPattern {
+        name: String,
+        /// Thumb and fingers (voices 1 and 2); otherwise one strum lane.
+        two_lanes: bool,
+        length_numerator: i64,
+        length_denominator: i64,
+        meter: Option<crate::api::pattern_grid::MeterDto>,
+    },
+    RemovePattern {
+        pattern: i64,
+    },
+    /// One grid edit; see pattern_grid for the view it changes.
+    EditPattern {
+        pattern: i64,
+        edit: crate::api::pattern_grid::GridEditDto,
+    },
+    DefineGesture {
+        name: String,
+        strike: crate::api::pattern_grid::GridStrikeDto,
+    },
+    /// Makes a gesture from the strike of a step and uses it there, in one step.
+    GestureFromStep {
+        pattern: i64,
+        lane: crate::api::pattern_grid::PatternLaneDto,
+        index: u32,
+        name: String,
+    },
+    RenameGesture {
+        gesture: i64,
+        name: String,
+    },
+    ChangeGesture {
+        gesture: i64,
+        strike: crate::api::pattern_grid::GridStrikeDto,
+    },
+    RemoveGesture {
+        gesture: i64,
+    },
     /// `keep_pitches`: notes keep their sound (frets move); otherwise frets are kept.
     Retune {
         track: i64,
@@ -259,6 +313,29 @@ pub enum CommandDto {
     },
 }
 
+/// Stroke direction of a beat (ADR-035).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum StrokeDto {
+    Down,
+    Up,
+}
+
+impl StrokeDto {
+    pub(crate) fn to_app(self) -> Stroke {
+        match self {
+            StrokeDto::Down => Stroke::Down,
+            StrokeDto::Up => Stroke::Up,
+        }
+    }
+
+    pub(crate) fn from_app(s: Stroke) -> Self {
+        match s {
+            Stroke::Down => StrokeDto::Down,
+            Stroke::Up => StrokeDto::Up,
+        }
+    }
+}
+
 /// A note of a clipboard fragment: strings and frets, not pitches; no ids (ADR-030).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ClipNoteDto {
@@ -267,13 +344,18 @@ pub struct ClipNoteDto {
     pub tie: bool,
     pub let_ring: bool,
     pub dead: bool,
+    pub accent: bool,
+    pub palm_mute: bool,
+    pub string_percussive: bool,
 }
 
-/// A beat of a clipboard fragment: written duration and notes; no ids (ADR-030).
+/// A beat of a clipboard fragment: written duration, notes and stroke; no ids
+/// (ADR-030, ADR-035).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ClipBeatDto {
     pub duration: DurationDto,
     pub notes: Vec<ClipNoteDto>,
+    pub stroke: Option<StrokeDto>,
 }
 
 impl ClipBeatDto {
@@ -290,9 +372,13 @@ impl ClipBeatDto {
                     effects: NoteEffects {
                         let_ring: n.let_ring,
                         dead: n.dead,
+                        accent: n.accent,
+                        palm_mute: n.palm_mute,
+                        string_percussive: n.string_percussive,
                     },
                 })
                 .collect(),
+            stroke: self.stroke.map(StrokeDto::to_app),
         }
     }
 
@@ -315,8 +401,12 @@ impl ClipBeatDto {
                     tie: n.tie,
                     let_ring: n.effects.let_ring,
                     dead: n.effects.dead,
+                    accent: n.effects.accent,
+                    palm_mute: n.effects.palm_mute,
+                    string_percussive: n.effects.string_percussive,
                 })
                 .collect(),
+            stroke: b.stroke.map(StrokeDto::from_app),
         }
     }
 }
@@ -365,6 +455,9 @@ pub enum EventKindDto {
         can_redo: bool,
     },
     HistoryApplied,
+    /// The pattern library changed (a library command, or undo or redo of one): the
+    /// UI re-queries the patterns, gestures and grid (ADR-034, 6a-5).
+    PatternLibraryChanged,
     /// Playback transport state changed (session state, ADR-028). The revision is
     /// unchanged on the carrying event.
     PlaybackStateChanged {
@@ -479,6 +572,12 @@ pub struct EventDto {
 pub struct OutcomeDto {
     pub revision: i64,
     pub events: Vec<EventDto>,
+    /// What `ApplyPattern` wrote; `None` for other commands.
+    pub pattern: Option<crate::api::pattern::PatternReportDto>,
+    /// The pattern a library command created (`NewPattern`), if any.
+    pub created_pattern: Option<i64>,
+    /// The gesture a library command created (`DefineGesture`, `GestureFromStep`).
+    pub created_gesture: Option<i64>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -524,12 +623,16 @@ pub struct NoteDto {
     pub tie: bool,
     pub let_ring: bool,
     pub dead: bool,
+    pub accent: bool,
+    pub palm_mute: bool,
+    pub string_percussive: bool,
 }
 
-/// One beat with its notes (inspector and editor queries).
+/// One beat with its notes and stroke (inspector and editor queries).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BeatDto {
     pub id: i64,
     pub duration: DurationDto,
     pub notes: Vec<NoteDto>,
+    pub stroke: Option<StrokeDto>,
 }

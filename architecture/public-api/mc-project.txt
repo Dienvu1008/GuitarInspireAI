@@ -28,6 +28,34 @@ impl core::marker::Unpin for mc_project::dto::ModeDto
 impl core::marker::UnsafeUnpin for mc_project::dto::ModeDto
 impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::ModeDto
 impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::ModeDto
+pub enum mc_project::dto::StrokeDto
+pub mc_project::dto::StrokeDto::Down
+pub mc_project::dto::StrokeDto::Up
+impl core::clone::Clone for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::dto::StrokeDto
+impl core::cmp::PartialEq for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::dto::StrokeDto
+impl core::marker::StructuralPartialEq for mc_project::dto::StrokeDto
+impl schemars::JsonSchema for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::inline_schema() -> bool
+pub fn mc_project::dto::StrokeDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::dto::StrokeDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::dto::StrokeDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::dto::StrokeDto
+pub fn mc_project::dto::StrokeDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::dto::StrokeDto
+impl core::marker::Send for mc_project::dto::StrokeDto
+impl core::marker::Sync for mc_project::dto::StrokeDto
+impl core::marker::Unpin for mc_project::dto::StrokeDto
+impl core::marker::UnsafeUnpin for mc_project::dto::StrokeDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::StrokeDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::StrokeDto
 pub struct mc_project::dto::AppDto
 pub mc_project::dto::AppDto::app: alloc::string::String
 pub mc_project::dto::AppDto::extra: mc_project::dto::Extra
@@ -89,6 +117,7 @@ pub struct mc_project::dto::BeatDto
 pub mc_project::dto::BeatDto::extra: mc_project::dto::Extra
 pub mc_project::dto::BeatDto::id: u64
 pub mc_project::dto::BeatDto::notes: alloc::vec::Vec<mc_project::dto::NoteDto>
+pub mc_project::dto::BeatDto::stroke: core::option::Option<mc_project::dto::StrokeDto>
 pub mc_project::dto::BeatDto::value: mc_project::dto::ValueDto
 impl core::clone::Clone for mc_project::dto::BeatDto
 pub fn mc_project::dto::BeatDto::clone(&self) -> Self
@@ -275,12 +304,15 @@ impl core::marker::UnsafeUnpin for mc_project::dto::MasterBarDto
 impl core::panic::unwind_safe::RefUnwindSafe for mc_project::dto::MasterBarDto
 impl core::panic::unwind_safe::UnwindSafe for mc_project::dto::MasterBarDto
 pub struct mc_project::dto::NoteDto
+pub mc_project::dto::NoteDto::accent: bool
 pub mc_project::dto::NoteDto::dead: bool
 pub mc_project::dto::NoteDto::extra: mc_project::dto::Extra
 pub mc_project::dto::NoteDto::fret: u8
 pub mc_project::dto::NoteDto::id: u64
 pub mc_project::dto::NoteDto::let_ring: bool
+pub mc_project::dto::NoteDto::palm_mute: bool
 pub mc_project::dto::NoteDto::string: u8
+pub mc_project::dto::NoteDto::string_percussive: bool
 pub mc_project::dto::NoteDto::tie: bool
 impl core::clone::Clone for mc_project::dto::NoteDto
 pub fn mc_project::dto::NoteDto::clone(&self) -> Self
@@ -514,7 +546,511 @@ impl mc_project::dto::UnknownContent for mc_project::dto::ValueDto
 pub fn mc_project::dto::ValueDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
 impl mc_project::dto::UnknownContent for mc_project::dto::VoiceDto
 pub fn mc_project::dto::VoiceDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::ActionDto
+pub fn mc_project::library::ActionDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::GestureDto
+pub fn mc_project::library::GestureDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::LaneDto
+pub fn mc_project::library::LaneDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::LanesDto
+pub fn mc_project::library::LanesDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::LibraryDto
+pub fn mc_project::library::LibraryDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::PatternDto
+pub fn mc_project::library::PatternDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::SelectorDto
+pub fn mc_project::library::SelectorDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::SpanDto
+pub fn mc_project::library::SpanDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::StepDto
+pub fn mc_project::library::StepDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl mc_project::dto::UnknownContent for mc_project::library::StrikeDto
+pub fn mc_project::library::StrikeDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
 pub type mc_project::dto::Extra = alloc::collections::btree::map::BTreeMap<alloc::string::String, serde_json::value::Value>
+pub mod mc_project::library
+pub enum mc_project::library::ActionKindDto
+pub mc_project::library::ActionKindDto::Gesture
+pub mc_project::library::ActionKindDto::Hold
+pub mc_project::library::ActionKindDto::Rest
+pub mc_project::library::ActionKindDto::Strike
+impl core::clone::Clone for mc_project::library::ActionKindDto
+pub fn mc_project::library::ActionKindDto::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::library::ActionKindDto
+impl core::cmp::PartialEq for mc_project::library::ActionKindDto
+pub fn mc_project::library::ActionKindDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::ActionKindDto
+pub fn mc_project::library::ActionKindDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::library::ActionKindDto
+impl core::marker::StructuralPartialEq for mc_project::library::ActionKindDto
+impl schemars::JsonSchema for mc_project::library::ActionKindDto
+pub fn mc_project::library::ActionKindDto::inline_schema() -> bool
+pub fn mc_project::library::ActionKindDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::ActionKindDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::ActionKindDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::ActionKindDto
+pub fn mc_project::library::ActionKindDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::ActionKindDto
+pub fn mc_project::library::ActionKindDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::ActionKindDto
+impl core::marker::Send for mc_project::library::ActionKindDto
+impl core::marker::Sync for mc_project::library::ActionKindDto
+impl core::marker::Unpin for mc_project::library::ActionKindDto
+impl core::marker::UnsafeUnpin for mc_project::library::ActionKindDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::ActionKindDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::ActionKindDto
+pub enum mc_project::library::LaneIdDto
+pub mc_project::library::LaneIdDto::Fingers
+pub mc_project::library::LaneIdDto::Strum
+pub mc_project::library::LaneIdDto::Thumb
+impl core::clone::Clone for mc_project::library::LaneIdDto
+pub fn mc_project::library::LaneIdDto::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::library::LaneIdDto
+impl core::cmp::PartialEq for mc_project::library::LaneIdDto
+pub fn mc_project::library::LaneIdDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::LaneIdDto
+pub fn mc_project::library::LaneIdDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::library::LaneIdDto
+impl core::marker::StructuralPartialEq for mc_project::library::LaneIdDto
+impl schemars::JsonSchema for mc_project::library::LaneIdDto
+pub fn mc_project::library::LaneIdDto::inline_schema() -> bool
+pub fn mc_project::library::LaneIdDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::LaneIdDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::LaneIdDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::LaneIdDto
+pub fn mc_project::library::LaneIdDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::LaneIdDto
+pub fn mc_project::library::LaneIdDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::LaneIdDto
+impl core::marker::Send for mc_project::library::LaneIdDto
+impl core::marker::Sync for mc_project::library::LaneIdDto
+impl core::marker::Unpin for mc_project::library::LaneIdDto
+impl core::marker::UnsafeUnpin for mc_project::library::LaneIdDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::LaneIdDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::LaneIdDto
+pub enum mc_project::library::LibraryLoadError
+pub mc_project::library::LibraryLoadError::Invalid(alloc::vec::Vec<mc_pattern::error::PatternError>)
+pub mc_project::library::LibraryLoadError::Shape(alloc::vec::Vec<mc_score::error::Violation>)
+impl core::clone::Clone for mc_project::library::LibraryLoadError
+pub fn mc_project::library::LibraryLoadError::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::library::LibraryLoadError
+impl core::cmp::PartialEq for mc_project::library::LibraryLoadError
+pub fn mc_project::library::LibraryLoadError::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::LibraryLoadError
+pub fn mc_project::library::LibraryLoadError::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::LibraryLoadError
+impl core::marker::Freeze for mc_project::library::LibraryLoadError
+impl core::marker::Send for mc_project::library::LibraryLoadError
+impl core::marker::Sync for mc_project::library::LibraryLoadError
+impl core::marker::Unpin for mc_project::library::LibraryLoadError
+impl core::marker::UnsafeUnpin for mc_project::library::LibraryLoadError
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::LibraryLoadError
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::LibraryLoadError
+pub enum mc_project::library::OriginDto
+pub mc_project::library::OriginDto::Grid
+pub mc_project::library::OriginDto::Tap
+pub mc_project::library::OriginDto::Text
+impl core::clone::Clone for mc_project::library::OriginDto
+pub fn mc_project::library::OriginDto::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::library::OriginDto
+impl core::cmp::PartialEq for mc_project::library::OriginDto
+pub fn mc_project::library::OriginDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::OriginDto
+pub fn mc_project::library::OriginDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::library::OriginDto
+impl core::marker::StructuralPartialEq for mc_project::library::OriginDto
+impl schemars::JsonSchema for mc_project::library::OriginDto
+pub fn mc_project::library::OriginDto::inline_schema() -> bool
+pub fn mc_project::library::OriginDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::OriginDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::OriginDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::OriginDto
+pub fn mc_project::library::OriginDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::OriginDto
+pub fn mc_project::library::OriginDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::OriginDto
+impl core::marker::Send for mc_project::library::OriginDto
+impl core::marker::Sync for mc_project::library::OriginDto
+impl core::marker::Unpin for mc_project::library::OriginDto
+impl core::marker::UnsafeUnpin for mc_project::library::OriginDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::OriginDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::OriginDto
+pub enum mc_project::library::SelectorKindDto
+pub mc_project::library::SelectorKindDto::Alt
+pub mc_project::library::SelectorKindDto::Bass
+pub mc_project::library::SelectorKindDto::String
+pub mc_project::library::SelectorKindDto::Strum
+pub mc_project::library::SelectorKindDto::StrumRange
+pub mc_project::library::SelectorKindDto::Treble
+impl core::clone::Clone for mc_project::library::SelectorKindDto
+pub fn mc_project::library::SelectorKindDto::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::library::SelectorKindDto
+impl core::cmp::PartialEq for mc_project::library::SelectorKindDto
+pub fn mc_project::library::SelectorKindDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::SelectorKindDto
+pub fn mc_project::library::SelectorKindDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::library::SelectorKindDto
+impl core::marker::StructuralPartialEq for mc_project::library::SelectorKindDto
+impl schemars::JsonSchema for mc_project::library::SelectorKindDto
+pub fn mc_project::library::SelectorKindDto::inline_schema() -> bool
+pub fn mc_project::library::SelectorKindDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::SelectorKindDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::SelectorKindDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::SelectorKindDto
+pub fn mc_project::library::SelectorKindDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::SelectorKindDto
+pub fn mc_project::library::SelectorKindDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::SelectorKindDto
+impl core::marker::Send for mc_project::library::SelectorKindDto
+impl core::marker::Sync for mc_project::library::SelectorKindDto
+impl core::marker::Unpin for mc_project::library::SelectorKindDto
+impl core::marker::UnsafeUnpin for mc_project::library::SelectorKindDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::SelectorKindDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::SelectorKindDto
+pub enum mc_project::library::TechniqueDto
+pub mc_project::library::TechniqueDto::Accent
+pub mc_project::library::TechniqueDto::Dead
+pub mc_project::library::TechniqueDto::LetRing
+pub mc_project::library::TechniqueDto::PalmMute
+pub mc_project::library::TechniqueDto::StringPercussive
+impl core::clone::Clone for mc_project::library::TechniqueDto
+pub fn mc_project::library::TechniqueDto::clone(&self) -> Self
+impl core::cmp::Eq for mc_project::library::TechniqueDto
+impl core::cmp::PartialEq for mc_project::library::TechniqueDto
+pub fn mc_project::library::TechniqueDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::TechniqueDto
+pub fn mc_project::library::TechniqueDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_project::library::TechniqueDto
+impl core::marker::StructuralPartialEq for mc_project::library::TechniqueDto
+impl schemars::JsonSchema for mc_project::library::TechniqueDto
+pub fn mc_project::library::TechniqueDto::inline_schema() -> bool
+pub fn mc_project::library::TechniqueDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::TechniqueDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::TechniqueDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::TechniqueDto
+pub fn mc_project::library::TechniqueDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::TechniqueDto
+pub fn mc_project::library::TechniqueDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::TechniqueDto
+impl core::marker::Send for mc_project::library::TechniqueDto
+impl core::marker::Sync for mc_project::library::TechniqueDto
+impl core::marker::Unpin for mc_project::library::TechniqueDto
+impl core::marker::UnsafeUnpin for mc_project::library::TechniqueDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::TechniqueDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::TechniqueDto
+pub struct mc_project::library::ActionDto
+pub mc_project::library::ActionDto::extra: mc_project::dto::Extra
+pub mc_project::library::ActionDto::gesture: core::option::Option<u64>
+pub mc_project::library::ActionDto::kind: mc_project::library::ActionKindDto
+pub mc_project::library::ActionDto::strike: core::option::Option<mc_project::library::StrikeDto>
+pub mc_project::library::ActionDto::strings: core::option::Option<alloc::vec::Vec<mc_project::library::SelectorDto>>
+impl core::clone::Clone for mc_project::library::ActionDto
+pub fn mc_project::library::ActionDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::ActionDto
+pub fn mc_project::library::ActionDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::ActionDto
+pub fn mc_project::library::ActionDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::ActionDto
+impl mc_project::dto::UnknownContent for mc_project::library::ActionDto
+pub fn mc_project::library::ActionDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::ActionDto
+pub fn mc_project::library::ActionDto::inline_schema() -> bool
+pub fn mc_project::library::ActionDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::ActionDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::ActionDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::ActionDto
+pub fn mc_project::library::ActionDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::ActionDto
+pub fn mc_project::library::ActionDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::ActionDto
+impl core::marker::Send for mc_project::library::ActionDto
+impl core::marker::Sync for mc_project::library::ActionDto
+impl core::marker::Unpin for mc_project::library::ActionDto
+impl core::marker::UnsafeUnpin for mc_project::library::ActionDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::ActionDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::ActionDto
+pub struct mc_project::library::GestureDto
+pub mc_project::library::GestureDto::extra: mc_project::dto::Extra
+pub mc_project::library::GestureDto::id: u64
+pub mc_project::library::GestureDto::name: alloc::string::String
+pub mc_project::library::GestureDto::strike: mc_project::library::StrikeDto
+impl core::clone::Clone for mc_project::library::GestureDto
+pub fn mc_project::library::GestureDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::GestureDto
+pub fn mc_project::library::GestureDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::GestureDto
+pub fn mc_project::library::GestureDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::GestureDto
+impl mc_project::dto::UnknownContent for mc_project::library::GestureDto
+pub fn mc_project::library::GestureDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::GestureDto
+pub fn mc_project::library::GestureDto::inline_schema() -> bool
+pub fn mc_project::library::GestureDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::GestureDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::GestureDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::GestureDto
+pub fn mc_project::library::GestureDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::GestureDto
+pub fn mc_project::library::GestureDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::GestureDto
+impl core::marker::Send for mc_project::library::GestureDto
+impl core::marker::Sync for mc_project::library::GestureDto
+impl core::marker::Unpin for mc_project::library::GestureDto
+impl core::marker::UnsafeUnpin for mc_project::library::GestureDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::GestureDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::GestureDto
+pub struct mc_project::library::LaneDto
+pub mc_project::library::LaneDto::extra: mc_project::dto::Extra
+pub mc_project::library::LaneDto::steps: alloc::vec::Vec<mc_project::library::StepDto>
+impl core::clone::Clone for mc_project::library::LaneDto
+pub fn mc_project::library::LaneDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::LaneDto
+pub fn mc_project::library::LaneDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::LaneDto
+pub fn mc_project::library::LaneDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::LaneDto
+impl mc_project::dto::UnknownContent for mc_project::library::LaneDto
+pub fn mc_project::library::LaneDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::LaneDto
+pub fn mc_project::library::LaneDto::inline_schema() -> bool
+pub fn mc_project::library::LaneDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::LaneDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::LaneDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::LaneDto
+pub fn mc_project::library::LaneDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::LaneDto
+pub fn mc_project::library::LaneDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::LaneDto
+impl core::marker::Send for mc_project::library::LaneDto
+impl core::marker::Sync for mc_project::library::LaneDto
+impl core::marker::Unpin for mc_project::library::LaneDto
+impl core::marker::UnsafeUnpin for mc_project::library::LaneDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::LaneDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::LaneDto
+pub struct mc_project::library::LanesDto
+pub mc_project::library::LanesDto::extra: mc_project::dto::Extra
+pub mc_project::library::LanesDto::fingers: core::option::Option<mc_project::library::LaneDto>
+pub mc_project::library::LanesDto::strum: core::option::Option<mc_project::library::LaneDto>
+pub mc_project::library::LanesDto::thumb: core::option::Option<mc_project::library::LaneDto>
+impl core::clone::Clone for mc_project::library::LanesDto
+pub fn mc_project::library::LanesDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::LanesDto
+pub fn mc_project::library::LanesDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::LanesDto
+pub fn mc_project::library::LanesDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::LanesDto
+impl mc_project::dto::UnknownContent for mc_project::library::LanesDto
+pub fn mc_project::library::LanesDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::LanesDto
+pub fn mc_project::library::LanesDto::inline_schema() -> bool
+pub fn mc_project::library::LanesDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::LanesDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::LanesDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::LanesDto
+pub fn mc_project::library::LanesDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::LanesDto
+pub fn mc_project::library::LanesDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::LanesDto
+impl core::marker::Send for mc_project::library::LanesDto
+impl core::marker::Sync for mc_project::library::LanesDto
+impl core::marker::Unpin for mc_project::library::LanesDto
+impl core::marker::UnsafeUnpin for mc_project::library::LanesDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::LanesDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::LanesDto
+pub struct mc_project::library::LibraryDto
+pub mc_project::library::LibraryDto::extra: mc_project::dto::Extra
+pub mc_project::library::LibraryDto::gestures: alloc::vec::Vec<mc_project::library::GestureDto>
+pub mc_project::library::LibraryDto::next_id: u64
+pub mc_project::library::LibraryDto::patterns: alloc::vec::Vec<mc_project::library::PatternDto>
+impl core::clone::Clone for mc_project::library::LibraryDto
+pub fn mc_project::library::LibraryDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::LibraryDto
+pub fn mc_project::library::LibraryDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::LibraryDto
+pub fn mc_project::library::LibraryDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::LibraryDto
+impl mc_project::dto::UnknownContent for mc_project::library::LibraryDto
+pub fn mc_project::library::LibraryDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::LibraryDto
+pub fn mc_project::library::LibraryDto::inline_schema() -> bool
+pub fn mc_project::library::LibraryDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::LibraryDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::LibraryDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::LibraryDto
+pub fn mc_project::library::LibraryDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::LibraryDto
+pub fn mc_project::library::LibraryDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::LibraryDto
+impl core::marker::Send for mc_project::library::LibraryDto
+impl core::marker::Sync for mc_project::library::LibraryDto
+impl core::marker::Unpin for mc_project::library::LibraryDto
+impl core::marker::UnsafeUnpin for mc_project::library::LibraryDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::LibraryDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::LibraryDto
+pub struct mc_project::library::PatternDto
+pub mc_project::library::PatternDto::description: alloc::string::String
+pub mc_project::library::PatternDto::extra: mc_project::dto::Extra
+pub mc_project::library::PatternDto::id: u64
+pub mc_project::library::PatternDto::lanes: mc_project::library::LanesDto
+pub mc_project::library::PatternDto::length: [i64; 2]
+pub mc_project::library::PatternDto::meter: core::option::Option<[u8; 2]>
+pub mc_project::library::PatternDto::name: alloc::string::String
+pub mc_project::library::PatternDto::origin: core::option::Option<mc_project::library::OriginDto>
+pub mc_project::library::PatternDto::spans: alloc::vec::Vec<mc_project::library::SpanDto>
+pub mc_project::library::PatternDto::tags: alloc::vec::Vec<alloc::string::String>
+impl core::clone::Clone for mc_project::library::PatternDto
+pub fn mc_project::library::PatternDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::PatternDto
+pub fn mc_project::library::PatternDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::PatternDto
+pub fn mc_project::library::PatternDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::PatternDto
+impl mc_project::dto::UnknownContent for mc_project::library::PatternDto
+pub fn mc_project::library::PatternDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::PatternDto
+pub fn mc_project::library::PatternDto::inline_schema() -> bool
+pub fn mc_project::library::PatternDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::PatternDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::PatternDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::PatternDto
+pub fn mc_project::library::PatternDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::PatternDto
+pub fn mc_project::library::PatternDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::PatternDto
+impl core::marker::Send for mc_project::library::PatternDto
+impl core::marker::Sync for mc_project::library::PatternDto
+impl core::marker::Unpin for mc_project::library::PatternDto
+impl core::marker::UnsafeUnpin for mc_project::library::PatternDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::PatternDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::PatternDto
+pub struct mc_project::library::SelectorDto
+pub mc_project::library::SelectorDto::count: core::option::Option<u8>
+pub mc_project::library::SelectorDto::extra: mc_project::dto::Extra
+pub mc_project::library::SelectorDto::from: core::option::Option<u8>
+pub mc_project::library::SelectorDto::kind: mc_project::library::SelectorKindDto
+pub mc_project::library::SelectorDto::string: core::option::Option<u8>
+pub mc_project::library::SelectorDto::to: core::option::Option<u8>
+impl core::clone::Clone for mc_project::library::SelectorDto
+pub fn mc_project::library::SelectorDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::SelectorDto
+pub fn mc_project::library::SelectorDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::SelectorDto
+pub fn mc_project::library::SelectorDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::SelectorDto
+impl mc_project::dto::UnknownContent for mc_project::library::SelectorDto
+pub fn mc_project::library::SelectorDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::SelectorDto
+pub fn mc_project::library::SelectorDto::inline_schema() -> bool
+pub fn mc_project::library::SelectorDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::SelectorDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::SelectorDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::SelectorDto
+pub fn mc_project::library::SelectorDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::SelectorDto
+pub fn mc_project::library::SelectorDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::SelectorDto
+impl core::marker::Send for mc_project::library::SelectorDto
+impl core::marker::Sync for mc_project::library::SelectorDto
+impl core::marker::Unpin for mc_project::library::SelectorDto
+impl core::marker::UnsafeUnpin for mc_project::library::SelectorDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::SelectorDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::SelectorDto
+pub struct mc_project::library::SpanDto
+pub mc_project::library::SpanDto::extra: mc_project::dto::Extra
+pub mc_project::library::SpanDto::first: u64
+pub mc_project::library::SpanDto::lane: mc_project::library::LaneIdDto
+pub mc_project::library::SpanDto::last: u64
+pub mc_project::library::SpanDto::technique: mc_project::library::TechniqueDto
+impl core::clone::Clone for mc_project::library::SpanDto
+pub fn mc_project::library::SpanDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::SpanDto
+pub fn mc_project::library::SpanDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::SpanDto
+pub fn mc_project::library::SpanDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::SpanDto
+impl mc_project::dto::UnknownContent for mc_project::library::SpanDto
+pub fn mc_project::library::SpanDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::SpanDto
+pub fn mc_project::library::SpanDto::inline_schema() -> bool
+pub fn mc_project::library::SpanDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::SpanDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::SpanDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::SpanDto
+pub fn mc_project::library::SpanDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::SpanDto
+pub fn mc_project::library::SpanDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::SpanDto
+impl core::marker::Send for mc_project::library::SpanDto
+impl core::marker::Sync for mc_project::library::SpanDto
+impl core::marker::Unpin for mc_project::library::SpanDto
+impl core::marker::UnsafeUnpin for mc_project::library::SpanDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::SpanDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::SpanDto
+pub struct mc_project::library::StepDto
+pub mc_project::library::StepDto::action: mc_project::library::ActionDto
+pub mc_project::library::StepDto::extra: mc_project::dto::Extra
+pub mc_project::library::StepDto::onset: [i64; 2]
+pub mc_project::library::StepDto::value: mc_project::dto::ValueDto
+impl core::clone::Clone for mc_project::library::StepDto
+pub fn mc_project::library::StepDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::StepDto
+pub fn mc_project::library::StepDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::StepDto
+pub fn mc_project::library::StepDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::StepDto
+impl mc_project::dto::UnknownContent for mc_project::library::StepDto
+pub fn mc_project::library::StepDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::StepDto
+pub fn mc_project::library::StepDto::inline_schema() -> bool
+pub fn mc_project::library::StepDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::StepDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::StepDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::StepDto
+pub fn mc_project::library::StepDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::StepDto
+pub fn mc_project::library::StepDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::StepDto
+impl core::marker::Send for mc_project::library::StepDto
+impl core::marker::Sync for mc_project::library::StepDto
+impl core::marker::Unpin for mc_project::library::StepDto
+impl core::marker::UnsafeUnpin for mc_project::library::StepDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::StepDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::StepDto
+pub struct mc_project::library::StrikeDto
+pub mc_project::library::StrikeDto::accent: bool
+pub mc_project::library::StrikeDto::dead: bool
+pub mc_project::library::StrikeDto::direction: core::option::Option<mc_project::dto::StrokeDto>
+pub mc_project::library::StrikeDto::extra: mc_project::dto::Extra
+pub mc_project::library::StrikeDto::let_ring: bool
+pub mc_project::library::StrikeDto::palm_mute: bool
+pub mc_project::library::StrikeDto::string_percussive: bool
+pub mc_project::library::StrikeDto::targets: alloc::vec::Vec<mc_project::library::SelectorDto>
+impl core::clone::Clone for mc_project::library::StrikeDto
+pub fn mc_project::library::StrikeDto::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_project::library::StrikeDto
+pub fn mc_project::library::StrikeDto::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_project::library::StrikeDto
+pub fn mc_project::library::StrikeDto::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_project::library::StrikeDto
+impl mc_project::dto::UnknownContent for mc_project::library::StrikeDto
+pub fn mc_project::library::StrikeDto::unknown_paths(&self, &str, &mut alloc::vec::Vec<alloc::string::String>)
+impl schemars::JsonSchema for mc_project::library::StrikeDto
+pub fn mc_project::library::StrikeDto::inline_schema() -> bool
+pub fn mc_project::library::StrikeDto::json_schema(&mut schemars::generate::SchemaGenerator) -> schemars::schema::Schema
+pub fn mc_project::library::StrikeDto::schema_id() -> alloc::borrow::Cow<'static, str>
+pub fn mc_project::library::StrikeDto::schema_name() -> alloc::borrow::Cow<'static, str>
+impl serde_core::ser::Serialize for mc_project::library::StrikeDto
+pub fn mc_project::library::StrikeDto::serialize<__S>(&self, __S) -> core::result::Result<<__S as serde_core::ser::Serializer>::Ok, <__S as serde_core::ser::Serializer>::Error> where __S: serde_core::ser::Serializer
+impl<'de> serde_core::de::Deserialize<'de> for mc_project::library::StrikeDto
+pub fn mc_project::library::StrikeDto::deserialize<__D>(__D) -> core::result::Result<Self, <__D as serde_core::de::Deserializer>::Error> where __D: serde_core::de::Deserializer<'de>
+impl core::marker::Freeze for mc_project::library::StrikeDto
+impl core::marker::Send for mc_project::library::StrikeDto
+impl core::marker::Sync for mc_project::library::StrikeDto
+impl core::marker::Unpin for mc_project::library::StrikeDto
+impl core::marker::UnsafeUnpin for mc_project::library::StrikeDto
+impl core::panic::unwind_safe::RefUnwindSafe for mc_project::library::StrikeDto
+impl core::panic::unwind_safe::UnwindSafe for mc_project::library::StrikeDto
+pub fn mc_project::library::library_from_dto(&mc_project::library::LibraryDto, &str) -> core::result::Result<mc_pattern::library::PatternLibrary, mc_project::library::LibraryLoadError>
+pub fn mc_project::library::library_to_dto(&mc_pattern::library::PatternLibrary) -> mc_project::library::LibraryDto
 pub enum mc_project::LoadError
 pub mc_project::LoadError::BadEntryName(alloc::string::String)
 pub mc_project::LoadError::CompressionRatio(alloc::string::String)
@@ -523,6 +1059,7 @@ pub mc_project::LoadError::DuplicateEntry(alloc::string::String)
 pub mc_project::LoadError::EntryTooLarge(alloc::string::String)
 pub mc_project::LoadError::HashMismatch(alloc::string::String)
 pub mc_project::LoadError::Invalid(alloc::vec::Vec<mc_score::error::Violation>)
+pub mc_project::LoadError::InvalidLibrary(alloc::vec::Vec<mc_pattern::error::PatternError>)
 pub mc_project::LoadError::Json
 pub mc_project::LoadError::Json::entry: alloc::string::String
 pub mc_project::LoadError::Json::message: alloc::string::String
@@ -644,6 +1181,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_project::Limits
 pub struct mc_project::LoadedProject
 pub mc_project::LoadedProject::created_by: mc_project::AppInfo
 pub mc_project::LoadedProject::format_version: mc_project::FormatVersion
+pub mc_project::LoadedProject::library: core::option::Option<mc_pattern::library::PatternLibrary>
 pub mc_project::LoadedProject::project_id: alloc::string::String
 pub mc_project::LoadedProject::saved_by: mc_project::AppInfo
 pub mc_project::LoadedProject::saved_revision: u64
@@ -710,16 +1248,19 @@ pub const mc_project::FORMAT: &str
 pub const mc_project::FORMAT_VERSION: mc_project::FormatVersion
 pub const mc_project::KNOWN_OPTIONAL_FEATURES: &[&str]
 pub const mc_project::KNOWN_REQUIRED_FEATURES: &[&str]
+pub const mc_project::LIBRARY: &str
 pub const mc_project::MANIFEST: &str
 pub const mc_project::RESERVED_PREFIXES: &[&str]
 pub const mc_project::SCORE: &str
 pub fn mc_project::check_name(&str) -> core::result::Result<(), mc_project::LoadError>
 pub fn mc_project::from_dto(&mc_project::dto::ScoreDto) -> core::result::Result<mc_score::score::Score, alloc::vec::Vec<mc_score::error::Violation>>
+pub fn mc_project::library_json(&mc_pattern::library::PatternLibrary) -> alloc::vec::Vec<u8>
 pub fn mc_project::load(&[u8]) -> core::result::Result<mc_project::LoadedProject, mc_project::LoadError>
 pub fn mc_project::load_with_limits(&[u8], &mc_project::Limits) -> core::result::Result<mc_project::LoadedProject, mc_project::LoadError>
 pub fn mc_project::read_entries(&[u8], &mc_project::Limits) -> core::result::Result<alloc::vec::Vec<(alloc::string::String, alloc::vec::Vec<u8>)>, mc_project::LoadError>
 pub fn mc_project::save(&mc_score::score::Score, &mc_project::SaveInfo) -> alloc::vec::Vec<u8>
-pub fn mc_project::schemas() -> [(&'static str, alloc::string::String); 2]
+pub fn mc_project::save_with_library(&mc_score::score::Score, core::option::Option<&mc_pattern::library::PatternLibrary>, &mc_project::SaveInfo) -> alloc::vec::Vec<u8>
+pub fn mc_project::schemas() -> [(&'static str, alloc::string::String); 3]
 pub fn mc_project::score_json(&mc_score::score::Score) -> alloc::vec::Vec<u8>
 pub fn mc_project::sha256_hex(&[u8]) -> alloc::string::String
 pub fn mc_project::to_dto(&mc_score::score::Score) -> mc_project::dto::ScoreDto

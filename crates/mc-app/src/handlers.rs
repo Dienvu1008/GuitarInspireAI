@@ -71,6 +71,7 @@ fn fragment_beat(b: &ClipBeat) -> Result<FragmentBeat, CommandError> {
     Ok(FragmentBeat {
         value: duration(b.duration)?,
         notes,
+        stroke: b.stroke,
     })
 }
 
@@ -136,6 +137,9 @@ pub(crate) mod score_handlers {
                 note,
                 effects,
             } => score.set_note_effects(beat(b), note, effects)?,
+            ScoreCommand::SetBeatStroke { beat: b, stroke } => {
+                score.set_beat_stroke(beat(b), stroke)?
+            }
             ScoreCommand::AddVoice { track, bar } => score.add_voice(track, bar)?.1,
             ScoreCommand::RemoveVoice { track, bar, voice } => {
                 score.remove_voice(track, bar, voice)?

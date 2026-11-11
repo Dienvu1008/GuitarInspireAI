@@ -22,6 +22,8 @@ String musicXmlSummary(MusicXmlReportDto r) => <String>[
   if (r.tempoRounded > 0) '${r.tempoRounded} tempo(s) rounded',
   if (r.charactersRemoved > 0)
     '${r.charactersRemoved} character(s) removed from names',
+  if (r.techniquesApproximated > 0)
+    '${r.techniquesApproximated} technique(s) written as text (palm mute, string-percussive)',
 ].join(', ');
 
 /// The File menu item "Export MusicXML...". The composition root owns the dialog and

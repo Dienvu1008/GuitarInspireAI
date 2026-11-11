@@ -319,6 +319,171 @@ void main() {
     expect(again.report.notes, 1);
     expect(text, contains('<fret>5</fret>'));
   });
+
+  // ADR-034 (slice 6a-3): Tools > Apply pattern... in the built app with the real
+  // core. The preview names the bar that would be overwritten, the dialog asks before
+  // replacing it, the result is one revision, and undo restores the note.
+  testWidgets('6a-3: apply the sample pattern from the Tools menu', (
+    tester,
+  ) async {
+    final c = await start(tester, _Dialogs(), '${tmp.path}/recovery-6a3');
+    EditorState s() => c.read(editorProvider);
+    final t = s().activeTrack;
+    await tester.sendKeyEvent(LogicalKeyboardKey.digit5);
+    await _until(tester, () => _hasNote(c));
+    final rev = s().summary.revision;
+
+    await tester.tap(find.text('Tools'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('tools-apply-pattern')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('apply-pattern-find')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('apply-pattern-first')),
+      '1',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('apply-pattern-last')),
+      '2',
+    );
+    await tester.tap(find.byKey(const ValueKey('apply-pattern-preview')));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('replaces the content of bars 1'),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('apply-pattern-apply')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('apply-pattern-overwrite')));
+    await _until(tester, () => s().summary.revision == rev + 1);
+
+    for (final bar in [0, 1]) {
+      final beats = s().service.beats(t, bar, 0);
+      expect(beats, hasLength(4), reason: 'bar ${bar + 1}: four quarters');
+      expect(beats[0].notes, hasLength(1), reason: 'the bass');
+      expect(beats[1].stroke, StrokeDto.down, reason: 'down-strum treble');
+      expect(beats[2].notes, hasLength(1), reason: 'the alternate bass');
+    }
+    await _ctrl(tester, LogicalKeyboardKey.keyZ);
+    await _until(tester, () => s().summary.revision == rev + 2);
+    expect(
+      s().service.beats(t, 0, 0).single.notes.single.fret,
+      5,
+      reason: 'undo restores the note',
+    );
+  });
+
+  testWidgets('6a-5: make a pattern in the grid, save, reopen and apply it', (
+    tester,
+  ) async {
+    final dialogs = _Dialogs();
+    final c = await start(tester, dialogs, '${tmp.path}/recovery-6a5');
+    await _patternEditorAcceptance(tester, c, dialogs, tmp.path);
+  });
+}
+
+/// ADR-034 (slice 6a-5): Tools > Pattern editor... in the built app with the real
+/// core. A pattern made in the grid (mouse and keyboard) is saved with the project
+/// (format 1.2), reopens identically, and is applied from the apply dialog.
+Future<void> _patternEditorAcceptance(
+  WidgetTester tester,
+  ProviderContainer c,
+  _Dialogs dialogs,
+  String dir,
+) async {
+  EditorState s() => c.read(editorProvider);
+  Future<void> tap(String key) async {
+    await tester.ensureVisible(find.byKey(ValueKey(key)));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(ValueKey(key)));
+    await tester.pumpAndSettle();
+  }
+
+  await tester.tap(find.text('Tools'));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const ValueKey('tools-pattern-editor')));
+  await tester.pumpAndSettle();
+  await tap('pattern-editor-new');
+  await tester.enterText(
+    find.byKey(const ValueKey('new-pattern-name')),
+    'Grid',
+  );
+  await tap('new-pattern-ok');
+  final grid = s().service.patterns().firstWhere((p) => p.name == 'Grid').id;
+  GridViewDto view() => s().service.patternGrid(grid, const []);
+  int row(String label) =>
+      view().lanes.length + view().rows.indexWhere((r) => r.label == label);
+
+  // Bass on beat 1 by mouse, a treble strike on beat 2 by keyboard, made a down-stroke.
+  await tap('pattern-cell-${row('Bass')}-0-0');
+  await tap('pattern-cell-${row('Treble')}-1-0');
+  await tester.sendKeyEvent(LogicalKeyboardKey.keyD);
+  await tester.sendKeyEvent(LogicalKeyboardKey.bracketRight);
+  await _until(tester, () => view().steps.length == 2);
+  await _until(tester, () => view().steps[1].direction == StrokeDto.down);
+  // The core decided the values: an eighth, then a quarter after the resize.
+  await _until(tester, () => view().steps[1].value.base == 2);
+  expect(view().steps[0].value.base, 3);
+  await tap('pattern-editor-close');
+
+  // Saved with the project and reopened: the same grid.
+  final before = view().steps
+      .map(
+        (x) =>
+            '${x.onsetNumerator}/${x.onsetDenominator}'
+            ' ${x.value.base} ${x.rows} ${x.direction}',
+      )
+      .toList();
+  final path = '$dir${Platform.pathSeparator}patterns.giproj';
+  dialogs.savePath = path;
+  await _ctrl(tester, LogicalKeyboardKey.keyS);
+  await _until(tester, () => !s().summary.dirty);
+  await _ctrl(tester, LogicalKeyboardKey.keyN);
+  await _until(tester, () => s().summary.location == null);
+  dialogs.openPath = path;
+  await _ctrl(tester, LogicalKeyboardKey.keyO);
+  await _until(tester, () => s().summary.location == path);
+  final reopened = s().service
+      .patterns()
+      .firstWhere((p) => p.name == 'Grid')
+      .id;
+  final after = s().service
+      .patternGrid(reopened, const [])
+      .steps
+      .map(
+        (x) =>
+            '${x.onsetNumerator}/${x.onsetDenominator}'
+            ' ${x.value.base} ${x.rows} ${x.direction}',
+      )
+      .toList();
+  expect(after, before, reason: 'the library reopens identically');
+
+  // Applied to bar 1 from the apply dialog.
+  final rev = s().summary.revision;
+  await tester.tap(find.text('Tools'));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const ValueKey('tools-apply-pattern')));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const ValueKey('apply-pattern-pattern')));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('Grid').last);
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const ValueKey('apply-pattern-find')));
+  await tester.pumpAndSettle();
+  await tester.enterText(
+    find.byKey(const ValueKey('apply-pattern-first')),
+    '1',
+  );
+  await tester.enterText(find.byKey(const ValueKey('apply-pattern-last')), '1');
+  await tester.tap(find.byKey(const ValueKey('apply-pattern-preview')));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const ValueKey('apply-pattern-apply')));
+  await _until(tester, () => s().summary.revision == rev + 1);
+  final t = s().activeTrack;
+  final beats = s().service.beats(t, 0, 0);
+  expect(beats.where((b) => b.notes.isNotEmpty), hasLength(2));
+  expect(beats.firstWhere((b) => b.stroke != null).stroke, StrokeDto.down);
 }
 
 Future<ProviderContainer> _startExpectingRecovery(

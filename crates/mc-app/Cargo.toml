@@ -11,7 +11,7 @@ default = ["native-fs"]
 # File-system ProjectStore and RecoveryStore (atomic save, backup, autosave, crash recovery).
 native-fs = []
 # Re-exports the deterministic reference scores for the CLI and benchmarks.
-fixtures = ["mc-score/fixtures"]
+fixtures = ["mc-score/fixtures", "mc-pattern/fixtures"]
 
 [dependencies]
 mc-theory.workspace = true
@@ -20,9 +20,11 @@ mc-project.workspace = true
 mc-guitar.workspace = true
 mc-notation.workspace = true
 mc-playback.workspace = true
+mc-pattern.workspace = true
 
 [dev-dependencies]
 mc-score = { workspace = true, features = ["fixtures"] }
+mc-pattern = { workspace = true, features = ["fixtures"] }
 proptest.workspace = true
 criterion.workspace = true
 

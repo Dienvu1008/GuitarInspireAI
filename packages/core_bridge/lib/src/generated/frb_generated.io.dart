@@ -9,6 +9,8 @@ import 'api/info.dart';
 import 'api/layout.dart';
 import 'api/midi.dart';
 import 'api/musicxml.dart';
+import 'api/pattern.dart';
+import 'api/pattern_grid.dart';
 import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -74,6 +76,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected ApiError dco_decode_api_error(dynamic raw);
 
+@protected ApplyPatternDto dco_decode_apply_pattern_dto(dynamic raw);
+
 @protected BarLayoutDto dco_decode_bar_layout_dto(dynamic raw);
 
 @protected BeatAddressDto dco_decode_beat_address_dto(dynamic raw);
@@ -82,11 +86,25 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected bool dco_decode_bool(dynamic raw);
 
+@protected ApplyPatternDto dco_decode_box_autoadd_apply_pattern_dto(dynamic raw);
+
 @protected BeatAddressDto dco_decode_box_autoadd_beat_address_dto(dynamic raw);
 
 @protected CommandDto dco_decode_box_autoadd_command_dto(dynamic raw);
 
 @protected DurationDto dco_decode_box_autoadd_duration_dto(dynamic raw);
+
+@protected FitDto dco_decode_box_autoadd_fit_dto(dynamic raw);
+
+@protected GridActionDto dco_decode_box_autoadd_grid_action_dto(dynamic raw);
+
+@protected GridCellDto dco_decode_box_autoadd_grid_cell_dto(dynamic raw);
+
+@protected GridEditDto dco_decode_box_autoadd_grid_edit_dto(dynamic raw);
+
+@protected GridSelectorDto dco_decode_box_autoadd_grid_selector_dto(dynamic raw);
+
+@protected GridStrikeDto dco_decode_box_autoadd_grid_strike_dto(dynamic raw);
 
 @protected PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw);
 
@@ -94,7 +112,13 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected MasterBarDto dco_decode_box_autoadd_master_bar_dto(dynamic raw);
 
+@protected MeterDto dco_decode_box_autoadd_meter_dto(dynamic raw);
+
 @protected MetricsDto dco_decode_box_autoadd_metrics_dto(dynamic raw);
+
+@protected PatternReportDto dco_decode_box_autoadd_pattern_report_dto(dynamic raw);
+
+@protected StrokeDto dco_decode_box_autoadd_stroke_dto(dynamic raw);
 
 @protected TupletDto dco_decode_box_autoadd_tuplet_dto(dynamic raw);
 
@@ -128,9 +152,33 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected double dco_decode_f_64(dynamic raw);
 
+@protected FitDto dco_decode_fit_dto(dynamic raw);
+
+@protected GestureInfoDto dco_decode_gesture_info_dto(dynamic raw);
+
 @protected GlyphDto dco_decode_glyph_dto(dynamic raw);
 
 @protected GlyphKindDto dco_decode_glyph_kind_dto(dynamic raw);
+
+@protected GridActionDto dco_decode_grid_action_dto(dynamic raw);
+
+@protected GridCellDto dco_decode_grid_cell_dto(dynamic raw);
+
+@protected GridEditDto dco_decode_grid_edit_dto(dynamic raw);
+
+@protected GridRowDto dco_decode_grid_row_dto(dynamic raw);
+
+@protected GridSelectorDto dco_decode_grid_selector_dto(dynamic raw);
+
+@protected GridSpanDto dco_decode_grid_span_dto(dynamic raw);
+
+@protected GridStepDto dco_decode_grid_step_dto(dynamic raw);
+
+@protected GridStepKindDto dco_decode_grid_step_kind_dto(dynamic raw);
+
+@protected GridStrikeDto dco_decode_grid_strike_dto(dynamic raw);
+
+@protected GridViewDto dco_decode_grid_view_dto(dynamic raw);
 
 @protected HitBeatDto dco_decode_hit_beat_dto(dynamic raw);
 
@@ -156,9 +204,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<DiagnosticDto> dco_decode_list_diagnostic_dto(dynamic raw);
 
+@protected List<DurationDto> dco_decode_list_duration_dto(dynamic raw);
+
 @protected List<EventDto> dco_decode_list_event_dto(dynamic raw);
 
+@protected List<GestureInfoDto> dco_decode_list_gesture_info_dto(dynamic raw);
+
 @protected List<GlyphDto> dco_decode_list_glyph_dto(dynamic raw);
+
+@protected List<GridRowDto> dco_decode_list_grid_row_dto(dynamic raw);
+
+@protected List<GridSelectorDto> dco_decode_list_grid_selector_dto(dynamic raw);
+
+@protected List<GridSpanDto> dco_decode_list_grid_span_dto(dynamic raw);
+
+@protected List<GridStepDto> dco_decode_list_grid_step_dto(dynamic raw);
 
 @protected List<HitBeatDto> dco_decode_list_hit_beat_dto(dynamic raw);
 
@@ -168,6 +228,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<OutlineSystemDto> dco_decode_list_outline_system_dto(dynamic raw);
 
+@protected List<PatternInfoDto> dco_decode_list_pattern_info_dto(dynamic raw);
+
+@protected List<PatternLaneDto> dco_decode_list_pattern_lane_dto(dynamic raw);
+
 @protected List<PlayedBarDto> dco_decode_list_played_bar_dto(dynamic raw);
 
 @protected Float32List dco_decode_list_prim_f_32_strict(dynamic raw);
@@ -175,6 +239,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected Int32List dco_decode_list_prim_i_32_strict(dynamic raw);
 
 @protected Int64List dco_decode_list_prim_i_64_strict(dynamic raw);
+
+@protected Uint32List dco_decode_list_prim_u_32_strict(dynamic raw);
 
 @protected List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
 
@@ -186,6 +252,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<StaveDto> dco_decode_list_stave_dto(dynamic raw);
 
+@protected List<StepChangeDto> dco_decode_list_step_change_dto(dynamic raw);
+
 @protected List<SystemDto> dco_decode_list_system_dto(dynamic raw);
 
 @protected List<TrackSummaryDto> dco_decode_list_track_summary_dto(dynamic raw);
@@ -193,6 +261,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected List<VoicingDto> dco_decode_list_voicing_dto(dynamic raw);
 
 @protected MasterBarDto dco_decode_master_bar_dto(dynamic raw);
+
+@protected MeterDto dco_decode_meter_dto(dynamic raw);
 
 @protected MetricsDto dco_decode_metrics_dto(dynamic raw);
 
@@ -204,7 +274,19 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected String? dco_decode_opt_String(dynamic raw);
 
+@protected FitDto? dco_decode_opt_box_autoadd_fit_dto(dynamic raw);
+
+@protected GridCellDto? dco_decode_opt_box_autoadd_grid_cell_dto(dynamic raw);
+
+@protected GridSelectorDto? dco_decode_opt_box_autoadd_grid_selector_dto(dynamic raw);
+
 @protected PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
+
+@protected MeterDto? dco_decode_opt_box_autoadd_meter_dto(dynamic raw);
+
+@protected PatternReportDto? dco_decode_opt_box_autoadd_pattern_report_dto(dynamic raw);
+
+@protected StrokeDto? dco_decode_opt_box_autoadd_stroke_dto(dynamic raw);
 
 @protected TupletDto? dco_decode_opt_box_autoadd_tuplet_dto(dynamic raw);
 
@@ -212,9 +294,19 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected int? dco_decode_opt_box_autoadd_u_8(dynamic raw);
 
+@protected List<GridSelectorDto>? dco_decode_opt_list_grid_selector_dto(dynamic raw);
+
 @protected OutcomeDto dco_decode_outcome_dto(dynamic raw);
 
 @protected OutlineSystemDto dco_decode_outline_system_dto(dynamic raw);
+
+@protected PatternInfoDto dco_decode_pattern_info_dto(dynamic raw);
+
+@protected PatternLaneDto dco_decode_pattern_lane_dto(dynamic raw);
+
+@protected PatternPreviewDto dco_decode_pattern_preview_dto(dynamic raw);
+
+@protected PatternReportDto dco_decode_pattern_report_dto(dynamic raw);
 
 @protected PlaybackStateDto dco_decode_playback_state_dto(dynamic raw);
 
@@ -228,11 +320,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected ScoreSystemDto dco_decode_score_system_dto(dynamic raw);
 
+@protected SelectorKindDto dco_decode_selector_kind_dto(dynamic raw);
+
 @protected StaveDto dco_decode_stave_dto(dynamic raw);
+
+@protected StepChangeDto dco_decode_step_change_dto(dynamic raw);
+
+@protected StrokeDto dco_decode_stroke_dto(dynamic raw);
 
 @protected SystemDto dco_decode_system_dto(dynamic raw);
 
 @protected TabLayoutDto dco_decode_tab_layout_dto(dynamic raw);
+
+@protected TechniqueKindDto dco_decode_technique_kind_dto(dynamic raw);
+
+@protected TechniquesDto dco_decode_techniques_dto(dynamic raw);
 
 @protected TrackSummaryDto dco_decode_track_summary_dto(dynamic raw);
 
@@ -288,6 +390,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected ApiError sse_decode_api_error(SseDeserializer deserializer);
 
+@protected ApplyPatternDto sse_decode_apply_pattern_dto(SseDeserializer deserializer);
+
 @protected BarLayoutDto sse_decode_bar_layout_dto(SseDeserializer deserializer);
 
 @protected BeatAddressDto sse_decode_beat_address_dto(SseDeserializer deserializer);
@@ -296,11 +400,25 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected bool sse_decode_bool(SseDeserializer deserializer);
 
+@protected ApplyPatternDto sse_decode_box_autoadd_apply_pattern_dto(SseDeserializer deserializer);
+
 @protected BeatAddressDto sse_decode_box_autoadd_beat_address_dto(SseDeserializer deserializer);
 
 @protected CommandDto sse_decode_box_autoadd_command_dto(SseDeserializer deserializer);
 
 @protected DurationDto sse_decode_box_autoadd_duration_dto(SseDeserializer deserializer);
+
+@protected FitDto sse_decode_box_autoadd_fit_dto(SseDeserializer deserializer);
+
+@protected GridActionDto sse_decode_box_autoadd_grid_action_dto(SseDeserializer deserializer);
+
+@protected GridCellDto sse_decode_box_autoadd_grid_cell_dto(SseDeserializer deserializer);
+
+@protected GridEditDto sse_decode_box_autoadd_grid_edit_dto(SseDeserializer deserializer);
+
+@protected GridSelectorDto sse_decode_box_autoadd_grid_selector_dto(SseDeserializer deserializer);
+
+@protected GridStrikeDto sse_decode_box_autoadd_grid_strike_dto(SseDeserializer deserializer);
 
 @protected PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer);
 
@@ -308,7 +426,13 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected MasterBarDto sse_decode_box_autoadd_master_bar_dto(SseDeserializer deserializer);
 
+@protected MeterDto sse_decode_box_autoadd_meter_dto(SseDeserializer deserializer);
+
 @protected MetricsDto sse_decode_box_autoadd_metrics_dto(SseDeserializer deserializer);
+
+@protected PatternReportDto sse_decode_box_autoadd_pattern_report_dto(SseDeserializer deserializer);
+
+@protected StrokeDto sse_decode_box_autoadd_stroke_dto(SseDeserializer deserializer);
 
 @protected TupletDto sse_decode_box_autoadd_tuplet_dto(SseDeserializer deserializer);
 
@@ -342,9 +466,33 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected double sse_decode_f_64(SseDeserializer deserializer);
 
+@protected FitDto sse_decode_fit_dto(SseDeserializer deserializer);
+
+@protected GestureInfoDto sse_decode_gesture_info_dto(SseDeserializer deserializer);
+
 @protected GlyphDto sse_decode_glyph_dto(SseDeserializer deserializer);
 
 @protected GlyphKindDto sse_decode_glyph_kind_dto(SseDeserializer deserializer);
+
+@protected GridActionDto sse_decode_grid_action_dto(SseDeserializer deserializer);
+
+@protected GridCellDto sse_decode_grid_cell_dto(SseDeserializer deserializer);
+
+@protected GridEditDto sse_decode_grid_edit_dto(SseDeserializer deserializer);
+
+@protected GridRowDto sse_decode_grid_row_dto(SseDeserializer deserializer);
+
+@protected GridSelectorDto sse_decode_grid_selector_dto(SseDeserializer deserializer);
+
+@protected GridSpanDto sse_decode_grid_span_dto(SseDeserializer deserializer);
+
+@protected GridStepDto sse_decode_grid_step_dto(SseDeserializer deserializer);
+
+@protected GridStepKindDto sse_decode_grid_step_kind_dto(SseDeserializer deserializer);
+
+@protected GridStrikeDto sse_decode_grid_strike_dto(SseDeserializer deserializer);
+
+@protected GridViewDto sse_decode_grid_view_dto(SseDeserializer deserializer);
 
 @protected HitBeatDto sse_decode_hit_beat_dto(SseDeserializer deserializer);
 
@@ -370,9 +518,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<DiagnosticDto> sse_decode_list_diagnostic_dto(SseDeserializer deserializer);
 
+@protected List<DurationDto> sse_decode_list_duration_dto(SseDeserializer deserializer);
+
 @protected List<EventDto> sse_decode_list_event_dto(SseDeserializer deserializer);
 
+@protected List<GestureInfoDto> sse_decode_list_gesture_info_dto(SseDeserializer deserializer);
+
 @protected List<GlyphDto> sse_decode_list_glyph_dto(SseDeserializer deserializer);
+
+@protected List<GridRowDto> sse_decode_list_grid_row_dto(SseDeserializer deserializer);
+
+@protected List<GridSelectorDto> sse_decode_list_grid_selector_dto(SseDeserializer deserializer);
+
+@protected List<GridSpanDto> sse_decode_list_grid_span_dto(SseDeserializer deserializer);
+
+@protected List<GridStepDto> sse_decode_list_grid_step_dto(SseDeserializer deserializer);
 
 @protected List<HitBeatDto> sse_decode_list_hit_beat_dto(SseDeserializer deserializer);
 
@@ -382,6 +542,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<OutlineSystemDto> sse_decode_list_outline_system_dto(SseDeserializer deserializer);
 
+@protected List<PatternInfoDto> sse_decode_list_pattern_info_dto(SseDeserializer deserializer);
+
+@protected List<PatternLaneDto> sse_decode_list_pattern_lane_dto(SseDeserializer deserializer);
+
 @protected List<PlayedBarDto> sse_decode_list_played_bar_dto(SseDeserializer deserializer);
 
 @protected Float32List sse_decode_list_prim_f_32_strict(SseDeserializer deserializer);
@@ -389,6 +553,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected Int32List sse_decode_list_prim_i_32_strict(SseDeserializer deserializer);
 
 @protected Int64List sse_decode_list_prim_i_64_strict(SseDeserializer deserializer);
+
+@protected Uint32List sse_decode_list_prim_u_32_strict(SseDeserializer deserializer);
 
 @protected List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
 
@@ -400,6 +566,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<StaveDto> sse_decode_list_stave_dto(SseDeserializer deserializer);
 
+@protected List<StepChangeDto> sse_decode_list_step_change_dto(SseDeserializer deserializer);
+
 @protected List<SystemDto> sse_decode_list_system_dto(SseDeserializer deserializer);
 
 @protected List<TrackSummaryDto> sse_decode_list_track_summary_dto(SseDeserializer deserializer);
@@ -407,6 +575,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected List<VoicingDto> sse_decode_list_voicing_dto(SseDeserializer deserializer);
 
 @protected MasterBarDto sse_decode_master_bar_dto(SseDeserializer deserializer);
+
+@protected MeterDto sse_decode_meter_dto(SseDeserializer deserializer);
 
 @protected MetricsDto sse_decode_metrics_dto(SseDeserializer deserializer);
 
@@ -418,7 +588,19 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected String? sse_decode_opt_String(SseDeserializer deserializer);
 
+@protected FitDto? sse_decode_opt_box_autoadd_fit_dto(SseDeserializer deserializer);
+
+@protected GridCellDto? sse_decode_opt_box_autoadd_grid_cell_dto(SseDeserializer deserializer);
+
+@protected GridSelectorDto? sse_decode_opt_box_autoadd_grid_selector_dto(SseDeserializer deserializer);
+
 @protected PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
+
+@protected MeterDto? sse_decode_opt_box_autoadd_meter_dto(SseDeserializer deserializer);
+
+@protected PatternReportDto? sse_decode_opt_box_autoadd_pattern_report_dto(SseDeserializer deserializer);
+
+@protected StrokeDto? sse_decode_opt_box_autoadd_stroke_dto(SseDeserializer deserializer);
 
 @protected TupletDto? sse_decode_opt_box_autoadd_tuplet_dto(SseDeserializer deserializer);
 
@@ -426,9 +608,19 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected int? sse_decode_opt_box_autoadd_u_8(SseDeserializer deserializer);
 
+@protected List<GridSelectorDto>? sse_decode_opt_list_grid_selector_dto(SseDeserializer deserializer);
+
 @protected OutcomeDto sse_decode_outcome_dto(SseDeserializer deserializer);
 
 @protected OutlineSystemDto sse_decode_outline_system_dto(SseDeserializer deserializer);
+
+@protected PatternInfoDto sse_decode_pattern_info_dto(SseDeserializer deserializer);
+
+@protected PatternLaneDto sse_decode_pattern_lane_dto(SseDeserializer deserializer);
+
+@protected PatternPreviewDto sse_decode_pattern_preview_dto(SseDeserializer deserializer);
+
+@protected PatternReportDto sse_decode_pattern_report_dto(SseDeserializer deserializer);
 
 @protected PlaybackStateDto sse_decode_playback_state_dto(SseDeserializer deserializer);
 
@@ -442,11 +634,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected ScoreSystemDto sse_decode_score_system_dto(SseDeserializer deserializer);
 
+@protected SelectorKindDto sse_decode_selector_kind_dto(SseDeserializer deserializer);
+
 @protected StaveDto sse_decode_stave_dto(SseDeserializer deserializer);
+
+@protected StepChangeDto sse_decode_step_change_dto(SseDeserializer deserializer);
+
+@protected StrokeDto sse_decode_stroke_dto(SseDeserializer deserializer);
 
 @protected SystemDto sse_decode_system_dto(SseDeserializer deserializer);
 
 @protected TabLayoutDto sse_decode_tab_layout_dto(SseDeserializer deserializer);
+
+@protected TechniqueKindDto sse_decode_technique_kind_dto(SseDeserializer deserializer);
+
+@protected TechniquesDto sse_decode_techniques_dto(SseDeserializer deserializer);
 
 @protected TrackSummaryDto sse_decode_track_summary_dto(SseDeserializer deserializer);
 
@@ -502,6 +704,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_api_error(ApiError self, SseSerializer serializer);
 
+@protected void sse_encode_apply_pattern_dto(ApplyPatternDto self, SseSerializer serializer);
+
 @protected void sse_encode_bar_layout_dto(BarLayoutDto self, SseSerializer serializer);
 
 @protected void sse_encode_beat_address_dto(BeatAddressDto self, SseSerializer serializer);
@@ -510,11 +714,25 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_bool(bool self, SseSerializer serializer);
 
+@protected void sse_encode_box_autoadd_apply_pattern_dto(ApplyPatternDto self, SseSerializer serializer);
+
 @protected void sse_encode_box_autoadd_beat_address_dto(BeatAddressDto self, SseSerializer serializer);
 
 @protected void sse_encode_box_autoadd_command_dto(CommandDto self, SseSerializer serializer);
 
 @protected void sse_encode_box_autoadd_duration_dto(DurationDto self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_fit_dto(FitDto self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_grid_action_dto(GridActionDto self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_grid_cell_dto(GridCellDto self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_grid_edit_dto(GridEditDto self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_grid_selector_dto(GridSelectorDto self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_grid_strike_dto(GridStrikeDto self, SseSerializer serializer);
 
 @protected void sse_encode_box_autoadd_i_64(PlatformInt64 self, SseSerializer serializer);
 
@@ -522,7 +740,13 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_box_autoadd_master_bar_dto(MasterBarDto self, SseSerializer serializer);
 
+@protected void sse_encode_box_autoadd_meter_dto(MeterDto self, SseSerializer serializer);
+
 @protected void sse_encode_box_autoadd_metrics_dto(MetricsDto self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_pattern_report_dto(PatternReportDto self, SseSerializer serializer);
+
+@protected void sse_encode_box_autoadd_stroke_dto(StrokeDto self, SseSerializer serializer);
 
 @protected void sse_encode_box_autoadd_tuplet_dto(TupletDto self, SseSerializer serializer);
 
@@ -556,9 +780,33 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_f_64(double self, SseSerializer serializer);
 
+@protected void sse_encode_fit_dto(FitDto self, SseSerializer serializer);
+
+@protected void sse_encode_gesture_info_dto(GestureInfoDto self, SseSerializer serializer);
+
 @protected void sse_encode_glyph_dto(GlyphDto self, SseSerializer serializer);
 
 @protected void sse_encode_glyph_kind_dto(GlyphKindDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_action_dto(GridActionDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_cell_dto(GridCellDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_edit_dto(GridEditDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_row_dto(GridRowDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_selector_dto(GridSelectorDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_span_dto(GridSpanDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_step_dto(GridStepDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_step_kind_dto(GridStepKindDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_strike_dto(GridStrikeDto self, SseSerializer serializer);
+
+@protected void sse_encode_grid_view_dto(GridViewDto self, SseSerializer serializer);
 
 @protected void sse_encode_hit_beat_dto(HitBeatDto self, SseSerializer serializer);
 
@@ -584,9 +832,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_list_diagnostic_dto(List<DiagnosticDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_duration_dto(List<DurationDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_event_dto(List<EventDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_gesture_info_dto(List<GestureInfoDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_glyph_dto(List<GlyphDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_grid_row_dto(List<GridRowDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_grid_selector_dto(List<GridSelectorDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_grid_span_dto(List<GridSpanDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_grid_step_dto(List<GridStepDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_hit_beat_dto(List<HitBeatDto> self, SseSerializer serializer);
 
@@ -596,6 +856,10 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_list_outline_system_dto(List<OutlineSystemDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_pattern_info_dto(List<PatternInfoDto> self, SseSerializer serializer);
+
+@protected void sse_encode_list_pattern_lane_dto(List<PatternLaneDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_played_bar_dto(List<PlayedBarDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer);
@@ -603,6 +867,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_list_prim_i_32_strict(Int32List self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_i_64_strict(Int64List self, SseSerializer serializer);
+
+@protected void sse_encode_list_prim_u_32_strict(Uint32List self, SseSerializer serializer);
 
 @protected void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer);
 
@@ -614,6 +880,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_list_stave_dto(List<StaveDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_step_change_dto(List<StepChangeDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_system_dto(List<SystemDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_track_summary_dto(List<TrackSummaryDto> self, SseSerializer serializer);
@@ -621,6 +889,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_list_voicing_dto(List<VoicingDto> self, SseSerializer serializer);
 
 @protected void sse_encode_master_bar_dto(MasterBarDto self, SseSerializer serializer);
+
+@protected void sse_encode_meter_dto(MeterDto self, SseSerializer serializer);
 
 @protected void sse_encode_metrics_dto(MetricsDto self, SseSerializer serializer);
 
@@ -632,7 +902,19 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_opt_String(String? self, SseSerializer serializer);
 
+@protected void sse_encode_opt_box_autoadd_fit_dto(FitDto? self, SseSerializer serializer);
+
+@protected void sse_encode_opt_box_autoadd_grid_cell_dto(GridCellDto? self, SseSerializer serializer);
+
+@protected void sse_encode_opt_box_autoadd_grid_selector_dto(GridSelectorDto? self, SseSerializer serializer);
+
 @protected void sse_encode_opt_box_autoadd_i_64(PlatformInt64? self, SseSerializer serializer);
+
+@protected void sse_encode_opt_box_autoadd_meter_dto(MeterDto? self, SseSerializer serializer);
+
+@protected void sse_encode_opt_box_autoadd_pattern_report_dto(PatternReportDto? self, SseSerializer serializer);
+
+@protected void sse_encode_opt_box_autoadd_stroke_dto(StrokeDto? self, SseSerializer serializer);
 
 @protected void sse_encode_opt_box_autoadd_tuplet_dto(TupletDto? self, SseSerializer serializer);
 
@@ -640,9 +922,19 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_opt_box_autoadd_u_8(int? self, SseSerializer serializer);
 
+@protected void sse_encode_opt_list_grid_selector_dto(List<GridSelectorDto>? self, SseSerializer serializer);
+
 @protected void sse_encode_outcome_dto(OutcomeDto self, SseSerializer serializer);
 
 @protected void sse_encode_outline_system_dto(OutlineSystemDto self, SseSerializer serializer);
+
+@protected void sse_encode_pattern_info_dto(PatternInfoDto self, SseSerializer serializer);
+
+@protected void sse_encode_pattern_lane_dto(PatternLaneDto self, SseSerializer serializer);
+
+@protected void sse_encode_pattern_preview_dto(PatternPreviewDto self, SseSerializer serializer);
+
+@protected void sse_encode_pattern_report_dto(PatternReportDto self, SseSerializer serializer);
 
 @protected void sse_encode_playback_state_dto(PlaybackStateDto self, SseSerializer serializer);
 
@@ -656,11 +948,21 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_score_system_dto(ScoreSystemDto self, SseSerializer serializer);
 
+@protected void sse_encode_selector_kind_dto(SelectorKindDto self, SseSerializer serializer);
+
 @protected void sse_encode_stave_dto(StaveDto self, SseSerializer serializer);
+
+@protected void sse_encode_step_change_dto(StepChangeDto self, SseSerializer serializer);
+
+@protected void sse_encode_stroke_dto(StrokeDto self, SseSerializer serializer);
 
 @protected void sse_encode_system_dto(SystemDto self, SseSerializer serializer);
 
 @protected void sse_encode_tab_layout_dto(TabLayoutDto self, SseSerializer serializer);
+
+@protected void sse_encode_technique_kind_dto(TechniqueKindDto self, SseSerializer serializer);
+
+@protected void sse_encode_techniques_dto(TechniquesDto self, SseSerializer serializer);
 
 @protected void sse_encode_track_summary_dto(TrackSummaryDto self, SseSerializer serializer);
 

@@ -95,6 +95,7 @@ impl Ids {
 
 fn beat(ids: &mut Ids, value: NoteValue, notes: &[(u8, u8, bool)]) -> Beat {
     Beat {
+        stroke: None,
         id: BeatId::from_raw(ids.next()),
         value,
         notes: notes
@@ -603,6 +604,108 @@ proptest! {
             }
             Err(ImportError::NoNotes) => {}
             Err(e) => prop_assert!(false, "unexpected error: {e}"),
+        }
+    }
+}
+
+// ---------------------------------------------------------------- ADR-035
+
+/// Notes of an SMF as (channel, start, end, key, velocity) in whole-note positions.
+fn smf_notes(bytes: &[u8]) -> Vec<(u8, Rational, Rational, u8, u8)> {
+    let smf = Smf::parse(bytes).unwrap();
+    let Timing::Metrical(ppq) = smf.header.timing else {
+        panic!("metrical timing")
+    };
+    let per_whole = ppq.as_int() as i64 * 4;
+    let mut out = Vec::new();
+    for track in &smf.tracks {
+        let mut tick = 0i64;
+        let mut open: BTreeMap<(u8, u8), (i64, u8)> = BTreeMap::new();
+        for e in track {
+            tick += e.delta.as_int() as i64;
+            if let TrackEventKind::Midi { channel, message } = e.kind {
+                let ch = channel.as_int();
+                match message {
+                    MidiMessage::NoteOn { key, vel } if vel.as_int() > 0 => {
+                        open.insert((ch, key.as_int()), (tick, vel.as_int()));
+                    }
+                    MidiMessage::NoteOn { key, .. } | MidiMessage::NoteOff { key, .. } => {
+                        if let Some((s, v)) = open.remove(&(ch, key.as_int())) {
+                            let pos = |t: i64| Rational::new(t, per_whole).unwrap();
+                            out.push((ch, pos(s), pos(tick), key.as_int(), v));
+                        }
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
+/// The same facts from a timeline, velocity included.
+fn timeline_notes(tl: &PerformanceTimeline) -> Vec<(u8, Rational, Rational, u8, u8)> {
+    let tpw = tl.ticks_per_whole().get() as i64;
+    let pos = |t: i64| Rational::new(t, tpw).unwrap();
+    let mut open: BTreeMap<(u8, u8), (i64, u8)> = BTreeMap::new();
+    let mut out = Vec::new();
+    for te in tl.events() {
+        match te.event {
+            PerformanceEvent::NoteOn {
+                channel,
+                key,
+                velocity,
+                ..
+            } => {
+                open.insert((channel.get(), key.get()), (te.tick.0, velocity.get()));
+            }
+            PerformanceEvent::NoteOff { channel, key } => {
+                if let Some((s, v)) = open.remove(&(channel.get(), key.get())) {
+                    out.push((channel.get(), pos(s), pos(te.tick.0), key.get(), v));
+                }
+            }
+            _ => {}
+        }
+    }
+    out.sort();
+    out
+}
+
+/// TQ-5: MIDI export carries the same velocities and lengths as playback for every
+/// technique of the techniques fixture.
+#[test]
+fn tq5_export_carries_the_playback_velocities_and_lengths() {
+    let score = mc_score::fixtures::techniques();
+    let tl = compile(&score, &CompileOptions::new()).unwrap().timeline;
+    let (bytes, report) = export_smf(&score, &tl).unwrap();
+    assert_eq!(report.rounded_ticks, 0);
+    let from_file = smf_notes(&bytes);
+    let from_playback = timeline_notes(&tl);
+    assert_eq!(from_file, from_playback);
+    // The fixture really exercises every technique velocity (ADR-035 section 4).
+    let velocities: std::collections::BTreeSet<u8> = from_file.iter().map(|n| n.4).collect();
+    for v in [96u8, 120, 80, 104, 94, 40, 70] {
+        assert!(velocities.contains(&v), "velocity {v} in {velocities:?}");
+    }
+}
+
+/// TQ-10: MIDI import sets no technique flag and no stroke.
+#[test]
+fn tq10_import_leaves_every_technique_off() {
+    let score = mc_score::fixtures::techniques();
+    let tl = compile(&score, &CompileOptions::new()).unwrap().timeline;
+    let (bytes, _) = export_smf(&score, &tl).unwrap();
+    let (imported, _) = import_smf(&bytes).unwrap();
+    assert!(imported.note_count() > 0);
+    for t in imported.tracks() {
+        for bar in t.bars() {
+            for b in bar.voices.iter().flat_map(|v| &v.beats) {
+                assert_eq!(b.stroke, None);
+                for n in &b.notes {
+                    assert_eq!(n.effects, NoteEffects::default(), "{:?}", n.effects);
+                }
+            }
         }
     }
 }

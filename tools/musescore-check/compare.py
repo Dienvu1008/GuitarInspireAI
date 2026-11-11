@@ -15,6 +15,15 @@ Standard library only. Two commands:
       String and fret of every note, per part and measure, as multisets. Also counts
       <tied type="let-ring"/> in each file.
 
+  compare.py techniques OURS.musicxml THEIRS.musicxml
+      ADR-035 TQ-8: for every note (matched by part, measure, string, fret and
+      occurrence) and every rest (by part, measure and occurrence), which of our
+      technique marks MuseScore kept: accent, down-bow, up-bow, x notehead, the
+      <other-technical> texts, <play><mute>palm</mute></play>, and a strum direction
+      (<other-direction smufl="guitarStrum...">) directly before a rest. Prints per technique "kept", "lost" or "partly kept",
+      plus the elements MuseScore wrote instead on those notes. A loss is reported,
+      not hidden; the exit status is 1 when anything was lost.
+
 Exit status 0 when there is no mismatch, 1 otherwise.
 """
 
@@ -182,6 +191,100 @@ def compare_strings(ours_path: str, theirs_path: str) -> int:
     return 0 if not diffs and parts_ours == parts_theirs else 1
 
 
+TECHNIQUES = ("accent", "down-bow", "up-bow", "notehead x",
+              "other-technical: palm mute", "other-technical: string percussive",
+              "play mute: palm", "rest strum: guitarStrumDown", "rest strum: guitarStrumUp")
+
+
+def techniques_of(path: str):
+    """{key: (set of our technique names, set of other element names)} per note/rest."""
+    root = ET.parse(path).getroot()
+    out = {}
+    parts = [e for e in root if _local(e.tag) == "part"]
+    for pi, part in enumerate(parts):
+        measures = [e for e in part if _local(e.tag) == "measure"]
+        for mi, m in enumerate(measures):
+            seen = Counter()
+            strum = None  # smufl glyph of a direction waiting for the next note
+            for note in m:
+                if _local(note.tag) == "direction":
+                    for e in note.iter():
+                        if _local(e.tag) == "other-direction" and (e.get("smufl") or "").startswith("guitarStrum"):
+                            strum = e.get("smufl")
+                    continue
+                if _local(note.tag) != "note":
+                    continue
+                before, strum = strum, None
+                tags = {}
+                for e in note.iter():
+                    tags.setdefault(_local(e.tag), []).append(e)
+                if "rest" in tags:
+                    if "type" not in tags:
+                        continue  # padding or measure rest
+                    base = (pi, mi, "rest")
+                else:
+                    s = int(tags["string"][0].text) if "string" in tags else None
+                    f = int(tags["fret"][0].text) if "fret" in tags else None
+                    base = (pi, mi, s, f)
+                key = base + (seen[base],)
+                seen[base] += 1
+                found = set()
+                for name in ("accent", "down-bow", "up-bow"):
+                    if name in tags:
+                        found.add(name)
+                if any((e.text or "").strip() == "x" for e in tags.get("notehead", [])):
+                    found.add("notehead x")
+                for e in tags.get("other-technical", []):
+                    found.add("other-technical: " + (e.text or "").strip())
+                for e in tags.get("mute", []):
+                    found.add("play mute: " + (e.text or "").strip())
+                if before and "rest" in tags:
+                    found.add("rest strum: " + before)
+                others = {t for t in tags if t not in (
+                    "note", "pitch", "step", "octave", "alter", "duration", "voice",
+                    "type", "chord", "notations", "technical", "string", "fret",
+                    "articulations", "rest", "staff", "stem", "dot", "beam",
+                    "accent", "down-bow", "up-bow", "notehead", "other-technical",
+                    "play", "mute")}
+                out[key] = (found, others)
+    return out
+
+
+def compare_techniques(ours_path: str, theirs_path: str) -> int:
+    ours, theirs = techniques_of(ours_path), techniques_of(theirs_path)
+    print(f"notes and rests: ours {len(ours)}, MuseScore {len(theirs)}")
+    missing = [k for k in ours if k not in theirs]
+    print(f"ours without a MuseScore note at the same place: {len(missing)}")
+    lost_any = bool(missing)
+    for name in TECHNIQUES:
+        have = [k for k, (f, _) in ours.items() if name in f]
+        kept = [k for k in have if k in theirs and name in theirs[k][0]]
+        added = [k for k, (f, _) in theirs.items() if name in f and (k not in ours or name not in ours[k][0])]
+        if not have:
+            verdict = "not in our file"
+        elif len(kept) == len(have):
+            verdict = "kept"
+        elif kept:
+            verdict = "partly kept"
+        else:
+            verdict = "lost"
+        lost_any |= bool(have) and len(kept) < len(have)
+        instead = Counter()
+        for k in have:
+            if k in theirs and name not in theirs[k][0]:
+                instead.update(theirs[k][1])
+        extra = f"; MuseScore wrote instead on those notes: {dict(instead)}" if instead else ""
+        print(f"  {name}: ours {len(have)}, kept {len(kept)}, MuseScore-only {len(added)} -> {verdict}{extra}")
+    # Rest strokes separately, since a stroke on a rest is a corner case.
+    strokes = {"down-bow", "up-bow", "rest strum: guitarStrumDown", "rest strum: guitarStrumUp"}
+    rests = [k for k, (f, _) in ours.items() if k[2] == "rest" and f & strokes]
+    rests_kept = [k for k in rests if k in theirs and ours[k][0] & strokes <= theirs[k][0]]
+    print(f"  stroke on a rest: ours {len(rests)}, kept {len(rests_kept)}")
+    print("RESULT:", "all kept" if not lost_any else "losses (evidence gap)")
+    return 0 if not lost_any else 1
+
+
 if __name__ == "__main__":
     cmd, a, b = sys.argv[1:4]
-    sys.exit({"midi": compare_midi, "strings": compare_strings}[cmd](a, b))
+    sys.exit({"midi": compare_midi, "strings": compare_strings,
+              "techniques": compare_techniques}[cmd](a, b))

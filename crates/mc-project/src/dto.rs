@@ -11,7 +11,7 @@ use std::collections::BTreeMap;
 
 pub type Extra = BTreeMap<String, serde_json::Value>;
 
-fn is_false(b: &bool) -> bool {
+pub(crate) fn is_false(b: &bool) -> bool {
     !*b
 }
 
@@ -116,8 +116,19 @@ pub struct BeatDto {
     pub value: ValueDto,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub notes: Vec<NoteDto>,
+    /// Stroke direction (format 1.1, ADR-035). Omitted when not marked.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stroke: Option<StrokeDto>,
     #[serde(flatten)]
     pub extra: Extra,
+}
+
+/// Stroke direction of a beat (format 1.1, ADR-035).
+#[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, Copy, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum StrokeDto {
+    Down,
+    Up,
 }
 
 #[derive(Serialize, Deserialize, JsonSchema, Debug, Clone, PartialEq)]
@@ -144,6 +155,13 @@ pub struct NoteDto {
     pub let_ring: bool,
     #[serde(default, skip_serializing_if = "is_false")]
     pub dead: bool,
+    /// Format 1.1 (ADR-035). Each is omitted when off.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub accent: bool,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub palm_mute: bool,
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub string_percussive: bool,
     #[serde(flatten)]
     pub extra: Extra,
 }
@@ -193,7 +211,7 @@ pub trait UnknownContent {
     fn unknown_paths(&self, path: &str, out: &mut Vec<String>);
 }
 
-fn extra_paths(extra: &Extra, path: &str, out: &mut Vec<String>) {
+pub(crate) fn extra_paths(extra: &Extra, path: &str, out: &mut Vec<String>) {
     out.extend(extra.keys().map(|k| format!("{path}.{k}")));
 }
 
@@ -215,7 +233,7 @@ leaf!(NoteDto);
 leaf!(AppDto);
 leaf!(EntryDto);
 
-fn list<T: UnknownContent>(items: &[T], path: &str, field: &str, out: &mut Vec<String>) {
+pub(crate) fn list<T: UnknownContent>(items: &[T], path: &str, field: &str, out: &mut Vec<String>) {
     for (i, item) in items.iter().enumerate() {
         item.unknown_paths(&format!("{path}.{field}[{i}]"), out);
     }

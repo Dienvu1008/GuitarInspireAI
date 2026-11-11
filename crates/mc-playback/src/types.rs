@@ -80,14 +80,26 @@ impl Channel {
     }
 }
 
-/// MIDI velocity 1..=127. Fixed values are used (ADR-024): [`Velocity::NORMAL`] for
-/// every note, [`Velocity::DEAD`] for dead notes.
+/// MIDI velocity 1..=127. Fixed values are used (ADR-024, extended by ADR-035): one per
+/// winning technique, plus [`Velocity::ACCENT_BOOST`] for an accent, capped at 127.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Velocity(u8);
 
 impl Velocity {
     pub const NORMAL: Velocity = Velocity(96);
     pub const DEAD: Velocity = Velocity(40);
+    /// Palm mute (ADR-035).
+    pub const PALM_MUTE: Velocity = Velocity(80);
+    /// String-percussive hit (ADR-035).
+    pub const STRING_PERCUSSIVE: Velocity = Velocity(70);
+    /// Added for an accent, on top of the winning technique (ADR-035).
+    pub const ACCENT_BOOST: u8 = 24;
+
+    /// This velocity with an accent: plus [`Velocity::ACCENT_BOOST`], capped at 127.
+    pub const fn accented(self) -> Velocity {
+        let v = self.0 as u16 + Self::ACCENT_BOOST as u16;
+        Velocity(if v > 127 { 127 } else { v as u8 })
+    }
 
     pub fn try_new(v: u8) -> Result<Self, OutOfRange> {
         if (1..=127).contains(&v) {

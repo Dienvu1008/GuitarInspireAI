@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:core_bridge/core_bridge.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -247,6 +249,253 @@ void documentServiceContract(
       );
     });
 
+    test('ADR-035: technique flags and the stroke are set, undone, redone and copied', () async {
+      final a = await insertBeat(0);
+      await d.execute(CommandDto.setNote(beat: a, string: 1, fret: 5));
+      final id = d.beats(track, 0, 0).single.notes.single.id;
+      final rev = d.summary().revision;
+      await d.execute(
+        CommandDto.setNoteEffects(
+          beat: a,
+          note: id,
+          letRing: false,
+          dead: false,
+          accent: true,
+          palmMute: true,
+          stringPercussive: true,
+        ),
+      );
+      expect(
+        d.summary().revision,
+        rev + 1,
+        reason: 'one command, one revision',
+      );
+      await d.execute(CommandDto.setBeatStroke(beat: a, stroke: StrokeDto.up));
+      expect(d.summary().revision, rev + 2);
+      (StrokeDto?, bool, bool, bool, bool, bool) facts(BeatDto b) {
+        final n = b.notes.single;
+        return (
+          b.stroke,
+          n.accent,
+          n.palmMute,
+          n.stringPercussive,
+          n.dead,
+          n.letRing,
+        );
+      }
+
+      const on = (StrokeDto.up, true, true, true, false, false);
+      expect(facts(d.beats(track, 0, 0).single), on);
+      final clip = d.copyBeats(
+        track,
+        0,
+        fromBar: 0,
+        fromIndex: 0,
+        toBar: 0,
+        toIndex: 0,
+      );
+      expect(clip.single.stroke, StrokeDto.up);
+      final cn = clip.single.notes.single;
+      expect((cn.accent, cn.palmMute, cn.stringPercussive), (true, true, true));
+      await d.execute(
+        CommandDto.pasteBeats(
+          track: track,
+          bar: 1,
+          voice: 0,
+          index: 0,
+          beats: clip,
+        ),
+      );
+      expect(
+        facts(d.beats(track, 1, 0).single),
+        on,
+        reason: 'paste keeps them',
+      );
+      await d.undo(); // paste
+      await d.undo(); // stroke
+      expect(d.beats(track, 0, 0).single.stroke, isNull);
+      await d.undo(); // flags
+      expect(facts(d.beats(track, 0, 0).single), (
+        null,
+        false,
+        false,
+        false,
+        false,
+        false,
+      ));
+      await d.redo();
+      await d.redo();
+      expect(facts(d.beats(track, 0, 0).single), on);
+      await d.execute(CommandDto.setBeatStroke(beat: a));
+      expect(d.beats(track, 0, 0).single.stroke, isNull, reason: 'cleared');
+    });
+
+    test(
+      'ADR-034: apply the sample pattern behind the overwrite safeguard',
+      () async {
+        final p = d.samplePattern();
+        expect(d.patterns().map((x) => x.id), contains(p));
+        final c = Int32List.fromList([0, 1, 0, 2, 3, -1]); // C x32010
+        ApplyPatternDto args({int pattern = -1, bool overwrite = false}) =>
+            ApplyPatternDto(
+              track: track,
+              first: 0,
+              last: 1,
+              pattern: pattern == -1 ? p : pattern,
+              frets: c,
+              chord: 'C',
+              overwrite: overwrite,
+            );
+        final preview = d.previewPattern(args());
+        expect(preview.needsFit, isFalse);
+        expect(preview.report!.overwritten, isEmpty);
+        final rev = d.summary().revision;
+        final out = await d.execute(CommandDto.applyPattern(args: args()));
+        expect(d.summary().revision, rev + 1, reason: 'one revision');
+        expect((out.pattern!.first, out.pattern!.last), (0, 1));
+        expect(d.beats(track, 0, 0), isNotEmpty);
+        expect(d.beats(track, 1, 0), isNotEmpty);
+        // Content now exists: refused without confirmation, nothing changes.
+        final rev2 = d.summary().revision;
+        expect(d.previewPattern(args()).report!.overwritten, [0, 1]);
+        await expectLater(
+          d.execute(CommandDto.applyPattern(args: args())),
+          throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'PE-07')),
+        );
+        expect(d.summary().revision, rev2);
+        await d.execute(CommandDto.applyPattern(args: args(overwrite: true)));
+        expect(d.summary().revision, rev2 + 1);
+        await d.undo();
+        await d.undo();
+        expect(d.beats(track, 0, 0), isEmpty, reason: 'undo restores');
+        expect(
+          () => d.previewPattern(args(pattern: 9999)),
+          throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'PT-06')),
+        );
+      },
+    );
+
+    test(
+      'ADR-034 (6a-5): the pattern grid is edited by commands and undone',
+      () async {
+        bool libraryChanged(OutcomeDto o) =>
+            o.events.any((e) => e.kind is EventKindDto_PatternLibraryChanged);
+        const bass = GridSelectorDto(
+          kind: SelectorKindDto.bass,
+          count: 0,
+          string: 0,
+          from: 0,
+          to: 0,
+        );
+        const strike = GridActionDto.strike(
+          strike: GridStrikeDto(
+            targets: [bass],
+            techniques: TechniquesDto(
+              accent: false,
+              palmMute: false,
+              dead: false,
+              letRing: false,
+              stringPercussive: false,
+            ),
+          ),
+        );
+        GridEditDto place(int beat, int parts) => GridEditDto.place(
+          lane: PatternLaneDto.strum,
+          at: GridCellDto(beat: beat, parts: parts, cell: 0),
+          cells: 1,
+          action: strike,
+        );
+        final rev = d.summary().revision;
+        final created = await d.execute(
+          const CommandDto.newPattern(
+            name: 'Grid',
+            twoLanes: false,
+            lengthNumerator: 1,
+            lengthDenominator: 1,
+            meter: MeterDto(numerator: 4, denominator: 4),
+          ),
+        );
+        final p = created.createdPattern!;
+        expect(libraryChanged(created), isTrue);
+        expect(d.summary().revision, rev + 1);
+        expect(d.patterns().map((x) => x.name), contains('Grid'));
+
+        await d.execute(CommandDto.editPattern(pattern: p, edit: place(0, 2)));
+        await d.execute(CommandDto.editPattern(pattern: p, edit: place(1, 3)));
+        var v = d.patternGrid(p, const []);
+        expect(v.snaps, [2, 2, 2, 2], reason: 'two cells per beat by default');
+        expect(v.beatDenominator, 4);
+        expect(v.lanes, [PatternLaneDto.strum]);
+        expect(v.steps, hasLength(2));
+        // A cell is relative to the snap of the view.
+        expect(v.steps[1].cell, const GridCellDto(beat: 1, parts: 2, cell: 0));
+        expect(
+          d.patternGrid(p, const [2, 3]).steps[1].cell,
+          const GridCellDto(beat: 1, parts: 3, cell: 0),
+        );
+        expect(v.rows[v.steps[0].rows.single].label, 'Bass');
+        expect(v.steps[0].kind, GridStepKindDto.strike);
+
+        // Refusals carry the core's rule and change nothing.
+        final before = d.summary().revision;
+        await expectLater(
+          d.execute(CommandDto.editPattern(pattern: p, edit: place(2, 5))),
+          throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'PE-14')),
+        );
+        await expectLater(
+          d.execute(CommandDto.editPattern(pattern: p, edit: place(0, 2))),
+          throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'PT')),
+        );
+        expect(
+          () => d.patternGrid(9999, const []),
+          throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'PT')),
+        );
+        expect(d.summary().revision, before);
+
+        // A run technique, then a gesture from the first strike.
+        await d.execute(
+          CommandDto.editPattern(
+            pattern: p,
+            edit: const GridEditDto.addSpan(
+              lane: PatternLaneDto.strum,
+              first: 0,
+              last: 1,
+              technique: TechniqueKindDto.palmMute,
+            ),
+          ),
+        );
+        v = d.patternGrid(p, const [2, 3]);
+        expect(v.steps.every((s) => s.spanTechniques.palmMute), isTrue);
+        final made = await d.execute(
+          CommandDto.gestureFromStep(
+            pattern: p,
+            lane: PatternLaneDto.strum,
+            index: 0,
+            name: 'Kịch',
+          ),
+        );
+        final g = made.createdGesture!;
+        expect(d.gestures().map((x) => (x.id, x.name)), [(g, 'Kịch')]);
+        v = d.patternGrid(p, const [2, 3]);
+        expect(v.steps[0].kind, GridStepKindDto.gesture);
+        expect(v.steps[0].gesture, g);
+        expect(v.rows[v.steps[0].rows.single].label, 'Kịch');
+        await expectLater(
+          d.execute(CommandDto.removeGesture(gesture: g)),
+          throwsA(isA<ApiError>().having((e) => e.rule, 'rule', 'PT')),
+        );
+
+        // Undo restores the strike and announces the library change.
+        final undone = await d.undo();
+        expect(libraryChanged(undone), isTrue);
+        expect(d.gestures(), isEmpty);
+        expect(
+          d.patternGrid(p, const []).steps[0].kind,
+          GridStepKindDto.strike,
+        );
+      },
+    );
+
     test('ADR-030: an invalid paste is rejected and changes nothing', () async {
       await insertBeat(0);
       final before = d.summary().revision;
@@ -259,6 +508,9 @@ void documentServiceContract(
             tie: false,
             letRing: false,
             dead: false,
+            accent: false,
+            palmMute: false,
+            stringPercussive: false,
           ),
         ],
       );

@@ -1,0 +1,23 @@
+[package]
+name = "mc-pattern"
+version = "0.1.0"
+description = "Pattern engine domain (ADR-034): the Pattern IR, its semantic validation and the pattern library of patterns and user gestures."
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[features]
+# A deterministic reference library for format fixtures and tests (6a-5).
+fixtures = []
+
+[dependencies]
+mc-theory.workspace = true
+mc-score.workspace = true
+# Voicings for binding (6a-3, ADR-034 section 5).
+mc-guitar.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true

@@ -20,7 +20,7 @@ Reconsideration trigger: projects with recorded audio over about 100 MB [Assumpt
 song.giproj                (ZIP)
   manifest.json            required, first entry
   score.json               required
-  patterns/                Phase 6a, one JSON per pattern
+  patterns/library.json    format 1.2: the pattern library (section 2b)
   assets/                  audio and images, STORED (no compression)
   analysis/                reserved: accepted analysis results with provenance
   history/                 reserved: named revisions (not undo)
@@ -36,6 +36,21 @@ The product-level extension is `.giproj` (GuitarInspire Project). It is a naming
 - The extension is not part of the Music Core: `mc-project` reads bytes, `mc-app` accepts any path. It is defined in adapters only (`mc-cli` now, the Flutter app in Phase 3). Adapters may append it to a new file name; they never refuse a file because of its name.
 - A registered media type is not needed before public distribution and stays open.
 
+## 2b. Format versions and the pattern library
+
+| Version | Change | Decision |
+|---|---|---|
+| 1.0 | First release (score, manifest) | ADR-008 |
+| 1.1 | Optional note techniques (accent, palm mute, string-percussive) and beat stroke direction | ADR-035 |
+| 1.2 | The pattern library, entry `patterns/library.json` | ADR-034 sections 8 and 22 |
+
+The library entry (format 1.2):
+
+- One JSON entry for the whole library: the id counter `next_id`, the gestures and the patterns, in ascending id order. One entry, not one per pattern as first sketched here, because patterns refer to gestures by id and the library is validated as a whole.
+- It follows section 4: struct order, no floats (rationals as `[num, den]`, values as in `score.json`), defaults omitted, `extra` at every level for U1. Enums with data are structs with a `kind` field and the fields of that kind; any other field is a P-05 error with its path.
+- On load, the shape is checked first (P-05, every problem with a path under `library`), then the library is rebuilt through `PatternLibrary::from_parts`, which checks every library rule (PT-01, PT-03 to PT-08). Errors: `LoadError::Invalid` for the shape, `LoadError::InvalidLibrary` for the rules.
+- The entry is written only when the document has a library to store. `mc-app` writes none while the library is still the built-in sample library, so a document that never used patterns opens in a 1.1 build without unknown content.
+- A 1.1 reader sees the entry as unknown content (`package:patterns/library.json`, U1) and refuses to save over the file (U2).
 ## 3. Manifest (example)
 
 ```json

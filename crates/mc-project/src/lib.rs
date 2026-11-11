@@ -7,17 +7,20 @@
 mod convert;
 pub mod dto;
 mod error;
+pub mod library;
 mod package;
 mod project_id;
 
 pub use convert::{from_dto, to_dto};
 pub use error::LoadError;
 pub use package::{
-    Limits, MANIFEST, RESERVED_PREFIXES, SCORE, check_name, read_entries, write_entries,
+    LIBRARY, Limits, MANIFEST, RESERVED_PREFIXES, SCORE, check_name, read_entries, write_entries,
 };
 pub use project_id::ProjectId;
 
 use dto::{AppDto, EntryDto, Extra, ManifestDto, ScoreDto, UnknownContent, VersionDto};
+use library::{LibraryDto, LibraryLoadError, library_from_dto, library_to_dto};
+use mc_pattern::PatternLibrary;
 use mc_score::Score;
 use sha2::{Digest, Sha256};
 
@@ -25,7 +28,10 @@ use sha2::{Digest, Sha256};
 pub const FORMAT: &str = "guitarinspire.project";
 /// Version written by this build. Bump minor for additive changes, major for
 /// incompatible ones (project-format section 5; FF-32 enforces it).
-pub const FORMAT_VERSION: FormatVersion = FormatVersion { major: 1, minor: 0 };
+/// 1.1 (ADR-035): optional note techniques (accent, palm mute, string-percussive) and
+/// beat stroke direction.
+/// 1.2 (ADR-034 section 8): the pattern library, patterns/library.json.
+pub const FORMAT_VERSION: FormatVersion = FormatVersion { major: 1, minor: 2 };
 /// Required features this build understands. Unknown ones refuse the file (P-03).
 pub const KNOWN_REQUIRED_FEATURES: &[&str] = &[];
 /// Optional features this build understands. Unknown ones are unknown content (U1).
@@ -71,6 +77,8 @@ pub struct LoadedProject {
     pub created_by: AppInfo,
     pub saved_by: AppInfo,
     pub saved_revision: u64,
+    /// The stored pattern library (format 1.2), validated. None when the file has none.
+    pub library: Option<PatternLibrary>,
     pub warnings: Vec<LoadWarning>,
 }
 
@@ -89,11 +97,12 @@ impl LoadedProject {
 
 /// JSON schemas of the persistence DTOs of the current format version, as
 /// (name, pretty JSON). Snapshots of released versions are compared by FF-32.
-pub fn schemas() -> [(&'static str, String); 2] {
+pub fn schemas() -> [(&'static str, String); 3] {
     let pretty = |s: &schemars::Schema| serde_json::to_string_pretty(s).expect("schemas serialize");
     [
         ("score", pretty(&schemars::schema_for!(ScoreDto))),
         ("manifest", pretty(&schemars::schema_for!(ManifestDto))),
+        ("library", pretty(&schemars::schema_for!(LibraryDto))),
     ]
 }
 
@@ -110,9 +119,36 @@ pub fn score_json(score: &Score) -> Vec<u8> {
     serde_json::to_vec(&to_dto(score)).expect("DTOs serialize infallibly")
 }
 
-/// Serializes a score into a package. Never fails for a valid `Score`.
+/// Deterministic compact JSON of a pattern library (format 1.2, ADR-034 section 8).
+pub fn library_json(library: &PatternLibrary) -> Vec<u8> {
+    serde_json::to_vec(&library_to_dto(library)).expect("DTOs serialize infallibly")
+}
+
+/// Serializes a score into a package, without a pattern library. Never fails for a
+/// valid `Score`.
 pub fn save(score: &Score, info: &SaveInfo) -> Vec<u8> {
+    save_with_library(score, None, info)
+}
+
+/// Serializes a score and, if given, its pattern library (entry `patterns/library.json`)
+/// into a package. Never fails for a valid `Score` and library.
+pub fn save_with_library(
+    score: &Score,
+    library: Option<&PatternLibrary>,
+    info: &SaveInfo,
+) -> Vec<u8> {
     let score_bytes = score_json(score);
+    let library_bytes = library.map(library_json);
+    let entry = |path: &str, bytes: &[u8]| EntryDto {
+        path: path.to_string(),
+        sha256: sha256_hex(bytes),
+        size: bytes.len() as u64,
+        extra: Extra::new(),
+    };
+    let mut entries = vec![entry(SCORE, &score_bytes)];
+    if let Some(b) = &library_bytes {
+        entries.push(entry(LIBRARY, b));
+    }
     let app = |a: &AppInfo| AppDto {
         app: a.app.clone(),
         version: a.version.clone(),
@@ -130,16 +166,15 @@ pub fn save(score: &Score, info: &SaveInfo) -> Vec<u8> {
         created_by: app(&info.created_by),
         saved_by: app(&info.saved_by),
         saved_revision: info.saved_revision,
-        entries: vec![EntryDto {
-            path: SCORE.to_string(),
-            sha256: sha256_hex(&score_bytes),
-            size: score_bytes.len() as u64,
-            extra: Extra::new(),
-        }],
+        entries,
         extra: Extra::new(),
     };
     let manifest_bytes = serde_json::to_vec_pretty(&manifest).expect("DTOs serialize infallibly");
-    write_entries(&[(MANIFEST, &manifest_bytes), (SCORE, &score_bytes)])
+    let mut files: Vec<(&str, &[u8])> = vec![(MANIFEST, &manifest_bytes), (SCORE, &score_bytes)];
+    if let Some(b) = &library_bytes {
+        files.push((LIBRARY, b));
+    }
+    write_entries(&files)
 }
 
 /// Loads a package with default limits.
@@ -190,7 +225,7 @@ pub fn load_with_limits(bytes: &[u8], limits: &Limits) -> Result<LoadedProject, 
         if !manifest.entries.iter().any(|e| &e.path == name) {
             return Err(LoadError::UnlistedEntry(name.clone()));
         }
-        if name != SCORE {
+        if name != SCORE && name != LIBRARY {
             unknown.push(format!("package:{name}"));
         }
     }
@@ -211,7 +246,28 @@ pub fn load_with_limits(bytes: &[u8], limits: &Limits) -> Result<LoadedProject, 
     );
     dto.unknown_paths("$", &mut unknown);
 
+    // The library entry, if any (format 1.2). Its JSON paths start with `library`.
+    let library_dto: Option<LibraryDto> = get(LIBRARY)
+        .map(|bytes| {
+            serde_json::from_slice(bytes).map_err(|e| LoadError::Json {
+                entry: LIBRARY.into(),
+                message: e.to_string(),
+            })
+        })
+        .transpose()?;
+    if let Some(l) = &library_dto {
+        l.unknown_paths("library", &mut unknown);
+    }
+
     let score = from_dto(&dto).map_err(LoadError::Invalid)?;
+    let library = library_dto
+        .map(|l| {
+            library_from_dto(&l, "library").map_err(|e| match e {
+                LibraryLoadError::Shape(v) => LoadError::Invalid(v),
+                LibraryLoadError::Invalid(v) => LoadError::InvalidLibrary(v),
+            })
+        })
+        .transpose()?;
 
     let mut warnings = Vec::new();
     if found > FORMAT_VERSION {
@@ -231,6 +287,7 @@ pub fn load_with_limits(bytes: &[u8], limits: &Limits) -> Result<LoadedProject, 
         created_by: app(&manifest.created_by),
         saved_by: app(&manifest.saved_by),
         saved_revision: manifest.saved_revision,
+        library,
         warnings,
     })
 }

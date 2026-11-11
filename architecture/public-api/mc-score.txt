@@ -125,6 +125,27 @@ impl core::marker::Unpin for mc_score::NoteKind
 impl core::marker::UnsafeUnpin for mc_score::NoteKind
 impl core::panic::unwind_safe::RefUnwindSafe for mc_score::NoteKind
 impl core::panic::unwind_safe::UnwindSafe for mc_score::NoteKind
+pub enum mc_score::Stroke
+pub mc_score::Stroke::Down
+pub mc_score::Stroke::Up
+impl core::clone::Clone for mc_score::Stroke
+pub fn mc_score::Stroke::clone(&self) -> Self
+impl core::cmp::Eq for mc_score::Stroke
+impl core::cmp::PartialEq for mc_score::Stroke
+pub fn mc_score::Stroke::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_score::Stroke
+pub fn mc_score::Stroke::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_score::Stroke
+pub fn mc_score::Stroke::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_score::Stroke
+impl core::marker::StructuralPartialEq for mc_score::Stroke
+impl core::marker::Freeze for mc_score::Stroke
+impl core::marker::Send for mc_score::Stroke
+impl core::marker::Sync for mc_score::Stroke
+impl core::marker::Unpin for mc_score::Stroke
+impl core::marker::UnsafeUnpin for mc_score::Stroke
+impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Stroke
+impl core::panic::unwind_safe::UnwindSafe for mc_score::Stroke
 pub struct mc_score::BarContent
 pub mc_score::BarContent::voices: alloc::vec::Vec<mc_score::Voice>
 impl mc_score::BarContent
@@ -147,6 +168,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_score::BarContent
 pub struct mc_score::Beat
 pub mc_score::Beat::id: mc_score::BeatId
 pub mc_score::Beat::notes: alloc::vec::Vec<mc_score::Note>
+pub mc_score::Beat::stroke: core::option::Option<mc_score::Stroke>
 pub mc_score::Beat::value: mc_theory::duration::NoteValue
 impl core::clone::Clone for mc_score::Beat
 pub fn mc_score::Beat::clone(&self) -> Self
@@ -252,6 +274,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Diagnostic
 impl core::panic::unwind_safe::UnwindSafe for mc_score::Diagnostic
 pub struct mc_score::FragmentBeat
 pub mc_score::FragmentBeat::notes: alloc::vec::Vec<mc_score::FragmentNote>
+pub mc_score::FragmentBeat::stroke: core::option::Option<mc_score::Stroke>
 pub mc_score::FragmentBeat::value: mc_theory::duration::NoteValue
 impl core::clone::Clone for mc_score::FragmentBeat
 pub fn mc_score::FragmentBeat::clone(&self) -> Self
@@ -359,8 +382,11 @@ impl core::marker::UnsafeUnpin for mc_score::Note
 impl core::panic::unwind_safe::RefUnwindSafe for mc_score::Note
 impl core::panic::unwind_safe::UnwindSafe for mc_score::Note
 pub struct mc_score::NoteEffects
+pub mc_score::NoteEffects::accent: bool
 pub mc_score::NoteEffects::dead: bool
 pub mc_score::NoteEffects::let_ring: bool
+pub mc_score::NoteEffects::palm_mute: bool
+pub mc_score::NoteEffects::string_percussive: bool
 impl core::clone::Clone for mc_score::NoteEffects
 pub fn mc_score::NoteEffects::clone(&self) -> Self
 impl core::cmp::Eq for mc_score::NoteEffects
@@ -440,7 +466,9 @@ pub fn mc_score::Score::remove_tempo(&mut self, usize, mc_theory::rational::Rati
 pub fn mc_score::Score::remove_track(&mut self, mc_score::TrackId) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::remove_voice(&mut self, mc_score::TrackId, usize, usize) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::rename_track(&mut self, mc_score::TrackId, &str) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::replace_voices(&mut self, mc_score::TrackId, usize, &[alloc::vec::Vec<(usize, alloc::vec::Vec<mc_score::FragmentBeat>)>]) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::retune_track(&mut self, mc_score::TrackId, mc_score::InstrumentSpec, core::option::Option<&[i16]>) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
+pub fn mc_score::Score::set_beat_stroke(&mut self, mc_score::BeatRef, core::option::Option<mc_score::Stroke>) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::set_beat_value(&mut self, mc_score::BeatRef, mc_theory::duration::NoteValue) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::set_instrument(&mut self, mc_score::TrackId, mc_score::InstrumentSpec) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>
 pub fn mc_score::Score::set_master_bar(&mut self, usize, mc_score::MasterBar) -> core::result::Result<alloc::vec::Vec<mc_score::DomainEvent>, mc_score::DomainError>

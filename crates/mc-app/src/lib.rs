@@ -10,7 +10,9 @@ mod events;
 pub mod guitar;
 mod handlers;
 mod history;
+pub mod library;
 pub mod notation;
+pub mod pattern;
 pub mod ports;
 pub mod recovery;
 mod session;
@@ -20,8 +22,9 @@ pub mod transport;
 pub mod infra;
 
 pub use command::{
-    BeatAddress, ClipBeat, ClipNote, Command, CommandEnvelope, CommandId, DurationSpec,
-    GuitarCommand, InstrumentSpecInput, Revision, ScoreCommand, TrackCommand,
+    ApplyPattern, BeatAddress, ClipBeat, ClipNote, Command, CommandEnvelope, CommandId,
+    DurationSpec, GuitarCommand, InstrumentSpecInput, LaneLayout, PatternCommand, Revision,
+    ScoreCommand, TrackCommand,
 };
 pub use constraints::Constraints;
 pub use error::{CommandError, OpenError, SaveError};
@@ -54,8 +57,8 @@ pub mod types {
     pub use mc_project::{AppInfo, FORMAT_VERSION, FormatVersion, LoadError};
     pub use mc_score::{
         BarContent, Beat, BeatId, Diagnostic, DiagnosticKind, DomainError, DomainEvent,
-        InstrumentSpec, MasterBar, Note, NoteEffects, NoteId, Score, Track, TrackId, Violation,
-        Voice,
+        InstrumentSpec, MasterBar, Note, NoteEffects, NoteId, Score, Stroke, Track, TrackId,
+        Violation, Voice,
     };
     pub use mc_theory::{KeySignature, Mode, Rational, TimeSignature};
 }
@@ -77,5 +80,9 @@ pub fn new_score(track_name: &str, bars: usize) -> Result<mc_score::Score, mc_sc
 
 #[cfg(feature = "fixtures")]
 pub mod fixtures {
-    pub use mc_score::fixtures::{LARGE, SMALL, Shape, TYPICAL, feature_rich, reference};
+    /// The reference pattern library of the format 1.2 fixtures (ADR-034 section 8).
+    pub use mc_pattern::fixtures::library as pattern_library;
+    pub use mc_score::fixtures::{
+        LARGE, SMALL, Shape, TYPICAL, feature_rich, reference, techniques,
+    };
 }

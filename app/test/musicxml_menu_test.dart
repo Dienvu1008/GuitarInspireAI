@@ -116,6 +116,7 @@ void main() {
       tupletsWithoutBracket: 3,
       tempoRounded: 1,
       charactersRemoved: 2,
+      techniquesApproximated: 4,
     );
     final s = musicXmlSummary(r);
     expect(s, startsWith('Exported 2 track(s), 5 bar(s), 10 note(s)'));
@@ -125,6 +126,7 @@ void main() {
       '3 tuplet note(s) without a bracket',
       '1 tempo(s) rounded',
       '2 character(s) removed',
+      '4 technique(s) written as text',
     ]) {
       expect(s, contains(part));
     }

@@ -196,17 +196,21 @@ final class DocumentController extends Notifier<EditorState> {
   }
 
   /// Runs an action and turns a rejection into a status message instead of a crash.
-  Future<bool> _guard(Future<void> Function() action) async {
+  Future<bool> _guard(Future<void> Function() action) async =>
+      await _attempt(action) == null;
+
+  /// Like [_guard], but gives back the rejection (null when the action succeeded).
+  Future<ApiError?> _attempt(Future<void> Function() action) async {
     try {
       await action();
       // Every change arrives as events; apply a refresh they queued now, so callers
       // see the new state when this returns, without a second summary query.
       _flushRefresh();
       state = state.copyWith(clearMessage: true);
-      return true;
+      return null;
     } on ApiError catch (e) {
       state = state.copyWith(message: '${e.rule}: ${e.message}');
-      return false;
+      return e;
     }
   }
 
@@ -252,6 +256,33 @@ final class DocumentController extends Notifier<EditorState> {
 
   Future<bool> execute(CommandDto command, {int? coalesceKey}) =>
       _guard(() => state.service.execute(command, coalesceKey: coalesceKey));
+
+  /// Sends [command] only if the document is still at [expectedRevision] (E-01 is
+  /// enforced by the core). Returns null on success, otherwise the rejection, with
+  /// rule `E-01` when the document changed since. Used by commands that follow a
+  /// preview and a confirmation, so a confirmation never applies to changed content.
+  Future<ApiError?> executeAt(
+    CommandDto command, {
+    required int expectedRevision,
+  }) => _attempt(
+    () => state.service.execute(command, expectedRevision: expectedRevision),
+  );
+
+  /// Like [executeAt], but also gives back the outcome on success, for commands that
+  /// create something (a pattern or a gesture id, ADR-034 6a-5).
+  Future<(OutcomeDto?, ApiError?)> executeForOutcome(
+    CommandDto command, {
+    required int expectedRevision,
+  }) async {
+    OutcomeDto? out;
+    final rejection = await _attempt(() async {
+      out = await state.service.execute(
+        command,
+        expectedRevision: expectedRevision,
+      );
+    });
+    return (out, rejection);
+  }
 
   /// Makes [track] the edited track. A hidden track becomes shown, since the active
   /// track always is (ADR-031 5.3).

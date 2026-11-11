@@ -66,10 +66,27 @@ impl FrettedInstrument {
     }
 }
 
+/// Playing techniques of one note (ADR-035). Every flag is stored and kept, also when
+/// another one wins for the sound: playback uses the precedence string-percussive >
+/// dead > palm mute > let ring > normal, and accent applies on top.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub struct NoteEffects {
     pub let_ring: bool,
     pub dead: bool,
+    /// Accented attack (ADR-035).
+    pub accent: bool,
+    /// Palm mute (ADR-035).
+    pub palm_mute: bool,
+    /// A percussive attack on the string. The note keeps its fretted position and its
+    /// sounding pitch; this is not a body slap or golpe (ADR-035).
+    pub string_percussive: bool,
+}
+
+/// Direction of a pick or strum stroke over a whole beat (ADR-035).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum Stroke {
+    Down,
+    Up,
 }
 
 /// What a note plays. Only fretted notes exist until non-fretted tracks are introduced.
@@ -102,6 +119,8 @@ pub struct Beat {
     pub id: BeatId,
     pub value: NoteValue,
     pub notes: Vec<Note>,
+    /// Stroke direction of the beat, if marked (ADR-035). Changes no timing.
+    pub stroke: Option<Stroke>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default)]

@@ -957,6 +957,7 @@ dependencies = [
  "criterion",
  "mc-guitar",
  "mc-notation",
+ "mc-pattern",
  "mc-playback",
  "mc-project",
  "mc-score",
@@ -1047,6 +1048,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "mc-pattern"
+version = "0.1.0"
+dependencies = [
+ "mc-guitar",
+ "mc-score",
+ "mc-theory",
+ "proptest",
+]
+
+[[package]]
 name = "mc-playback"
 version = "0.1.0"
 dependencies = [
@@ -1060,6 +1071,7 @@ name = "mc-project"
 version = "0.1.0"
 dependencies = [
  "criterion",
+ "mc-pattern",
  "mc-score",
  "mc-theory",
  "proptest",

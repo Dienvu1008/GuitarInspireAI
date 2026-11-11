@@ -1,0 +1,6 @@
+// Corpus 9: string-percussive boom-chuck (C, 4/4). The chuck is an accented
+// string-percussive hit on the sounded strings; the up-stroke on 3& is Treble(4)
+// (amendment B).
+"name": "String-percussive boom-chuck"
+"length": 1
+strum: D Strum:4 D >sp(Strum):4 D Strum:8 U Treble(4):8 D >sp(Strum):4

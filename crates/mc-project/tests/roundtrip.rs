@@ -11,7 +11,7 @@ use mc_project::{
     load_with_limits, save, schemas, score_json, sha256_hex, write_entries,
 };
 use mc_score::Score;
-use mc_score::fixtures::{SMALL, feature_rich, reference};
+use mc_score::fixtures::{SMALL, feature_rich, reference, techniques};
 
 /// (format version, fixture name, package bytes, golden score.json bytes) for every
 /// released version. Append when a new version is released; never edit entries.
@@ -28,7 +28,57 @@ const FIXTURES: &[(&str, &str, &[u8], &[u8])] = &[
         include_bytes!("fixtures/v1.0/feature-rich.package"),
         include_bytes!("fixtures/v1.0/feature-rich.score.json"),
     ),
+    (
+        "1.1",
+        "small",
+        include_bytes!("fixtures/v1.1/small.package"),
+        include_bytes!("fixtures/v1.1/small.score.json"),
+    ),
+    (
+        "1.1",
+        "feature-rich",
+        include_bytes!("fixtures/v1.1/feature-rich.package"),
+        include_bytes!("fixtures/v1.1/feature-rich.score.json"),
+    ),
+    (
+        "1.1",
+        "techniques",
+        include_bytes!("fixtures/v1.1/techniques.package"),
+        include_bytes!("fixtures/v1.1/techniques.score.json"),
+    ),
+    (
+        "1.2",
+        "small",
+        include_bytes!("fixtures/v1.2/small.package"),
+        include_bytes!("fixtures/v1.2/small.score.json"),
+    ),
+    (
+        "1.2",
+        "feature-rich",
+        include_bytes!("fixtures/v1.2/feature-rich.package"),
+        include_bytes!("fixtures/v1.2/feature-rich.score.json"),
+    ),
+    (
+        "1.2",
+        "techniques",
+        include_bytes!("fixtures/v1.2/techniques.package"),
+        include_bytes!("fixtures/v1.2/techniques.score.json"),
+    ),
+    (
+        "1.2",
+        "patterns",
+        include_bytes!("fixtures/v1.2/patterns.package"),
+        include_bytes!("fixtures/v1.2/patterns.score.json"),
+    ),
 ];
+
+/// (format version, fixture name, golden library.json bytes) for every released
+/// version with a pattern library (from 1.2). Append only.
+const LIBRARIES: &[(&str, &str, &[u8])] = &[(
+    "1.2",
+    "patterns",
+    include_bytes!("fixtures/v1.2/patterns.library.json"),
+)];
 
 /// (format version, schema name, snapshot) for every released version.
 const SCHEMAS: &[(&str, &str, &str)] = &[
@@ -41,6 +91,31 @@ const SCHEMAS: &[(&str, &str, &str)] = &[
         "1.0",
         "manifest",
         include_str!("../schema/manifest-1.0.schema.json"),
+    ),
+    (
+        "1.1",
+        "score",
+        include_str!("../schema/score-1.1.schema.json"),
+    ),
+    (
+        "1.1",
+        "manifest",
+        include_str!("../schema/manifest-1.1.schema.json"),
+    ),
+    (
+        "1.2",
+        "score",
+        include_str!("../schema/score-1.2.schema.json"),
+    ),
+    (
+        "1.2",
+        "manifest",
+        include_str!("../schema/manifest-1.2.schema.json"),
+    ),
+    (
+        "1.2",
+        "library",
+        include_str!("../schema/library-1.2.schema.json"),
     ),
 ];
 
@@ -68,6 +143,9 @@ fn builders() -> Vec<(&'static str, Score)> {
     vec![
         ("small", reference(SMALL)),
         ("feature-rich", feature_rich()),
+        ("techniques", techniques()),
+        // The score of the 1.2 library fixture; its library is checked by the pe13 tests.
+        ("patterns", techniques()),
     ]
 }
 
@@ -244,10 +322,11 @@ fn rt4a_newer_minor_version_loads_with_a_warning() {
     );
 }
 
-// 5. Migration chain: format 1.0 is the first released version, so there is nothing to
-//    migrate yet. The existing policy part is checked: major 0 is refused.
+// 5. Migration chain. 1.1 (ADR-035) only adds optional fields, so the 1.0 to 1.1
+//    migration is the identity: a 1.0 file loads to the same score as the 1.1 file of
+//    the same name, with every technique flag off. Major 0 is refused.
 #[test]
-fn rt5_no_older_versions_exist_and_major_zero_is_refused() {
+fn rt5_no_older_major_versions_exist_and_major_zero_is_refused() {
     let pkg = repackage(&dto_value(), |m| m["format_version"]["major"] = 0.into());
     assert!(matches!(
         load(&pkg),
@@ -257,9 +336,60 @@ fn rt5_no_older_versions_exist_and_major_zero_is_refused() {
     versions.dedup();
     assert_eq!(
         versions,
-        ["1.0"],
-        "when a second version exists, add migration fixtures and tests here"
+        ["1.0", "1.1", "1.2"],
+        "when another version exists, add migration fixtures and tests here"
     );
+}
+
+#[test]
+fn rt5_tq3_v1_0_fixtures_load_unchanged_in_1_1_with_every_technique_off() {
+    for (_, name, package, golden) in FIXTURES.iter().filter(|f| f.0 == "1.0") {
+        let old = load(package).unwrap().score;
+        let (_, _, new_package, new_golden) = FIXTURES
+            .iter()
+            .find(|f| f.0 == "1.1" && f.1 == *name)
+            .expect("same fixture in 1.1");
+        assert_eq!(old, load(new_package).unwrap().score, "{name}");
+        // Additive minor version: the score entry did not change by one byte.
+        assert_eq!(
+            golden, new_golden,
+            "{name}: score.json identical in 1.0 and 1.1"
+        );
+        for t in old.tracks() {
+            for bar in t.bars() {
+                for b in bar.voices.iter().flat_map(|v| &v.beats) {
+                    assert_eq!(b.stroke, None, "{name}");
+                    for n in &b.notes {
+                        let e = n.effects;
+                        assert!(!e.accent && !e.palm_mute && !e.string_percussive, "{name}");
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// TQ-3: every stored technique flag and stroke survives save and load, and only the
+/// flags that are set are written (absent means off).
+#[test]
+fn tq3_every_technique_flag_and_stroke_round_trips() {
+    let score = techniques();
+    let loaded = load(&save(&score, &info())).unwrap().score;
+    assert_eq!(loaded, score);
+    let json = String::from_utf8(score_json(&score)).unwrap();
+    for (key, want) in [
+        ("\"accent\":true", 11),
+        ("\"palm_mute\":true", 4),
+        ("\"string_percussive\":true", 6),
+        ("\"dead\":true", 2),
+        ("\"let_ring\":true", 3),
+        ("\"stroke\":\"down\"", 3),
+        ("\"stroke\":\"up\"", 1),
+    ] {
+        assert_eq!(json.matches(key).count(), want, "{key}");
+    }
+    assert!(!json.contains(":false"), "off flags are omitted");
+    assert!(!json.contains("\"stroke\":null"));
 }
 
 // 6. Newer major and unknown required features are refused.
@@ -455,6 +585,391 @@ mod mutation {
             if let Ok(v) = serde_json::from_slice::<serde_json::Value>(&json) {
                 let _ = load(&repackage(&v, |_| {}));
             }
+        }
+    }
+}
+
+// ----------------------------------------------------- the pattern library (1.2)
+//
+// ADR-034 PE-13 and the byte part of PE-1 (decision 15.2): the library is stored as
+// `patterns/library.json`, validated through `mc-pattern` on load.
+
+mod library {
+    use super::*;
+    use mc_pattern::fixtures::library as reference_library;
+    use mc_pattern::{PatternError, PatternLibrary};
+    use mc_project::{LIBRARY, library_json, save_with_library};
+    use proptest::prelude::*;
+
+    #[allow(unused_imports)]
+    #[path = "../../../mc-pattern/tests/common/mod.rs"]
+    mod generate;
+
+    fn golden_library() -> &'static [u8] {
+        LIBRARIES
+            .iter()
+            .find(|l| l.0 == current_version() && l.1 == "patterns")
+            .expect("a library fixture for the current version")
+            .2
+    }
+
+    fn package(name: &str) -> &'static [u8] {
+        FIXTURES
+            .iter()
+            .find(|f| f.0 == current_version() && f.1 == name)
+            .expect("fixture exists")
+            .2
+    }
+
+    /// A package with this score.json and library.json, listed with their hashes.
+    fn with_library_json(library: &[u8]) -> Vec<u8> {
+        let score = score_json(&techniques());
+        let (manifest, _) = entries(&save(&techniques(), &info()));
+        let mut m: serde_json::Value = serde_json::from_slice(&manifest).unwrap();
+        m["entries"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({
+                "path": LIBRARY,
+                "sha256": sha256_hex(library),
+                "size": library.len(),
+            }));
+        write_entries(&[
+            ("manifest.json", &serde_json::to_vec(&m).unwrap()),
+            ("score.json", &score),
+            (LIBRARY, library),
+        ])
+    }
+
+    fn library_value() -> serde_json::Value {
+        serde_json::from_slice(golden_library()).unwrap()
+    }
+
+    fn with_library_value(v: &serde_json::Value) -> Vec<u8> {
+        with_library_json(&serde_json::to_vec(v).unwrap())
+    }
+
+    /// The JSON paths of P-05 violations of a library that fails to load.
+    fn shape_errors(v: &serde_json::Value) -> Vec<String> {
+        match load(&with_library_value(v)) {
+            Err(LoadError::Invalid(violations)) => {
+                violations.into_iter().map(|x| x.location).collect()
+            }
+            other => panic!("expected Invalid, got {other:?}"),
+        }
+    }
+
+    #[test]
+    fn pe13_the_library_fixture_loads_and_keeps_every_byte() {
+        let loaded = load(package("patterns")).unwrap();
+        assert!(loaded.warnings.is_empty(), "{:?}", loaded.warnings);
+        let lib = loaded.library.expect("the fixture has a library");
+        assert_eq!(lib, reference_library());
+        // The stored DTO and the current output are both byte-stable (PE-1).
+        assert_eq!(library_json(&lib), golden_library());
+        assert_eq!(
+            library_json(&reference_library()),
+            golden_library(),
+            "library.json output changed; this is a format change (bump FORMAT_VERSION)"
+        );
+        // Save and reopen: the whole package is identical, byte for byte.
+        let again = save_with_library(&loaded.score, Some(&lib), &info());
+        assert_eq!(again, package("patterns"));
+    }
+
+    #[test]
+    fn pe13_the_reference_library_uses_every_stored_feature() {
+        let json = String::from_utf8(golden_library().to_vec()).unwrap();
+        for needle in [
+            "\"kind\":\"bass\"",
+            "\"kind\":\"alt\"",
+            "\"kind\":\"treble\",\"count\":3",
+            "\"kind\":\"treble\",\"count\":2",
+            "\"kind\":\"string\"",
+            "\"kind\":\"strum\"",
+            "\"kind\":\"strum_range\",\"from\":6,\"to\":4",
+            "\"kind\":\"gesture\"",
+            "\"kind\":\"hold\"}",
+            "\"kind\":\"hold\",\"strings\"",
+            "\"kind\":\"rest\"",
+            "\"direction\":\"down\"",
+            "\"direction\":\"up\"",
+            "\"accent\":true",
+            "\"palm_mute\":true",
+            "\"dead\":true",
+            "\"let_ring\":true",
+            "\"string_percussive\":true",
+            "\"technique\":\"palm_mute\"",
+            "\"technique\":\"accent\"",
+            "\"technique\":\"let_ring\"",
+            "\"technique\":\"string_percussive\"",
+            "\"lane\":\"thumb\"",
+            "\"lane\":\"fingers\"",
+            "\"lane\":\"strum\"",
+            "\"dots\":1",
+            "\"dots\":2",
+            "\"tuplet\":[3,2]",
+            "\"tuplet\":[5,4]",
+            "\"meter\":[4,4]",
+            "\"meter\":[3,4]",
+            "\"description\"",
+            "\"tags\"",
+            "\"origin\":\"grid\"",
+            "\"origin\":\"text\"",
+            "\"origin\":\"tap\"",
+            "Bùm",
+            "Kịch",
+        ] {
+            assert!(json.contains(needle), "the fixture has no {needle}");
+        }
+        // One pattern was removed, so the stored ids have a gap the counter keeps.
+        let v = library_value();
+        let ids = v["gestures"].as_array().unwrap().len() + v["patterns"].as_array().unwrap().len();
+        assert_eq!(v["next_id"].as_u64().unwrap(), ids as u64 + 2);
+    }
+
+    #[test]
+    fn pe13_files_without_a_library_load_without_one() {
+        for (version, name, pkg, _) in FIXTURES.iter().filter(|f| f.1 != "patterns") {
+            assert!(
+                load(pkg).unwrap().library.is_none(),
+                "v{version}/{name} has no library"
+            );
+        }
+        // And `save` without a library writes no library entry.
+        let names: Vec<String> =
+            mc_project::read_entries(&save(&techniques(), &info()), &Limits::default())
+                .unwrap()
+                .into_iter()
+                .map(|(n, _)| n)
+                .collect();
+        assert_eq!(names, ["manifest.json", "score.json"]);
+    }
+
+    #[test]
+    fn rt5_v1_1_fixtures_load_unchanged_in_1_2() {
+        // 1.2 only adds the library entry: every 1.1 file loads to the same score as
+        // the 1.2 file of the same name, whose score.json is identical.
+        for (_, name, package, golden) in FIXTURES.iter().filter(|f| f.0 == "1.1") {
+            let (_, _, new_package, new_golden) = FIXTURES
+                .iter()
+                .find(|f| f.0 == "1.2" && f.1 == *name)
+                .expect("same fixture in 1.2");
+            assert_eq!(
+                load(package).unwrap().score,
+                load(new_package).unwrap().score,
+                "{name}"
+            );
+            assert_eq!(
+                golden, new_golden,
+                "{name}: score.json identical in 1.1 and 1.2"
+            );
+        }
+    }
+
+    // U1 for the library: an unknown key at every level is reported with its path.
+    #[test]
+    fn pe13_unknown_fields_at_every_library_level_are_detected() {
+        let mut v = library_value();
+        let mut expected = Vec::new();
+        inject(&mut v, "library".into(), &mut expected);
+        let loaded = load(&with_library_value(&v)).unwrap();
+        assert_eq!(
+            loaded.library.as_ref(),
+            Some(&reference_library()),
+            "known content still loads"
+        );
+        let mut found = loaded.unknown_content().to_vec();
+        found.sort();
+        expected.sort();
+        assert_eq!(found, expected);
+        for level in [
+            "library.x_future",
+            "gestures[0].x_future",
+            "gestures[0].strike.x_future",
+            "targets[0].x_future",
+            "patterns[0].x_future",
+            "lanes.x_future",
+            "thumb.x_future",
+            "fingers.x_future",
+            "strum.x_future",
+            "steps[0].x_future",
+            "value.x_future",
+            "action.x_future",
+            "action.strike.x_future",
+            "strings[0].x_future",
+            "spans[0].x_future",
+        ] {
+            assert!(
+                found.iter().any(|p| p.ends_with(level)),
+                "no unknown field detected at level {level}"
+            );
+        }
+    }
+
+    #[test]
+    fn pe13_a_misshapen_library_is_refused_with_json_paths() {
+        let mut v = library_value();
+        v["gestures"][0]["strike"]["targets"][0] = serde_json::json!({"kind": "treble"});
+        assert_eq!(
+            shape_errors(&v),
+            ["library.gestures[0].strike.targets[0].count"]
+        );
+
+        let mut v = library_value();
+        v["gestures"][0]["strike"]["targets"][0] =
+            serde_json::json!({"kind": "string", "string": 0});
+        assert_eq!(
+            shape_errors(&v),
+            ["library.gestures[0].strike.targets[0].string"]
+        );
+
+        let mut v = library_value();
+        let thumb = v["patterns"][0]["lanes"]["thumb"].clone();
+        v["patterns"][0]["lanes"]["strum"] = thumb;
+        v["patterns"][0]["length"] = serde_json::json!([1, 0]);
+        // Every problem of the pattern is reported, not only the first.
+        assert_eq!(
+            shape_errors(&v),
+            ["library.patterns[0].length", "library.patterns[0].lanes"]
+        );
+
+        let mut v = library_value();
+        v["patterns"][0]["lanes"]["thumb"]["steps"][0]["action"]["kind"] = "rest".into();
+        assert_eq!(
+            shape_errors(&v),
+            ["library.patterns[0].lanes.thumb.steps[0].action.strike"]
+        );
+
+        let mut v = library_value();
+        v["patterns"][0]["lanes"]["thumb"]["steps"][1]["onset"] = serde_json::json!([1, 0]);
+        v["patterns"][0]["lanes"]["fingers"]["steps"][0]["value"]["base"] = 9.into();
+        assert_eq!(
+            shape_errors(&v),
+            [
+                "library.patterns[0].lanes.thumb.steps[1].onset",
+                "library.patterns[0].lanes.fingers.steps[0].value.base"
+            ]
+        );
+
+        // An unknown enum value is a JSON error of the library entry, not a panic.
+        let mut v = library_value();
+        v["patterns"][0]["origin"] = "dream".into();
+        assert!(matches!(
+            load(&with_library_value(&v)),
+            Err(LoadError::Json { entry, .. }) if entry == LIBRARY
+        ));
+    }
+
+    #[test]
+    fn pe13_library_rules_are_checked_on_load() {
+        // Two gestures with the same name (PT-08).
+        let mut v = library_value();
+        v["gestures"][1]["name"] = v["gestures"][0]["name"].clone();
+        let Err(LoadError::InvalidLibrary(errors)) = load(&with_library_value(&v)) else {
+            panic!("expected InvalidLibrary")
+        };
+        assert!(
+            errors
+                .iter()
+                .any(|e| matches!(e, PatternError::DuplicateGestureName { .. })),
+            "{errors:?}"
+        );
+        // An id at or above the counter, and a step overlap (PT-03).
+        let mut v = library_value();
+        v["next_id"] = 2.into();
+        v["patterns"][0]["lanes"]["thumb"]["steps"][1]["onset"] = serde_json::json!([1, 8]);
+        let Err(LoadError::InvalidLibrary(errors)) = load(&with_library_value(&v)) else {
+            panic!("expected InvalidLibrary")
+        };
+        assert!(
+            errors
+                .iter()
+                .any(|e| matches!(e, PatternError::IdNotBelowCounter { .. }))
+        );
+        assert!(
+            errors
+                .iter()
+                .any(|e| matches!(e, PatternError::InvalidPattern { .. }))
+        );
+        // A step using a gesture the library does not have (PT-06).
+        let mut v = library_value();
+        v["gestures"].as_array_mut().unwrap().remove(0);
+        assert!(matches!(
+            load(&with_library_value(&v)),
+            Err(LoadError::InvalidLibrary(_))
+        ));
+    }
+
+    #[test]
+    fn pe13_a_library_entry_without_its_manifest_listing_is_refused() {
+        let (manifest, score) = entries(&save(&techniques(), &info()));
+        let pkg = write_entries(&[
+            ("manifest.json", &manifest),
+            ("score.json", &score),
+            (LIBRARY, golden_library()),
+        ]);
+        assert_eq!(
+            load(&pkg).unwrap_err(),
+            LoadError::UnlistedEntry(LIBRARY.into())
+        );
+    }
+
+    /// A random valid library: the three test gestures and up to four random patterns,
+    /// some of them removed again.
+    fn random_library(seeds: &[(generate::PatternSeed, bool, String, bool)]) -> PatternLibrary {
+        let (mut lib, g) = generate::gesture_library();
+        for (seed, ext, name, remove) in seeds {
+            let values = if *ext {
+                generate::ext_values()
+            } else {
+                generate::values()
+            };
+            let mut p = generate::build_pattern_with(&values, seed, &g);
+            p.name = name.clone();
+            p.meta.description = name.chars().rev().collect();
+            p.meta.tags = vec![name.clone(), "t".into()];
+            let id = lib.define_pattern(p).expect("generated patterns are valid");
+            if *remove {
+                lib.remove_pattern(id).unwrap();
+            }
+        }
+        lib
+    }
+
+    proptest! {
+        #![proptest_config(ProptestConfig::with_cases(200))]
+
+        /// PE-1 (byte part) and PE-13: every valid library survives the stored DTO and
+        /// a package save and load: the same library, and the same bytes again.
+        #[test]
+        fn pe1_pe13_every_valid_library_round_trips_byte_for_byte(
+            seeds in proptest::collection::vec(
+                (generate::pattern_seeds(), any::<bool>(), any::<String>(), any::<bool>()),
+                0..4,
+            )
+        ) {
+            let lib = random_library(&seeds);
+            let bytes = library_json(&lib);
+            let pkg = save_with_library(&techniques(), Some(&lib), &info());
+            let loaded = load(&pkg).unwrap();
+            prop_assert!(loaded.warnings.is_empty());
+            let back = loaded.library.unwrap();
+            prop_assert_eq!(&back, &lib);
+            prop_assert_eq!(library_json(&back), bytes);
+            prop_assert_eq!(save_with_library(&loaded.score, Some(&back), &info()), pkg);
+        }
+
+        #[test]
+        fn rt9_mutated_library_json_never_panics(
+            edits in proptest::collection::vec((any::<prop::sample::Index>(), any::<u8>()), 1..8)
+        ) {
+            let mut json = golden_library().to_vec();
+            for (i, b) in edits {
+                let at = i.index(json.len());
+                json[at] = b;
+            }
+            let _ = load(&with_library_json(&json));
         }
     }
 }

@@ -83,8 +83,45 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   not yet found (ADR-031). Typical scores (4 tracks, 150 bars) were within budget in
   every run of the last session. One machine only (ADR-025).
 - No standard notation, no PDF.
-- Effects are limited to tie, let ring and dead note. No lyrics. Repeat editing is limited
-  to simple start and end markers.
+- Effects are tie, let ring, dead note and, from Phase 6a-1 (ADR-035), accent, palm mute,
+  string-percussive and a down or up stroke per beat. They are set in the inspector; there
+  are no keyboard shortcuts for them yet. No lyrics.
+- **Playing techniques (Phase 6a-1, ADR-035).** Limits:
+  - The sound uses fixed values (for example accent +24 velocity, palm mute 80); there is no
+    setting. When several techniques are on one note, one wins (string-percussive, dead, palm
+    mute, let ring); all stay stored and shown.
+  - A stroke changes no timing: the notes of a chord still start together (no strum
+    spread), and MIDI export carries no stroke.
+  - The TAB marks above the staff (arrow, `>`, `S`, "P.M.") can overlap volta brackets and
+    the stems of an upper voice.
+  - Files that use them are format 1.1. An older build opens them but cannot save over
+    them (use Save As); it loses the techniques.
+- Repeat editing is limited to simple start and end markers.
+- **Patterns (Phases 6a-3 to 6a-5, ADR-034).** Tools > Pattern editor... makes and edits
+  patterns on a grid, with user gestures; Tools > Apply pattern... applies one to a range
+  of whole bars of the active track, for one chord voicing. Limits:
+  - The pattern library belongs to the project (format 1.2). There is no library shared
+    between projects. A file with a changed library cannot be saved over by an older build
+    (it offers Save As).
+  - The grid places a step one cell long; a longer step is made by resizing it (] and [).
+    A step gets exactly one written value, so some lengths (for example 5/16) cannot be
+    made; the editor says so.
+  - Deleting a strike that a hold continues is refused; delete the hold first.
+  - A beat is one unit of the meter (an eighth in 6/8).
+  - The preview is a text summary (repetitions, notes, bars replaced, steps cut at the
+    end), not a TAB preview.
+  - One voicing for the whole range; there is no chord track.
+  - A range with a pickup bar is refused. When the range is not a whole number of
+    repetitions, you choose how to fit it each time.
+  - The pattern replaces voices 1 and 2 of the bars it writes; it does not insert.
+  - Holding a dead, palm-muted or string-percussive note, letting one cross a bar line, or
+    cutting one at the end of the range to a length that needs more than one note value, is
+    refused, because playback would sound it twice.
+  - If the score changes between the preview and Apply, Apply is refused and you preview
+    again.
+  - The pattern text notation (Phase 6a-4, [pattern-text-syntax.md](../architecture/pattern-text-syntax.md))
+    exists only inside the core and its tests. There is no way to type or load a pattern
+    as text in the app yet.
 - A pickup bar round-trips through MIDI as a full-length bar with a trailing rest.
 - Copy and paste (Phase 6b-1, ADR-030) work on a run of beats in one voice, possibly
   across bars, selected with Shift+Left/Right or Shift+click. Paste inserts; there is no
@@ -117,6 +154,12 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   - **Checked with MuseScore 4.7.5 only, on one machine.** Finale, Dorico and Guitar Pro were not checked, and layout quality was not judged. Known MuseScore behaviour (`benchmarks/musescore-musicxml.md`):
     - **MuseScore ignores the capo.** A track with a capo is re-fingered in MuseScore (frets shifted, notes moved to other strings), although the file follows the MusicXML definition.
     - Dead notes show as fret numbers, not X.
+    - Playing techniques (ADR-035): accents and strokes on notes are kept (one accent per
+      chord). A stroke on a rest is shown, but lost when MuseScore saves MusicXML again.
+      **Palm mute and string-percussive are lost** in MuseScore.
+      - The file follows MusicXML 4.0: palm mute playback as `<play><mute>palm</mute></play>`, and a stroke on a rest as a SMuFL strum symbol.
+      - The palm-mute and string-percussive marks are `<other-technical>` text, because 4.0 has no element for them; the export message counts them.
+      - MuseScore also loses its own palm mute through MusicXML.
     - A tie into a repeated section is not played again on the second pass.
     - MuseScore's own MIDI playback does not sustain let ring, although the let-ring marks are read and kept.
 - Resolved in Phase 6b-1 (ADR-030): the session marker, the "save changes?" prompt on

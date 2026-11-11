@@ -2,8 +2,10 @@
 //! compared fact by fact with the score.
 
 use mc_musicxml::{MusicXmlReport, export_musicxml};
-use mc_score::fixtures::{Shape, feature_rich, reference};
-use mc_score::{BeatRef, FrettedInstrument, InstrumentSpec, MasterBar, NoteEffects, Score, Track};
+use mc_score::fixtures::{Shape, feature_rich, reference, techniques};
+use mc_score::{
+    BeatRef, FrettedInstrument, InstrumentSpec, MasterBar, NoteEffects, Score, Stroke, Track,
+};
 use mc_theory::fretted::{Capo, Fret, FretPosition, StringIndex, Tuning, pitch_at};
 use mc_theory::{BaseValue, KeySignature, Mode, NoteValue, Rational, Tempo, TimeSignature, Tuplet};
 use proptest::prelude::*;
@@ -109,6 +111,8 @@ fn check(score: &Score, xml: &str, report: &MusicXmlReport) {
     let bars = score.master_bars();
     let pickup_first = bars.first().is_some_and(|b| b.pickup);
     let mut notes_seen = 0usize;
+    let mut approximated = 0usize;
+    let mut rest_strokes = 0usize;
     for (ti, (track, part)) in score.tracks().zip(&parts).enumerate() {
         assert_eq!(list[ti].attribute("id"), part.attribute("id"));
         let measures: Vec<_> = kids(*part, "measure").collect();
@@ -215,6 +219,29 @@ fn check(score: &Score, xml: &str, report: &MusicXmlReport) {
                     if beat.notes.is_empty() {
                         assert!(kid(first, "rest").is_some(), "E3 rest");
                         assert_eq!(xml_beat.len(), 1);
+                        // ADR-035 section 9: a rest's stroke is the direction directly
+                        // before it (SMuFL strum glyph, same voice), never <technical>.
+                        assert!(!has(first, "technical", None), "no technical on a rest");
+                        let before = first.prev_sibling_element();
+                        // Other directions (a tempo change) may precede a rest too.
+                        let glyph = before
+                            .filter(|d| {
+                                d.tag_name().name() == "direction"
+                                    && has(*d, "other-direction", None)
+                            })
+                            .and_then(|d| {
+                                assert_eq!(num(d, "voice"), v as i64 + 1, "stroke voice");
+                                d.descendants()
+                                    .find(|c| c.tag_name().name() == "other-direction")
+                                    .and_then(|c| c.attribute("smufl"))
+                            });
+                        let want = match beat.stroke {
+                            Some(Stroke::Down) => Some("guitarStrumDown"),
+                            Some(Stroke::Up) => Some("guitarStrumUp"),
+                            None => None,
+                        };
+                        assert_eq!(glyph, want, "rest stroke direction");
+                        rest_strokes += usize::from(want.is_some());
                         continue;
                     }
                     assert_eq!(xml_beat.len(), beat.notes.len(), "E3 chord size");
@@ -256,7 +283,49 @@ fn check(score: &Score, xml: &str, report: &MusicXmlReport) {
                             usize::from(note.effects.let_ring),
                             "E3 let ring"
                         );
-                        assert_eq!(text(*xn, "notehead") == Some("x"), note.effects.dead);
+                        // ADR-035: dead and string-percussive both draw an x notehead.
+                        assert_eq!(
+                            text(*xn, "notehead") == Some("x"),
+                            note.effects.dead || note.effects.string_percussive,
+                            "x notehead"
+                        );
+                        assert_eq!(
+                            count(*xn, "accent", None),
+                            usize::from(note.effects.accent),
+                            "accent"
+                        );
+                        let others: Vec<_> = xn
+                            .descendants()
+                            .filter(|c| c.tag_name().name() == "other-technical")
+                            .map(|c| c.text().unwrap_or(""))
+                            .collect();
+                        let mut expected = Vec::new();
+                        if note.effects.palm_mute {
+                            expected.push("palm mute");
+                        }
+                        if note.effects.string_percussive {
+                            expected.push("string percussive");
+                        }
+                        assert_eq!(others, expected, "other-technical");
+                        // Palm mute playback, natively on the note only.
+                        let mutes: Vec<_> = kids(*xn, "play")
+                            .flat_map(|p| kids(p, "mute"))
+                            .map(|m| m.text().unwrap_or(""))
+                            .collect();
+                        let want: &[&str] = if note.effects.palm_mute {
+                            &["palm"]
+                        } else {
+                            &[]
+                        };
+                        assert_eq!(mutes, want, "play/mute palm");
+                        approximated += expected.len();
+                        assert!(!has(*xn, "golpe", None), "never golpe");
+                    }
+                    // The stroke is written once per beat, on its first note.
+                    for (i, xn) in xml_beat.iter().enumerate() {
+                        let want = |s| usize::from(i == 0 && beat.stroke == Some(s));
+                        assert_eq!(count(*xn, "down-bow", None), want(Stroke::Down), "down");
+                        assert_eq!(count(*xn, "up-bow", None), want(Stroke::Up), "up");
                     }
                 }
             }
@@ -266,6 +335,13 @@ fn check(score: &Score, xml: &str, report: &MusicXmlReport) {
     // E5: nothing dropped.
     assert_eq!(notes_seen, score.note_count());
     assert_eq!(report.notes, score.note_count());
+    assert_eq!(report.techniques_approximated, approximated);
+    // No stray strum directions: exactly one per stroked rest.
+    let doc = Document::parse(xml).unwrap();
+    assert_eq!(
+        count(doc.root_element(), "other-direction", None),
+        rest_strokes
+    );
 }
 
 fn export(score: &Score) -> (String, MusicXmlReport) {
@@ -418,6 +494,7 @@ fn e5_overfull_measure_keeps_every_note() {
 
 const GOLDEN_FEATURE_RICH: &str = include_str!("golden/feature_rich.musicxml");
 const GOLDEN_SMALL: &str = include_str!("golden/small.musicxml");
+const GOLDEN_TECHNIQUES: &str = include_str!("golden/techniques.musicxml");
 
 fn small() -> Score {
     reference(Shape {
@@ -433,6 +510,7 @@ fn e6_output_is_deterministic_and_matches_the_goldens() {
     for (name, score, golden) in [
         ("feature_rich", feature_rich(), GOLDEN_FEATURE_RICH),
         ("small", small(), GOLDEN_SMALL),
+        ("techniques", techniques(), GOLDEN_TECHNIQUES),
     ] {
         let (a, _) = export(&score);
         let (b, _) = export(&score);
@@ -453,6 +531,7 @@ fn update_goldens() {
     std::fs::create_dir_all(&dir).unwrap();
     std::fs::write(dir.join("feature_rich.musicxml"), export(&feature_rich()).0).unwrap();
     std::fs::write(dir.join("small.musicxml"), export(&small()).0).unwrap();
+    std::fs::write(dir.join("techniques.musicxml"), export(&techniques()).0).unwrap();
 }
 
 // ----------------------------------------------------- random scores (E3, E5, E7)
@@ -605,10 +684,21 @@ fn random_score(seed: u64) -> Score {
                                 let effects = NoteEffects {
                                     let_ring: rng.chance(20),
                                     dead: rng.chance(10),
+                                    accent: rng.chance(15),
+                                    palm_mute: rng.chance(15),
+                                    string_percussive: rng.chance(8),
                                 };
                                 let _ = s.set_note_effects(r, id, effects);
                             }
                         }
+                    }
+                    if rng.chance(20) {
+                        let stroke = if rng.chance(50) {
+                            Stroke::Down
+                        } else {
+                            Stroke::Up
+                        };
+                        s.set_beat_stroke(r, Some(stroke)).unwrap();
                     }
                     previous = Some(placed);
                 }
@@ -696,6 +786,7 @@ fn random_scores_cover_ties_let_ring_tuplets_voices_and_bar_lengths() {
         mut loose,
         mut rests,
     ) = (0, 0, 0, 0, 0, 0, 0, 0, 0);
+    let (mut accent, mut palm, mut percussive, mut strokes, mut rest_strokes) = (0, 0, 0, 0, 0);
     let mut cross_bar_ties = 0;
     for seed in 0..200u64 {
         let s = random_score(seed.wrapping_mul(0x9E37_79B9_7F4A_7C15));
@@ -710,11 +801,16 @@ fn random_scores_cover_ties_let_ring_tuplets_voices_and_bar_lengths() {
                     for (k, b) in v.beats.iter().enumerate() {
                         tuplets += usize::from(b.value.tuplet().is_some());
                         rests += usize::from(b.notes.is_empty());
+                        strokes += usize::from(b.stroke.is_some());
+                        rest_strokes += usize::from(b.stroke.is_some() && b.notes.is_empty());
                         for n in &b.notes {
                             ties += usize::from(n.tie);
                             cross_bar_ties += usize::from(n.tie && k == 0);
                             ring += usize::from(n.effects.let_ring);
                             dead += usize::from(n.effects.dead);
+                            accent += usize::from(n.effects.accent);
+                            palm += usize::from(n.effects.palm_mute);
+                            percussive += usize::from(n.effects.string_percussive);
                         }
                         let _ = vi;
                     }
@@ -733,9 +829,84 @@ fn random_scores_cover_ties_let_ring_tuplets_voices_and_bar_lengths() {
         overfull,
         loose,
         rests,
+        accent,
+        palm,
+        percussive,
+        strokes,
+        rest_strokes,
     ];
     println!(
-        "ties {ties} cross-bar {cross_bar_ties} ring {ring} dead {dead} tuplets {tuplets} two-voice bars {voices2} padded {padded} overfull {overfull} loose tuplets {loose} rests {rests}"
+        "ties {ties} cross-bar {cross_bar_ties} ring {ring} dead {dead} tuplets {tuplets} two-voice bars {voices2} padded {padded} overfull {overfull} loose tuplets {loose} rests {rests} accent {accent} palm mute {palm} string-percussive {percussive} strokes {strokes} on rests {rest_strokes}"
     );
     assert!(all.iter().all(|&c| c > 0), "{all:?}");
+}
+
+// ------------------------------------------------------------- ADR-035 (TQ-7)
+
+/// TQ-7: every technique of the techniques fixture is written with the ADR-035
+/// mapping, the approximations are counted, and nothing maps to `<golpe/>`.
+#[test]
+fn tq7_techniques_fixture_uses_the_adr_035_mapping() {
+    let s = techniques();
+    let (xml, report) = export(&s);
+    check(&s, &xml, &report);
+    let doc = Document::parse(&xml).unwrap();
+    let root = doc.root_element();
+    // Accents: 5 (chord) + 1 (eighth) + 5 (percussive chord).
+    assert_eq!(count(root, "accent", None), 11);
+    // Strokes on notes: down on beat 1, up on beat 4 of bar 1; down on the partly muted
+    // chord in bar 2. The down-stroke on the rest of bar 2 is a direction (section 9).
+    assert_eq!(count(root, "down-bow", None), 2);
+    assert_eq!(count(root, "up-bow", None), 1);
+    let strums: Vec<_> = root
+        .descendants()
+        .filter(|n| n.tag_name().name() == "other-direction")
+        .collect();
+    assert_eq!(strums.len(), 1);
+    assert_eq!(strums[0].attribute("smufl"), Some("guitarStrumDown"));
+    let direction = strums[0]
+        .ancestors()
+        .find(|n| n.tag_name().name() == "direction")
+        .unwrap();
+    let rest = direction.next_sibling_element().unwrap();
+    assert!(
+        kid(rest, "rest").is_some(),
+        "the strum direction is directly before the rest"
+    );
+    assert_eq!(text(rest, "type"), Some("eighth"));
+    assert_eq!(direction.attribute("placement"), Some("above"));
+    // Palm mute playback on each of the four palm-muted notes, and only those.
+    let mutes: Vec<_> = root
+        .descendants()
+        .filter(|n| n.tag_name().name() == "mute")
+        .map(|n| (n.parent().unwrap().tag_name().name(), n.text()))
+        .collect();
+    assert_eq!(mutes, vec![("play", Some("palm")); 4]);
+    let others: Vec<_> = root
+        .descendants()
+        .filter(|n| n.tag_name().name() == "other-technical")
+        .map(|n| n.text().unwrap().to_string())
+        .collect();
+    let palm = others.iter().filter(|t| *t == "palm mute").count();
+    let perc = others.iter().filter(|t| *t == "string percussive").count();
+    // Palm mute: two eighths, PM+let ring, one note of the partial chord.
+    assert_eq!(palm, 4);
+    // String-percussive: the 5-note chord and the note with dead.
+    assert_eq!(perc, 6);
+    assert_eq!(others.len(), palm + perc);
+    assert_eq!(report.techniques_approximated, 10);
+    // x noteheads: 5 percussive chord + dead/let ring + percussive/dead.
+    let x = root
+        .descendants()
+        .filter(|n| n.tag_name().name() == "notehead" && n.text() == Some("x"))
+        .count();
+    assert_eq!(x, 7);
+    assert!(!xml.contains("golpe"));
+    assert!(
+        !xml.contains("arpeggiate"),
+        "a stroke is not a rolled chord"
+    );
+    // The precedence is a playback rule: the file keeps every stored flag, so the
+    // dead + let ring note still has its let-ring tie.
+    assert_eq!(count(root, "tied", Some(("type", "let-ring"))), 3);
 }

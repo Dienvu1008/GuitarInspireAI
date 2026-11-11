@@ -1,0 +1,5 @@
+// Corpus 2: Travis-style picking (G, 4/4). Thumb quarters under finger eighths.
+"name": "Travis-style picking"
+"length": 1
+thumb: Bass:4 Alt:4 Bass:4 Alt:4
+fingers: 1:8 2:8 -:8 1:8 -:8 2:8 -:8 1:8

@@ -1,5 +1,6 @@
 pub mod mc_notation
 pub enum mc_notation::GlyphKind
+pub mc_notation::GlyphKind::Accent
 pub mc_notation::GlyphKind::BarNumber
 pub mc_notation::GlyphKind::BarNumber::number: usize
 pub mc_notation::GlyphKind::Dot
@@ -10,6 +11,8 @@ pub mc_notation::GlyphKind::Fret::let_ring: bool
 pub mc_notation::GlyphKind::Fret::tied: bool
 pub mc_notation::GlyphKind::Marker
 pub mc_notation::GlyphKind::Marker::text: alloc::string::String
+pub mc_notation::GlyphKind::PalmMute
+pub mc_notation::GlyphKind::PalmMute::run: bool
 pub mc_notation::GlyphKind::RepeatCount
 pub mc_notation::GlyphKind::RepeatCount::count: u8
 pub mc_notation::GlyphKind::RepeatDots
@@ -19,6 +22,9 @@ pub mc_notation::GlyphKind::Rest::exponent: u8
 pub mc_notation::GlyphKind::StringName
 pub mc_notation::GlyphKind::StringName::name: alloc::string::String
 pub mc_notation::GlyphKind::StringName::string: u8
+pub mc_notation::GlyphKind::StringPercussive
+pub mc_notation::GlyphKind::Stroke
+pub mc_notation::GlyphKind::Stroke::up: bool
 pub mc_notation::GlyphKind::TabClef
 pub mc_notation::GlyphKind::TimeSignature
 pub mc_notation::GlyphKind::TimeSignature::denominator: u8

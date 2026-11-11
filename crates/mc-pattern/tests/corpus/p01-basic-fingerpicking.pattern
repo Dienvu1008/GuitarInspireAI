@@ -1,0 +1,5 @@
+// Corpus 1: basic fingerpicking (Am, 4/4). The corpus labels the lane "fingers:", but
+// with one lane the IR is the single Strum lane (voice 1).
+"name": "Basic fingerpicking"
+"length": 1
+strum: Bass:8 3:8 2:8 3:8 1:8 3:8 2:8 3:8

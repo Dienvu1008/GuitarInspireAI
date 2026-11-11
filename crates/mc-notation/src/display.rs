@@ -50,8 +50,9 @@ pub struct Line {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum GlyphKind {
-    /// A fret number on a string. Tied notes are shown in parentheses and dead notes
-    /// as `x` (painting decides the exact symbol).
+    /// A fret number on a string. Tied notes are shown in parentheses; `dead` notes are
+    /// drawn as `x`, which covers dead and string-percussive notes (ADR-035). Painting
+    /// decides the exact symbol.
     Fret {
         fret: u8,
         tied: bool,
@@ -95,6 +96,21 @@ pub enum GlyphKind {
     StringName {
         string: u8,
         name: String,
+    },
+    /// Accent mark (`>`) above a beat with an accented note (ADR-035).
+    Accent,
+    /// Stroke arrow above a beat: down (`up` false) or up (ADR-035).
+    Stroke {
+        up: bool,
+    },
+    /// "S" above a beat with a string-percussive note (ADR-035).
+    StringPercussive,
+    /// "P.M." over palm-muted beats (ADR-035). `run` is true for a run of beats in
+    /// which every sounding note is palm-muted: the label starts at `x - width / 2`
+    /// and a dashed line extends over `width`. `run` is false for a beat where only
+    /// some notes are palm-muted: the label only, on that beat.
+    PalmMute {
+        run: bool,
     },
 }
 

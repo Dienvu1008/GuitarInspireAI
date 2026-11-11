@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'document_service.dart';
+import 'fake_pattern_library.dart';
 import 'generated/api/document.dart' show RecoveryEntryDto;
 import 'generated/api/layout.dart';
+import 'generated/api/pattern.dart';
+import 'generated/api/pattern_grid.dart';
 import 'generated/api/types.dart';
 
 /// In-memory stand-in for the Rust document session, for widget tests.
@@ -130,7 +133,17 @@ final class FakeDocumentService implements DocumentService {
     if (!coalesce) _undo.add(before);
     _redo.clear();
     _lastCoalesceKey = coalesceKey;
-    return _commit(kinds, _nextCommand++);
+    final report = _lastPatternReport;
+    _lastPatternReport = null;
+    final created = _lastCreated;
+    _lastCreated = (pattern: null, gesture: null);
+    return _commit(
+      kinds,
+      _nextCommand++,
+      pattern: report,
+      createdPattern: created.pattern,
+      createdGesture: created.gesture,
+    );
   }
 
   List<EventKindDto> _apply(CommandDto c) {
@@ -162,15 +175,7 @@ final class FakeDocumentService implements DocumentService {
         final b = _beat(beat);
         final i = b.notes.indexWhere((n) => n.string == string);
         if (i >= 0) {
-          final n = b.notes[i];
-          b.notes[i] = NoteDto(
-            id: n.id,
-            string: n.string,
-            fret: fret,
-            tie: n.tie,
-            letRing: n.letRing,
-            dead: n.dead,
-          );
+          b.notes[i] = _note(b.notes[i], fret: fret);
         } else {
           b.notes.add(
             NoteDto(
@@ -180,10 +185,42 @@ final class FakeDocumentService implements DocumentService {
               tie: false,
               letRing: false,
               dead: false,
+              accent: false,
+              palmMute: false,
+              stringPercussive: false,
             ),
           );
           b.notes.sort((x, y) => x.string.compareTo(y.string));
         }
+        return [_changed(beat)];
+      // ADR-035: stores the flags as given; the core owns what they mean.
+      case CommandDto_SetNoteEffects(
+        :final beat,
+        :final note,
+        :final letRing,
+        :final dead,
+        :final accent,
+        :final palmMute,
+        :final stringPercussive,
+      ):
+        final b = _beat(beat);
+        final i = b.notes.indexWhere((n) => n.id == note);
+        if (i < 0) throw ApiError(rule: 'not-found', message: 'note $note');
+        final n = b.notes[i];
+        b.notes[i] = NoteDto(
+          id: n.id,
+          string: n.string,
+          fret: n.fret,
+          tie: n.tie,
+          letRing: letRing,
+          dead: dead,
+          accent: accent,
+          palmMute: palmMute,
+          stringPercussive: stringPercussive,
+        );
+        return [_changed(beat)];
+      case CommandDto_SetBeatStroke(:final beat, :final stroke):
+        _beat(beat).stroke = stroke;
         return [_changed(beat)];
       case CommandDto_RemoveNote(:final beat, :final note):
         final b = _beat(beat);
@@ -251,8 +288,11 @@ final class FakeDocumentService implements DocumentService {
                   tie: n.tie,
                   letRing: n.letRing,
                   dead: n.dead,
+                  accent: n.accent,
+                  palmMute: n.palmMute,
+                  stringPercussive: n.stringPercussive,
                 ),
-            ]),
+            ], b.stroke),
         ]);
         return [
           EventKindDto.barContentChanged(
@@ -286,10 +326,180 @@ final class FakeDocumentService implements DocumentService {
             end: toBar + 1,
           ),
         ];
+      case CommandDto_ApplyPattern(:final args):
+        if (patternNeedsFit && args.fit == null) {
+          throw ApiError(rule: 'PE-08', message: 'choose how to fit it');
+        }
+        final report = _patternReport(args);
+        if (!args.overwrite && report.overwritten.isNotEmpty) {
+          throw ApiError(
+            rule: 'PE-07',
+            message:
+                'bars ${report.overwritten.map((b) => b + 1).join(', ')} already have content',
+          );
+        }
+        // Placeholder content: four quarters on the lowest sounded string. The fake
+        // binds nothing; the real binding is tested in the core.
+        var lowest = -1;
+        for (var i = 0; i < args.frets.length; i++) {
+          if (args.frets[i] >= 0) lowest = i;
+        }
+        for (var bar = args.first; bar <= args.last; bar++) {
+          final v = _voice(args.track, bar, 0)..clear();
+          for (var k = 0; k < 4; k++) {
+            v.add(
+              _Beat(_nextId++, const DurationDto(base: 2, dots: 0), [
+                NoteDto(
+                  id: _nextId++,
+                  string: lowest + 1,
+                  fret: args.frets[lowest],
+                  tie: false,
+                  letRing: false,
+                  dead: false,
+                  accent: false,
+                  palmMute: false,
+                  stringPercussive: false,
+                ),
+              ]),
+            );
+          }
+        }
+        _lastPatternReport = report;
+        return [
+          EventKindDto.barContentChanged(
+            track: args.track,
+            start: args.first,
+            end: args.last + 1,
+          ),
+        ];
+      // ADR-034 (6a-5): library commands change only the placeholder library.
+      case CommandDto_NewPattern(
+        :final name,
+        :final twoLanes,
+        :final lengthNumerator,
+        :final lengthDenominator,
+        :final meter,
+      ):
+        _lastCreated = (
+          pattern: _state.library.create(
+            name,
+            twoLanes,
+            lengthNumerator,
+            lengthDenominator,
+            meter,
+          ),
+          gesture: null,
+        );
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_RemovePattern(:final pattern):
+        _state.library.remove(pattern);
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_EditPattern(:final pattern, :final edit):
+        _state.library.edit(pattern, edit);
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_DefineGesture(:final name, :final strike):
+        _lastCreated = (
+          pattern: null,
+          gesture: _state.library.defineGesture(name, strike),
+        );
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_GestureFromStep(
+        :final pattern,
+        :final lane,
+        :final index,
+        :final name,
+      ):
+        _lastCreated = (
+          pattern: null,
+          gesture: _state.library.gestureFromStep(pattern, lane, index, name),
+        );
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_RenameGesture(:final gesture, :final name):
+        _state.library.renameGesture(gesture, name);
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_ChangeGesture(:final gesture, :final strike):
+        _state.library.changeGesture(gesture, strike);
+        return const [EventKindDto.patternLibraryChanged()];
+      case CommandDto_RemoveGesture(:final gesture):
+        _state.library.removeGesture(gesture);
+        return const [EventKindDto.patternLibraryChanged()];
       default:
         throw ApiError(rule: 'unsupported', message: 'FakeDocumentService: $c');
     }
   }
+
+  PatternReportDto? _lastPatternReport;
+  ({int? pattern, int? gesture}) _lastCreated = (pattern: null, gesture: null);
+
+  /// Test hook: when true, a pattern range needs a fit (the core decides this from
+  /// the bar lengths; the fake's bars are all 4/4, so it never would on its own).
+  /// Without a fit the preview reports `needsFit` and applying throws `PE-08`.
+  bool patternNeedsFit = false;
+
+  PatternReportDto _patternReport(ApplyPatternDto a) {
+    if (!_state.library.contains(a.pattern)) {
+      throw ApiError(rule: 'PT-06', message: 'no pattern ${a.pattern}');
+    }
+    _track(a.track);
+    if (a.first > a.last || a.last >= _state.bars) {
+      throw ApiError(rule: 'E-04', message: 'bars ${a.first} to ${a.last}');
+    }
+    if (!a.frets.any((f) => f >= 0)) {
+      throw ApiError(rule: 'PT-02', message: 'no sounded string');
+    }
+    final overwritten = <int>[
+      for (var b = a.first; b <= a.last; b++)
+        if (_voice(a.track, b, 0).isNotEmpty) b,
+    ];
+    final bars = a.last - a.first + 1;
+    return PatternReportDto(
+      first: a.first,
+      last: a.last,
+      voices: 1,
+      overwritten: Uint32List.fromList(overwritten),
+      repetitions: bars,
+      notes: 4 * bars,
+      dropped: const [],
+      shortened: const [],
+    );
+  }
+
+  @override
+  List<PatternInfoDto> patterns() => _state.library.infos();
+
+  @override
+  int samplePattern() => _state.library.sampleUnchanged
+      ? FakePatternLibrary.sampleId
+      : -1;
+
+  @override
+  GridViewDto patternGrid(int pattern, List<int> snaps) =>
+      _state.library.view(pattern, snaps);
+
+  @override
+  List<GestureInfoDto> gestures() => _state.library.gestures();
+
+  @override
+  PatternPreviewDto previewPattern(ApplyPatternDto args) =>
+      patternNeedsFit && args.fit == null
+      ? PatternPreviewDto(revision: _revision, needsFit: true)
+      : PatternPreviewDto(
+          revision: _revision,
+          needsFit: false,
+          report: _patternReport(args),
+        );
+
+  static NoteDto _note(NoteDto n, {required int fret}) => NoteDto(
+    id: n.id,
+    string: n.string,
+    fret: fret,
+    tie: n.tie,
+    letRing: n.letRing,
+    dead: n.dead,
+    accent: n.accent,
+    palmMute: n.palmMute,
+    stringPercussive: n.stringPercussive,
+  );
 
   EventKindDto _changed(BeatAddressDto a) => EventKindDto.barContentChanged(
     track: a.track,
@@ -297,7 +507,13 @@ final class FakeDocumentService implements DocumentService {
     end: a.bar + 1,
   );
 
-  OutcomeDto _commit(List<EventKindDto> kinds, int? correlation) {
+  OutcomeDto _commit(
+    List<EventKindDto> kinds,
+    int? correlation, {
+    PatternReportDto? pattern,
+    int? createdPattern,
+    int? createdGesture,
+  }) {
     _revision++;
     final events = [
       for (final k in kinds)
@@ -311,7 +527,13 @@ final class FakeDocumentService implements DocumentService {
     for (final e in events) {
       _events.add(e);
     }
-    return OutcomeDto(revision: _revision, events: events);
+    return OutcomeDto(
+      revision: _revision,
+      events: events,
+      pattern: pattern,
+      createdPattern: createdPattern,
+      createdGesture: createdGesture,
+    );
   }
 
   @override
@@ -320,7 +542,7 @@ final class FakeDocumentService implements DocumentService {
     _redo.add(_state);
     _state = _undo.removeLast();
     _lastCoalesceKey = null;
-    return _commit([const EventKindDto.historyApplied()], null);
+    return _commit(_historyKinds(_redo.last), null);
   }
 
   @override
@@ -329,8 +551,15 @@ final class FakeDocumentService implements DocumentService {
     _undo.add(_state);
     _state = _redo.removeLast();
     _lastCoalesceKey = null;
-    return _commit([const EventKindDto.historyApplied()], null);
+    return _commit(_historyKinds(_undo.last), null);
   }
+
+  /// Undo and redo say whether the library changed, as the core does.
+  List<EventKindDto> _historyKinds(_State from) => [
+    const EventKindDto.historyApplied(),
+    if (from.library.generation != _state.library.generation)
+      const EventKindDto.patternLibraryChanged(),
+  ];
 
   @override
   Future<OutcomeDto> save() async {
@@ -351,7 +580,12 @@ final class FakeDocumentService implements DocumentService {
   @override
   List<BeatDto> beats(int track, int bar, int voice) => [
     for (final b in _voice(track, bar, voice))
-      BeatDto(id: b.id, duration: b.duration, notes: List.of(b.notes)),
+      BeatDto(
+        id: b.id,
+        duration: b.duration,
+        notes: List.of(b.notes),
+        stroke: b.stroke,
+      ),
   ];
 
   @override
@@ -403,6 +637,7 @@ final class FakeDocumentService implements DocumentService {
       for (final b in _voice(track, bar, voice).sublist(from, to))
         ClipBeatDto(
           duration: b.duration,
+          stroke: b.stroke,
           notes: [
             for (final n in b.notes)
               ClipNoteDto(
@@ -411,6 +646,9 @@ final class FakeDocumentService implements DocumentService {
                 tie: n.tie,
                 letRing: n.letRing,
                 dead: n.dead,
+                accent: n.accent,
+                palmMute: n.palmMute,
+                stringPercussive: n.stringPercussive,
               ),
           ],
         ),
@@ -757,6 +995,18 @@ final class _Tracked implements DocumentService {
   ChordResultDto chordVoicings(int track, String symbol, {int max = 5}) =>
       _inner.chordVoicings(track, symbol, max: max);
   @override
+  List<PatternInfoDto> patterns() => _inner.patterns();
+  @override
+  int samplePattern() => _inner.samplePattern();
+  @override
+  PatternPreviewDto previewPattern(ApplyPatternDto args) =>
+      _inner.previewPattern(args);
+  @override
+  GridViewDto patternGrid(int pattern, List<int> snaps) =>
+      _inner.patternGrid(pattern, snaps);
+  @override
+  List<GestureInfoDto> gestures() => _inner.gestures();
+  @override
   List<ClipBeatDto> copyBeats(
     int track,
     int voice, {
@@ -798,11 +1048,12 @@ final class _Tracked implements DocumentService {
 }
 
 final class _Beat {
-  _Beat(this.id, this.duration, this.notes);
+  _Beat(this.id, this.duration, this.notes, [this.stroke]);
   final int id;
   final DurationDto duration;
   final List<NoteDto> notes;
-  _Beat copy() => _Beat(id, duration, List.of(notes));
+  StrokeDto? stroke;
+  _Beat copy() => _Beat(id, duration, List.of(notes), stroke);
 }
 
 final class _Track {
@@ -820,16 +1071,22 @@ final class _Track {
 }
 
 final class _State {
-  _State({required this.tracks, required this.bars});
+  _State({required this.tracks, required this.bars, FakePatternLibrary? library})
+    : library = library ?? FakePatternLibrary.sample();
   final List<_Track> tracks;
   int bars;
+  final FakePatternLibrary library;
 
-  _State copy() =>
-      _State(tracks: [for (final t in tracks) t.copy()], bars: bars);
+  _State copy() => _State(
+    tracks: [for (final t in tracks) t.copy()],
+    bars: bars,
+    library: library.copy(),
+  );
 
   bool sameAs(_State? other) {
     if (other == null ||
         other.bars != bars ||
+        other.library.generation != library.generation ||
         other.tracks.length != tracks.length) {
       return false;
     }
@@ -844,12 +1101,22 @@ final class _State {
           if (x.length != y.length) return false;
           for (var k = 0; k < x.length; k++) {
             if (x[k].id != y[k].id ||
-                x[k].notes.toString() != y[k].notes.toString()) {
+                x[k].stroke != y[k].stroke ||
+                !_sameNotes(x[k].notes, y[k].notes)) {
               return false;
             }
           }
         }
       }
+    }
+    return true;
+  }
+
+  // NoteDto has value equality but no toString, so compare element by element.
+  static bool _sameNotes(List<NoteDto> a, List<NoteDto> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
     }
     return true;
   }

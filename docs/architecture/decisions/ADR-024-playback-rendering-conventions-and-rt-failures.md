@@ -19,6 +19,19 @@ ADR-007 decides the thread isolation of the audio engine and records the S2 amen
 6. Timeline swap (Q8): when the callback swaps in a new timeline during playback, it first sends all-notes-off to the synth, then relocates the cursor in the new timeline by binary search on the current tick. Notes that started before the swap are not carried over. This is the S2 behaviour; carrying held notes is reconsidered only if the cut is audible in practice.
 7. Panics (Q9): the callback body runs inside `std::panic::catch_unwind`. On a panic the callback fills the output with silence for that and every later callback, sets an error flag (atomic) and stops reading the timeline; the control thread reports the error and can rebuild the engine. The workspace keeps `panic = "unwind"` (no profile may set `panic = "abort"` for crates linked into the app, or this protection is lost). A test injects a panic into the callback body and checks the silence and the flag.
 
+### Amendment (ADR-035, format 1.1, 2026-11-09)
+Format 1.1 adds accent, palm mute and string-percussive to notes and a stroke direction to beats. [ADR-035](ADR-035-playing-techniques-in-the-score.md) section 4 extends values 1 and 2:
+- **Precedence:** string-percussive > dead > palm mute > let ring > normal.
+- **Velocity and note-off of the winning technique:**
+  - palm mute: velocity 80, at most 1/16 whole;
+  - string-percussive: velocity 70, at most 1/64;
+  - dead and let ring: as above.
+- Each limit is the earlier of the limit and the written beat end.
+- **Accent** adds 24 to the winner's velocity, capped at 127.
+- Short techniques (dead, palm mute, string-percussive) end a tie chain, as rule 2 already does for dead notes.
+- A stroke changes no timing.
+- Scores without the new flags compile to the same timeline as before; the goldens are unchanged.
+
 ## Alternatives
 - Velocity from note position or accents: no data for it in the model.
 - Dead notes omitted: loses the rhythmic click that players expect.

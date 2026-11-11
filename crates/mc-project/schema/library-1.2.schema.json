@@ -1,0 +1,451 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LibraryDto",
+  "type": "object",
+  "properties": {
+    "gestures": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/GestureDto"
+      }
+    },
+    "next_id": {
+      "description": "The next id to allocate. Every gesture and pattern id is below it.",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PatternDto"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "next_id"
+  ],
+  "$defs": {
+    "ActionDto": {
+      "description": "`strike` carries `strike`; `gesture` carries the gesture id; `hold` carries\n`strings` when it holds only some strings; `rest` carries nothing.",
+      "type": "object",
+      "properties": {
+        "gesture": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint64",
+          "minimum": 0
+        },
+        "kind": {
+          "$ref": "#/$defs/ActionKindDto"
+        },
+        "strike": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StrikeDto"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "strings": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "$ref": "#/$defs/SelectorDto"
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "kind"
+      ]
+    },
+    "ActionKindDto": {
+      "type": "string",
+      "enum": [
+        "strike",
+        "gesture",
+        "hold",
+        "rest"
+      ]
+    },
+    "GestureDto": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "name": {
+          "type": "string"
+        },
+        "strike": {
+          "$ref": "#/$defs/StrikeDto"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "name",
+        "strike"
+      ]
+    },
+    "LaneDto": {
+      "type": "object",
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StepDto"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "LaneIdDto": {
+      "type": "string",
+      "enum": [
+        "strum",
+        "thumb",
+        "fingers"
+      ]
+    },
+    "LanesDto": {
+      "description": "Either `strum`, or both `thumb` and `fingers`.",
+      "type": "object",
+      "properties": {
+        "fingers": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LaneDto"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "strum": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LaneDto"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "thumb": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LaneDto"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "OriginDto": {
+      "type": "string",
+      "enum": [
+        "grid",
+        "text",
+        "tap"
+      ]
+    },
+    "PatternDto": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "lanes": {
+          "$ref": "#/$defs/LanesDto"
+        },
+        "length": {
+          "description": "In whole notes, as [numerator, denominator].",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "meter": {
+          "description": "[numerator, denominator] of the declared meter, if any.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "name": {
+          "type": "string"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OriginDto"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "spans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SpanDto"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "name",
+        "length",
+        "lanes"
+      ]
+    },
+    "SelectorDto": {
+      "description": "`treble` carries `count`; `string` carries `string`; `strum_range` carries `from`\nand `to`; the others carry nothing.",
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "from": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "kind": {
+          "$ref": "#/$defs/SelectorKindDto"
+        },
+        "string": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "to": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "kind"
+      ]
+    },
+    "SelectorKindDto": {
+      "type": "string",
+      "enum": [
+        "bass",
+        "alt",
+        "treble",
+        "string",
+        "strum",
+        "strum_range"
+      ]
+    },
+    "SpanDto": {
+      "description": "One technique over the steps `first` to `last` of a lane, inclusive.",
+      "type": "object",
+      "properties": {
+        "first": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "lane": {
+          "$ref": "#/$defs/LaneIdDto"
+        },
+        "last": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "technique": {
+          "$ref": "#/$defs/TechniqueDto"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "lane",
+        "first",
+        "last",
+        "technique"
+      ]
+    },
+    "StepDto": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/ActionDto"
+        },
+        "onset": {
+          "description": "From the pattern start, in whole notes, as [numerator, denominator].",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "maxItems": 2,
+          "minItems": 2
+        },
+        "value": {
+          "$ref": "#/$defs/ValueDto"
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "onset",
+        "value",
+        "action"
+      ]
+    },
+    "StrikeDto": {
+      "type": "object",
+      "properties": {
+        "accent": {
+          "type": "boolean"
+        },
+        "dead": {
+          "type": "boolean"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/StrokeDto"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "let_ring": {
+          "type": "boolean"
+        },
+        "palm_mute": {
+          "type": "boolean"
+        },
+        "string_percussive": {
+          "type": "boolean"
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SelectorDto"
+          }
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "targets"
+      ]
+    },
+    "StrokeDto": {
+      "description": "Stroke direction of a beat (format 1.1, ADR-035).",
+      "type": "string",
+      "enum": [
+        "down",
+        "up"
+      ]
+    },
+    "TechniqueDto": {
+      "type": "string",
+      "enum": [
+        "accent",
+        "palm_mute",
+        "dead",
+        "let_ring",
+        "string_percussive"
+      ]
+    },
+    "ValueDto": {
+      "type": "object",
+      "properties": {
+        "base": {
+          "description": "Power of two: 0 = whole ... 8 = 1/256.",
+          "type": "integer",
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "dots": {
+          "type": "integer",
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0
+        },
+        "tuplet": {
+          "description": "[actual, normal], for example [3, 2] for a triplet.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "maxItems": 2,
+          "minItems": 2
+        }
+      },
+      "additionalProperties": true,
+      "required": [
+        "base"
+      ]
+    }
+  }
+}

@@ -1,3 +1,4 @@
+use mc_pattern::PatternError;
 use mc_score::Violation;
 use std::fmt;
 
@@ -44,6 +45,9 @@ pub enum LoadError {
     UnknownRequiredFeatures(Vec<String>),
     /// P-05: content violates domain rules.
     Invalid(Vec<Violation>),
+    /// The stored pattern library (format 1.2) breaks a library rule (PT-01, PT-03 to
+    /// PT-08).
+    InvalidLibrary(Vec<PatternError>),
 }
 
 impl fmt::Display for LoadError {
@@ -80,6 +84,13 @@ impl fmt::Display for LoadError {
             ),
             LoadError::Invalid(v) => {
                 write!(f, "project content is invalid ({} problems)", v.len())?;
+                if let Some(first) = v.first() {
+                    write!(f, "; first: {first}")?;
+                }
+                Ok(())
+            }
+            LoadError::InvalidLibrary(v) => {
+                write!(f, "the pattern library is invalid ({} problems)", v.len())?;
                 if let Some(first) = v.first() {
                     write!(f, "; first: {first}")?;
                 }

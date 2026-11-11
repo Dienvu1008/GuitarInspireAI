@@ -101,3 +101,81 @@ No collision hides a note. Seen in the rendering, and both explained above: the 
 | `reference(LARGE)` (20 tracks, 300 bars, 288 000 notes, a 100.2 MB file) | 154.9 ms | 164.7 ms | ≤ 2 s |
 
 **E11: met** on this machine.
+
+## ADR-035 TQ-8: playing techniques through MuseScore (6a-1, 2026-11-09)
+
+The procedure also exports the `techniques` fixture (ADR-035: every technique and combination, two bars of 4/4, open C shape). MuseScore converts it to MusicXML, MIDI, `.mscz` and PNG. `compare.py techniques` then checks, note by note, which of our marks MuseScore's MusicXML re-export still has. `run.ps1` also counts what MuseScore keeps in its own `.mscz` (the import side, before its exporter runs). In each run, E8 and E9 gave exactly the results above.
+
+Three kinds of result are kept apart below:
+- **native**: a MusicXML 4.0 element or value defined for the meaning;
+- **our approximation**: an extension, counted in the export report;
+- **MuseScore loss**: the file is right, but MuseScore drops it on import or on re-export.
+
+### First encoding (commit `1290325`)
+
+Full output: [musescore/summary-6a1-2026-11-09.txt](musescore/summary-6a1-2026-11-09.txt). Rendering: [musescore/techniques-preview-1290325.png](musescore/techniques-preview-1290325.png).
+
+Palm mute was only `<other-technical>` text; a stroke on a rest was `<technical><down-bow/>` on the rest. MuseScore lost palm mute, string-percussive and the rest stroke, on import already.
+
+### Interop investigation (user review of `1290325`)
+
+Two MusicXML 4.0 mechanisms were tested. Neither had been considered in the first encoding.
+
+- **Palm mute as playback:** `<note>…<play><mute>palm</mute></play></note>`.
+  - The reference says `<play>` inside a `<note>` "applies to the current note only" ([play](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/play/)).
+  - The `mute` type includes `palm` ([mute](https://www.w3.org/2021/06/musicxml40/musicxml-reference/data-types/mute/)).
+- **Stroke on a rest as a direction:** `<direction placement="above"><direction-type><other-direction smufl="guitarStrumDown"/></direction-type><voice>1</voice></direction>`, directly before the rest, so it sits at the rest's onset in its voice.
+  - `<other-direction>` with `smufl` exists "allowing application interoperability" ([other-direction](https://www.w3.org/2021/06/musicxml40/musicxml-reference/elements/other-direction/)).
+  - SMuFL defines `guitarStrumDown` (U+E847) and `guitarStrumUp` (U+E846) ([glyphnames.json](https://github.com/w3c/smufl/blob/gh-pages/metadata/glyphnames.json)).
+
+Method:
+- [tools/musescore-check/variants.py](../tools/musescore-check/variants.py) derives the candidate files from the first-encoding export. Its usage line reproduces them byte for byte.
+- Each file was validated with xmllint 2.9.14 against the pinned XSD (commit `799e2de`, SHA-256 checked, `--nonet`, as in `tools/musicxml-schema/validate.sh`).
+- Three negative controls were rejected: `<play>` before `<notations>`, `mute` value `palm-mute`, and an unknown element. So the passes are real.
+- MuseScore 4.7.5 then converted each file. Its own `.mscx` was compared with the control's, ignoring the random element ids.
+
+| Candidate | XSD | MuseScore import (its `.mscx`) | MuseScore MIDI | MuseScore MusicXML re-export |
+|---|---|---|---|---|
+| Control (first encoding, ElementTree round trip) | valid | reference | reference | reference |
+| `<play><mute>palm</mute></play>`, text kept | valid | **identical to the control**: ignored | byte-identical to the control: no effect | no `<play>`, no `<mute>` |
+| `<play><mute>palm</mute></play>` only | valid | identical to the control | byte-identical | none. Two of four conversions exited with 0xC0000005 after writing their output; 9 repeats of this and the other files all exited 0, so this was not reproduced |
+| `<play>` plus `<words>P.M.</words>` and `<dashes>` over each run | valid | generic `TextLine` and `StaffText` "P.M." (not MuseScore's palm-mute line) | byte-identical: no effect | 3 `<words>P.M.</words>`, 2 `<dashes>`: visible text only |
+| Rest stroke as `<other-direction smufl="guitarStrumDown"/>` | valid | **a `guitarStrumDown` symbol, in bar 2, voice 1, directly before the eighth rest** | byte-identical | no `<other-direction>`: lost |
+| The same, with the `<technical>` on the rest kept | valid | the same symbol (the `<technical>` is still ignored) | byte-identical | lost |
+
+**MuseScore's own palm mute** (a one-off check, not part of `run.ps1`). In MuseScore's `.mscz` of the words variant, the `TextLine` was renamed to a native `PalmMute` spanner (same anchors), and the file was run through MuseScore again:
+- Its MIDI changes: the palm-muted notes are shortened.
+- Its MusicXML export is `<words>P.M.</words>` with a dashed `<bracket>`, not `<play><mute>`.
+- Re-importing that export gives a generic `TextLine`, not a `PalmMute`.
+
+So MuseScore 4.7.5 cannot round-trip even its own palm mute through MusicXML. No encoding we could choose would keep it.
+
+String-percussive: SMuFL has no glyph for a pitched percussive string hit, only percussion pictograms. So no `smufl` reference would be truthful, and the counted extension stays (ADR-035 section 9).
+
+### Current encoding (after the investigation)
+
+The exporter writes palm mute playback natively, as `<play><mute>palm</mute></play>` on each palm-muted note. It keeps the per-note `<other-technical>palm mute</other-technical>` mark, counted, because 4.0 has no palm-mute notation element. A stroke on a rest is now the strum direction above. The other mappings are unchanged.
+
+Full output: [musescore/summary-6a1-interop-2026-11-09.txt](musescore/summary-6a1-interop-2026-11-09.txt).
+
+| Technique (our encoding) | Kind | Ours | MuseScore import | MuseScore re-export | Result |
+|---|---|---|---|---|---|
+| Accent (`<articulations><accent/>`) | native | 11 notes on 3 beats | 3 accent articulations, one per chord | 3, on the chord's first note | Kept per beat. MuseScore stores articulations per chord, so a chord where only some notes are accented cannot be told apart. Our score keeps the per-note flag |
+| Down-stroke on notes (`<technical><down-bow/>`) | native | 2 | 2 | 2 | Kept |
+| Up-stroke (`<technical><up-bow/>`) | native | 1 | 1 | 1 | Kept |
+| Stroke on a rest (`<other-direction smufl="guitarStrumDown"/>`) | native mechanism (SMuFL glyph) | 1 | **1 symbol, drawn at the rest** | 0 | **Kept on import, lost on re-export** (MuseScore loss) |
+| `x` notehead (dead, string-percussive) | native | 7 | 7 cross noteheads | 7 | Kept in the file. On TAB MuseScore draws digits |
+| Palm mute playback (`<play><mute>palm</mute></play>`) | native | 4 | ignored | 0 | **Lost** (MuseScore loss) |
+| Palm mute mark (`<other-technical>palm mute</other-technical>`) | our approximation, counted | 4 | ignored | 0 | **Lost** (MuseScore loss) |
+| String-percussive mark (`<other-technical>string percussive</other-technical>`) | our approximation, counted | 6 | ignored | 0 | **Lost**. The `x` notehead stays, so MuseScore reads a dead note |
+
+![MuseScore rendering of the techniques fixture, current encoding](musescore/techniques-preview.png)
+
+The rendering shows the accents, the down-bow and up-bow symbols, the let-ring ties and, new, the down-strum arrow above the rest in bar 2. It shows no palm-mute or string-percussive text.
+
+**TQ-8: MuseScore opens the file, and the result for each technique is recorded.** After MuseScore's MusicXML re-export:
+- Palm mute (both its native playback and its mark) and string-percussive are lost.
+- The rest stroke is lost too, although MuseScore now imports and draws it.
+- Per-note accents in a chord collapse to one accent per chord.
+
+**This is still an evidence gap, not a pass.** The remaining losses are MuseScore behaviour: the file is valid MusicXML 4.0 and uses the native element wherever one exists. The encoding is not bent to suit MuseScore.

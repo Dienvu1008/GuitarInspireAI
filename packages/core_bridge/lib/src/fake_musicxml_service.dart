@@ -58,6 +58,7 @@ final class FakeMusicXmlService implements MusicXmlService {
         tupletsWithoutBracket: 0,
         tempoRounded: 0,
         charactersRemoved: 0,
+        techniquesApproximated: 0,
       ),
     );
   }
