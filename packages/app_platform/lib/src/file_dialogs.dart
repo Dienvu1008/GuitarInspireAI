@@ -2,9 +2,10 @@ import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 
-/// Open and save dialogs for project, MIDI and MusicXML files. Returns `null` when the user
-/// cancels. MIDI bytes are read and written here because file I/O is a platform concern
-/// (GR-11, FF-08); the core only receives and produces bytes.
+/// Open and save dialogs for project, MIDI, MusicXML and Guitar Pro files. Returns
+/// `null` when the user cancels. Interchange bytes are read and written here because
+/// file I/O is a platform concern (GR-11, FF-08); the core only receives and produces
+/// bytes.
 abstract interface class FileDialogs {
   Future<String?> pickProjectToOpen();
 
@@ -24,6 +25,18 @@ abstract interface class FileDialogs {
     List<int> bytes, {
     required String suggestedName,
   });
+
+  /// Pick a `.gp3`, `.gp4` or `.gp5` file and return its bytes, or `null` if
+  /// cancelled (ADR-036).
+  Future<List<int>?> pickGuitarProToImport();
+
+  /// Pick where to export a Guitar Pro file; `.gp5` is appended when the name has no
+  /// extension. The chosen extension selects the version, so the bytes are produced
+  /// after this and written with [writeFile]. Returns `null` if cancelled.
+  Future<String?> pickGuitarProToSave({required String suggestedName});
+
+  /// Write [bytes] to [path] (a location returned by a pick method).
+  Future<void> writeFile(String path, List<int> bytes);
 }
 
 /// Product extension of project files (Q-08). Adapter-level convention only: the
@@ -36,6 +49,15 @@ const _projectFiles = XTypeGroup(
 );
 
 const _musicXmlFiles = XTypeGroup(label: 'MusicXML', extensions: ['musicxml']);
+
+// "Guitar Pro" names the format only (ADR-036 section 2).
+const _guitarProFiles = XTypeGroup(
+  label: 'Guitar Pro 3 to 5',
+  extensions: ['gp5', 'gp4', 'gp3'],
+);
+const _guitarPro5 = XTypeGroup(label: 'Guitar Pro 5', extensions: ['gp5']);
+const _guitarPro4 = XTypeGroup(label: 'Guitar Pro 4', extensions: ['gp4']);
+const _guitarPro3 = XTypeGroup(label: 'Guitar Pro 3', extensions: ['gp3']);
 
 const _midiFiles = XTypeGroup(
   label: 'Standard MIDI File',
@@ -81,6 +103,28 @@ final class SystemFileDialogs implements FileDialogs {
     List<int> bytes, {
     required String suggestedName,
   }) => _save(bytes, suggestedName, _musicXmlFiles, 'musicxml');
+
+  @override
+  Future<List<int>?> pickGuitarProToImport() async {
+    final file = await openFile(acceptedTypeGroups: const [_guitarProFiles]);
+    if (file == null) return null;
+    return file.readAsBytes();
+  }
+
+  @override
+  Future<String?> pickGuitarProToSave({required String suggestedName}) async {
+    final location = await getSaveLocation(
+      acceptedTypeGroups: const [_guitarPro5, _guitarPro4, _guitarPro3],
+      suggestedName: suggestedName,
+    );
+    if (location == null) return null;
+    final name = location.path.split(RegExp(r'[\\/]')).last;
+    return name.contains('.') ? location.path : '${location.path}.gp5';
+  }
+
+  @override
+  Future<void> writeFile(String path, List<int> bytes) =>
+      XFile.fromData(Uint8List.fromList(bytes)).saveTo(path);
 
   /// Ask for a location and write [bytes] there, appending [extension] when the user
   /// typed a name without one.

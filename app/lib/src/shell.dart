@@ -7,6 +7,7 @@ import 'package:tools_feature/tools_feature.dart';
 import 'package:ui_kit/ui_kit.dart';
 
 import 'close_guard.dart';
+import 'guitar_pro_menu.dart';
 import 'midi_menu.dart';
 import 'musicxml_menu.dart';
 import 'playback_wiring.dart';
@@ -182,6 +183,7 @@ class _MenuBar extends ConsumerWidget {
                 const Divider(),
                 ...buildMidiMenuItems(context, ref),
                 ...buildMusicXmlMenuItems(context, ref),
+                ...buildGuitarProMenuItems(context, ref),
               ],
               child: const Text('File'),
             ),

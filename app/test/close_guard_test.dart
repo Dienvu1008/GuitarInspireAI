@@ -45,6 +45,13 @@ final class _Dialogs implements FileDialogs {
     List<int> bytes, {
     required String suggestedName,
   }) async => null;
+  @override
+  Future<List<int>?> pickGuitarProToImport() async => null;
+  @override
+  Future<String?> pickGuitarProToSave({required String suggestedName}) async =>
+      null;
+  @override
+  Future<void> writeFile(String path, List<int> bytes) async {}
 }
 
 Future<ProviderContainer> _start(
