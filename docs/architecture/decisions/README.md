@@ -80,3 +80,7 @@ Related documents: links
 | [ADR-035](ADR-035-playing-techniques-in-the-score.md) | Playing techniques in the score: accent, palm mute, string-percussive, stroke (Phase 6a-1) | Accepted (2026-11-09) |
 | [ADR-036](ADR-036-guitar-pro-adapter.md) | Guitar Pro import and export adapter `mc-guitarpro` (Phase 6d) | Accepted (2026-11-11) |
 | [ADR-037](ADR-037-bravura-smufl-font.md) | Bravura as the SMuFL music font, bundled unmodified under the SIL OFL 1.1 (Phase 6c); ADR-015 amendment 1 | Accepted (2026-11-11) |
+| [ADR-038](ADR-038-notation-staff-model.md) | Staff model for standard notation and TAB (Phase 6c; amends ADR-031) | Accepted (2026-11-12) |
+| [ADR-039](ADR-039-pitch-capo-and-written-transposition.md) | Pitch semantics: sounding pitch with capo, written transposition from the instrument (Phase 6c) | Accepted (2026-11-12) |
+| [ADR-040](ADR-040-theory-notation-rendering-boundary.md) | Boundary between mc-theory, mc-notation and rendering; spelling and accidentals in mc-theory (Phase 6c) | Accepted (2026-11-12); spelling rule (section 5) pending the user |
+| [ADR-041](ADR-041-notation-engine-metrics-cache-pdf.md) | Notation engine: SMuFL metrics in Rust, bar-plan cache, vector PDF adapter, read-only hit testing (Phase 6c; amends ADR-018) | Accepted (2026-11-12) |

@@ -1,6 +1,6 @@
 # ADR-031 Simultaneous multi-track TAB display (Phase 6b-2)
 
-Status: Accepted (2026-11-06). The acceptance criteria were fixed before any code. The user accepted all four choices of section 5 as proposed on 2026-11-06. 6b-2 is done when it meets section 4.
+Status: Accepted (2026-11-06). The acceptance criteria were fixed before any code. The user accepted all four choices of section 5 as proposed on 2026-11-06. 6b-2 is done when it meets section 4. Amended by [ADR-038](ADR-038-notation-staff-model.md) (2026-11-12): staff model with notation staves.
 Date: 2026-11-06
 Related documents: [ADR-018](ADR-018-notation-layout-in-rust.md), [ADR-025](ADR-025-single-machine-evidence-accepted.md), [ADR-028](ADR-028-playback-transport-port-and-session-state.md), [ADR-030](ADR-030-editor-debt-clipboard-and-session-marker.md), [cross-platform-ui.md](../cross-platform-ui.md), [performance-requirements.md](../performance-requirements.md), [implementation-phases.md](../../roadmap/implementation-phases.md), [phase-3-exit-report.md](../../roadmap/phase-3-exit-report.md)
 

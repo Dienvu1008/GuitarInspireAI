@@ -169,6 +169,8 @@ Spike: `spikes/s10-guitar-pro/`. It is throwaway and has its own workspace. The 
 
 ### S11 standard notation engraving (Phase 6c entry, 2026-11-12; recommendation Go, pending the user's N4 review)
 
+Decisions taken on the results (user, 2026-11-12): ADR-038 to ADR-041. The spelling rule of ADR-040 section 5 is still open. The baseline estimate is in [implementation-phases.md](../roadmap/implementation-phases.md) (6c). R-13 stays High until it is reviewed after 6c-3.
+
 Spike: `spikes/s11-notation/`, throwaway, with its own workspace. Criteria N1 to N8 and the decision rule were fixed in its README sections 4 and 5 before the code. Full results are in its section 7.
 
 **Scope set by the user**
@@ -198,7 +200,7 @@ So "own engine vs Verovio" in the question was decided before the spike. The spi
 - 6c-2 `mc-notation` notation staff (staff model, bar plans and cache, SMuFL metrics, emission, checks as tests, golden layouts): 3 to 5.
 - 6c-3 Bravura bundling, DTO and Flutter painting above TAB, view setting: 2 to 3.
 - 6c-4 read-only hit testing on the notation staff: 0.5 to 1.
-- 6c-5 vector PDF export with pagination and Noto Sans Mono: 2 to 3.
+- 6c-5 vector PDF export with pagination and Noto Sans Mono: 2 to 3, in two parts: 6c-5a is a pagination checkpoint, and 6c-5b is the export.
 - 6c-6 engraving polish (spacing, courtesy signatures, double bar line at a key change, centred bar rests, ties): 1 to 2.
 - 6c-7 benchmarks and exit: 0.5.
 

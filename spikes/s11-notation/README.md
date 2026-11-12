@@ -282,7 +282,25 @@ The vector PDFs are in `results/pdf/`. The SVG-to-PDF files are not committed, b
 
 ### 7.8 Proposals for approval (N7)
 
-All of these are Proposed. Nothing is decided before the user approves.
+**Decision record (2026-11-12).** The user approved items 1 to 9, with added conditions, and they are now ADRs. This list is kept as the spike's proposal, and the ADRs are the authority.
+
+| Item | Decided in | Status |
+|---|---|---|
+| 1 staff model | ADR-038 (amends ADR-031) | Accepted |
+| 2 written pitch, clef, capo | ADR-039: sounding pitch with the capo, the octave from the instrument | Accepted |
+| 3 spelling and accidentals | ADR-040: rules in `mc-theory`; a semantic layer in `mc-notation` | Accepted. The spelling rule (ADR-040 section 5) is **pending the user**, because `KeySignature::spell` (ADR-033) differs from the spike rule in keys with 6 or 7 accidentals |
+| 4 metrics | ADR-041 decision 1: a generated, pinned table; missing glyphs and anchors are explicit errors | Accepted |
+| 5 bar-plan cache | ADR-041 decision 3: full key and forward tie propagation | Accepted, mandatory |
+| 6 vertical layout | ADR-038 decision 5 | Accepted |
+| 7 hit testing | ADR-041 decision 4: read-only | Accepted |
+| 8 PDF | ADR-041 decision 5: `mc-pdf` vector, only bundled fonts embedded, pagination checkpoint, Edge check by the user | Accepted |
+| 9 checks as tests | ADR-041 decision 6 | Accepted |
+
+Two corrections to this spike, found while writing the ADRs:
+- **`Engine::replan` re-plans only the edited bar and the next one.** A tie chain that spans more than two bars can therefore keep a stale spelling. The timing measured in 7.6 is not affected (same work per bar), but the invalidation rule was incomplete. ADR-041 decision 3 fixes it: re-plan forward until the entering tie spellings are unchanged.
+- **The vector PDFs in `results/pdf/` use Helvetica**, a non-embedded standard font, for TAB digits. They do not meet the user's "no dependence on installed fonts" condition. ADR-041 decision 5 requires embedded Noto Sans Mono.
+
+The original proposals follow. They were Proposed until the user approved them on 2026-11-12.
 
 1. **ADR-031 change, the staff model.** A track shows a `StaffConfiguration` (notation, TAB, transposition), a view setting that is not stored in the score. Each staff is a `Staff` at a `StaffPosition` in its system. Every staff of a system takes its x from one shared bar plan. Editing stays on the TAB staff in 6c.
 2. **Written pitch, clef and capo.** The model keeps the sounding pitch (no change to the score or the format). The notation engine alone writes it an octave up under `gClef8vb`. **Question for the user:** the spike puts the capo into the sounding pitch, so the notes are written as they sound. Should the capo instead be shown as fingered (written without the capo)?
