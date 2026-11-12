@@ -12,6 +12,7 @@ mod duration;
 mod error;
 pub mod fretted;
 mod key;
+pub mod notation;
 mod note_name;
 mod pitch;
 mod rational;

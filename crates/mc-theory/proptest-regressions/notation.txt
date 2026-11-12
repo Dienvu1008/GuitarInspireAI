@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 43c6ceddc47107f6b51f14fcc3512a5a91491fcb2a1071b7e5e6020086acce7c # shrinks to fifths = 4, notes = [BarNote { onset: 1/2, written: SpelledPitch { letter: D, alter: Alter(0), octave: 5 }, tie: NotTied }, BarNote { onset: 0/1, written: SpelledPitch { letter: D, alter: Alter(0), octave: 5 }, tie: TiedAcrossBarLine }]

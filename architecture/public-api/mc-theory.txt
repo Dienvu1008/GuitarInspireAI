@@ -124,6 +124,76 @@ impl core::marker::UnsafeUnpin for mc_theory::fretted::Tuning
 impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::fretted::Tuning
 impl core::panic::unwind_safe::UnwindSafe for mc_theory::fretted::Tuning
 pub fn mc_theory::fretted::pitch_at(&mc_theory::fretted::Tuning, mc_theory::fretted::Capo, mc_theory::fretted::FretPosition) -> core::option::Option<i32>
+pub mod mc_theory::notation
+pub enum mc_theory::notation::TieRole
+pub mc_theory::notation::TieRole::NotTied
+pub mc_theory::notation::TieRole::TiedAcrossBarLine
+pub mc_theory::notation::TieRole::TiedInBar
+impl core::clone::Clone for mc_theory::notation::TieRole
+pub fn mc_theory::notation::TieRole::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::notation::TieRole
+impl core::cmp::PartialEq for mc_theory::notation::TieRole
+pub fn mc_theory::notation::TieRole::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::notation::TieRole
+pub fn mc_theory::notation::TieRole::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::notation::TieRole
+pub fn mc_theory::notation::TieRole::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::notation::TieRole
+impl core::marker::StructuralPartialEq for mc_theory::notation::TieRole
+impl core::marker::Freeze for mc_theory::notation::TieRole
+impl core::marker::Send for mc_theory::notation::TieRole
+impl core::marker::Sync for mc_theory::notation::TieRole
+impl core::marker::Unpin for mc_theory::notation::TieRole
+impl core::marker::UnsafeUnpin for mc_theory::notation::TieRole
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::notation::TieRole
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::notation::TieRole
+pub struct mc_theory::notation::BarNote
+pub mc_theory::notation::BarNote::onset: mc_theory::Rational
+pub mc_theory::notation::BarNote::tie: mc_theory::notation::TieRole
+pub mc_theory::notation::BarNote::written: mc_theory::SpelledPitch
+impl core::clone::Clone for mc_theory::notation::BarNote
+pub fn mc_theory::notation::BarNote::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::notation::BarNote
+impl core::cmp::PartialEq for mc_theory::notation::BarNote
+pub fn mc_theory::notation::BarNote::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::notation::BarNote
+pub fn mc_theory::notation::BarNote::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_theory::notation::BarNote
+impl core::marker::StructuralPartialEq for mc_theory::notation::BarNote
+impl core::marker::Freeze for mc_theory::notation::BarNote
+impl core::marker::Send for mc_theory::notation::BarNote
+impl core::marker::Sync for mc_theory::notation::BarNote
+impl core::marker::Unpin for mc_theory::notation::BarNote
+impl core::marker::UnsafeUnpin for mc_theory::notation::BarNote
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::notation::BarNote
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::notation::BarNote
+pub struct mc_theory::notation::Transposition
+impl mc_theory::notation::Transposition
+pub const mc_theory::notation::Transposition::NONE: mc_theory::notation::Transposition
+pub const mc_theory::notation::Transposition::OCTAVE_UP: mc_theory::notation::Transposition
+pub const fn mc_theory::notation::Transposition::new(i8) -> Self
+pub const fn mc_theory::notation::Transposition::octaves(self) -> i8
+pub fn mc_theory::notation::Transposition::written(self, mc_theory::SpelledPitch) -> core::result::Result<mc_theory::SpelledPitch, mc_theory::TheoryError>
+impl core::clone::Clone for mc_theory::notation::Transposition
+pub fn mc_theory::notation::Transposition::clone(&self) -> Self
+impl core::cmp::Eq for mc_theory::notation::Transposition
+impl core::cmp::PartialEq for mc_theory::notation::Transposition
+pub fn mc_theory::notation::Transposition::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_theory::notation::Transposition
+pub fn mc_theory::notation::Transposition::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_theory::notation::Transposition
+pub fn mc_theory::notation::Transposition::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_theory::notation::Transposition
+impl core::marker::StructuralPartialEq for mc_theory::notation::Transposition
+impl core::marker::Freeze for mc_theory::notation::Transposition
+impl core::marker::Send for mc_theory::notation::Transposition
+impl core::marker::Sync for mc_theory::notation::Transposition
+impl core::marker::Unpin for mc_theory::notation::Transposition
+impl core::marker::UnsafeUnpin for mc_theory::notation::Transposition
+impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::notation::Transposition
+impl core::panic::unwind_safe::UnwindSafe for mc_theory::notation::Transposition
+pub fn mc_theory::notation::bar_accidentals(mc_theory::KeySignature, &[mc_theory::notation::BarNote]) -> alloc::vec::Vec<core::option::Option<mc_theory::Alter>>
+pub fn mc_theory::notation::tie_continuation(mc_theory::KeySignature, mc_theory::SpelledPitch, i32) -> mc_theory::SpelledPitch
 pub enum mc_theory::ChordQuality
 pub mc_theory::ChordQuality::Add9
 pub mc_theory::ChordQuality::Augmented
@@ -176,6 +246,8 @@ pub mc_theory::Letter::E
 pub mc_theory::Letter::F
 pub mc_theory::Letter::G
 impl mc_theory::Letter
+pub const mc_theory::Letter::ALL: [mc_theory::Letter; 7]
+pub const fn mc_theory::Letter::index(self) -> i32
 pub const fn mc_theory::Letter::natural_semitone(self) -> i32
 impl core::clone::Clone for mc_theory::Letter
 pub fn mc_theory::Letter::clone(&self) -> Self
@@ -288,7 +360,9 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_theory::TheoryError
 impl core::panic::unwind_safe::UnwindSafe for mc_theory::TheoryError
 pub struct mc_theory::Alter(_)
 impl mc_theory::Alter
+pub const mc_theory::Alter::FLAT: mc_theory::Alter
 pub const mc_theory::Alter::NATURAL: mc_theory::Alter
+pub const mc_theory::Alter::SHARP: mc_theory::Alter
 pub fn mc_theory::Alter::new(i8) -> core::result::Result<Self, mc_theory::TheoryError>
 pub const fn mc_theory::Alter::semitones(self) -> i8
 impl core::clone::Clone for mc_theory::Alter
@@ -396,6 +470,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_theory::ChordInterval
 pub struct mc_theory::KeySignature
 impl mc_theory::KeySignature
 pub const mc_theory::KeySignature::C_MAJOR: mc_theory::KeySignature
+pub fn mc_theory::KeySignature::alteration(self, mc_theory::Letter) -> mc_theory::Alter
 pub const fn mc_theory::KeySignature::fifths(self) -> i8
 pub const fn mc_theory::KeySignature::mode(self) -> mc_theory::Mode
 pub fn mc_theory::KeySignature::new(i8, mc_theory::Mode) -> core::result::Result<Self, mc_theory::TheoryError>
@@ -549,6 +624,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_theory::Rational
 pub struct mc_theory::SpelledPitch
 impl mc_theory::SpelledPitch
 pub const fn mc_theory::SpelledPitch::alter(self) -> mc_theory::Alter
+pub const fn mc_theory::SpelledPitch::diatonic_step(self) -> i32
 pub fn mc_theory::SpelledPitch::from_semitone_flat(i32) -> Self
 pub fn mc_theory::SpelledPitch::from_semitone_sharp(i32) -> Self
 pub const fn mc_theory::SpelledPitch::letter(self) -> mc_theory::Letter
@@ -556,6 +632,7 @@ pub const fn mc_theory::SpelledPitch::new(mc_theory::Letter, mc_theory::Alter, i
 pub const fn mc_theory::SpelledPitch::octave(self) -> i8
 pub fn mc_theory::SpelledPitch::pitch_class(self) -> mc_theory::PitchClass
 pub const fn mc_theory::SpelledPitch::semitone(self) -> i32
+pub fn mc_theory::SpelledPitch::with_semitone(mc_theory::Letter, mc_theory::Alter, i32) -> Self
 impl core::clone::Clone for mc_theory::SpelledPitch
 pub fn mc_theory::SpelledPitch::clone(&self) -> Self
 impl core::cmp::Eq for mc_theory::SpelledPitch

@@ -48,6 +48,18 @@ pub enum InstrumentSpec {
     Fretted(FrettedInstrument),
 }
 
+impl InstrumentSpec {
+    /// Written pitch relative to sounding pitch, from the instrument definition
+    /// (ADR-039 decision 3). Derived, not stored: fretted instruments (guitar, bass
+    /// guitar) are written one octave above sounding. The capo is already in the
+    /// sounding pitch (`pitch_at`) and is never added here.
+    pub fn written_transposition(&self) -> mc_theory::notation::Transposition {
+        match self {
+            InstrumentSpec::Fretted(_) => mc_theory::notation::Transposition::OCTAVE_UP,
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FrettedInstrument {
     pub tuning: Tuning,

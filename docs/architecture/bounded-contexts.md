@@ -10,9 +10,9 @@ Type names are illustrative, not final API.
 
 1. Responsibilities: Exact musical value types and pure arithmetic on them.
 2. Entities: None.
-3. Value objects: `Letter`, `Alter` (-2..=2 in v1), `SpelledPitch` (letter, alter, octave), `PitchClass`, `Interval` (spelled: number and quality), `ScaleFormula`, `ChordFormula`, `ChordSymbol`, `Key`, `Rational`, `NoteValue` duration primitives (base value, dots, tuplet ratio), `TimeSignature`, `Tempo` (positive), and module `fretted`: `StringIndex`, `Fret`, `Capo`, `Tuning`, `FretPosition`, function `pitch_at(tuning, capo, position)`.
+3. Value objects: `Letter`, `Alter` (-2..=2 in v1), `SpelledPitch` (letter, alter, octave), `PitchClass`, `Interval` (spelled: number and quality), `ScaleFormula`, `ChordFormula`, `ChordSymbol`, `Key`, `Rational`, `NoteValue` duration primitives (base value, dots, tuplet ratio), `TimeSignature`, `Tempo` (positive), and module `fretted`: `StringIndex`, `Fret`, `Capo`, `Tuning`, `FretPosition`, function `pitch_at(tuning, capo, position)`; and module `notation` (ADR-040): `Transposition`, `TieRole`, `BarNote`.
 4. Aggregates: None.
-5. Domain services: Pure functions only: transpose, interval between pitches, enharmonic respelling, chord formula to pitch classes.
+5. Domain services: Pure functions only: transpose, interval between pitches, enharmonic respelling, chord formula to pitch classes. Notation rules (ADR-040): `KeySignature::spell` (scale degree first), `KeySignature::alteration`, `notation::tie_continuation`, `notation::bar_accidentals`. Every consumer (notation layout, PDF, MusicXML) takes spellings and accidentals from these functions only.
 6. Domain events: None.
 7. Public interface: Value types with smart constructors and pure functions.
 8. Dependencies: `std` only (plus `serde` derive behind a feature flag if mirroring requires it; to be decided by S1).

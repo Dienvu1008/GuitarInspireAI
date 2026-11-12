@@ -17,6 +17,30 @@ pub enum Letter {
 }
 
 impl Letter {
+    /// The seven letters from C up.
+    pub const ALL: [Letter; 7] = [
+        Letter::C,
+        Letter::D,
+        Letter::E,
+        Letter::F,
+        Letter::G,
+        Letter::A,
+        Letter::B,
+    ];
+
+    /// Position from C (0) to B (6).
+    pub const fn index(self) -> i32 {
+        match self {
+            Letter::C => 0,
+            Letter::D => 1,
+            Letter::E => 2,
+            Letter::F => 3,
+            Letter::G => 4,
+            Letter::A => 5,
+            Letter::B => 6,
+        }
+    }
+
     pub const fn natural_semitone(self) -> i32 {
         match self {
             Letter::C => 0,
@@ -61,6 +85,8 @@ pub struct Alter(i8);
 
 impl Alter {
     pub const NATURAL: Alter = Alter(0);
+    pub const SHARP: Alter = Alter(1);
+    pub const FLAT: Alter = Alter(-1);
 
     pub fn new(semitones: i8) -> Result<Self, TheoryError> {
         if !(-2..=2).contains(&semitones) {
@@ -125,6 +151,25 @@ impl SpelledPitch {
 
     pub fn pitch_class(self) -> PitchClass {
         PitchClass::from_semitone(self.semitone())
+    }
+
+    /// Diatonic step number: 7 per octave, C-1 = -7, C0 = 0, C4 = 28. Letter and octave
+    /// together; the alteration does not count (Cb4 and C#4 share a step).
+    pub const fn diatonic_step(self) -> i32 {
+        self.octave as i32 * 7 + self.letter.index()
+    }
+
+    /// The pitch with this letter and alteration that sounds `semitone`. The octave
+    /// number follows the letter (Cb4 = 59, B#3 = 60). Clamped to the octave range of
+    /// `i8`, like the tables below.
+    pub fn with_semitone(letter: Letter, alter: Alter, semitone: i32) -> Self {
+        let base = letter.natural_semitone() + alter.0 as i32;
+        let octave = (semitone - base).div_euclid(12) - 1;
+        SpelledPitch {
+            letter,
+            alter,
+            octave: octave.clamp(i8::MIN as i32, i8::MAX as i32) as i8,
+        }
     }
 
     /// Spelling of a semitone number using flats for the black keys (Db, Eb, Gb, Ab, Bb).

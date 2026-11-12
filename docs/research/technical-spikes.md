@@ -167,9 +167,9 @@ Spike: `spikes/s10-guitar-pro/`. It is throwaway and has its own workspace. The 
 
 **Effort:** well inside the 3-day timebox.
 
-### S11 standard notation engraving (Phase 6c entry, 2026-11-12; recommendation Go, pending the user's N4 review)
+### S11 standard notation engraving (Phase 6c entry, 2026-11-12; Go, N4 accepted by the user)
 
-Decisions taken on the results (user, 2026-11-12): ADR-038 to ADR-041. The spelling rule of ADR-040 section 5 is still open. The baseline estimate is in [implementation-phases.md](../roadmap/implementation-phases.md) (6c). R-13 stays High until it is reviewed after 6c-3.
+Decisions taken on the results (user, 2026-11-12): ADR-038 to ADR-041. For ADR-040 section 5, the spelling rule, the user chose option A. The baseline estimate is in [implementation-phases.md](../roadmap/implementation-phases.md) (6c). R-13 stays High until it is reviewed after 6c-3.
 
 Spike: `spikes/s11-notation/`, throwaway, with its own workspace. Criteria N1 to N8 and the decision rule were fixed in its README sections 4 and 5 before the code. Full results are in its section 7.
 
@@ -185,7 +185,7 @@ So "own engine vs Verovio" in the question was decided before the spike. The spi
 | N1 correctness | Pass. 0 errors on 9 inputs. 229 of 229 accidentals equal MuseScore. |
 | N2 alignment | Pass, exact by construction (one bar plan for both staves). |
 | N3 engraving rules | Pass. 0 violations in 4 024 rule checks. 12 deliberate breakages, each caught. |
-| N4 review | Pending the user (`results/review/`). |
+| N4 review | Accepted by the user, 2026-11-12 (`results/review/`). |
 | N5 timing | Pass for TYPICAL in view (p99 9.9 ms without cache). LARGE needs the bar-plan cache: 4.9 ms p99 with it, 212 ms without. |
 | N6 PDF | Vector route recommended. SVG-to-PDF is 70 times slower and not deterministic. |
 | N7 | Risks (R-13) and effort below; ADR proposals in the spike README section 7.8. |

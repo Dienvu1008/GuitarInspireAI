@@ -70,6 +70,20 @@ Scope: the `mc-theory` rules of decision 1, `Transposition` and `InstrumentSpec:
 | T6 | The MusicXML export uses the new `spell`.<br>– Its three goldens are unchanged (none has 6 or 7 accidentals; checked before the change).<br>– A new test exports F♯ major with an in-key E♯. | `mc-musicxml` tests |
 | T7 | No new dependency, no `unsafe`, no I/O in `mc-theory` (FF-03, FF-04, FF-34). Public API changes are additions only, plus the decided behaviour change of `spell` (FF-22). The whole workspace builds and tests pass, clippy clean. | CI and the fitness functions |
 
+**Results (2026-11-12).**
+
+| Id | Result |
+|---|---|
+| T1 | Pass. In-key cases (E♯4, B♯3, C♭4, F♭4), all 15 keys over -12 to 140, mode independence. Up to 5 accidentals, the new rule equals the old one on every semitone. The octave-boundary test was rewritten as decided in section 5. |
+| T2 | Pass, all 15 keys. |
+| T3 | Pass. Unit cases, including the S11 `keys` bars, plus two property tests: agreement with a separately written look-back oracle, and per-note independence from input order. A planted fault (ties across the bar line counted in the state) was caught by `t3_ties` and the oracle, then removed. |
+| T4 | Pass. |
+| T5 | Pass, on SMALL, TYPICAL, `feature_rich` (capo 2 track) and `techniques`, plus the ADR-039 capo example. |
+| T6 | Pass. The three goldens are unchanged; the new F♯ major test exports E♯4. |
+| T7 | Pass: fmt, clippy `-D warnings`, `cargo test --workspace --all-features` and FF-01, FF-03, FF-04, FF-20, FF-33, FF-34 locally. FF-22 snapshots of `mc-theory` and `mc-score`: 79 lines added, 0 removed. |
+
+One rule was made precise while writing the code. In S11, two notes on one step at the same onset (a unison across voices, or F with F♯) got a result that depended on their order. Now every note at one onset is compared with the state before that onset. On a clash both notes show their sign, and the step stays ambiguous, so the next note on it shows its sign. This rule is the one T3 checks.
+
 Not in 6c-1, and kept for 6c-2:
 - the `mc-notation` semantic layer;
 - tie continuation and accidentals inside the MusicXML export (it writes spelled pitches today and no `<accidental>` element).

@@ -133,6 +133,13 @@ Sub-phases can be reordered by user priority.
     - The estimate and R-13 are reviewed after 6c-3.
     - PDF export is committed to only after the pagination checkpoint.
     - Tests and correctness are not cut to meet a date.
+  - Actual effort:
+
+    | Slice | Estimate | Agent time (wall clock) | Notes |
+    |---|---|---|---|
+    | 6c-1 | 0.5 to 1 FTE weeks | 2026-11-12 15:16 to 15:30 | Criteria committed before code (`426bfe3`). User review time is not included. |
+
+    Agent wall-clock time is **not comparable** with the FTE-week estimate, which assumed a human developer. Before the review after 6c-3, the user decides which measure the estimate is checked against: the user's own hours, calendar time to merge, or agent time.
 - 6d Guitar Pro import: entry gate S10. Acceptance: fixture files of each supported version import with reports. Complexity: Medium to high with format risk. The scope is set by [ADR-036](../architecture/decisions/ADR-036-guitar-pro-adapter.md): GP3 to GP5 (5.00) import, and export to the same three versions (added by the user). GP5 5.10, GPX and GP7+ wait for lawful sample files.
 
 Common testing: golden files, fuzzing for importers, format fixtures appended (format minor bump for patterns).

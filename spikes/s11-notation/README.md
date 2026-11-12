@@ -183,7 +183,7 @@ The engine is in `engine/` (its own workspace, excluded from the main one; throw
 | N1 correctness | **Met.** 0 errors on all 9 inputs (6 hand-built, `feature_rich`, `techniques`, SMALL). | `results/n1-n3-check.txt`, `results/xcheck-musescore.txt` |
 | N2 alignment | **Met, exactly.** Bar lines and beat anchors of notation and TAB differ by 0.0000 (tolerance 0.05 sp). | `results/n1-n3-check.txt` |
 | N3 engraving rules | **Met.** 0 violations on all 9 inputs, in 4 024 rule checks. | `results/n1-n3-check.txt` |
-| N4 review | **Waiting for the user.** Images side by side with MuseScore 4.7.5 in `results/review/`. Known differences in 7.5. | `results/review/` |
+| N4 review | **Accepted by the user (2026-11-12).** Images side by side with MuseScore 4.7.5 in `results/review/`. Known differences in 7.5 go to 6c-6. | `results/review/` |
 | N5 timing | **Met for TYPICAL in view; LARGE needs the plan cache** (measured: p99 4.9 ms with it, 212 ms without). | `results/n5-timing.md` |
 | N6 PDF | **Vector route recommended.** Both read back every glyph; only the vector route is deterministic and fast. | `results/n6-pdf.md`, `results/pdf/` |
 | N7 risks and effort | Drafted for approval (R-13 in the risk register, slice estimate in 7.8). | this section |
