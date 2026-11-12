@@ -1,6 +1,6 @@
 # ADR-037 Bravura as the SMuFL music font, bundled unmodified under the SIL OFL 1.1 (Phase 6c)
 
-Status: Proposed (2026-11-11). The user chose Bravura and asked for the license audit and this exception on 2026-11-11. It becomes Accepted when the user approves it; until then the font is not added to the repository.
+Status: Accepted (user, 2026-11-11). The user chose Bravura, asked for the license audit and this exception, and approved this ADR and ADR-015 amendment 1 on 2026-11-11. The font is added to the repository in the 6c slice that bundles it, together with its checksum check (decision 6). Until then the S11 spike reads a local copy.
 Date: 2026-11-11
 Related documents: [ADR-015](ADR-015-dependency-license-policy.md) (amendment 1), [ADR-018](ADR-018-notation-layout-in-rust.md), [ADR-021](ADR-021-bundled-font-ofl.md), [technical-spikes.md](../../research/technical-spikes.md) (S11)
 
@@ -32,7 +32,7 @@ Findings:
   - (c) distribution of an unmodified data file with the application (the app bundle);
   - embedding in documents the user creates (PDF export).
 
-## Decision (proposed)
+## Decision
 
 1. **Bravura 1.482 is the music font** for standard notation in the app and in PDF export, with its SMuFL metadata `Bravura.json`.
 2. **Bundled unmodified.** `Bravura.otf` and `Bravura.json` are added with the original `OFL.txt` next to them, and a `PROVENANCE.md` that records the source URL, release, file names, sizes and SHA-256 above. The files keep their upstream names. They live with the app's bundled fonts, as ADR-021's font does.

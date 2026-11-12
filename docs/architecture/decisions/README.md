@@ -79,4 +79,4 @@ Related documents: links
 | [ADR-034](ADR-034-pattern-engine-ir-first.md) | Pattern engine: the Pattern IR is the source of truth (Phase 6a) | Accepted (2026-11-09) |
 | [ADR-035](ADR-035-playing-techniques-in-the-score.md) | Playing techniques in the score: accent, palm mute, string-percussive, stroke (Phase 6a-1) | Accepted (2026-11-09) |
 | [ADR-036](ADR-036-guitar-pro-adapter.md) | Guitar Pro import and export adapter `mc-guitarpro` (Phase 6d) | Accepted (2026-11-11) |
-| [ADR-037](ADR-037-bravura-smufl-font.md) | Bravura as the SMuFL music font, bundled unmodified under the SIL OFL 1.1 (Phase 6c); ADR-015 amendment 1 | Proposed (2026-11-11) |
+| [ADR-037](ADR-037-bravura-smufl-font.md) | Bravura as the SMuFL music font, bundled unmodified under the SIL OFL 1.1 (Phase 6c); ADR-015 amendment 1 | Accepted (2026-11-11) |
