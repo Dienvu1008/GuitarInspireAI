@@ -1,6 +1,6 @@
 # ADR-033 MusicXML export adapter (Phase 6b-4)
 
-Status: Accepted (2026-11-07); results in section 6 (2026-11-09). The acceptance criteria in section 4 were fixed before any code. The user decided the six choices of section 5 on 2026-11-07, with additions recorded there.
+Status: Accepted (2026-11-07); results in section 6 (2026-11-09). The acceptance criteria in section 4 were fixed before any code. The user decided the six choices of section 5 on 2026-11-07, with additions recorded there. Choice 5.3 (spelling) is superseded by [ADR-040](ADR-040-theory-notation-rendering-boundary.md) section 5 (2026-11-12): one scale-degree spelling rule, shared with notation.
 Date: 2026-11-07
 Related documents: [ADR-012](ADR-012-interchange-formats-as-adapters.md), [ADR-015](ADR-015-dependency-license-policy.md), [ADR-019](ADR-019-fretted-instrument-shared-kernel.md), [ADR-020](ADR-020-invariants-vs-diagnostics.md), [ADR-023](ADR-023-midi-adapter-crate.md), [ADR-025](ADR-025-single-machine-evidence-accepted.md), [data-architecture.md](../data-architecture.md), [dependency-rules.md](../dependency-rules.md), [implementation-phases.md](../../roadmap/implementation-phases.md)
 

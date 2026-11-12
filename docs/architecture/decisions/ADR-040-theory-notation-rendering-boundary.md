@@ -1,6 +1,6 @@
 # ADR-040 Boundary between mc-theory, mc-notation and rendering; spelling and accidentals in mc-theory (Phase 6c)
 
-Status: Accepted (user, 2026-11-12) for the boundary and ownership (decisions 1 to 6). **The spelling rule (section 5) is pending the user's choice.** 6c-1 starts only after that choice.
+Status: Accepted (user, 2026-11-12), including the spelling rule: the user chose **option A** of section 5 on 2026-11-12. ADR-033 choice 5.3 is superseded for spelling by this ADR.
 Date: 2026-11-12
 Related documents: [ADR-002](ADR-002-rust-core-source-of-truth.md), [ADR-018](ADR-018-notation-layout-in-rust.md), [ADR-033](ADR-033-musicxml-export-adapter.md) (choice 5.3), [ADR-038](ADR-038-notation-staff-model.md), [ADR-039](ADR-039-pitch-capo-and-written-transposition.md), [dependency-rules.md](../dependency-rules.md) (GR-05, GR-06), `spikes/s11-notation/README.md` (section 4.2)
 
@@ -37,7 +37,9 @@ The dependency matrix allows `notation -> theory, score`. `theory` depends on no
    - `mc-notation` semantic: per-fixture notated notes as goldens, plus the S11 N1 oracle.
    - Layout: N2, N3 and bounds (ADR-041 decision 6).
 
-## 5. Spelling rule (pending the user's choice)
+## 5. Spelling rule (decided: option A, user, 2026-11-12)
+
+Checked before the choice: no MusicXML export golden has a key with 6 or 7 accidentals, so no export golden changes. One `mc-theory` unit test changes with the behaviour. It is `spelling_keeps_the_semitone_and_the_octave_boundaries` in `key.rs`, which asserts that C♭ major spells semitone 59 as B3. Under option A, 59 in C♭ major is C♭4 (in key), and the octave number follows the letter. The test is rewritten to the new rule in 6c-1 and still checks the semitone and the octave boundary. It is a decided change of behaviour, not a weakened test.
 
 The existing rule (ADR-033 choice 5.3) spells by key side: sharps in sharp and neutral keys, flats in flat keys, naturals as naturals. It cannot spell an in-key note that needs another letter, such as E♯ in F♯ major or C♭ in G♭ major. S11 used scale degrees first, then the same fallback.
 
