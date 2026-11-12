@@ -56,6 +56,24 @@ Example: F♯ major, sounding semitone F.
 
 Not offered: different rules for notation and export, because the same score would be spelled two ways (decision 3).
 
+## 6. Slice 6c-1 acceptance criteria (fixed 2026-11-12, before any code)
+
+Scope: the `mc-theory` rules of decision 1, `Transposition` and `InstrumentSpec::written_transposition()` (ADR-039), and the MusicXML export using the new spelling. Thresholds are not lowered to match a result.
+
+| Id | Criterion | Checked by |
+|---|---|---|
+| T1 | `KeySignature::spell` (option A).<br>– In each of the 15 keys, every semitone from -12 to 140 keeps its semitone.<br>– A scale degree is spelled with the key's letter and alteration.<br>– Any other note is spelled by the sharp or flat table of ADR-033 5.3.<br>– Cases: E♯4 in F♯ major; B♯3 and E♯4 in C♯ major; C♭4 in G♭ major; C♭4 and F♭4 in C♭ major; mode does not change spelling. | Unit and property tests |
+| T2 | `KeySignature::alteration(letter)`: the order of sharps (F C G D A E B) and flats (B E A D G C F), and as many altered letters as fifths, for all 15 keys | Unit test |
+| T3 | Bar accidental state (`bar_accidentals`).<br>– The result for each note does not depend on the order of the input.<br>– Notes are ordered by onset, then low to high.<br>– Scope is letter and octave; the state starts from the key every bar.<br>– A natural after an alteration shows ♮; the same alteration again shows nothing.<br>– A tie within the bar shows nothing and sets the state.<br>– A tie across the bar line shows nothing and sets no state.<br>– The cases of the S11 `keys` input.<br>– An independent oracle (written separately, as in S11 N1) agrees on random bars. | Unit and property tests |
+| T4 | Tie continuation: the source spelling is kept while the semitone is the same; otherwise the key's spelling | Unit test |
+| T5 | `Transposition`: an octave shift keeps letter and alteration, and overflow is an error, not a wrap. `InstrumentSpec::written_transposition()` is one octave up for fretted instruments. On every `mc-score` fixture, the written semitone equals `pitch_at` + 12 for every note (no doubled capo or octave), with a capo case. | Unit and fixture tests |
+| T6 | The MusicXML export uses the new `spell`.<br>– Its three goldens are unchanged (none has 6 or 7 accidentals; checked before the change).<br>– A new test exports F♯ major with an in-key E♯. | `mc-musicxml` tests |
+| T7 | No new dependency, no `unsafe`, no I/O in `mc-theory` (FF-03, FF-04, FF-34). Public API changes are additions only, plus the decided behaviour change of `spell` (FF-22). The whole workspace builds and tests pass, clippy clean. | CI and the fitness functions |
+
+Not in 6c-1, and kept for 6c-2:
+- the `mc-notation` semantic layer;
+- tie continuation and accidentals inside the MusicXML export (it writes spelled pitches today and no `<accidental>` element).
+
 ## Alternatives
 
 - **Accidental state in `mc-notation`**, as in the spike. Rejected by the user: a music rule in layout code, and not reusable by the export.
