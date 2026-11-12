@@ -171,3 +171,144 @@ Timebox: 4 FTE days (technical-spikes S11). If the timebox runs out, the spike s
 - MuseScore is run as an application, a black box; its source is not read.
 - Bravura and `Bravura.json` are read from a local copy outside the repository (`%TEMP%\bravura-1.482`, checked against the SHA-256 in ADR-037). They are not committed until ADR-037 is accepted.
 - Images and PDFs produced from our own test scores may be committed as results.
+
+## 7. Results (2026-11-12)
+
+The engine is in `engine/` (its own workspace, excluded from the main one; throwaway). All numbers below are from `results/`, which the commands in 7.9 regenerate. Machine: the developer's Windows 11 desktop, release build unless stated.
+
+### 7.1 Summary
+
+| Criterion | Result | Evidence |
+|---|---|---|
+| N1 correctness | **Met.** 0 errors on all 9 inputs (6 hand-built, `feature_rich`, `techniques`, SMALL). | `results/n1-n3-check.txt`, `results/xcheck-musescore.txt` |
+| N2 alignment | **Met, exactly.** Bar lines and beat anchors of notation and TAB differ by 0.0000 (tolerance 0.05 sp). | `results/n1-n3-check.txt` |
+| N3 engraving rules | **Met.** 0 violations on all 9 inputs, in 4 024 rule checks. | `results/n1-n3-check.txt` |
+| N4 review | **Waiting for the user.** Images side by side with MuseScore 4.7.5 in `results/review/`. Known differences in 7.5. | `results/review/` |
+| N5 timing | **Met for TYPICAL in view; LARGE needs the plan cache** (measured: p99 4.9 ms with it, 212 ms without). | `results/n5-timing.md` |
+| N6 PDF | **Vector route recommended.** Both read back every glyph; only the vector route is deterministic and fast. | `results/n6-pdf.md`, `results/pdf/` |
+| N7 risks and effort | Drafted for approval (R-13 in the risk register, slice estimate in 7.8). | this section |
+| N8 determinism | **Met for layout, SVG and the vector PDF; not met by SVG-to-PDF.** | `results/n8-determinism.md`, `results/determinism/` |
+
+The checks catch deliberate faults. Each breakage (`S11_BREAK=<name>`) is reported, summed over the 9 inputs:
+
+| Breakage | What it breaks | Caught |
+|---|---|---|
+| `stem-rule` | stem direction (inverted middle-line rule) | N1 38 |
+| `no-bar-reset` | accidental state carried over the bar line | N1 33; MuseScore cross-check 33 differ |
+| `accidental-touches` | no clearance between accidental and head | N3 60 |
+| `no-seconds` | both heads of a second on one side | N3 14 |
+| `dot-on-line` | dots on lines | N3 2 |
+| `short-ledger` | ledger lines shorter than the head | N3 127 |
+| `no-headroom` | fixed staff box, content ignored | N3 124 |
+| `no-tuplet-number` | tuplet numbers left out | N1 2 |
+| `tuplet-touches` | tuplet number on the notes | N3 2 |
+| `tuplet-by-window` | a triplet split by beat-window beaming | N1 1 |
+| `no-bar-rest` | empty bars without a whole-bar rest | N1 2 |
+| `double-key` | key change drawn again after the system header | N1 1 |
+
+### 7.2 Faults found during the spike
+
+Reviewing the PDFs and images, at 2x (thin lines vanish in smaller previews), found six faults that the first version of the checks did not report. Each became a check before it was fixed:
+
+1. A stem above the staff was clipped at the top of the page. The staff box had fixed margins. Now each bar's plan computes its vertical reach, a system's box follows its bars, and N3 (i) checks every painted item is inside its staff box and every box inside its system and the page.
+2. The last bar line was centred on the page edge, so half of it fell outside. Bar lines now end on the bar's end.
+3. The clef's 8 reached below a small box; TAB digits on the first string reached above the TAB box. Fixed by the same reach rule (clef counted; TAB top margin 1.0 sp).
+4. Tuplets had no number, and a triplet crossing a beat was beamed by beat window. A tuplet is now its own beam unit, with its number on the beam side.
+5. Empty bars had no rest. They get a whole-bar rest.
+6. A key change in a system's first bar was drawn twice (header and bar). Found in the `keys` review image.
+
+A seventh finding was in the spike's input, not the engine: the hand-built `rhythm` bar was 11/8 in 4/4. It now fills exactly 4/4 and adds a sixteenth-sixteenth-eighth group (two beam levels in one group).
+
+Lesson for 6c: the checks must cover page geometry (bounds, overlap between staves), not only the rules inside one staff. A review at 2x by eye found what the rules did not.
+
+### 7.3 N1 and the MuseScore cross-check
+
+229 of 229 notes agree with MuseScore 4.7.5 on written position and shown accidental. The check works on MuseScore's own re-export of our MusicXML (written treble 8vb, ties kept). This is an independent check of the accidental rule (4.2). It is not a check of spelling, because MuseScore keeps the spelling we write. Rests are not compared. The TQ-8 gaps remain.
+
+### 7.4 N2 and N3
+
+N2 is exact by construction: notation and TAB take their x from one bar plan and one set of column anchors (4.3). The check guards that construction; it does not measure a tolerance that happens to be met. N3 rules (a) to (j) and the bounds rule (i) run on every input; the check output gives the total per input.
+
+### 7.5 N4: differences from MuseScore (for the user's review)
+
+Readable guitar notation in our judgement, and the user decides. Differences seen:
+
+- Spacing is wider than MuseScore's. `keys` puts 3 bars on its first system, where MuseScore puts 5 on a wider page, and TYPICAL fits 1 bar per system at 125 staff spaces of width. Every column reserves room for accidentals and two-digit fret numbers. To tune in 6c; not a correctness issue.
+- No courtesy key signature at a system's end, no double bar line before a key change, no cancelling naturals.
+- A whole rest that fills a bar sits at its onset; MuseScore centres a full-bar rest.
+- Ties are thinner and flatter than MuseScore's.
+- Out of the MVP and not drawn: repeats, voltas, markers, tempo, dead-note heads, let ring, slurs, articulations. `feature_rich` and `techniques` show those beats as plain notes.
+- The TAB digits use Helvetica (vector PDF) or Consolas (SVG). Production uses Noto Sans Mono (ADR-021).
+
+### 7.6 N5 timing (release, ms)
+
+| Case | Median | p95 | p99 |
+|---|---|---|---|
+| TYPICAL in view (4 systems), notation + TAB, no cache | 6.6 | 9.5 | 9.9 |
+| TYPICAL one system, no cache | 6.8 | 16.6 | 19.5 |
+| TYPICAL edit: re-plan 2 bars + in view from cached plans | 0.37 | 0.62 | 0.70 |
+| LARGE in view, no cache | 130 | 186 | 212 |
+| LARGE edit: re-plan 2 bars + in view from cached plans | 3.8 | 4.3 | 4.9 |
+| LARGE building all plans (once per open) | 118 | 134 | 167 |
+| Today's mc-notation TAB in view, TYPICAL / LARGE | 0.79 / 12.2 | 1.2 / 13.8 | 1.4 / 15.1 |
+| SVG rendering, TYPICAL in view | 0.58 | 0.60 | 0.70 |
+| PDF, TYPICAL whole score: vector / SVG-to-PDF | 60 / 4 180 | 66 / 5 215 | 83 / 5 349 |
+
+- Without a cache, every layout plans every bar of the score. The cost grows with the score: within P1 for TYPICAL in view, though p99 varies between runs (9.9 to 19.5 ms for the same work). It is more than six times over the 33 ms budget for LARGE.
+- With cached bar plans, an edit re-plans its bar and the next one; the next one reads the edited bar for key and time display and tie spelling. The view is then laid out from the cache: 4.9 ms p99 on LARGE. Filling the cache costs 118 ms once per open, inside the "open large project" budget of 2 s. **The cache is a requirement for 6c, not an option.**
+- Payload: about 4.6 KB per bar for notation + TAB on TYPICAL, against about 2.2 KB per bar for today's TAB-only DTO (estimate from 8 748 B per 4 bars).
+
+### 7.7 N6 PDF routes and N8 determinism
+
+| | Vector (`pdf-writer` + `subsetter`) | SVG-to-PDF (`svg2pdf` 0.13) |
+|---|---|---|
+| Glyph positions read back, feature_rich / TYPICAL | 43/43, 13 657/13 657, max error 0.0000 pt | all, max error 0.0059 pt |
+| Size, feature_rich / TYPICAL | 19 990 / 416 306 B | 18 519 / 383 129 B |
+| Fonts | Bravura subset (OFL-FAQ 1.12); TAB in a standard font | Bravura subset plus the system font for TAB |
+| Time, TYPICAL | 60 ms median | 4.2 s median (the system font scan is only 13 ms of it) |
+| Determinism | byte-identical: 100 runs in one process, two processes, debug and release | **not deterministic.** Font objects come out in a varying order in one process and across processes. Probably an unordered map inside the dependency (inferred from the output, its source not read) |
+| Code | about 150 lines in the spike | about 15 lines, plus our SVG writer |
+| Licenses | MIT / Apache-2.0 | MIT / Apache-2.0 |
+
+Recommendation: **the vector route.** It meets N8, it is about 70 times faster, it embeds only the fonts the layout names, and it paints from the same layout model as the screen. The size difference (about 9 % on TYPICAL, from the knockout rectangles under the TAB digits) can be reduced in 6c.
+
+Determinism (N8), 9 inputs × 4 artefacts:
+
+- Layout, SVG and vector PDF are identical in every case: 100 layouts in one process, 10 renders, two processes and a debug build against a release build.
+- Staff size and transposition change the canonical layout (the hash covers the configuration).
+- Bravura 1.481 against 1.482 changes the canonical layout and both PDFs. In the layout only the font line changes: the metrics of the glyphs the spike uses are equal in the two versions. So the font version is covered by name and version, not shown through changed geometry.
+
+The vector PDFs are in `results/pdf/`. The SVG-to-PDF files are not committed, because they embed a subset of a system font. Both kinds of file open in the Windows PDF renderer (`tools/pdf-to-png.ps1`). Opening them in Edge (N6) is left to the user, because headless Edge does not render PDF.
+
+### 7.8 Proposals for approval (N7)
+
+All of these are Proposed. Nothing is decided before the user approves.
+
+1. **ADR-031 change, the staff model.** A track shows a `StaffConfiguration` (notation, TAB, transposition), a view setting that is not stored in the score. Each staff is a `Staff` at a `StaffPosition` in its system. Every staff of a system takes its x from one shared bar plan. Editing stays on the TAB staff in 6c.
+2. **Written pitch, clef and capo.** The model keeps the sounding pitch (no change to the score or the format). The notation engine alone writes it an octave up under `gClef8vb`. **Question for the user:** the spike puts the capo into the sounding pitch, so the notes are written as they sound. Should the capo instead be shown as fingered (written without the capo)?
+3. **Spelling and accidentals.** A pitch spells as a scale degree of the key. Otherwise it takes a sharp in sharp and neutral keys and a flat in flat keys. A tie keeps its source spelling. Accidental state is per letter and octave and resets at each bar line; a tie across the bar line shows nothing and sets no state. Proposal: the pure rule moves to `mc-theory` (music rules stay in Rust, GR-05), and `mc-notation` uses it.
+4. **Metrics.** Glyph boxes, anchors and engraving defaults come from `Bravura.json`, in staff spaces, read in Rust. Codepoints are checked against the font's cmap at load. No measurement in Dart.
+5. **Bar-plan cache** (7.6) as a requirement, with re-planning of the edited bar and the next one.
+6. **Vertical layout from content.** The reach is computed per bar, and the bounds checks become tests.
+7. **Hit testing on the notation staff:** not measured in the spike. Proposal: read-only in 6c (hits only select the beat, which the TAB staff then edits). The hit regions come from the same notehead facts as N1.
+8. **PDF:** the vector route (7.7), with Noto Sans Mono embedded for TAB text.
+9. **Checks as tests.** The N1–N3 checks, the bounds checks and the breakage list move into `mc-notation` as tests, and one canonical layout per input becomes a golden file (N8). Per GR-14, they may be extended but not weakened.
+
+R-13 and the effort estimate per slice are drafted in `docs/roadmap/risk-register.md` and `docs/research/technical-spikes.md` (S11 entry).
+
+### 7.9 Reproducing
+
+```powershell
+$env:BRAVURA_DIR = "$env:TEMP\bravura-1.482"   # SHA-256 as in ADR-037
+cd spikes/s11-notation/engine
+cargo build --release
+.\target\release\s11-notation.exe check          # N1-N3 (S11_BREAK=<name> for a breakage)
+.\target\release\s11-notation.exe musicxml <dir> # then MuseScore4.exe -o <name>.ms.musicxml <name>.musicxml
+.\target\release\s11-notation.exe xcheck <dir>
+.\target\release\s11-notation.exe timing         # N5
+.\target\release\s11-notation.exe pdf <dir>      # N6
+.\target\release\s11-notation.exe determinism <dir>  # N8, run twice and in a debug build, compare SHA-256
+$env:S11_SCALE = "2"; .\target\release\s11-notation.exe render <dir>  # review SVGs
+```
+
+Sources used for engraving practice: the SMuFL specification (glyph names, codepoints, metadata and engraving defaults) and Bravura's own metadata. General practice was taken from public notation references (stem direction by the middle line, accidental columns, ledger extension, dots in spaces, beaming by beat and tuplet as unit, whole-bar rests). No engraver's source was read.

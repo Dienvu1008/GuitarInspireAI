@@ -1,7 +1,7 @@
 # Technical Spikes
 
 Purpose: Define the proof-of-concept experiments (S1 to S12) that answer questions documentation cannot, with question, timebox, success criteria and the phase gate each one unblocks.
-Status: S1, S2, S4, S5 and S7 executed in M0 (results below). S3 executed in Phase 5 (synthetic and latency measured; real-guitar pending; see ADR-029). S10 executed in Phase 6d for GP3 to GP5 (see ADR-036). S6, S8, S9, S11 and S12 not started.
+Status: S1, S2, S4, S5 and S7 executed in M0 (results below). S3 executed in Phase 5 (synthetic and latency measured; real-guitar pending; see ADR-029). S10 executed in Phase 6d for GP3 to GP5 (see ADR-036). S11 executed for Phase 6c (results below; decision pending user approval). S6, S8, S9 and S12 not started.
 Related documents: [implementation-phases.md](../roadmap/implementation-phases.md), [dependency-map.md](../roadmap/dependency-map.md), [technology-evaluation.md](technology-evaluation.md), [audio-dsp-architecture.md](../architecture/audio-dsp-architecture.md), [risk-register.md](../roadmap/risk-register.md).
 
 Rules:
@@ -166,3 +166,42 @@ Spike: `spikes/s10-guitar-pro/`. It is throwaway and has its own workspace. The 
 - The two chord layouts no fixture shows.
 
 **Effort:** well inside the 3-day timebox.
+
+### S11 standard notation engraving (Phase 6c entry, 2026-11-12; recommendation Go, pending the user's N4 review)
+
+Spike: `spikes/s11-notation/`, throwaway, with its own workspace. Criteria N1 to N8 and the decision rule were fixed in its README sections 4 and 5 before the code. Full results are in its section 7.
+
+**Scope set by the user**
+- Own engine in `mc-notation` (ADR-018). No Verovio at runtime. Bravura 1.482 (ADR-037).
+- Treble 8vb above TAB from one semantic score.
+- MuseScore 4.7.5 as the reference, not pixel-identical.
+
+So "own engine vs Verovio" in the question was decided before the spike. The spike tested whether the own engine is good enough.
+
+| Criterion | Result |
+|---|---|
+| N1 correctness | Pass. 0 errors on 9 inputs. 229 of 229 accidentals equal MuseScore. |
+| N2 alignment | Pass, exact by construction (one bar plan for both staves). |
+| N3 engraving rules | Pass. 0 violations in 4 024 rule checks. 12 deliberate breakages, each caught. |
+| N4 review | Pending the user (`results/review/`). |
+| N5 timing | Pass for TYPICAL in view (p99 9.9 ms without cache). LARGE needs the bar-plan cache: 4.9 ms p99 with it, 212 ms without. |
+| N6 PDF | Vector route recommended. SVG-to-PDF is 70 times slower and not deterministic. |
+| N7 | Risks (R-13) and effort below; ADR proposals in the spike README section 7.8. |
+| N8 determinism | Pass for layout, SVG and the vector PDF. Fail for SVG-to-PDF. |
+
+**Findings that affect the design**
+- A review at 2x found six faults the first checks missed: clipping, page bounds, missing tuplet numbers, missing bar rests, and a doubled key signature. Page geometry must be tested, not only rules within a staff.
+- Without a cache, layout cost grows with the score, so a bar-plan cache is a requirement.
+
+**Effort estimate (Proposed), in FTE weeks**
+- 6c-1 spelling and accidental rule in `mc-theory`: 0.5 to 1.
+- 6c-2 `mc-notation` notation staff (staff model, bar plans and cache, SMuFL metrics, emission, checks as tests, golden layouts): 3 to 5.
+- 6c-3 Bravura bundling, DTO and Flutter painting above TAB, view setting: 2 to 3.
+- 6c-4 read-only hit testing on the notation staff: 0.5 to 1.
+- 6c-5 vector PDF export with pagination and Noto Sans Mono: 2 to 3.
+- 6c-6 engraving polish (spacing, courtesy signatures, double bar line at a key change, centred bar rests, ties): 1 to 2.
+- 6c-7 benchmarks and exit: 0.5.
+
+Total: 9.5 to 15.5 FTE weeks, inside the 8 to 16 of the plan and near its top. Not covered by the spike: pagination, Flutter painting cost, and hit testing.
+
+**Timebox:** elapsed effort was not tracked in FTE days.
