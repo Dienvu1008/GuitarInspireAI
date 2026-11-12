@@ -24,6 +24,21 @@ Allow-list: MIT, Apache-2.0, BSD-1/2/3-Clause, ISC, Zlib, Unlicense, Unicode-3.0
   - Include its license and attribution in the release third-party notices.
   - User-supplied SoundFonts remain a future capability; they are not bundled and carry no distribution obligation for the project.
 
+## Amendment 1 (proposed 2026-11-11): bundled fonts under the SIL OFL 1.1
+
+Status: Proposed, with [ADR-037](ADR-037-bravura-smufl-font.md). It becomes Accepted when the user approves ADR-037.
+
+- **A controlled exception, not an allow-list entry.** The SIL Open Font License 1.1 is accepted only for **font files named in an accepted ADR**, used as data, never for code dependencies.
+  - Today: Noto Sans Mono ([ADR-021](ADR-021-bundled-font-ofl.md)).
+  - Proposed: Bravura 1.482 and its SMuFL metadata ([ADR-037](ADR-037-bravura-smufl-font.md)).
+- **Conditions for each such font:**
+  - the files are bundled unmodified, with the original `OFL.txt`;
+  - a `PROVENANCE.md` records the source URL, version, file names, sizes and SHA-256;
+  - the release third-party notices carry the copyright and license;
+  - the font is not sold by itself.
+- **Embedding a font (full or subset) in a document the user creates**, such as an exported PDF, is allowed (OFL FAQ 1.12). The bundled file itself stays unmodified.
+- **No automatic widening.** Another font, or a new version of a listed one, needs its own ADR, or an amendment to that font's ADR, with a new audit.
+
 ## Alternatives
 Allow LGPL with dynamic linking; decide project license first.
 
