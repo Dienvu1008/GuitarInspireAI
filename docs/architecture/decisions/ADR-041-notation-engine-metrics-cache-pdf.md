@@ -108,6 +108,55 @@ A bar's plan, for all shown tracks, is cached and reused only if all of these ar
 - Measured both as the Rust bench and end to end in the app (ADR-031 protocol).
 - Flutter paint cost is measured in 6c-3. If a criterion fails, the threshold is not changed. The cause is measured and the next step is decided with the user.
 
+## 8. Slice 6c-2 acceptance criteria (Proposed 2026-11-12, pending the user; fixed before any code)
+
+**Scope.** The notation staff inside `mc-notation`:
+- the semantic layer (ADR-040 decision 2);
+- layout of the MVP elements:
+  - treble 8vb clef, key and time signatures;
+  - whole, half and black noteheads; stems, flags, flat beams with levels, dots;
+  - rests, including the whole-bar rest; accidentals, ledger lines, ties, tuplet numbers;
+  - bar lines and repeat dots aligned with TAB;
+- the bundled Bravura and the generated metrics table;
+- the bar-plan cache;
+- the S11 checks as tests, goldens, and the Rust bench.
+
+**Not in 6c-2:**
+- FFI, DTO and Dart (6c-3);
+- notation hit regions (6c-4);
+- PDF (6c-5);
+- the polish items of S11 7.5 (6c-6).
+
+Voltas, markers and tempo stay on the TAB staff only.
+
+**Design points the criteria rely on:**
+- **Unit.** The staff space is derived from the existing metrics: `staff_space = string_spacing / 1.5`, as in S11 (TAB string gap 1.5 staff spaces). No new metric and no DTO change in 6c-2.
+- **API.** The existing functions keep their signatures and meaning: TAB only. New variants take a per-track `StaffConfiguration` (ADR-038).
+  - New display types are additions: a stave kind; music glyphs at their SMuFL origin; lines with a thickness; ties; knockouts.
+  - TAB staves leave them empty.
+- **Generator: amended from decision 1.** `xtask` deliberately has no dependencies, so the generator does not go there. Instead:
+  - an ignored test in `mc-notation` regenerates the table;
+  - a normal test regenerates it in memory and compares it with the committed file;
+  - both use dev-dependencies: `serde_json` (already in the workspace), and `ttf-parser`, which is new (MIT OR Apache-2.0; checked by cargo-deny in the slice).
+- **Checksum check: amended from ADR-037 decision 6.** It is a test with the `sha2` dev-dependency (already in the workspace), registered as FF-35. `xtask` stays dependency-free.
+- **Location.** The fonts live with ADR-021's font: `packages/ui_kit/fonts/bravura/` holds `Bravura.otf`, `Bravura.json`, `OFL.txt` and `PROVENANCE.md`.
+
+| Id | Criterion | Checked by |
+|---|---|---|
+| L1 | **TAB unchanged.** With notation off on every track, the output equals today's on SMALL, TYPICAL, LARGE (track 1), `feature_rich` and `techniques` (fingerprints before and after). The existing goldens and the ADR-031 tests pass unchanged. | Equivalence and existing tests |
+| L2 | **N1 correctness**, from score facts (not engine internals), on the six S11 inputs, `feature_rich`, `techniques`, SMALL and 300 seeded random scores. Covered:<br>– written pitch = `spell` plus `written_transposition`;<br>– staff position and ledger-line count;<br>– accidentals equal `bar_accidentals`;<br>– stem direction by the middle-line rule (voice 1 up and voice 2 down with two voices);<br>– beam groups (beat window, a tuplet as its own unit);<br>– tuplet numbers;<br>– whole-bar rests;<br>– key-signature signs per system. | Tests |
+| L3 | **N2 alignment.** Bar lines and beat anchors of notation and TAB are equal to within 0.01 units, on the same inputs. | Tests |
+| L4 | **N3 rules** (a) to (j) of S11, and **bounds**: every painted item inside its staff box, boxes inside their system, systems inside the outline. 0 violations on the same inputs. | Tests |
+| L5 | **The checks catch faults.** Each of the 12 S11 breakages is a test that corrupts a layout model and expects its check to fail. There is no fault switch in production code. | Tests |
+| L6 | **Boundary (ADR-040).**<br>– A source-scan test fails if `mc-notation` spells from semitones, keeps accidental state or reads alterations itself (`from_semitone_*`, `natural_semitone`, per-letter alteration tables).<br>– A test shows that the semantic output equals `mc-theory` applied directly. | Tests |
+| L7 | **Metrics table.**<br>– The committed table equals a fresh generation.<br>– Codepoints are in the cmap; boxes agree within 0.05 staff spaces; advance widths come from `hmtx`; anchors appear only where the metadata has them.<br>– A glyph absent from the font, or a missing required anchor, makes the generator fail with its name (tested on a modified copy in memory).<br>– Scaling from staff spaces to layout units is tested. | Tests |
+| L8 | **Bundled Bravura** with `OFL.txt` and `PROVENANCE.md` (source, release, sizes, SHA-256 as in ADR-037).<br>– FF-35 passes, and fails when a byte of either file changes (tested in memory).<br>– The fitness register and inventory (FF-20) list FF-35. | FF-35, FF-20 |
+| L9 | **Cache** (decision 3).<br>– Cached equals fresh after every change kind listed there, over 60 seeded scores × 25 steps.<br>– A tie chain over 3 bars, edited at its start, re-plans exactly the chain.<br>– A note edit with no tie chain re-plans at most 2 bars.<br>– One mutation per key component is caught. | Tests |
+| L10 | **Determinism.**<br>– One canonical dump golden per S11 input and `feature_rich` (append-only), compared as the existing goldens are.<br>– Two runs give identical output.<br>– A windowed layout equals the full layout. | Golden tests |
+| L11 | **Performance**, Rust bench on the reference machine, every track with notation and TAB, edit plus layout in view (bar-plan cache):<br>– TYPICAL 4 tracks p99 ≤ 16 ms;<br>– LARGE 4 tracks p99 ≤ 33 ms;<br>– LARGE 20 tracks p99 ≤ 33 ms.<br>Rust only; end to end is measured in 6c-3. Payload per system is reported. | `mc-app` bench |
+| L12 | **Review by eye.** SVG renders at 2x (a test-support renderer, not shipped) of the six S11 inputs and `feature_rich`, next to the S11 images. The user accepts them. | The user |
+| L13 | **Non-functional.**<br>– No new runtime dependency; `ttf-parser` is a dev-dependency only.<br>– No `unsafe`.<br>– FF-03 and FF-04 for `mc-notation`; FF-22 additions only.<br>– fmt, clippy `-D warnings`, the workspace tests and CI are green. | CI and the fitness functions |
+
 ## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.
