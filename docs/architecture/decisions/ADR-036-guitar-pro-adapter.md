@@ -258,6 +258,8 @@ Single machine (ADR-025). The TuxGuitar procedure and the timing numbers are in 
 2. **The eight choices of section 7 are confirmed as written.** They are no longer only the agent's recommendations.
 3. **Phase 6d is merged into `main` now.** The first weekly fuzz run (G5) is not waited for and stays a condition of acceptance ([phase-6d-exit-report.md](../../roadmap/phase-6d-exit-report.md)).
 
+G5 after the merge (2026-11-11): a local cargo-fuzz run of `import_gp` (300 s, 1 801 744 inputs, seeded with the 54 fixtures) found no crash. The CI step had not been reached: the weekly job's MIDI step, which runs first, had failed since 2026-11-09 (a midly panic, now fixed; exit report section 7). G5 stays open until a green weekly run on Linux.
+
 ## Alternatives
 
 - **The `guitarpro` crate (MIT).** Rejected by the user: its provenance may derive from copyleft readers, and auditing 32 000 lines is not possible.

@@ -31,11 +31,11 @@ All on `phase-6d-guitar-pro`, after `main` at `af06079`. Every commit that touch
 
 These are conditions of acceptance (user decision 2026-11-11), to be resolved later. All evidence comes from one machine (ADR-025, R-21 open).
 
-- **(a) The fuzz target has not run yet (G5).**
-  - `import_gp` compiles and is a step of the weekly job, seeded with the 54 fixtures.
-  - cargo-fuzz is not installed on the reference machine, and the scheduled job runs only from `main`.
-  - Until the first run, the robustness evidence is 102 600 mutated fixtures and 2 000 arbitrary inputs, with 0 panics.
-  - To close: the first weekly run (Monday, or "weekly" by hand in the Actions tab). A crash becomes a regression test.
+- **(a) The fuzz target has not run in CI yet (G5).**
+  - `import_gp` is a step of the weekly job, seeded with the 54 fixtures.
+  - **Local run, 2026-11-11** (after the merge; Windows, `nightly-2026-10-31`, cargo-fuzz 0.13.1, AddressSanitizer runtime from MSVC 14.50): 300 s, **1 801 744 inputs, 0 crashes**, corpus grown from 54 to 856 files.
+  - The CI job could not have reached this step yet. Its first step, the MIDI target, had failed since 2026-11-09 (see section 7), and a failed step stops the job.
+  - To close: the first green weekly run on Linux. A crash becomes a regression test.
 - **(b) No file written by Guitar Pro itself.**
   - Every fixture was written by TuxGuitar 2.0.1, and the export was read back only by TuxGuitar and by us.
   - Guitar Pro's own files may differ in padding values, optional sections and text encoding. The importer refuses rather than guesses where the layout is unknown, so such a file may fail where a guess might have worked.
@@ -83,3 +83,17 @@ Decisions (user, 2026-11-11):
 - `phase-6d-guitar-pro` is merged into `main` with `--no-ff`. The merge commit carries the trailer ADR-036.
 
 Next: Phase 6c (standard notation and PDF), entry gate S11. It is the last part of Phase 6 not yet started.
+
+## 7. Weekly job failures found at closure (pre-existing, not caused by 6d)
+
+While checking CI after the merge, the scheduled weekly run of 2026-11-09 (#2, on `c789862`, the Phase 6b merge) was found red in three jobs. Nobody had noticed. The weekly run is Important and does not block merges. The logs need a signed-in account, so each cause was established as follows:
+
+| Job | Cause | Evidence | Fix (branch `weekly-ci-fixes`) |
+|---|---|---|---|
+| `fuzz` (FF-15) | **A real defect.** midly 0.5.3 panics (negating `i8::MIN`) on an SMPTE header whose frame byte is 0x80. `mc-midi` caught the panic with `catch_unwind`, but libfuzzer aborts on any panic, even a caught one. The fuzzer also found the same header later in a file, which midly reads while collecting the tracks. | Reproduced locally with cargo-fuzz 0.13.1: the crash came at once, both before the fix and after a first, incomplete fix. | `mc-midi` checks every header chunk midly would read, with midly's own lookup, before calling it. An SMPTE first header is refused as unsupported (as before); a later bad header is malformed. `catch_unwind` stays as a second guard. A regression test asserts that no panic happens at all; it fails without the fix. After the fix: 300 s, 338 396 inputs, 0 crashes. |
+| `portability (ubuntu-24.04)` | **Inferred, not proven by a log.** cpal (`mc-audio`, since Phase 4) needs `libasound2-dev` on Linux, and the runner image lacks it. The job failed at build time (30 s). The last green weekly run (2026-11-02) predates `mc-audio`. | cpal's README; the ubuntu-24.04 image package list | The job installs `libasound2-dev` on Linux |
+| `public-api` (FF-22) | **Not established.** The snapshots match the code exactly (0 differing lines for all 9 crates), both at `c789862` and on `main`, with `nightly-2026-10-31`. The job uses an unpinned nightly, which can change the rustdoc JSON under the pinned cargo-public-api 0.52.0; that is the likely cause. | Local runs | The job now stops when cargo-public-api itself fails, and it prints the full diff instead of the file names, so the next failure can be read. The nightly is **not** pinned (see below). |
+
+No check was loosened: the same commands and thresholds run. The fixes are confirmed only by the next weekly run on Linux. It can be started by hand on the branch from the Actions tab ("weekly", workflow_dispatch).
+
+**Pinning the nightly is a separate proposal for the user.** FF-20 (`xtask/src/fitness/inventory.rs`, a protected path) checks that the weekly workflow contains the literal commands `cargo +nightly public-api` and `cargo +nightly fuzz run import_smf`. Pinning would change those commands, so FF-20 must change with them, in the same commit, with an ADR. A first attempt pinned the nightly without that and failed FF-20. It was reverted before any merge; the check was not edited.

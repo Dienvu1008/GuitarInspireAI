@@ -28,8 +28,10 @@ jobs:
         run: |
           foreach ($c in 'mc-theory','mc-score','mc-guitar','mc-notation','mc-playback','mc-project','mc-app','mc-dsp','mc-pattern') {
             cargo +nightly public-api -p $c --simplified | Out-File -Encoding utf8NoBOM "architecture/public-api/$c.txt"
+            if ($LASTEXITCODE -ne 0) { Write-Error "cargo public-api failed for $c"; exit 1 }
           }
-          git diff --stat --exit-code -- architecture/public-api
+          # The full diff, so a failure can be read in the log.
+          git diff --exit-code -- architecture/public-api
 
   coverage:
     # FF-27 (Advisory): line and function coverage report.
@@ -85,5 +87,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
+      - name: ALSA development files (Linux)
+        # cpal (mc-audio, since Phase 4) needs libasound2-dev to build on Linux, and the
+        # ubuntu-24.04 image does not have it; without it the job fails at build time.
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libasound2-dev
       - run: cargo test --workspace --all-features --locked
       - run: cargo xtask fitness wasm
