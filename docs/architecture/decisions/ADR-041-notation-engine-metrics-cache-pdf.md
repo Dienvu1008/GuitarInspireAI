@@ -75,6 +75,7 @@ A bar's plan, for all shown tracks, is cached and reused only if all of these ar
 - New adapter crate `mc-pdf` (ADR-012), depending on `notation` only. Only `ffi` and `cli` use it.
 - It writes the layout model to PDF with vector paths and embedded font text.
 - Candidate dependencies, as used in S11: `pdf-writer`, `subsetter`, `ttf-parser`, `miniz_oxide`. S11 recorded them as MIT or Apache-2.0 (`miniz_oxide` also Zlib). This is to be verified by cargo-deny in the slice.
+  - Note (2026-11-16): `ttf-parser` is unmaintained (RUSTSEC-2026-0192), so it is replaced. Whether `subsetter` depends on it is checked in 6c-5 (section 8 follow-up).
 - **Fonts, by the user's conditions:**
   - only the bundled Bravura (subset, OFL-FAQ 1.12) and the bundled Noto Sans Mono are embedded;
   - no system font is loaded, and no standard-14 font is used;
@@ -108,7 +109,29 @@ A bar's plan, for all shown tracks, is cached and reused only if all of these ar
 - Measured both as the Rust bench and end to end in the app (ADR-031 protocol).
 - Flutter paint cost is measured in 6c-3. If a criterion fails, the threshold is not changed. The cause is measured and the next step is decided with the user.
 
-## 8. Slice 6c-2 acceptance criteria (Proposed 2026-11-12, pending the user; fixed before any code)
+## 8. Slice 6c-2 acceptance criteria (fixed 2026-11-12, before any code)
+
+**User decision (2026-11-12).**
+- Approved: the scope; TAB backward compatibility as a mandatory invariant; L1 to L6; L9; the L11 thresholds; the L12 method (SVGs to be supplied for review).
+- Approved: the generator as an ignored test plus a regular consistency test; FF-35 with `sha2`; `ttf-parser` as a dev-dependency.
+- Approved: `staff_space = string_spacing / 1.5`, on condition that the coordinate system is documented and no magic number is used. See "Coordinate system" below.
+- L7 and L8 are the generator and FF-35 decisions in criterion form.
+- L10 (goldens and determinism) and L13 (non-functional) were confirmed by the user on 2026-11-16.
+
+**Follow-up decision (user, 2026-11-16): `skrifa` replaces `ttf-parser`.**
+- Reason: cargo-deny failed on RUSTSEC-2026-0192, which marks `ttf-parser` as unmaintained. The user chose to replace it rather than ignore the advisory.
+- `skrifa` 0.50.0 (Google Fonts fontations, MIT OR Apache-2.0) is the replacement the advisory names. It is a dev-dependency of `mc-notation` only, and brings 11 crates into the lockfile.
+- It reads CFF outline boxes from the outline. The table it generates is byte-identical to the one `ttf-parser` generated.
+- Where this section says `ttf-parser`, read `skrifa`. Decision 5's candidate list for `mc-pdf` is to be re-evaluated in 6c-5, because `ttf-parser` is no longer acceptable there either.
+
+**Coordinate system (the user's condition).** All notation geometry is computed in staff spaces, then multiplied by one factor.
+- One named constant, `TAB_STRING_GAP_SP = 1.5`: the TAB string gap in staff spaces. This is the only link between TAB metrics and notation.
+- `staff_space = LayoutMetrics::string_spacing / TAB_STRING_GAP_SP` is computed in one function, `LayoutMetrics::staff_space()`.
+- SMuFL: 1 em = 4 staff spaces. Glyph metrics in the generated table are in staff spaces.
+- Layout units are those of `LayoutMetrics`: logical pixels at the current zoom, with y growing downward.
+- A staff's coordinates start at its box top (ADR-038 decision 3).
+- A staff position `p` counts half staff spaces above the bottom line (E4 written = 0 on the treble staff, top line = 8): `y = lines_top + (8 - p) / 2 * staff_space`.
+- Engraving distances (stem length, gaps, pads) are named constants in staff spaces in one module, each with its source: the SMuFL engraving defaults, or a stated rule.
 
 **Scope.** The notation staff inside `mc-notation`:
 - the semantic layer (ADR-040 decision 2);

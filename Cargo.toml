@@ -38,6 +38,10 @@ zip = { version = "=9.1.3", default-features = false, features = ["deflate-flate
 sha2 = { version = "=0.11.1", default-features = false }
 schemars = "=1.2.3"
 proptest = "=1.12.0"
+# mc-notation dev-dependency only (ADR-041 section 8): reads the bundled Bravura's cmap,
+# outline boxes and advance widths for the metrics-table check. MIT OR Apache-2.0.
+# Replaces ttf-parser, which is unmaintained (RUSTSEC-2026-0192; user decision 2026-11-16).
+skrifa = "=0.50.0"
 # mc-audio only (FF-02 wrapper bans, ADR-007). Versions validated by spike S2.
 # cpal without the `realtime` feature (MPL-2.0 audio_thread_priority is banned, ADR-015).
 cpal = "=0.18.2"

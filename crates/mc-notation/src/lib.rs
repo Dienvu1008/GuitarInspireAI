@@ -9,6 +9,7 @@ mod display;
 mod error;
 mod layout;
 mod metrics;
+pub mod smufl;
 
 pub use display::{
     BarLayout, Glyph, GlyphKind, HitRegion, HitTarget, Line, LineKind, OutlineSystem, Rect,

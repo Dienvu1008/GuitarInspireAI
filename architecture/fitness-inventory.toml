@@ -210,3 +210,8 @@ name = "Unsafe code confined to the generated FFI module (ADR-022)"
 phase = 3
 status = "active"
 check = "xtask:unsafe-scope"
+[FF-35]
+name = "Bundled Bravura equals its provenance (ADR-037)"
+phase = 6
+status = "active"
+check = "test:crates/mc-notation/src/smufl/generate.rs#ff35_"

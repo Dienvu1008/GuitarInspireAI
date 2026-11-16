@@ -12,6 +12,11 @@ mc-score.workspace = true
 
 [dev-dependencies]
 mc-score = { workspace = true, features = ["fixtures"] }
+# Metrics-table generation and check, FF-35 checksum (ADR-041 section 8). Test only.
+serde_json.workspace = true
+sha2.workspace = true
+skrifa.workspace = true
+proptest.workspace = true
 
 [lints]
 workspace = true

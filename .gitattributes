@@ -7,3 +7,6 @@ packages/core_bridge/lib/src/generated/** text eol=lf
 *.gp3 binary
 *.gp4 binary
 *.gp5 binary
+# Bundled Bravura (ADR-037): byte-exact files checked by SHA-256 (FF-35). No line-ending
+# conversion, also for the text files Bravura.json and OFL.txt.
+packages/ui_kit/fonts/bravura/** binary

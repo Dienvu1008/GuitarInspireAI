@@ -45,11 +45,12 @@ Planned implementation home: a Rust `xtask` crate (`cargo xtask fitness`) plus c
 | FF-31 | Candidate acceptance passes domain validation | GR-04, AI-02 | Integration test with invalid candidate | Critical | Phase 8 | Binary |
 | FF-32 | DTO JSON schema snapshot requires version bump | GR-08 | schemars snapshot test | Critical | Phase 1 | Binary |
 | FF-33 | Documentation links and Mermaid diagrams valid | GR-12 | Link check script, mermaid-cli | Important | Phase 0 | Binary |
+| FF-35 | Bundled Bravura equals its provenance ([ADR-037](decisions/ADR-037-bravura-smufl-font.md) decision 6, [ADR-041](decisions/ADR-041-notation-engine-metrics-cache-pdf.md) section 8): `Bravura.otf`, `Bravura.json` and `OFL.txt` in `packages/ui_kit/fonts/bravura/` have the sizes and SHA-256 recorded in its `PROVENANCE.md`, and the generated metrics table names the same hashes | ADR-015 amendment 1, licensing | Test `ff35_*` in `crates/mc-notation/src/smufl/generate.rs` (`sha2`, files via `include_bytes!`) | Critical | Phase 6 | Binary |
 | FF-34 | Unsafe code confined to two reviewed exceptions ([ADR-022](decisions/ADR-022-unsafe-confined-to-generated-ffi.md), [ADR-027](decisions/ADR-027-unsafe-exception-mmcss-module.md)): every crate except `mc-ffi` and `mc-audio` uses the workspace lints (`unsafe_code = "forbid"`); the lint tables of those two equal the workspace table except `unsafe_code = "deny"`; the only `allow(unsafe_code)` are on `mod frb_generated;` in `crates/mc-ffi/src/lib.rs` and on `#[cfg(windows)] mod mmcss;` in `crates/mc-audio/src/lib.rs`; `mmcss.rs` has exactly one `unsafe` token preceded by a `// SAFETY:` comment | Security, ADR-005 | `cargo xtask fitness unsafe-scope` (source and manifest scan) | Critical | Phase 3 | Binary |
 
 ## Activation by phase
 
-Fitness functions are implemented when the code they guard first exists. M0 implements only the five Phase 0 checks. The inventory (`architecture/fitness-inventory.toml`) lists all 34 with status `active` or `planned`; FF-20 verifies that every `active` entry is implemented and that no entry is removed or downgraded without an ADR trailer.
+Fitness functions are implemented when the code they guard first exists. M0 implements only the five Phase 0 checks. The inventory (`architecture/fitness-inventory.toml`) lists all 35 with status `active` or `planned`; FF-20 verifies that every `active` entry is implemented and that no entry is removed or downgraded without an ADR trailer.
 
 | Phase | Checks activated | Count |
 |---|---|---|
@@ -58,8 +59,9 @@ Fitness functions are implemented when the code they guard first exists. M0 impl
 | 2 | FF-25, FF-26 | 2 |
 | 3 | FF-05, FF-06, FF-08, FF-12, FF-34 | 5 |
 | 4 | FF-15, FF-16, FF-17, FF-18, FF-29 | 5 |
+| 6 | FF-35 | 1 |
 | 8 | FF-31 | 1 |
-| Total | | 34 |
+| Total | | 35 |
 
 ## Notes on thresholds
 
