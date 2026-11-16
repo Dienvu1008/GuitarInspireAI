@@ -169,9 +169,10 @@ fn run(args: &[String]) -> Result<(), String> {
                 "large" => mc_app::fixtures::reference(mc_app::fixtures::LARGE),
                 "feature-rich" => mc_app::fixtures::feature_rich(),
                 "techniques" => mc_app::fixtures::techniques(),
+                "keys" => mc_app::fixtures::notation_keys(),
                 other => {
                     return Err(format!(
-                        "unknown fixture '{other}' (small, typical, large, feature-rich, techniques)"
+                        "unknown fixture '{other}' (small, typical, large, feature-rich, techniques, keys)"
                     ));
                 }
             };

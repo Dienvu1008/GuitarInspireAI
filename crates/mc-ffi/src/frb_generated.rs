@@ -44,7 +44,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1215411450;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1494858265;
 
 // Section: executor
 
@@ -883,6 +883,58 @@ fn wire__crate__api__document__DocumentHandle_score_outline_impl(
         },
     )
 }
+fn wire__crate__api__document__DocumentHandle_score_outline_with_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "DocumentHandle_score_outline_with",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
+            >>::sse_decode(&mut deserializer);
+            let api_shown = <Vec<crate::api::layout::ShownTrackDto>>::sse_decode(&mut deserializer);
+            let api_metrics = <crate::api::layout::MetricsDto>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, crate::api::types::ApiError>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok = crate::api::document::DocumentHandle::score_outline_with(
+                    &*api_that_guard,
+                    api_shown,
+                    api_metrics,
+                )?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__document__DocumentHandle_score_systems_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -930,6 +982,62 @@ fn wire__crate__api__document__DocumentHandle_score_systems_impl(
                 let output_ok = crate::api::document::DocumentHandle::score_systems(
                     &*api_that_guard,
                     api_tracks,
+                    api_metrics,
+                    api_first,
+                    api_count,
+                )?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__document__DocumentHandle_score_systems_with_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "DocumentHandle_score_systems_with",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
+            >>::sse_decode(&mut deserializer);
+            let api_shown = <Vec<crate::api::layout::ShownTrackDto>>::sse_decode(&mut deserializer);
+            let api_metrics = <crate::api::layout::MetricsDto>::sse_decode(&mut deserializer);
+            let api_first = <u32>::sse_decode(&mut deserializer);
+            let api_count = <u32>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, crate::api::types::ApiError>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok = crate::api::document::DocumentHandle::score_systems_with(
+                    &*api_that_guard,
+                    api_shown,
                     api_metrics,
                     api_first,
                     api_count,
@@ -2974,6 +3082,38 @@ fn wire__crate__api__info__init_app_impl(
                     let output_ok = Ok::<_, ()>({
                         crate::api::info::init_app();
                     })?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__layout__notation_staff_dto_default_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "notation_staff_dto_default",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Ok::<_, ()>(crate::api::layout::NotationStaffDto::default())?;
                     std::result::Result::Ok(output_ok)
                 })())
             }
@@ -5074,6 +5214,20 @@ impl SseDecode for Vec<crate::api::layout::ScoreSystemDto> {
     }
 }
 
+impl SseDecode for Vec<crate::api::layout::ShownTrackDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::layout::ShownTrackDto>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<crate::api::layout::StaveDto> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -5248,6 +5402,32 @@ impl SseDecode for crate::api::musicxml::MusicXmlReportDto {
             tempo_rounded: var_tempoRounded,
             characters_removed: var_charactersRemoved,
             techniques_approximated: var_techniquesApproximated,
+        };
+    }
+}
+
+impl SseDecode for crate::api::layout::NotationStaffDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_staffSpace = <f32>::sse_decode(deserializer);
+        let mut var_linesTop = <f32>::sse_decode(deserializer);
+        let mut var_lines = <Vec<f32>>::sse_decode(deserializer);
+        let mut var_lineKinds = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_glyphCodepoints = <Vec<u32>>::sse_decode(deserializer);
+        let mut var_glyphPositions = <Vec<f32>>::sse_decode(deserializer);
+        let mut var_beams = <Vec<f32>>::sse_decode(deserializer);
+        let mut var_ties = <Vec<f32>>::sse_decode(deserializer);
+        let mut var_tieUp = <Vec<u8>>::sse_decode(deserializer);
+        return crate::api::layout::NotationStaffDto {
+            staff_space: var_staffSpace,
+            lines_top: var_linesTop,
+            lines: var_lines,
+            line_kinds: var_lineKinds,
+            glyph_codepoints: var_glyphCodepoints,
+            glyph_positions: var_glyphPositions,
+            beams: var_beams,
+            ties: var_ties,
+            tie_up: var_tieUp,
         };
     }
 }
@@ -5636,18 +5816,36 @@ impl SseDecode for crate::api::pattern_grid::SelectorKindDto {
     }
 }
 
+impl SseDecode for crate::api::layout::ShownTrackDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_track = <i64>::sse_decode(deserializer);
+        let mut var_notation = <bool>::sse_decode(deserializer);
+        let mut var_tab = <bool>::sse_decode(deserializer);
+        return crate::api::layout::ShownTrackDto {
+            track: var_track,
+            notation: var_notation,
+            tab: var_tab,
+        };
+    }
+}
+
 impl SseDecode for crate::api::layout::StaveDto {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_track = <i64>::sse_decode(deserializer);
+        let mut var_kind = <u8>::sse_decode(deserializer);
         let mut var_strings = <u8>::sse_decode(deserializer);
         let mut var_top = <f32>::sse_decode(deserializer);
         let mut var_system = <crate::api::layout::SystemDto>::sse_decode(deserializer);
+        let mut var_notation = <crate::api::layout::NotationStaffDto>::sse_decode(deserializer);
         return crate::api::layout::StaveDto {
             track: var_track,
+            kind: var_kind,
             strings: var_strings,
             top: var_top,
             system: var_system,
+            notation: var_notation,
         };
     }
 }
@@ -5902,67 +6100,73 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        21 => wire__crate__api__document__DocumentHandle_subscribe_events_impl(
+        23 => wire__crate__api__document__DocumentHandle_subscribe_events_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        24 => {
+        26 => {
             wire__crate__api__document__DocumentHandle_undo_impl(port, ptr, rust_vec_len, data_len)
         }
-        27 => wire__crate__api__document__DocumentHandle_write_autosave_impl(
+        29 => wire__crate__api__document__DocumentHandle_write_autosave_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        29 => wire__crate__api__engine__EngineHandle_play_impl(port, ptr, rust_vec_len, data_len),
-        31 => {
+        31 => wire__crate__api__engine__EngineHandle_play_impl(port, ptr, rust_vec_len, data_len),
+        33 => {
             wire__crate__api__engine__EngineHandle_positions_impl(port, ptr, rust_vec_len, data_len)
         }
-        32 => wire__crate__api__engine__EngineHandle_refresh_after_edit_impl(
+        34 => wire__crate__api__engine__EngineHandle_refresh_after_edit_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        33 => wire__crate__api__engine__EngineHandle_seek_impl(port, ptr, rust_vec_len, data_len),
-        34 => {
+        35 => wire__crate__api__engine__EngineHandle_seek_impl(port, ptr, rust_vec_len, data_len),
+        36 => {
             wire__crate__api__engine__EngineHandle_set_muted_impl(port, ptr, rust_vec_len, data_len)
         }
-        35 => wire__crate__api__engine__EngineHandle_set_soloed_impl(
+        37 => wire__crate__api__engine__EngineHandle_set_soloed_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        36 => wire__crate__api__engine__EngineHandle_set_tempo_factor_impl(
+        38 => wire__crate__api__engine__EngineHandle_set_tempo_factor_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        37 => wire__crate__api__engine__EngineHandle_set_track_mix_impl(
+        39 => wire__crate__api__engine__EngineHandle_set_track_mix_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        38 => wire__crate__api__engine__EngineHandle_start_impl(port, ptr, rust_vec_len, data_len),
-        39 => wire__crate__api__engine__EngineHandle_stop_impl(port, ptr, rust_vec_len, data_len),
-        50 => wire__crate__api__tuner__TunerHandle_start_impl(port, ptr, rust_vec_len, data_len),
-        54 => {
+        40 => wire__crate__api__engine__EngineHandle_start_impl(port, ptr, rust_vec_len, data_len),
+        41 => wire__crate__api__engine__EngineHandle_stop_impl(port, ptr, rust_vec_len, data_len),
+        52 => wire__crate__api__tuner__TunerHandle_start_impl(port, ptr, rust_vec_len, data_len),
+        56 => {
             wire__crate__api__guitarpro__export_guitar_pro_impl(port, ptr, rust_vec_len, data_len)
         }
-        55 => wire__crate__api__midi__export_midi_impl(port, ptr, rust_vec_len, data_len),
-        56 => wire__crate__api__musicxml__export_musicxml_impl(port, ptr, rust_vec_len, data_len),
-        59 => {
+        57 => wire__crate__api__midi__export_midi_impl(port, ptr, rust_vec_len, data_len),
+        58 => wire__crate__api__musicxml__export_musicxml_impl(port, ptr, rust_vec_len, data_len),
+        61 => {
             wire__crate__api__guitarpro__import_guitar_pro_impl(port, ptr, rust_vec_len, data_len)
         }
-        60 => wire__crate__api__midi__import_midi_impl(port, ptr, rust_vec_len, data_len),
-        61 => wire__crate__api__info__init_app_impl(port, ptr, rust_vec_len, data_len),
-        66 => wire__crate__api__pattern_grid__techniques_dto_default_impl(
+        62 => wire__crate__api__midi__import_midi_impl(port, ptr, rust_vec_len, data_len),
+        63 => wire__crate__api__info__init_app_impl(port, ptr, rust_vec_len, data_len),
+        64 => wire__crate__api__layout__notation_staff_dto_default_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        69 => wire__crate__api__pattern_grid__techniques_dto_default_impl(
             port,
             ptr,
             rust_vec_len,
@@ -6031,80 +6235,90 @@ fn pde_ffi_dispatcher_sync_impl(
             rust_vec_len,
             data_len,
         ),
-        20 => wire__crate__api__document__DocumentHandle_score_systems_impl(
+        20 => wire__crate__api__document__DocumentHandle_score_outline_with_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        22 => wire__crate__api__document__DocumentHandle_summary_impl(ptr, rust_vec_len, data_len),
-        23 => {
+        21 => wire__crate__api__document__DocumentHandle_score_systems_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        22 => wire__crate__api__document__DocumentHandle_score_systems_with_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        24 => wire__crate__api__document__DocumentHandle_summary_impl(ptr, rust_vec_len, data_len),
+        25 => {
             wire__crate__api__document__DocumentHandle_tab_layout_impl(ptr, rust_vec_len, data_len)
         }
-        25 => wire__crate__api__document__DocumentHandle_unsubscribe_events_impl(
+        27 => wire__crate__api__document__DocumentHandle_unsubscribe_events_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        26 => {
+        28 => {
             wire__crate__api__document__DocumentHandle_voice_count_impl(ptr, rust_vec_len, data_len)
         }
-        28 => wire__crate__api__engine__EngineHandle_last_error_impl(ptr, rust_vec_len, data_len),
-        30 => wire__crate__api__engine__EngineHandle_position_impl(ptr, rust_vec_len, data_len),
-        40 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_get_document_impl(
+        30 => wire__crate__api__engine__EngineHandle_last_error_impl(ptr, rust_vec_len, data_len),
+        32 => wire__crate__api__engine__EngineHandle_position_impl(ptr, rust_vec_len, data_len),
+        42 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_get_document_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        41 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_get_report_impl(
+        43 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_get_report_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        42 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_set_document_impl(
+        44 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_set_document_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        43 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_set_report_impl(
+        45 => wire__crate__api__guitarpro__GuitarProImportResult_auto_accessor_set_report_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        44 => wire__crate__api__midi__ImportResult_auto_accessor_get_document_impl(
+        46 => wire__crate__api__midi__ImportResult_auto_accessor_get_document_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        45 => wire__crate__api__midi__ImportResult_auto_accessor_get_report_impl(
+        47 => wire__crate__api__midi__ImportResult_auto_accessor_get_report_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        46 => wire__crate__api__midi__ImportResult_auto_accessor_set_document_impl(
+        48 => wire__crate__api__midi__ImportResult_auto_accessor_set_document_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        47 => wire__crate__api__midi__ImportResult_auto_accessor_set_report_impl(
+        49 => wire__crate__api__midi__ImportResult_auto_accessor_set_report_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        48 => wire__crate__api__tuner__TunerHandle_failed_impl(ptr, rust_vec_len, data_len),
-        49 => wire__crate__api__tuner__TunerHandle_reading_impl(ptr, rust_vec_len, data_len),
-        51 => wire__crate__api__tuner__TunerHandle_stop_impl(ptr, rust_vec_len, data_len),
-        52 => wire__crate__api__info__core_version_impl(ptr, rust_vec_len, data_len),
-        53 => wire__crate__api__layout__default_metrics_impl(ptr, rust_vec_len, data_len),
-        57 => wire__crate__api__pattern_grid__gestures_impl(ptr, rust_vec_len, data_len),
-        58 => wire__crate__api__guitarpro__guitar_pro_export_extension_supported_impl(
+        50 => wire__crate__api__tuner__TunerHandle_failed_impl(ptr, rust_vec_len, data_len),
+        51 => wire__crate__api__tuner__TunerHandle_reading_impl(ptr, rust_vec_len, data_len),
+        53 => wire__crate__api__tuner__TunerHandle_stop_impl(ptr, rust_vec_len, data_len),
+        54 => wire__crate__api__info__core_version_impl(ptr, rust_vec_len, data_len),
+        55 => wire__crate__api__layout__default_metrics_impl(ptr, rust_vec_len, data_len),
+        59 => wire__crate__api__pattern_grid__gestures_impl(ptr, rust_vec_len, data_len),
+        60 => wire__crate__api__guitarpro__guitar_pro_export_extension_supported_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        62 => wire__crate__api__pattern_grid__pattern_grid_impl(ptr, rust_vec_len, data_len),
-        63 => wire__crate__api__pattern__patterns_impl(ptr, rust_vec_len, data_len),
-        64 => wire__crate__api__pattern__preview_pattern_impl(ptr, rust_vec_len, data_len),
-        65 => wire__crate__api__pattern__sample_pattern_impl(ptr, rust_vec_len, data_len),
+        65 => wire__crate__api__pattern_grid__pattern_grid_impl(ptr, rust_vec_len, data_len),
+        66 => wire__crate__api__pattern__patterns_impl(ptr, rust_vec_len, data_len),
+        67 => wire__crate__api__pattern__preview_pattern_impl(ptr, rust_vec_len, data_len),
+        68 => wire__crate__api__pattern__sample_pattern_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -7694,6 +7908,34 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::musicxml::MusicXmlReportDto>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::layout::NotationStaffDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.staff_space.into_into_dart().into_dart(),
+            self.lines_top.into_into_dart().into_dart(),
+            self.lines.into_into_dart().into_dart(),
+            self.line_kinds.into_into_dart().into_dart(),
+            self.glyph_codepoints.into_into_dart().into_dart(),
+            self.glyph_positions.into_into_dart().into_dart(),
+            self.beams.into_into_dart().into_dart(),
+            self.ties.into_into_dart().into_dart(),
+            self.tie_up.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::layout::NotationStaffDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::NotationStaffDto>
+    for crate::api::layout::NotationStaffDto
+{
+    fn into_into_dart(self) -> crate::api::layout::NotationStaffDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::types::NoteDto {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -8019,13 +8261,37 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::pattern_grid::SelectorKindDto
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::layout::ShownTrackDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.track.into_into_dart().into_dart(),
+            self.notation.into_into_dart().into_dart(),
+            self.tab.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::layout::ShownTrackDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::ShownTrackDto>
+    for crate::api::layout::ShownTrackDto
+{
+    fn into_into_dart(self) -> crate::api::layout::ShownTrackDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::layout::StaveDto {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.track.into_into_dart().into_dart(),
+            self.kind.into_into_dart().into_dart(),
             self.strings.into_into_dart().into_dart(),
             self.top.into_into_dart().into_dart(),
             self.system.into_into_dart().into_dart(),
+            self.notation.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -9669,6 +9935,16 @@ impl SseEncode for Vec<crate::api::layout::ScoreSystemDto> {
     }
 }
 
+impl SseEncode for Vec<crate::api::layout::ShownTrackDto> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::layout::ShownTrackDto>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<crate::api::layout::StaveDto> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -9783,6 +10059,21 @@ impl SseEncode for crate::api::musicxml::MusicXmlReportDto {
         <u32>::sse_encode(self.tempo_rounded, serializer);
         <u32>::sse_encode(self.characters_removed, serializer);
         <u32>::sse_encode(self.techniques_approximated, serializer);
+    }
+}
+
+impl SseEncode for crate::api::layout::NotationStaffDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <f32>::sse_encode(self.staff_space, serializer);
+        <f32>::sse_encode(self.lines_top, serializer);
+        <Vec<f32>>::sse_encode(self.lines, serializer);
+        <Vec<u8>>::sse_encode(self.line_kinds, serializer);
+        <Vec<u32>>::sse_encode(self.glyph_codepoints, serializer);
+        <Vec<f32>>::sse_encode(self.glyph_positions, serializer);
+        <Vec<f32>>::sse_encode(self.beams, serializer);
+        <Vec<f32>>::sse_encode(self.ties, serializer);
+        <Vec<u8>>::sse_encode(self.tie_up, serializer);
     }
 }
 
@@ -10081,13 +10372,24 @@ impl SseEncode for crate::api::pattern_grid::SelectorKindDto {
     }
 }
 
+impl SseEncode for crate::api::layout::ShownTrackDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i64>::sse_encode(self.track, serializer);
+        <bool>::sse_encode(self.notation, serializer);
+        <bool>::sse_encode(self.tab, serializer);
+    }
+}
+
 impl SseEncode for crate::api::layout::StaveDto {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i64>::sse_encode(self.track, serializer);
+        <u8>::sse_encode(self.kind, serializer);
         <u8>::sse_encode(self.strings, serializer);
         <f32>::sse_encode(self.top, serializer);
         <crate::api::layout::SystemDto>::sse_encode(self.system, serializer);
+        <crate::api::layout::NotationStaffDto>::sse_encode(self.notation, serializer);
     }
 }
 

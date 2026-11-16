@@ -8,8 +8,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'layout.freezed.dart';
 
-            // These functions are ignored because they are not marked as `pub`: `glyph_dto`, `system_dto`, `to_core`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
+            // These functions are ignored because they are not marked as `pub`: `glyph_dto`, `notation_dto`, `score_system_dto`, `system_dto`, `to_core`, `to_core`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `assert_fields_are_eq`, `assert_fields_are_eq`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `eq`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`
 
 
             /// Default metrics in abstract units, for tests and as a starting point before Dart
@@ -167,6 +167,51 @@ final double stemLength;
 
             }
 
+/// A notation stave as packed arrays, in stave coordinates (ADR-041 section 9). Dart
+/// paints it as given: glyphs with the bundled Bravura at 4 staff spaces per em, each
+/// on its alphabetic baseline at its SMuFL origin.
+class NotationStaffDto  {
+                /// Layout units per staff space.
+final double staffSpace;
+/// y of the top staff line.
+final double linesTop;
+/// x1, y1, x2, y2, thickness per line.
+final Float32List lines;
+/// One `NOTATION_LINE_*` code per line.
+final Uint8List lineKinds;
+/// SMuFL codepoint per glyph.
+final Uint32List glyphCodepoints;
+/// x, y of each glyph's origin.
+final Float32List glyphPositions;
+/// x1, y1, x2, y2, thickness per beam (the band's centre line).
+final Float32List beams;
+/// x1, x2, y, height, end thickness, middle thickness per tie.
+final Float32List ties;
+/// 1 when the tie bulges up, per tie.
+final Uint8List tieUp;
+
+                const NotationStaffDto({required this.staffSpace ,required this.linesTop ,required this.lines ,required this.lineKinds ,required this.glyphCodepoints ,required this.glyphPositions ,required this.beams ,required this.ties ,required this.tieUp ,});
+
+                static Future<NotationStaffDto>  default_()=>RustLib.instance.api.crateApiLayoutNotationStaffDtoDefault();
+
+
+
+
+
+        @override
+        int get hashCode => staffSpace.hashCode^linesTop.hashCode^lines.hashCode^lineKinds.hashCode^glyphCodepoints.hashCode^glyphPositions.hashCode^beams.hashCode^ties.hashCode^tieUp.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is NotationStaffDto &&
+                runtimeType == other.runtimeType
+                && staffSpace == other.staffSpace&& linesTop == other.linesTop&& lines == other.lines&& lineKinds == other.lineKinds&& glyphCodepoints == other.glyphCodepoints&& glyphPositions == other.glyphPositions&& beams == other.beams&& ties == other.ties&& tieUp == other.tieUp;
+
+            }
+
 /// Where a system sits and which bars it holds, without content.
 class OutlineSystemDto  {
                 final int index;
@@ -252,23 +297,55 @@ final List<StaveDto> staves;
 
             }
 
-/// One track's stave in a multi-track system (ADR-031). `system` is in stave
-/// coordinates, like a single-track system, so Dart paints and hit-tests it the same
-/// way; `top` places it in the system. Bar x-positions are equal in every stave.
-class StaveDto  {
+/// A shown track and its staves (ADR-038). A view setting the adapter passes.
+class ShownTrackDto  {
                 final PlatformInt64 track;
-final int strings;
-final double top;
-final SystemDto system;
+final bool notation;
+final bool tab;
 
-                const StaveDto({required this.track ,required this.strings ,required this.top ,required this.system ,});
+                const ShownTrackDto({required this.track ,required this.notation ,required this.tab ,});
 
 
 
 
 
         @override
-        int get hashCode => track.hashCode^strings.hashCode^top.hashCode^system.hashCode;
+        int get hashCode => track.hashCode^notation.hashCode^tab.hashCode;
+
+
+
+        @override
+        bool operator ==(Object other) =>
+            identical(this, other) ||
+            other is ShownTrackDto &&
+                runtimeType == other.runtimeType
+                && track == other.track&& notation == other.notation&& tab == other.tab;
+
+            }
+
+/// One track's stave in a multi-track system (ADR-031). `system` is in stave
+/// coordinates, like a single-track system, so Dart paints and hit-tests it the same
+/// way; `top` places it in the system. Bar x-positions are equal in every stave.
+class StaveDto  {
+                final PlatformInt64 track;
+/// `STAVE_TAB` or `STAVE_NOTATION` (ADR-038). A track with both has two staves,
+/// notation first.
+final int kind;
+final int strings;
+final double top;
+/// TAB content (empty lists on a notation stave, except the bars).
+final SystemDto system;
+/// Notation content (empty on a TAB stave).
+final NotationStaffDto notation;
+
+                const StaveDto({required this.track ,required this.kind ,required this.strings ,required this.top ,required this.system ,required this.notation ,});
+
+
+
+
+
+        @override
+        int get hashCode => track.hashCode^kind.hashCode^strings.hashCode^top.hashCode^system.hashCode^notation.hashCode;
 
 
 
@@ -277,7 +354,7 @@ final SystemDto system;
             identical(this, other) ||
             other is StaveDto &&
                 runtimeType == other.runtimeType
-                && track == other.track&& strings == other.strings&& top == other.top&& system == other.system;
+                && track == other.track&& kind == other.kind&& strings == other.strings&& top == other.top&& system == other.system&& notation == other.notation;
 
             }
 

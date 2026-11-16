@@ -7,9 +7,10 @@ use mc_score::TrackId;
 use std::ops::Range;
 
 pub use mc_notation::{
-    BarLayout, Glyph, GlyphKind, HitRegion, HitTarget, LayoutCache, LayoutMetrics, Line, LineKind,
-    NotationError, NotationStaff, OutlineSystem, Rect, ScoreLayout, ScoreOutline, ScoreSystem,
-    ShownTrack, StaffConfiguration, Stave, StaveKind, SystemLayout, TabLayout,
+    BarLayout, EngravedLineKind, Glyph, GlyphKind, HitRegion, HitTarget, LayoutCache,
+    LayoutMetrics, Line, LineKind, NotationError, NotationStaff, OutlineSystem, Rect, ScoreLayout,
+    ScoreOutline, ScoreSystem, ShownTrack, StaffConfiguration, Stave, StaveKind, SystemLayout,
+    TabLayout,
 };
 
 /// The outline of one revision, shown tracks with their staves, and metrics (a view

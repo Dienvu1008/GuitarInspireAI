@@ -267,6 +267,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<ScoreSystemDto> dco_decode_list_score_system_dto(dynamic raw);
 
+@protected List<ShownTrackDto> dco_decode_list_shown_track_dto(dynamic raw);
+
 @protected List<StaveDto> dco_decode_list_stave_dto(dynamic raw);
 
 @protected List<StepChangeDto> dco_decode_list_step_change_dto(dynamic raw);
@@ -286,6 +288,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected MusicXmlExportResult dco_decode_music_xml_export_result(dynamic raw);
 
 @protected MusicXmlReportDto dco_decode_music_xml_report_dto(dynamic raw);
+
+@protected NotationStaffDto dco_decode_notation_staff_dto(dynamic raw);
 
 @protected NoteDto dco_decode_note_dto(dynamic raw);
 
@@ -338,6 +342,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected ScoreSystemDto dco_decode_score_system_dto(dynamic raw);
 
 @protected SelectorKindDto dco_decode_selector_kind_dto(dynamic raw);
+
+@protected ShownTrackDto dco_decode_shown_track_dto(dynamic raw);
 
 @protected StaveDto dco_decode_stave_dto(dynamic raw);
 
@@ -595,6 +601,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected List<ScoreSystemDto> sse_decode_list_score_system_dto(SseDeserializer deserializer);
 
+@protected List<ShownTrackDto> sse_decode_list_shown_track_dto(SseDeserializer deserializer);
+
 @protected List<StaveDto> sse_decode_list_stave_dto(SseDeserializer deserializer);
 
 @protected List<StepChangeDto> sse_decode_list_step_change_dto(SseDeserializer deserializer);
@@ -614,6 +622,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected MusicXmlExportResult sse_decode_music_xml_export_result(SseDeserializer deserializer);
 
 @protected MusicXmlReportDto sse_decode_music_xml_report_dto(SseDeserializer deserializer);
+
+@protected NotationStaffDto sse_decode_notation_staff_dto(SseDeserializer deserializer);
 
 @protected NoteDto sse_decode_note_dto(SseDeserializer deserializer);
 
@@ -666,6 +676,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected ScoreSystemDto sse_decode_score_system_dto(SseDeserializer deserializer);
 
 @protected SelectorKindDto sse_decode_selector_kind_dto(SseDeserializer deserializer);
+
+@protected ShownTrackDto sse_decode_shown_track_dto(SseDeserializer deserializer);
 
 @protected StaveDto sse_decode_stave_dto(SseDeserializer deserializer);
 
@@ -923,6 +935,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_list_score_system_dto(List<ScoreSystemDto> self, SseSerializer serializer);
 
+@protected void sse_encode_list_shown_track_dto(List<ShownTrackDto> self, SseSerializer serializer);
+
 @protected void sse_encode_list_stave_dto(List<StaveDto> self, SseSerializer serializer);
 
 @protected void sse_encode_list_step_change_dto(List<StepChangeDto> self, SseSerializer serializer);
@@ -942,6 +956,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_music_xml_export_result(MusicXmlExportResult self, SseSerializer serializer);
 
 @protected void sse_encode_music_xml_report_dto(MusicXmlReportDto self, SseSerializer serializer);
+
+@protected void sse_encode_notation_staff_dto(NotationStaffDto self, SseSerializer serializer);
 
 @protected void sse_encode_note_dto(NoteDto self, SseSerializer serializer);
 
@@ -994,6 +1010,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_score_system_dto(ScoreSystemDto self, SseSerializer serializer);
 
 @protected void sse_encode_selector_kind_dto(SelectorKindDto self, SseSerializer serializer);
+
+@protected void sse_encode_shown_track_dto(ShownTrackDto self, SseSerializer serializer);
 
 @protected void sse_encode_stave_dto(StaveDto self, SseSerializer serializer);
 

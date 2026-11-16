@@ -95,6 +95,22 @@ abstract interface class DocumentService {
     int count,
   );
 
+  /// [scoreOutline] with the staves of each shown track (ADR-038): notation above
+  /// TAB where [ShownTrackDto.notation] is set. The configuration is view state.
+  ScoreOutlineDto scoreOutlineWith(
+    List<ShownTrackDto> shown,
+    MetricsDto metrics,
+  );
+
+  /// [scoreSystems] with the staves of each shown track (ADR-038): per track a
+  /// notation stave (if asked) then a TAB stave (if asked), in score order.
+  List<ScoreSystemDto> scoreSystemsWith(
+    List<ShownTrackDto> shown,
+    MetricsDto metrics,
+    int first,
+    int count,
+  );
+
   /// TAB layout of a track at the current revision (synchronous; see ADR-018).
   TabLayoutDto tabLayout(int track, MetricsDto metrics);
 
@@ -148,6 +164,21 @@ abstract interface class DocumentFactory {
 }
 
 /// Line kind codes used in [SystemDto.lineKinds].
+/// Stave kind codes in `StaveDto.kind` (Rust `STAVE_*`).
+abstract final class StaveKind {
+  static const int tab = 0;
+  static const int notation = 1;
+}
+
+/// Line kind codes in `NotationStaffDto.lineKinds` (Rust `NOTATION_LINE_*`).
+abstract final class NotationLineKind {
+  static const int staff = 0;
+  static const int ledger = 1;
+  static const int stem = 2;
+  static const int bar = 3;
+  static const int thickBar = 4;
+}
+
 abstract final class LineKind {
   static const int string = 0;
   static const int bar = 1;

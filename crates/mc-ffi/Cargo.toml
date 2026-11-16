@@ -23,6 +23,10 @@ mc-musicxml.workspace = true
 mc-guitarpro.workspace = true
 flutter_rust_bridge.workspace = true
 
+[dev-dependencies]
+# Reference scores for the DTO tests (ADR-041 section 9, F1 and F2).
+mc-app = { workspace = true, features = ["fixtures"] }
+
 # ADR-022: the workspace lints, restated, with one difference: unsafe_code is "deny"
 # instead of "forbid", so that only the generated module may allow it. FF-34 checks
 # that this table equals [workspace.lints] except for that one value, and that

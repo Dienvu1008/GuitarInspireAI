@@ -133,18 +133,25 @@ void main() {
     tester,
   ) async {
     final (_, ids) = await _threeTracks(tester);
-    // One cursor segment per stave, each covering its stave; together they run
-    // from the top of the first stave to the bottom of the last, without gaps.
+    // One cursor segment per stave (notation and TAB of every track, ADR-041
+    // section 9), each covering its stave; together they run from the top of the
+    // first stave to the bottom of the last, without gaps.
+    final staves = [
+      for (final t in ids) ...[
+        find.byKey(ValueKey('notation-0-$t')),
+        _stave(0, t),
+      ],
+    ];
     final segments = find
         .byKey(const ValueKey('play-cursor'))
         .evaluate()
         .toList();
-    expect(segments, hasLength(ids.length));
+    expect(segments, hasLength(staves.length));
     final rects = [
       for (final e in segments) tester.getRect(find.byWidget(e.widget)),
     ]..sort((a, b) => a.top.compareTo(b.top));
-    for (final (k, t) in ids.indexed) {
-      final stave = tester.getRect(_stave(0, t));
+    for (final (k, finder) in staves.indexed) {
+      final stave = tester.getRect(finder);
       expect(rects[k].top, closeTo(stave.top, 0.5));
       expect(rects[k].height, closeTo(stave.height, 0.5));
     }

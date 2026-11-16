@@ -436,6 +436,94 @@ pub fn techniques() -> Score {
     assert!(s.validate().is_empty());
     s
 }
+/// The S11 `keys` input (spikes/s11-notation README section 3): G, F, B-flat and E
+/// major with chromatic notes, a repeated altered note, a reset at the bar line, and a
+/// sharp tied into the next bar. Six bars of 4/4, one standard-tuned track; each
+/// sounding semitone on its lowest fret (0 to 15). For notation review (ADR-041).
+pub fn notation_keys() -> Score {
+    use mc_theory::fretted::{Tuning, pitch_at};
+    let bar = |fifths: i8| {
+        MasterBar::new(
+            TimeSignature::COMMON,
+            KeySignature::new(fifths, Mode::Major).unwrap(),
+        )
+    };
+    let mut s = Score::new(
+        "Keys",
+        InstrumentSpec::Fretted(FrettedInstrument::standard_guitar()),
+        bar(1),
+        Tempo::from_bpm(100).unwrap(),
+    )
+    .unwrap();
+    s.insert_master_bars(1, 5, MasterBar::default()).unwrap();
+    for (b, f) in [(1, 1), (2, -1), (3, -2), (4, 4), (5, 4)] {
+        s.set_master_bar(b, bar(f)).unwrap();
+    }
+    let tuning = Tuning::standard_guitar();
+    let at = |semitone: i32| {
+        (1..=6u8)
+            .filter_map(|string| {
+                let p = |fret| FretPosition {
+                    string: StringIndex::new(string).unwrap(),
+                    fret: Fret(fret),
+                };
+                let fret = semitone - pitch_at(&tuning, Capo(0), p(0)).unwrap();
+                (0..=15).contains(&fret).then(|| (fret, p(fret as u8)))
+            })
+            .min_by_key(|(fret, p)| (*fret, p.string.get()))
+            .map(|(_, p)| p)
+            .expect("playable")
+    };
+    let t = s.track_at(0).unwrap().id();
+    let q = NoteValue::plain(BaseValue::QUARTER);
+    let h = NoteValue::plain(BaseValue::HALF);
+    let bars: [&[(i32, NoteValue, bool)]; 6] = [
+        &[
+            (66, q, false),
+            (65, q, false),
+            (65, q, false),
+            (73, q, false),
+        ],
+        &[(65, q, false), (64, q, false), (68, h, false)],
+        &[
+            (70, q, false),
+            (71, q, false),
+            (70, q, false),
+            (75, q, false),
+        ],
+        &[
+            (63, q, false),
+            (64, q, false),
+            (68, q, false),
+            (69, q, false),
+        ],
+        &[(75, q, false), (74, q, false), (75, h, false)],
+        &[
+            (75, q, true),
+            (74, q, false),
+            (75, q, false),
+            (74, q, false),
+        ],
+    ];
+    for (b, beats) in bars.iter().enumerate() {
+        for (k, &(semitone, value, tie)) in beats.iter().enumerate() {
+            let (beat, _) = s.insert_beat(t, b, 0, k, value).unwrap();
+            let r = BeatRef {
+                track: t,
+                bar: b,
+                voice: 0,
+                beat,
+            };
+            let (note, _) = s.set_note(r, at(semitone)).unwrap();
+            if tie {
+                s.set_tie(r, note, true).unwrap();
+            }
+        }
+    }
+    assert!(s.validate().is_empty());
+    s
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

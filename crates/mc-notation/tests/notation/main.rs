@@ -162,6 +162,18 @@ fn l10_windowed_layout_equals_the_full_layout_and_runs_repeat() {
     }
 }
 
+/// The `notation_keys` fixture (used by the CLI for app review) is the S11 `keys`
+/// input: the same layout.
+#[test]
+fn notation_keys_fixture_equals_the_s11_input() {
+    let m = LayoutMetrics::default();
+    let fixture = mc_score::fixtures::notation_keys();
+    assert_eq!(
+        svg::canonical(&layout(&fixture, &m)),
+        svg::canonical(&layout(&samples::keys(), &m))
+    );
+}
+
 // ------------------------------------------------------------------ L5 breakages
 
 /// One input with every feature a breakage needs, laid out and checked clean.

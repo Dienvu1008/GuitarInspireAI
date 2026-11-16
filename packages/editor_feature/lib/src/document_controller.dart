@@ -54,6 +54,7 @@ final class EditorState {
     this.message,
     this.anchor,
     this.hiddenTracks = const {},
+    this.notationOff = const {},
   });
 
   final DocumentService service;
@@ -80,6 +81,17 @@ final class EditorState {
   List<int> get shownTracks => [
     for (final t in summary.tracks)
       if (t.id == activeTrack || !hiddenTracks.contains(t.id)) t.id,
+  ];
+
+  /// Tracks whose standard notation the user switched off (ADR-038, ADR-041 section
+  /// 9). UI state only: notation is on for every track when a document opens, and the
+  /// set is not saved.
+  final Set<int> notationOff;
+
+  /// The shown tracks with their staves: notation (unless switched off) above TAB.
+  List<ShownTrackDto> get shownStaves => [
+    for (final t in shownTracks)
+      ShownTrackDto(track: t, notation: !notationOff.contains(t), tab: true),
   ];
 
   /// The selected run of beats from [anchor] to the cursor, in written order and
@@ -111,6 +123,7 @@ final class EditorState {
     BeatSlot? anchor,
     bool clearAnchor = false,
     Set<int>? hiddenTracks,
+    Set<int>? notationOff,
   }) => EditorState(
     service: service,
     summary: summary ?? this.summary,
@@ -119,6 +132,7 @@ final class EditorState {
     message: clearMessage ? null : (message ?? this.message),
     anchor: clearAnchor ? null : (anchor ?? this.anchor),
     hiddenTracks: hiddenTracks ?? this.hiddenTracks,
+    notationOff: notationOff ?? this.notationOff,
   );
 }
 
@@ -308,6 +322,13 @@ final class DocumentController extends Notifier<EditorState> {
       hidden.add(track);
     }
     state = state.copyWith(hiddenTracks: hidden);
+  }
+
+  /// Switches the standard notation of [track] on or off (ADR-041 section 9).
+  void toggleNotation(int track) {
+    final off = {...state.notationOff};
+    if (!off.remove(track)) off.add(track);
+    state = state.copyWith(notationOff: off);
   }
 
   /// Moves the cursor. With [extend] (Shift), the selection grows from where it

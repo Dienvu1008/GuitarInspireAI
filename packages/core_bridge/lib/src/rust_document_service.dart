@@ -199,6 +199,25 @@ final class RustDocumentService implements DocumentService {
   );
 
   @override
+  ScoreOutlineDto scoreOutlineWith(
+    List<ShownTrackDto> shown,
+    MetricsDto metrics,
+  ) => _handle.scoreOutlineWith(shown: shown, metrics: metrics);
+
+  @override
+  List<ScoreSystemDto> scoreSystemsWith(
+    List<ShownTrackDto> shown,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) => _handle.scoreSystemsWith(
+    shown: shown,
+    metrics: metrics,
+    first: first,
+    count: count,
+  );
+
+  @override
   TabLayoutDto tabLayout(int track, MetricsDto metrics) =>
       _handle.tabLayout(track: track, metrics: metrics);
 

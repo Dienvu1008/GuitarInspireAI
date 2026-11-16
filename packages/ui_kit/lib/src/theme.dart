@@ -16,6 +16,20 @@ TextStyle tabTextStyle({double size = 11, Color color = Colors.black}) =>
       color: color,
     );
 
+/// Font family of the bundled SMuFL music font (ADR-037).
+const String musicFontFamily = 'Bravura';
+
+/// Text style for SMuFL glyphs: [size] is the em, which SMuFL defines as four staff
+/// spaces. The core decides every glyph and its origin; painting only places the
+/// glyph's baseline origin there.
+TextStyle musicTextStyle({required double size, Color color = Colors.black}) =>
+    TextStyle(
+      fontFamily: musicFontFamily,
+      package: tabFontPackage,
+      fontSize: size,
+      color: color,
+    );
+
 /// Application theme (Material 3, light and dark).
 abstract final class AppTheme {
   static ThemeData light() => _theme(Brightness.light);

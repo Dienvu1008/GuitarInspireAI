@@ -222,6 +222,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_app::library::LibraryOutcome
 impl core::panic::unwind_safe::UnwindSafe for mc_app::library::LibraryOutcome
 pub mod mc_app::notation
 pub use mc_app::notation::BarLayout
+pub use mc_app::notation::EngravedLineKind
 pub use mc_app::notation::Glyph
 pub use mc_app::notation::GlyphKind
 pub use mc_app::notation::HitRegion

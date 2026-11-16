@@ -88,7 +88,11 @@ void main() {
       }
     }
     expect(hit, isNonNegative);
-    final origin = tester.getTopLeft(find.byKey(const ValueKey('system-0')));
+    // The TAB stave's own origin: with notation on (the default, ADR-041 section 9)
+    // a notation stave sits above it at the top of the system.
+    final origin = tester.getTopLeft(
+      find.byKey(ValueKey('stave-0-${s.activeTrack}')),
+    );
     await tester.tapAt(origin + system.hitRect(hit).center);
     await tester.pump();
     expect(

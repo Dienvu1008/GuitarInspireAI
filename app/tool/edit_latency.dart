@@ -76,6 +76,8 @@ Future<void> main(List<String> args) async {
   final shape = shapeName == 'large' ? _large : _typical;
   // Optional: how many tracks are shown (the first N); default every track.
   final showCount = args.length > 2 ? int.parse(args[2]) : shape.tracks;
+  // Optional: "tab" for TAB only; default notation above TAB (the app's default).
+  final notation = !(args.length > 3 && args[3] == 'tab');
 
   WidgetsFlutterBinding.ensureInitialized();
   await CoreBridge.init();
@@ -120,6 +122,12 @@ Future<void> main(List<String> args) async {
   final shown = [for (final t in doc.summary().tracks) t.id]
       .take(showCount)
       .toList();
+  // ADR-041 section 9 (F7): notation above TAB on every shown track, as the app
+  // opens; "tab" as the fourth argument measures TAB only for comparison.
+  final staves = [
+    for (final t in shown)
+      ShownTrackDto(track: t, notation: notation, tab: true),
+  ];
   for (var i = 0; i < _warmup + 100; i++) {
     final w = Stopwatch()..start();
     await doc.execute(noteEdit(i));
@@ -131,8 +139,8 @@ Future<void> main(List<String> args) async {
     doc.tabLayout(track, metrics);
     final l = w.elapsedMicroseconds;
     w.reset();
-    doc.scoreOutline(shown, metrics);
-    doc.scoreSystems(shown, metrics, 0, 3);
+    doc.scoreOutlineWith(staves, metrics);
+    doc.scoreSystemsWith(staves, metrics, 0, 3);
     final m = w.elapsedMicroseconds;
     if (i >= _warmup) {
       command.add(c);
@@ -146,7 +154,12 @@ Future<void> main(List<String> args) async {
   // Show exactly the first N tracks, as a user would from the track list.
   for (final (i, t) in doc.summary().tracks.indexed) {
     container.read(editorProvider.notifier).setTrackShown(t.id, i < showCount);
+    if (!notation) container.read(editorProvider.notifier).toggleNotation(t.id);
   }
+  // Payload of the first system as the view fetches it (packed arrays and records).
+  final payload = _payloadBytes(
+    doc.scoreSystemsWith(staves, metrics, 0, 1).single,
+  );
   await WidgetsBinding.instance.endOfFrame;
   final editor = container.read(editorProvider.notifier);
 
@@ -206,6 +219,9 @@ Future<void> main(List<String> args) async {
     // ADR-031: outline of every track plus three systems in view (FFI included).
     'score_layout_in_view_query_us': _stats(scoreLayout),
     'shown_tracks': shown.length,
+    'notation': notation,
+    // ADR-041 F7: bytes of system 0 as fetched (estimate: 4 bytes per number).
+    'payload_system0_bytes': payload,
     // ADR-031 P4: frames while scrolling, build plus raster per frame.
     'scroll_frames': scrollCompute.length,
     'scroll_frame_compute_us': _stats(scrollCompute),
@@ -228,6 +244,23 @@ Future<void> main(List<String> args) async {
   }
   stdout.writeln(json);
   exit(0);
+}
+
+/// Bytes of one system's payload: packed arrays at their element size, records at 4
+/// bytes per number field (an estimate of the transfer, not of the Dart heap).
+int _payloadBytes(ScoreSystemDto sys) {
+  var n = 0;
+  for (final st in sys.staves) {
+    final s = st.system;
+    n += s.lines.lengthInBytes + s.lineKinds.lengthInBytes;
+    n += s.hitRects.lengthInBytes + s.hitMeta.lengthInBytes;
+    n += s.glyphs.length * 16 + s.beats.length * 16 + s.bars.length * 16;
+    final m = st.notation;
+    n += m.lines.lengthInBytes + m.lineKinds.lengthInBytes;
+    n += m.glyphCodepoints.lengthInBytes + m.glyphPositions.lengthInBytes;
+    n += m.beams.lengthInBytes + m.ties.lengthInBytes + m.tieUp.lengthInBytes;
+  }
+  return n;
 }
 
 /// Builds the fixture directly on the service (no UI refresh per command).
