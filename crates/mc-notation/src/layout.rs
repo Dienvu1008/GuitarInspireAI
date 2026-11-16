@@ -13,7 +13,8 @@
 //! are used only for geometry; musical time stays rational (ADR-011).
 
 use crate::display::*;
-use crate::{LayoutMetrics, NotationError};
+use crate::engrave::BarGeometry;
+use crate::{LayoutMetrics, NotationError, ShownTrack, StaffConfiguration, StaveKind};
 use mc_score::{BarContent, Beat, MasterBar, Score, Track, TrackId};
 use mc_theory::{Rational, TimeSignature};
 use std::collections::BTreeSet;
@@ -57,6 +58,17 @@ pub fn layout_score(
     tracks: &[TrackId],
     metrics: &LayoutMetrics,
 ) -> Result<ScoreLayout, NotationError> {
+    layout_score_with(score, &tab_only(tracks), metrics)
+}
+
+/// [`layout_score`] with the staves of each shown track (ADR-038): a track with
+/// notation gets a notation stave above its TAB stave. With TAB only on every track
+/// the result is exactly [`layout_score`]'s (ADR-041 L1).
+pub fn layout_score_with(
+    score: &Score,
+    tracks: &[ShownTrack],
+    metrics: &LayoutMetrics,
+) -> Result<ScoreLayout, NotationError> {
     let shown = shown_tracks(score, tracks, metrics)?;
     let plans = plan_all(score, &shown, metrics)?;
     let widths: Vec<BarWidths> = plans.iter().map(BarPlan::widths).collect();
@@ -72,6 +84,10 @@ pub fn layout_score(
     })
 }
 
+fn tab_only(tracks: &[TrackId]) -> Vec<ShownTrack> {
+    tracks.iter().map(|t| ShownTrack::tab(*t)).collect()
+}
+
 /// Line breaking of the shown `tracks` for the whole score (ADR-031 fallback 2):
 /// which bars each system holds, its justification and its height, without emitting
 /// any lines, glyphs or hit regions. Cheap enough to recompute per revision; pair it
@@ -79,6 +95,15 @@ pub fn layout_score(
 pub fn outline_score(
     score: &Score,
     tracks: &[TrackId],
+    metrics: &LayoutMetrics,
+) -> Result<ScoreOutline, NotationError> {
+    outline_score_with(score, &tab_only(tracks), metrics)
+}
+
+/// [`outline_score`] with the staves of each shown track (ADR-038).
+pub fn outline_score_with(
+    score: &Score,
+    tracks: &[ShownTrack],
     metrics: &LayoutMetrics,
 ) -> Result<ScoreOutline, NotationError> {
     let shown = shown_tracks(score, tracks, metrics)?;
@@ -94,6 +119,13 @@ pub fn outline_score(
 ///
 /// The cache holds the bar contents it keyed on, so an `Arc` it compares cannot be
 /// freed and its address reused by different content.
+///
+/// Key of a bar (ADR-041 decision 3): the content `Arc` of each shown track; the
+/// master bar; the previous bar's time signature and key; each shown track's instrument
+/// (tuning, capo, fret count) and staff configuration; and, on notation staves, the
+/// spellings of ties entering the bar. The metrics key the whole cache. The font
+/// metrics and the layout constants are compiled in, so one process never sees two
+/// versions of them.
 #[derive(Debug, Default)]
 pub struct LayoutCache {
     metrics: Option<LayoutMetrics>,
@@ -105,8 +137,32 @@ pub struct LayoutCache {
 struct CachedBar {
     contents: Vec<Arc<BarContent>>,
     master: MasterBar,
-    previous_time_signature: Option<TimeSignature>,
+    previous: Option<(TimeSignature, mc_theory::KeySignature)>,
+    instruments: Vec<mc_score::InstrumentSpec>,
+    staves: Vec<StaffConfiguration>,
+    entering: Vec<Vec<(usize, u8, mc_theory::SpelledPitch)>>,
     widths: BarWidths,
+}
+
+/// Key mutations for the L9 test: each one leaves a key component out, and the test
+/// shows the cached outline then differs from a fresh one.
+#[cfg(test)]
+pub(crate) mod key_mutation {
+    use std::cell::Cell;
+    thread_local! {
+        pub static SKIP: Cell<Option<&'static str>> = const { Cell::new(None) };
+    }
+    pub fn skip(part: &str) -> bool {
+        SKIP.with(|s| s.get() == Some(part))
+    }
+}
+
+#[cfg(not(test))]
+mod key_mutation {
+    #[inline(always)]
+    pub fn skip(_: &str) -> bool {
+        false
+    }
 }
 
 impl LayoutCache {
@@ -128,6 +184,16 @@ pub fn outline_score_cached(
     metrics: &LayoutMetrics,
     cache: &mut LayoutCache,
 ) -> Result<ScoreOutline, NotationError> {
+    outline_score_cached_with(score, &tab_only(tracks), metrics, cache)
+}
+
+/// [`outline_score_with`] using and updating `cache`; the result is identical.
+pub fn outline_score_cached_with(
+    score: &Score,
+    tracks: &[ShownTrack],
+    metrics: &LayoutMetrics,
+    cache: &mut LayoutCache,
+) -> Result<ScoreOutline, NotationError> {
     let shown = shown_tracks(score, tracks, metrics)?;
     if cache.metrics != Some(*metrics) {
         cache.bars.clear();
@@ -136,35 +202,63 @@ pub fn outline_score_cached(
     let count = score.master_bar_count();
     cache.bars.resize_with(count, || None);
     let master_bars = score.master_bars();
+    let instruments: Vec<mc_score::InstrumentSpec> = shown
+        .tracks
+        .iter()
+        .map(|t| t.instrument().clone())
+        .collect();
     let mut widths = Vec::with_capacity(count);
     let mut measured = 0;
     for b in 0..count {
         let master = &master_bars[b];
-        let previous = b.checked_sub(1).map(|p| master_bars[p].time_signature);
+        let previous = b
+            .checked_sub(1)
+            .map(|p| (master_bars[p].time_signature, master_bars[p].key));
         let contents = || {
             shown
+                .tracks
                 .iter()
                 .map(|t| t.bar_shared(b).expect("H-02: bars aligned"))
         };
+        let entering: Vec<Vec<(usize, u8, mc_theory::SpelledPitch)>> = shown
+            .tracks
+            .iter()
+            .zip(&shown.staves)
+            .map(|(t, s)| {
+                if s.notation {
+                    crate::semantic::entering_ties(score, t, b)
+                } else {
+                    Vec::new()
+                }
+            })
+            .collect();
+        let skip = key_mutation::skip;
         let hit = cache.bars[b].as_ref().filter(|c| {
-            c.master == *master
-                && c.previous_time_signature == previous
-                && c.contents.len() == shown.len()
-                && c.contents
-                    .iter()
-                    .zip(contents())
-                    .all(|(a, b)| Arc::ptr_eq(a, b))
+            (skip("master") || c.master == *master)
+                && (skip("previous") || c.previous == previous)
+                && c.contents.len() == shown.tracks.len()
+                && (skip("contents")
+                    || c.contents
+                        .iter()
+                        .zip(contents())
+                        .all(|(a, b)| Arc::ptr_eq(a, b)))
+                && (skip("instruments") || c.instruments == instruments)
+                && (skip("staves") || c.staves == shown.staves)
+                && (skip("entering") || c.entering == entering)
         });
         let w = match hit {
-            Some(c) => c.widths,
+            Some(c) => c.widths.clone(),
             None => {
                 measured += 1;
                 let w = plan_bar(score, &shown, b, metrics)?.widths();
                 cache.bars[b] = Some(CachedBar {
                     contents: contents().cloned().collect(),
                     master: master.clone(),
-                    previous_time_signature: previous,
-                    widths: w,
+                    previous,
+                    instruments: instruments.clone(),
+                    staves: shown.staves.clone(),
+                    entering,
+                    widths: w.clone(),
                 });
                 w
             }
@@ -185,8 +279,20 @@ pub fn layout_score_systems(
     range: std::ops::Range<usize>,
     metrics: &LayoutMetrics,
 ) -> Result<Vec<ScoreSystem>, NotationError> {
-    let shown = shown_tracks(score, &outline.tracks, metrics)?;
-    if shown.len() != outline.tracks.len() || outline.bar_count != score.master_bar_count() {
+    if outline.staves.len() != outline.tracks.len() {
+        return Err(NotationError::StaleOutline);
+    }
+    let requested: Vec<ShownTrack> = outline
+        .tracks
+        .iter()
+        .zip(&outline.staves)
+        .map(|(t, s)| ShownTrack {
+            track: *t,
+            staves: *s,
+        })
+        .collect();
+    let shown = shown_tracks(score, &requested, metrics)?;
+    if shown.tracks.len() != outline.tracks.len() || outline.bar_count != score.master_bar_count() {
         return Err(NotationError::StaleOutline);
     }
     let range = range.start.min(outline.systems.len())..range.end.min(outline.systems.len());
@@ -206,21 +312,45 @@ pub fn layout_score_systems(
     })
 }
 
-/// The shown tracks in score order, after validating metrics and ids.
+/// The shown tracks in score order with their staves.
+struct Shown<'a> {
+    tracks: Vec<&'a Track>,
+    staves: Vec<StaffConfiguration>,
+}
+
+impl Shown<'_> {
+    fn any_notation(&self) -> bool {
+        self.staves.iter().any(|s| s.notation)
+    }
+}
+
+/// The shown tracks in score order, after validating metrics and ids. A track listed
+/// twice keeps its first configuration.
 fn shown_tracks<'a>(
     score: &'a Score,
-    tracks: &[TrackId],
+    tracks: &[ShownTrack],
     metrics: &LayoutMetrics,
-) -> Result<Vec<&'a Track>, NotationError> {
+) -> Result<Shown<'a>, NotationError> {
     metrics.validate()?;
-    for &t in tracks {
-        score.track(t).ok_or(NotationError::UnknownTrack(t))?;
+    for t in tracks {
+        score
+            .track(t.track)
+            .ok_or(NotationError::UnknownTrack(t.track))?;
+        if !t.staves.notation && !t.staves.tab {
+            return Err(NotationError::NoStaves(t.track));
+        }
     }
-    let shown: Vec<&Track> = score
-        .tracks()
-        .filter(|t| tracks.contains(&t.id()))
-        .collect();
-    if shown.is_empty() {
+    let mut shown = Shown {
+        tracks: Vec::new(),
+        staves: Vec::new(),
+    };
+    for t in score.tracks() {
+        if let Some(s) = tracks.iter().find(|s| s.track == t.id()) {
+            shown.tracks.push(t);
+            shown.staves.push(s.staves);
+        }
+    }
+    if shown.tracks.is_empty() {
         return Err(NotationError::NoTracks);
     }
     Ok(shown)
@@ -228,7 +358,7 @@ fn shown_tracks<'a>(
 
 fn plan_all(
     score: &Score,
-    shown: &[&Track],
+    shown: &Shown,
     metrics: &LayoutMetrics,
 ) -> Result<Vec<BarPlan>, NotationError> {
     (0..score.master_bar_count())
@@ -242,36 +372,82 @@ fn stave_height(strings: u8, m: &LayoutMetrics) -> f32 {
     m.above_staff + (strings as f32 - 1.0) * m.string_spacing + m.below_staff
 }
 
+/// Extra header width (layout units) for the notation clef and key signature of a
+/// system starting at `bar`; 0 when no shown track has notation.
+fn header_extra(score: &Score, shown: &Shown, bar: usize, m: &LayoutMetrics) -> f32 {
+    if !shown.any_notation() {
+        return 0.0;
+    }
+    let fifths = score.master_bars()[bar].key.fifths();
+    (crate::engrave::header_sp(fifths) * m.staff_space() - m.header_width).max(0.0)
+}
+
+/// Notation box of one track in a system: (space above the top line, total height),
+/// in layout units, from the reach of the system's bars (ADR-038 decision 5).
+fn notation_box(widths: &[BarWidths], track: usize, m: &LayoutMetrics) -> (f32, f32) {
+    use crate::engrave::{BOX_MIN_SP, BOX_PAD_SP, clef_reach};
+    let (clef_above, clef_below) = clef_reach();
+    let reach = widths.iter().filter_map(|w| w.reach[track]);
+    let above = reach.clone().map(|r| r.0).fold(clef_above, f32::max);
+    let below = reach.map(|r| r.1).fold(clef_below, f32::max);
+    let above = (above + BOX_PAD_SP).max(BOX_MIN_SP);
+    let below = (below + BOX_PAD_SP).max(BOX_MIN_SP);
+    let sp = m.staff_space();
+    (above * sp, (above + 4.0 + below) * sp)
+}
+
+/// Height of a system: every stave of every shown track.
+fn system_height(shown: &Shown, widths: &[BarWidths], m: &LayoutMetrics) -> f32 {
+    shown
+        .tracks
+        .iter()
+        .zip(&shown.staves)
+        .enumerate()
+        .map(|(i, (t, s))| {
+            let notation = if s.notation {
+                notation_box(widths, i, m).1
+            } else {
+                0.0
+            };
+            let tab = if s.tab {
+                stave_height(t.fretted().tuning.string_count(), m)
+            } else {
+                0.0
+            };
+            notation + tab
+        })
+        .sum()
+}
+
 fn break_systems(
     score: &Score,
-    shown: &[&Track],
+    shown: &Shown,
     plans: &[BarWidths],
     metrics: &LayoutMetrics,
 ) -> ScoreOutline {
-    let height_of_system: f32 = shown
-        .iter()
-        .map(|t| stave_height(t.fretted().tuning.string_count(), metrics))
-        .sum();
-    let available = metrics.content_width();
     let mut systems = Vec::new();
     let mut y = 0.0f32;
     let mut start = 0;
     while start < plans.len() {
+        let extra = header_extra(score, shown, start, metrics);
+        let available = metrics.content_width() - extra;
         let mut end = start + 1;
         let mut used = plans[start].natural();
         while end < plans.len() && used + plans[end].natural() <= available {
             used += plans[end].natural();
             end += 1;
         }
+        let height = system_height(shown, &plans[start..end], metrics);
         systems.push(OutlineSystem {
             index: systems.len(),
             y,
-            height: height_of_system,
+            height,
             first_bar: start,
             end_bar: end,
-            scale: system_scale(&plans[start..end], end == plans.len(), metrics),
+            scale: system_scale(&plans[start..end], end == plans.len(), metrics, extra),
+            header_extra: extra,
         });
-        y += height_of_system + metrics.system_gap;
+        y += height + metrics.system_gap;
         start = end;
     }
     let height = if systems.is_empty() {
@@ -280,7 +456,8 @@ fn break_systems(
         y - metrics.system_gap
     };
     ScoreOutline {
-        tracks: shown.iter().map(|t| t.id()).collect(),
+        tracks: shown.tracks.iter().map(|t| t.id()).collect(),
+        staves: shown.staves.clone(),
         width: metrics.width,
         height,
         bar_count: score.master_bar_count(),
@@ -292,12 +469,13 @@ fn break_systems(
 /// in turn (borrowed from a full plan list, or measured for just that system).
 fn emit_systems<'p>(
     score: &Score,
-    shown: &[&Track],
+    shown: &Shown,
     systems: &[OutlineSystem],
     metrics: &LayoutMetrics,
     mut plans_for: impl FnMut(std::ops::Range<usize>) -> Result<Vec<&'p BarPlan>, NotationError>,
 ) -> Result<Vec<ScoreSystem>, NotationError> {
     let ctxs: Vec<Ctx> = shown
+        .tracks
         .iter()
         .enumerate()
         .map(|(stave, track)| Ctx {
@@ -314,23 +492,46 @@ fn emit_systems<'p>(
         let group = plans_for(bars.clone())?;
         let mut staves = Vec::with_capacity(ctxs.len());
         let mut top = 0.0f32;
-        for ctx in &ctxs {
+        for (ctx, config) in ctxs.iter().zip(&shown.staves) {
             let diagnostic_bars: BTreeSet<usize> = score
                 .track_diagnostics(ctx.track.id(), bars.clone())
                 .map_err(|_| NotationError::Overflow)?
                 .into_iter()
                 .map(|d| d.bar)
                 .collect();
-            let layout =
-                ctx.emit_system(sys.index, sys.y + top, &group, sys.scale, &diagnostic_bars);
-            let height = layout.height;
-            staves.push(Stave {
-                track: ctx.track.id(),
-                strings: ctx.strings,
-                top,
-                layout,
-            });
-            top += height;
+            if config.notation {
+                let widths: Vec<BarWidths> = group.iter().map(|p| p.widths()).collect();
+                let (above, height) = notation_box(&widths, ctx.stave, metrics);
+                let layout =
+                    ctx.emit_notation(sys, sys.y + top, &group, above, height, &diagnostic_bars);
+                staves.push(Stave {
+                    track: ctx.track.id(),
+                    kind: StaveKind::Notation,
+                    strings: ctx.strings,
+                    top,
+                    layout,
+                });
+                top += height;
+            }
+            if config.tab {
+                let layout = ctx.emit_system(
+                    sys.index,
+                    sys.y + top,
+                    &group,
+                    sys.scale,
+                    sys.header_extra,
+                    &diagnostic_bars,
+                );
+                let height = layout.height;
+                staves.push(Stave {
+                    track: ctx.track.id(),
+                    kind: StaveKind::Tab,
+                    strings: ctx.strings,
+                    top,
+                    layout,
+                });
+                top += height;
+            }
         }
         out.push(ScoreSystem {
             index: sys.index,
@@ -344,10 +545,16 @@ fn emit_systems<'p>(
 
 /// Justification factor of a system's flexible width, shared by all its staves. The
 /// last system stays at natural width when it would stretch by more than a third.
-fn system_scale(plans: &[BarWidths], is_last: bool, m: &LayoutMetrics) -> f32 {
-    let fixed: f32 = plans.iter().map(|p| p.fixed_left + p.fixed_right).sum();
+/// The header shows a key change in the system's first bar, so that bar does not keep
+/// its key-change space (ADR-041 section 8).
+fn system_scale(plans: &[BarWidths], is_last: bool, m: &LayoutMetrics, header_extra: f32) -> f32 {
+    let fixed: f32 = plans
+        .iter()
+        .map(|p| p.fixed_left + p.fixed_right)
+        .sum::<f32>()
+        - plans.first().map_or(0.0, |p| p.key_reserve);
     let flexible: f32 = plans.iter().map(|p| p.flexible).sum();
-    let target = m.content_width() - fixed;
+    let target = m.content_width() - header_extra - fixed;
     let scale = if flexible > 0.0 {
         target / flexible
     } else {
@@ -387,6 +594,13 @@ struct BarPlan {
     show_time_signature: bool,
     /// Natural flexible width: the column sum, or the empty-bar width.
     flexible: f32,
+    /// Width of the time signature (TAB's, or wider for notation).
+    time_signature_width: f32,
+    /// Room kept for a key change shown in the bar (notation only; 0 otherwise). Not
+    /// used when the bar starts a system: the header shows the key.
+    key_reserve: f32,
+    /// Per shown track: its notation plan and the column of each planned beat.
+    notation: Vec<Option<(crate::engrave::NotationPlan, Vec<usize>)>>,
 }
 
 impl BarPlan {
@@ -395,16 +609,25 @@ impl BarPlan {
             fixed_left: self.fixed_left,
             flexible: self.flexible,
             fixed_right: self.fixed_right,
+            key_reserve: self.key_reserve,
+            reach: self
+                .notation
+                .iter()
+                .map(|n| n.as_ref().map(|(p, _)| (p.above, p.below)))
+                .collect(),
         }
     }
 }
 
-/// What line breaking needs of a bar: its fixed and flexible natural widths.
-#[derive(Clone, Copy, Debug, PartialEq)]
+/// What line breaking needs of a bar: its fixed and flexible natural widths, and the
+/// vertical reach of each shown track's notation (staff spaces).
+#[derive(Clone, Debug, PartialEq)]
 struct BarWidths {
     fixed_left: f32,
     flexible: f32,
     fixed_right: f32,
+    key_reserve: f32,
+    reach: Vec<Option<(f32, f32)>>,
 }
 
 impl BarWidths {
@@ -415,10 +638,11 @@ impl BarWidths {
 
 fn plan_bar(
     score: &Score,
-    tracks: &[&Track],
+    shown: &Shown,
     b: usize,
     m: &LayoutMetrics,
 ) -> Result<BarPlan, NotationError> {
+    let tracks = &shown.tracks;
     let master = &score.master_bars()[b];
     let nominal = score.nominal_bar_duration(b).expect("bar exists");
     // Onsets per voice of every track, computed once (each rational addition reduces
@@ -470,6 +694,26 @@ fn plan_bar(
             voice_cols,
         });
     }
+    // Notation: plan each notation track and widen the columns it needs, centred on the
+    // anchor TAB uses (ADR-038 decision 4).
+    let sp = m.staff_space();
+    let mut notation = Vec::with_capacity(tracks.len());
+    for ((track, config), stave) in tracks.iter().zip(&shown.staves).zip(&staves) {
+        if !config.notation {
+            notation.push(None);
+            continue;
+        }
+        let notated = crate::semantic::notate_bar(score, track, b)?;
+        let cols: Vec<usize> = notated
+            .iter()
+            .map(|nb| stave.voice_cols[nb.voice][nb.beat])
+            .collect();
+        let plan = crate::engrave::plan(notated, master);
+        for (i, &c) in cols.iter().enumerate() {
+            widest[c] = widest[c].max(2.0 * plan.half_reserve(i) * sp);
+        }
+        notation.push(Some((plan, cols)));
+    }
     let mut columns = Vec::with_capacity(onsets.len());
     for (i, onset) in onsets.iter().enumerate() {
         let next = onsets.get(i + 1).copied().unwrap_or(end);
@@ -479,9 +723,21 @@ fn plan_bar(
     }
     let previous = b.checked_sub(1).map(|p| &score.master_bars()[p]);
     let show_time_signature = previous.is_none_or(|p| p.time_signature != master.time_signature);
+    let any_notation = shown.any_notation();
+    let time_signature_width = if any_notation {
+        m.time_signature_width
+            .max(crate::engrave::time_signature_sp(master) * sp)
+    } else {
+        m.time_signature_width
+    };
+    let key_reserve = if any_notation && crate::semantic::key_changes(master, previous) {
+        crate::engrave::key_change_sp(master.key.fifths()) * sp
+    } else {
+        0.0
+    };
     let fixed_left = m.bar_padding
         + if show_time_signature {
-            m.time_signature_width
+            time_signature_width
         } else {
             0.0
         }
@@ -489,7 +745,8 @@ fn plan_bar(
             m.repeat_width
         } else {
             0.0
-        };
+        }
+        + key_reserve;
     let fixed_right = m.bar_padding
         + if master.repeat_end.is_some() {
             m.repeat_width
@@ -509,7 +766,100 @@ fn plan_bar(
         fixed_right,
         show_time_signature,
         flexible,
+        time_signature_width,
+        key_reserve,
+        notation,
     })
+}
+
+/// Width of a bar in its system. A system's first bar does not keep its key-change
+/// room: the header shows the key.
+fn bar_width(plan: &BarPlan, first_in_system: bool, scale: f32) -> f32 {
+    let saving = if first_in_system {
+        plan.key_reserve
+    } else {
+        0.0
+    };
+    (plan.fixed_left - saving) + plan.flexible * scale + plan.fixed_right
+}
+
+/// Columns and signs of one bar, shared by its TAB and notation staves so both line up
+/// (ADR-038 decision 4). With TAB only, these are exactly the positions TAB used
+/// before notation existed (ADR-041 L1).
+#[allow(clippy::too_many_arguments)]
+fn bar_geometry(
+    m: &LayoutMetrics,
+    masters: &[MasterBar],
+    plan: &BarPlan,
+    x: f32,
+    width: f32,
+    scale: f32,
+    first_in_system: bool,
+    last_in_system: bool,
+) -> BarGeometry {
+    let master = &masters[plan.bar];
+    let end = x + width;
+    let mut barlines = Vec::new();
+    let mut repeat_dots = Vec::new();
+    let mut cursor = x;
+    if master.repeat_start {
+        barlines.push((x + 1.0, true));
+        barlines.push((x + 4.0, false));
+        repeat_dots.push(x + m.repeat_width * 0.75);
+        cursor += m.repeat_width;
+    } else {
+        barlines.push((x, false));
+    }
+    let key_x = if plan.key_reserve > 0.0 && !first_in_system {
+        let kx = cursor;
+        cursor += plan.key_reserve;
+        Some(kx)
+    } else {
+        None
+    };
+    let time_signature_centre = if plan.show_time_signature {
+        let c = cursor + m.bar_padding * 0.5 + plan.time_signature_width * 0.5;
+        cursor += plan.time_signature_width;
+        Some(c)
+    } else {
+        None
+    };
+    cursor += m.bar_padding;
+    let content_start = cursor;
+    let is_final = plan.bar + 1 == masters.len();
+    if master.repeat_end.is_some() {
+        repeat_dots.push(end - m.repeat_width * 0.75);
+        barlines.push((end - 4.0, false));
+        barlines.push((end - 1.0, true));
+    } else if is_final {
+        barlines.push((end - 4.0, false));
+        barlines.push((end - 1.0, true));
+    } else if last_in_system {
+        barlines.push((end, false));
+    }
+    let mut columns = Vec::with_capacity(plan.columns.len());
+    let mut cx = content_start;
+    for w in &plan.columns {
+        columns.push((cx, w * scale));
+        cx += w * scale;
+    }
+    let content_end = if plan.columns.is_empty() {
+        content_start + m.empty_bar_width * scale
+    } else {
+        cx
+    };
+    BarGeometry {
+        bar: plan.bar,
+        content_start,
+        content_end,
+        centres: columns.iter().map(|(bx, bw)| bx + bw / 2.0).collect(),
+        columns,
+        time_signature_centre,
+        key_x,
+        barlines,
+        repeat_dots,
+        last_in_system,
+    }
 }
 
 fn fret_glyph_width(fret: u8, tied: bool, dead: bool, m: &LayoutMetrics) -> f32 {
@@ -619,6 +969,7 @@ impl Ctx<'_> {
         y: f32,
         plans: &[&BarPlan],
         scale: f32,
+        header_extra: f32,
         diagnostic_bars: &BTreeSet<usize>,
     ) -> SystemLayout {
         let m = self.m;
@@ -658,12 +1009,22 @@ impl Ctx<'_> {
             }
         }
 
-        let mut x = m.margin_left + m.header_width;
+        let mut x = m.margin_left + m.header_width + header_extra;
         let mut bars = Vec::with_capacity(plans.len());
         for (k, plan) in plans.iter().enumerate() {
-            let width = plan.fixed_left + plan.flexible * scale + plan.fixed_right;
+            let width = bar_width(plan, k == 0, scale);
             let last_in_system = k + 1 == plans.len();
-            self.emit_bar(&mut out, plan, x, width, scale, last_in_system);
+            let geo = bar_geometry(
+                m,
+                self.master,
+                plan,
+                x,
+                width,
+                scale,
+                k == 0,
+                last_in_system,
+            );
+            self.emit_bar(&mut out, plan, &geo, x, width);
             if k == 0 {
                 out.glyph(
                     GlyphKind::BarNumber {
@@ -706,27 +1067,79 @@ impl Ctx<'_> {
             lines: out.lines,
             glyphs: out.glyphs,
             hits: out.hits,
+            notation: NotationStaff::default(),
         }
     }
 
-    fn emit_bar(
+    /// The notation stave of this track in a system, in stave coordinates; bars and
+    /// columns are those of the TAB stave (the same geometry).
+    fn emit_notation(
         &self,
-        out: &mut Out,
-        plan: &BarPlan,
-        x: f32,
-        width: f32,
-        scale: f32,
-        last_in_system: bool,
-    ) {
+        sys: &OutlineSystem,
+        y: f32,
+        plans: &[&BarPlan],
+        above: f32,
+        height: f32,
+        diagnostic_bars: &BTreeSet<usize>,
+    ) -> SystemLayout {
+        let m = self.m;
+        let mut x = m.margin_left + m.header_width + sys.header_extra;
+        let mut bars = Vec::with_capacity(plans.len());
+        let mut parts = Vec::with_capacity(plans.len());
+        for (k, plan) in plans.iter().enumerate() {
+            let width = bar_width(plan, k == 0, sys.scale);
+            let geo = bar_geometry(
+                m,
+                self.master,
+                plan,
+                x,
+                width,
+                sys.scale,
+                k == 0,
+                k + 1 == plans.len(),
+            );
+            let (np, cols) = plan.notation[self.stave]
+                .as_ref()
+                .expect("notation planned");
+            parts.push((np, cols.as_slice(), geo, &self.master[plan.bar]));
+            bars.push(BarLayout {
+                bar: plan.bar,
+                x,
+                width,
+                diagnostic: diagnostic_bars.contains(&plan.bar),
+            });
+            x += width;
+        }
+        let stave = crate::engrave::Stave {
+            sp: m.staff_space(),
+            lines_top: above,
+            header_x: m.margin_left,
+            key: self.master[sys.first_bar].key,
+            plans: parts,
+        };
+        SystemLayout {
+            index: sys.index,
+            y,
+            height,
+            staff_top: above,
+            bars,
+            lines: Vec::new(),
+            glyphs: Vec::new(),
+            hits: Vec::new(),
+            notation: stave.emit(x),
+        }
+    }
+
+    fn emit_bar(&self, out: &mut Out, plan: &BarPlan, geo: &BarGeometry, x: f32, width: f32) {
         let m = self.m;
         let master = &self.master[plan.bar];
         let top = self.staff_top();
         let bottom = self.staff_bottom();
         let middle = (top + bottom) / 2.0;
         let end = x + width;
+        let last_in_system = geo.last_in_system;
 
         // Left bar line or repeat start (thick, thin, dots).
-        let mut cursor = x;
         if master.repeat_start {
             out.line(LineKind::ThickBarLine, x + 1.0, top, x + 1.0, bottom);
             out.line(LineKind::BarLine, x + 4.0, top, x + 4.0, bottom);
@@ -736,24 +1149,21 @@ impl Ctx<'_> {
                 middle,
                 2.0,
             );
-            cursor += m.repeat_width;
         } else {
             out.line(LineKind::BarLine, x, top, x, bottom);
         }
-        if plan.show_time_signature {
+        if let Some(centre) = geo.time_signature_centre {
             out.glyph(
                 GlyphKind::TimeSignature {
                     numerator: master.time_signature.numerator(),
                     denominator: master.time_signature.denominator(),
                 },
-                cursor + m.bar_padding * 0.5 + m.time_signature_width * 0.5,
+                centre,
                 middle,
-                m.time_signature_width,
+                plan.time_signature_width,
             );
-            cursor += m.time_signature_width;
         }
-        cursor += m.bar_padding;
-        let content_start = cursor;
+        let content_start = geo.content_start;
 
         // Right side: repeat end, final bar line or system end line.
         let is_final = plan.bar + 1 == self.master.len();
@@ -808,19 +1218,9 @@ impl Ctx<'_> {
             );
         }
 
-        // Columns.
-        let empty = plan.columns.is_empty();
-        let mut col_x = Vec::with_capacity(plan.columns.len());
-        let mut cx = content_start;
-        for w in &plan.columns {
-            col_x.push((cx, w * scale));
-            cx += w * scale;
-        }
-        let content_end = if empty {
-            content_start + m.empty_bar_width * scale
-        } else {
-            cx
-        };
+        // Columns (shared with the notation stave).
+        let col_x = &geo.columns;
+        let content_end = geo.content_end;
         let inner_end = end
             - m.bar_padding.min(width)
             - if master.repeat_end.is_some() {

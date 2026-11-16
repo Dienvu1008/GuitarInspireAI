@@ -12,6 +12,8 @@ pub enum NotationError {
     /// An outline was used with a score it was not computed for (bars or tracks
     /// changed); compute a new outline.
     StaleOutline,
+    /// A shown track was given neither a notation nor a TAB staff (ADR-038).
+    NoStaves(TrackId),
 }
 
 impl fmt::Display for NotationError {
@@ -22,6 +24,7 @@ impl fmt::Display for NotationError {
             Self::Overflow => write!(f, "bar duration overflow"),
             Self::NoTracks => write!(f, "no track to lay out"),
             Self::StaleOutline => write!(f, "layout outline is out of date"),
+            Self::NoStaves(t) => write!(f, "track {} is shown with no staff", t.raw()),
         }
     }
 }

@@ -138,6 +138,7 @@ Sub-phases can be reordered by user priority.
     | Slice | Estimate | Agent time (wall clock) | Notes |
     |---|---|---|---|
     | 6c-1 | 0.5 to 1 FTE weeks | 2026-11-12 15:16 to 15:30 | Criteria committed before code (`426bfe3`). User review time is not included. |
+    | 6c-2 | 3 to 5 FTE weeks | 2026-11-16 08:35 to 09:18 (step 1), 09:23 to 09:56 (step 2) | Criteria approved first. Interrupted once for a decision on a dependency advisory (`skrifa`). L12 review pending. |
 
     Agent wall-clock time is **not comparable** with the FTE-week estimate, which assumed a human developer. Before the review after 6c-3, the user decides which measure the estimate is checked against: the user's own hours, calendar time to merge, or agent time.
 - 6d Guitar Pro import: entry gate S10. Acceptance: fixture files of each supported version import with reports. Complexity: Medium to high with format risk. The scope is set by [ADR-036](../architecture/decisions/ADR-036-guitar-pro-adapter.md): GP3 to GP5 (5.00) import, and export to the same three versions (added by the user). GP5 5.10, GPX and GP7+ wait for lawful sample files.

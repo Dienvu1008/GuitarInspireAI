@@ -1,0 +1,60 @@
+layout width 1000.000 height 216.096
+system 0 y 0.000 h 216.096
+ stave Notation track 1 top 0.000 h 92.096
+  bar 0 x 61.472 w 116.960
+  bar 1 x 178.432 w 110.032
+  line StaffLine 24.000 32.000 288.464 32.000 1.040
+  line StaffLine 24.000 40.000 288.464 40.000 1.040
+  line StaffLine 24.000 48.000 288.464 48.000 1.040
+  line StaffLine 24.000 56.000 288.464 56.000 1.040
+  line StaffLine 24.000 64.000 288.464 64.000 1.040
+  line BarLine 61.472 32.000 61.472 64.000 1.280
+  line LedgerLine 103.112 72.000 118.952 72.000 1.280
+  line Stem 115.272 70.656 115.272 8.000 0.960
+  line Stem 154.872 54.656 154.872 24.000 0.960
+  line BarLine 178.432 32.000 178.432 64.000 1.280
+  line BarLine 284.464 32.000 284.464 64.000 1.280
+  line ThickBarLine 287.464 32.000 287.464 64.000 4.000
+  line Stem 201.992 33.344 201.992 64.000 0.960
+  line Stem 257.488 58.656 257.488 16.000 0.960
+  glyph gClef8vb 32.000 56.000
+  glyph timeSig4 69.472 40.000
+  glyph timeSig4 69.472 56.000
+  glyph noteheadHalf 106.312 72.000
+  glyph noteheadHalf 106.312 64.000
+  glyph noteheadHalf 106.312 56.000
+  glyph noteheadHalf 106.312 44.000
+  glyph noteheadHalf 106.312 36.000
+  glyph noteheadHalf 145.912 56.000
+  glyph noteheadHalf 155.352 52.000
+  glyph noteheadHalf 192.072 36.000
+  glyph noteheadHalf 201.512 32.000
+  glyph noteheadHalf 248.528 60.000
+  glyph accidentalSharp 230.032 60.000
+  glyph noteheadHalf 248.528 44.000
+  glyph accidentalSharp 238.960 44.000
+  note 0:0:0 C4 pos -2 acc None NotTied displaced false
+  note 0:0:0 E4 pos 0 acc None NotTied displaced false
+  note 0:0:0 G4 pos 2 acc None NotTied displaced false
+  note 0:0:0 C5 pos 5 acc None NotTied displaced false
+  note 0:0:0 E5 pos 7 acc None NotTied displaced false
+  note 0:0:1 G4 pos 2 acc None NotTied displaced false
+  note 0:0:1 A4 pos 3 acc None NotTied displaced true
+  note 1:0:0 E5 pos 7 acc None NotTied displaced true
+  note 1:0:0 F5 pos 8 acc None NotTied displaced false
+  note 1:0:1 F#4 pos 1 acc Some(1) NotTied displaced false
+  note 1:0:1 C#5 pos 5 acc Some(1) NotTied displaced false
+ stave Tab track 1 top 92.096 h 124.000
+  bar 0 x 61.472 w 116.960
+  bar 1 x 178.432 w 110.032
+  fret 0 111.032 28.000
+  fret 1 111.032 40.000
+  fret 0 111.032 52.000
+  fret 2 111.032 64.000
+  fret 3 111.032 76.000
+  fret 2 150.632 52.000
+  fret 5 150.632 64.000
+  fret 0 206.232 28.000
+  fret 6 206.232 40.000
+  fret 6 253.248 52.000
+  fret 4 253.248 64.000

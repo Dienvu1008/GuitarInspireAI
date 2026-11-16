@@ -273,6 +273,69 @@ fn notation_layout(c: &mut Criterion) {
         );
     }
 
+    // ADR-041 L11: the same, with notation above TAB on every shown track.
+    use mc_app::notation::{ShownTrack, StaffConfiguration, StaveKind};
+    for (name, shape, shown, budget) in [
+        ("L11 typical/4 tracks", TYPICAL, 4, "16 ms"),
+        ("L11 large/4 tracks", LARGE, 4, "33 ms"),
+        ("L11 large/20 tracks", LARGE, 20, "33 ms"),
+    ] {
+        let mut s = session(shape);
+        let b = middle_beat(&s);
+        let mut tracks: Vec<_> = s.score().tracks().map(|t| t.id()).take(shown).collect();
+        if !tracks.contains(&b.track) {
+            tracks[0] = b.track;
+        }
+        let shown: Vec<ShownTrack> = tracks
+            .iter()
+            .map(|t| ShownTrack {
+                track: *t,
+                staves: StaffConfiguration::NOTATION_AND_TAB,
+            })
+            .collect();
+        let mut samples = Vec::with_capacity(200);
+        for i in 0..200 {
+            let t = Instant::now();
+            edit(&mut s, b, 2000 + i);
+            let at = s
+                .score_outline_with(&shown, &metrics)
+                .expect("outline")
+                .systems
+                .iter()
+                .position(|x| (x.first_bar..x.end_bar).contains(&b.bar))
+                .expect("bar in a system");
+            let from = at.saturating_sub(1);
+            black_box(
+                s.score_systems_with(&shown, &metrics, from..from + 3)
+                    .expect("systems"),
+            );
+            samples.push(t.elapsed().as_nanos());
+        }
+        percentiles(
+            &format!("edit_and_score_relayout/{name} notation+TAB in view (budget {budget})"),
+            samples,
+        );
+        // Payload of one system with notation (counts; bytes are estimated in 6c-3).
+        let sys = s
+            .score_systems_with(&shown, &metrics, 0..1)
+            .expect("systems");
+        let (mut lines, mut glyphs, mut beams, mut tab_items) = (0, 0, 0, 0);
+        for st in &sys[0].staves {
+            match st.kind {
+                StaveKind::Notation => {
+                    lines += st.layout.notation.lines.len();
+                    glyphs += st.layout.notation.glyphs.len();
+                    beams += st.layout.notation.beams.len();
+                }
+                StaveKind::Tab => tab_items += st.layout.lines.len() + st.layout.glyphs.len(),
+            }
+        }
+        eprintln!(
+            "payload/{name} system 0 ({} bars): notation {lines} lines, {glyphs} glyphs, {beams} beams; TAB {tab_items} lines and glyphs",
+            sys[0].staves[0].layout.bars.len()
+        );
+    }
+
     let s = session(LARGE);
     let track = s.score().track_at(0).unwrap().id();
     let mut group = c.benchmark_group("notation");

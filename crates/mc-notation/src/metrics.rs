@@ -63,7 +63,18 @@ impl Default for LayoutMetrics {
     }
 }
 
+/// The TAB string gap in notation staff spaces (ADR-041 section 8, coordinate system).
+/// The only link between TAB metrics and notation geometry: a TAB staff of six strings
+/// is 7.5 staff spaces tall, as in common guitar editions and in S11.
+pub const TAB_STRING_GAP_SP: f32 = 1.5;
+
 impl LayoutMetrics {
+    /// Layout units per notation staff space. Every notation distance is computed in
+    /// staff spaces and multiplied by this value, in one place.
+    pub fn staff_space(&self) -> f32 {
+        self.string_spacing / TAB_STRING_GAP_SP
+    }
+
     /// Width available for bars in one system.
     pub fn content_width(&self) -> f32 {
         self.width - self.margin_left - self.margin_right - self.header_width

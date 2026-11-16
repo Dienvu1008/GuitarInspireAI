@@ -1,0 +1,125 @@
+layout width 1000.000 height 224.000
+system 0 y 0.000 h 224.000
+ stave Notation track 1 top 0.000 h 100.000
+  bar 0 x 61.472 w 200.314
+  bar 1 x 261.786 w 178.554
+  bar 2 x 440.339 w 178.554
+  bar 3 x 618.893 w 178.554
+  bar 4 x 797.446 w 178.554
+  line StaffLine 24.000 28.000 976.000 28.000 1.040
+  line StaffLine 24.000 36.000 976.000 36.000 1.040
+  line StaffLine 24.000 44.000 976.000 44.000 1.040
+  line StaffLine 24.000 52.000 976.000 52.000 1.040
+  line StaffLine 24.000 60.000 976.000 60.000 1.040
+  line BarLine 61.472 28.000 61.472 60.000 1.280
+  line LedgerLine 103.631 68.000 119.471 68.000 1.280
+  line LedgerLine 103.631 76.000 119.471 76.000 1.280
+  line LedgerLine 103.631 84.000 119.471 84.000 1.280
+  line LedgerLine 144.270 68.000 160.110 68.000 1.280
+  line LedgerLine 144.270 76.000 160.110 76.000 1.280
+  line LedgerLine 144.270 84.000 160.110 84.000 1.280
+  line LedgerLine 184.908 68.000 200.748 68.000 1.280
+  line LedgerLine 184.908 76.000 200.748 76.000 1.280
+  line LedgerLine 225.546 68.000 241.386 68.000 1.280
+  line LedgerLine 225.546 76.000 241.386 76.000 1.280
+  line Stem 115.791 86.656 115.791 44.000 0.960
+  line Stem 156.430 82.656 156.430 44.000 0.960
+  line Stem 197.068 78.656 197.068 44.000 0.960
+  line Stem 237.706 74.656 237.706 44.000 0.960
+  line BarLine 261.786 28.000 261.786 60.000 1.280
+  line LedgerLine 282.185 68.000 298.025 68.000 1.280
+  line LedgerLine 322.823 68.000 338.663 68.000 1.280
+  line Stem 294.345 70.656 294.345 44.000 0.960
+  line Stem 334.983 66.656 334.983 40.000 0.960
+  line Stem 375.622 62.656 375.622 36.000 0.960
+  line Stem 416.260 58.656 416.260 32.000 0.960
+  line BarLine 440.339 28.000 440.339 60.000 1.280
+  line Stem 472.898 54.656 472.898 28.000 0.960
+  line Stem 513.537 50.656 513.537 24.000 0.960
+  line Stem 554.175 46.656 554.175 20.000 0.960
+  line Stem 586.334 45.344 586.334 72.000 0.960
+  line BarLine 618.893 28.000 618.893 60.000 1.280
+  line Stem 642.972 41.344 642.972 68.000 0.960
+  line Stem 683.610 37.344 683.610 64.000 0.960
+  line Stem 724.249 33.344 724.249 60.000 0.960
+  line Stem 764.887 29.344 764.887 56.000 0.960
+  line BarLine 797.446 28.000 797.446 60.000 1.280
+  line BarLine 972.000 28.000 972.000 60.000 1.280
+  line ThickBarLine 975.000 28.000 975.000 60.000 4.000
+  line LedgerLine 858.484 20.000 874.324 20.000 1.280
+  line LedgerLine 899.122 20.000 914.962 20.000 1.280
+  line LedgerLine 939.761 20.000 955.601 20.000 1.280
+  line LedgerLine 939.761 12.000 955.601 12.000 1.280
+  line Stem 821.526 25.344 821.526 52.000 0.960
+  line Stem 862.164 21.344 862.164 48.000 0.960
+  line Stem 902.802 17.344 902.802 44.000 0.960
+  line Stem 943.441 13.344 943.441 44.000 0.960
+  glyph gClef8vb 32.000 52.000
+  glyph timeSig4 69.472 36.000
+  glyph timeSig4 69.472 52.000
+  glyph noteheadBlack 106.831 88.000
+  glyph noteheadBlack 147.470 84.000
+  glyph noteheadBlack 188.108 80.000
+  glyph noteheadBlack 228.746 76.000
+  glyph noteheadBlack 285.385 72.000
+  glyph noteheadBlack 326.023 68.000
+  glyph noteheadBlack 366.662 64.000
+  glyph noteheadBlack 407.300 60.000
+  glyph noteheadBlack 463.938 56.000
+  glyph noteheadBlack 504.577 52.000
+  glyph noteheadBlack 545.215 48.000
+  glyph noteheadBlack 585.854 44.000
+  glyph noteheadBlack 642.492 40.000
+  glyph noteheadBlack 683.130 36.000
+  glyph noteheadBlack 723.769 32.000
+  glyph noteheadBlack 764.407 28.000
+  glyph noteheadBlack 821.046 24.000
+  glyph noteheadBlack 861.684 20.000
+  glyph noteheadBlack 902.322 16.000
+  glyph noteheadBlack 942.961 12.000
+  note 0:0:0 E3 pos -7 acc None NotTied displaced false
+  note 0:0:1 F3 pos -6 acc None NotTied displaced false
+  note 0:0:2 G3 pos -5 acc None NotTied displaced false
+  note 0:0:3 A3 pos -4 acc None NotTied displaced false
+  note 1:0:0 B3 pos -3 acc None NotTied displaced false
+  note 1:0:1 C4 pos -2 acc None NotTied displaced false
+  note 1:0:2 D4 pos -1 acc None NotTied displaced false
+  note 1:0:3 E4 pos 0 acc None NotTied displaced false
+  note 2:0:0 F4 pos 1 acc None NotTied displaced false
+  note 2:0:1 G4 pos 2 acc None NotTied displaced false
+  note 2:0:2 A4 pos 3 acc None NotTied displaced false
+  note 2:0:3 B4 pos 4 acc None NotTied displaced false
+  note 3:0:0 C5 pos 5 acc None NotTied displaced false
+  note 3:0:1 D5 pos 6 acc None NotTied displaced false
+  note 3:0:2 E5 pos 7 acc None NotTied displaced false
+  note 3:0:3 F5 pos 8 acc None NotTied displaced false
+  note 4:0:0 G5 pos 9 acc None NotTied displaced false
+  note 4:0:1 A5 pos 10 acc None NotTied displaced false
+  note 4:0:2 B5 pos 11 acc None NotTied displaced false
+  note 4:0:3 C6 pos 12 acc None NotTied displaced false
+ stave Tab track 1 top 100.000 h 124.000
+  bar 0 x 61.472 w 200.314
+  bar 1 x 261.786 w 178.554
+  bar 2 x 440.339 w 178.554
+  bar 3 x 618.893 w 178.554
+  bar 4 x 797.446 w 178.554
+  fret 0 111.551 88.000
+  fret 1 152.190 88.000
+  fret 3 192.828 88.000
+  fret 0 233.466 76.000
+  fret 2 290.105 76.000
+  fret 3 330.743 76.000
+  fret 0 371.382 64.000
+  fret 2 412.020 64.000
+  fret 3 468.658 64.000
+  fret 0 509.297 52.000
+  fret 2 549.935 52.000
+  fret 0 590.574 40.000
+  fret 1 647.212 40.000
+  fret 3 687.850 40.000
+  fret 0 728.489 28.000
+  fret 1 769.127 28.000
+  fret 3 825.766 28.000
+  fret 5 866.404 28.000
+  fret 7 907.042 28.000
+  fret 8 947.681 28.000

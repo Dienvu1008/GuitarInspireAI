@@ -180,6 +180,28 @@ Voltas, markers and tempo stay on the TAB staff only.
 | L12 | **Review by eye.** SVG renders at 2x (a test-support renderer, not shipped) of the six S11 inputs and `feature_rich`, next to the S11 images. The user accepts them. | The user |
 | L13 | **Non-functional.**<br>– No new runtime dependency; `ttf-parser` is a dev-dependency only.<br>– No `unsafe`.<br>– FF-03 and FF-04 for `mc-notation`; FF-22 additions only.<br>– fmt, clippy `-D warnings`, the workspace tests and CI are green. | CI and the fitness functions |
 
+### Results of 6c-2 (2026-11-16; L12 pending the user)
+
+| Id | Result |
+|---|---|
+| L1 | **Pass.** 20 fingerprints (SMALL, TYPICAL, LARGE, `feature_rich`, `techniques`; two widths; `layout_tab` and `layout_score`) recorded from the code before notation (commit 958bf6a) equal the new output in release and debug builds. The existing goldens and ADR-031 tests are unchanged. The TAB-only configuration of the new API equals the old API. |
+| L2, L3, L4 | **Pass.** 0 violations on the six S11 inputs, `feature_rich`, `techniques` and SMALL at two widths, and on 300 seeded random scores. A coverage test shows the random scores contain accidentals, ties, seconds, tuplets, second-voice stems, ledger lines and key signs (at least 20 of each). |
+| L5 | **Pass.** 12 tests each corrupt a layout model and get the expected rule. |
+| L6 | **Pass.** A source scan finds no spelling or accidental rule in `mc-notation`; only `semantic.rs` calls `mc-theory`'s rules. The checks take spelling and accidentals from `mc-theory` directly. |
+| L7, L8 | **Pass** (step 1, 958bf6a). |
+| L9 | **Pass.** Cached equals fresh over 60 scores × 25 steps, with all 12 change kinds seen. A tie chain over 3 bars edited at its start re-plans exactly those 3 bars. A note edit re-plans at most 2. Leaving out each of the 6 key components (master, previous, contents, instruments, staves, entering ties) is caught. A change of written transposition alone cannot happen yet: it is derived from the instrument kind, and only fretted instruments exist. |
+| L10 | **Pass.** Goldens for the six S11 inputs and `feature_rich`. Two runs are identical. Each system laid out alone equals the full layout. |
+| L11 | **Pass** (Rust bench, reference machine, notation and TAB on every shown track, edit plus layout in view): TYPICAL 4 tracks p99 0.63 ms (budget 16); LARGE 4 tracks p99 1.05 ms (33); LARGE 20 tracks p99 3.03 ms (33). The worst single samples were 5.3, 21.6 and 101.6 ms. These are probably the first edit after open, which fills the cache; not separated in this run. Payload of one system with notation, LARGE 20 tracks: 991 lines, 1 407 glyphs, 160 beams on the notation staves. |
+| L12 | Pending the user (review images supplied 2026-11-16). |
+| L13 | **Pass** locally: fmt, clippy `-D warnings`, 73 test suites, cargo-deny, `xtask fitness all`; FF-22 snapshots of `mc-notation` and `mc-app` with 583 lines added and 0 removed. CI pending the push. |
+
+Found while testing, and fixed:
+- **Rests with two voices.** A rest could overlap a head of the other voice at the same onset (random seed 4). Rests now move away from the other voice a staff space at a time.
+- **Tuplet numbers.** A number could come too close to another voice's note in its span (seed 251). Its placement now clears every beat under it.
+- **The ledger-neighbour check.** It wrongly counted two voices at one onset as neighbouring columns (seed 8). It now compares columns, as the S11 rule says.
+
+Known limitation, not in the MVP rules: **when two voices cross**, their heads at one position and onset overlap. Multi-voice collision handling was outside S11 and the MVP. It is proposed for 6c-6 or later, with its own rule.
+
 ## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.

@@ -168,6 +168,8 @@ pub struct SystemLayout {
     pub lines: Vec<Line>,
     pub glyphs: Vec<Glyph>,
     pub hits: Vec<HitRegion>,
+    /// Notation content (ADR-038); empty on a TAB stave, whose content is above.
+    pub notation: NotationStaff,
 }
 
 impl SystemLayout {
@@ -198,6 +200,9 @@ impl SystemLayout {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Stave {
     pub track: TrackId,
+    /// TAB or notation (ADR-038). A track with both has two staves, notation first.
+    pub kind: crate::StaveKind,
+    /// String count of the track's instrument (also on its notation stave).
     pub strings: u8,
     /// Top of the stave in system coordinates.
     pub top: f32,
@@ -228,6 +233,9 @@ pub struct OutlineSystem {
     pub end_bar: usize,
     /// Justification factor of the system's flexible width (shared by its staves).
     pub scale: f32,
+    /// Width added to the header for the notation clef and key signature (0 with no
+    /// notation staff).
+    pub header_extra: f32,
 }
 
 /// Line breaking of the shown tracks for the whole score: enough to size a scroll
@@ -236,6 +244,8 @@ pub struct OutlineSystem {
 pub struct ScoreOutline {
     /// The shown tracks in stave order (score order).
     pub tracks: Vec<TrackId>,
+    /// The staves of each shown track, in the order of `tracks`.
+    pub staves: Vec<crate::StaffConfiguration>,
     pub width: f32,
     pub height: f32,
     /// Master bar count the outline was computed for (stale-outline check).
@@ -289,4 +299,163 @@ impl TabLayout {
             .find(|h| h.bar == bar && h.string == string && h.target == target)
             .map(|h| (s, h.rect))
     }
+}
+
+// ------------------------------------------------------------------ notation staff
+
+/// Kinds of engraved lines on a notation staff.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum EngravedLineKind {
+    StaffLine,
+    LedgerLine,
+    Stem,
+    BarLine,
+    ThickBarLine,
+}
+
+/// A straight line with its thickness (layout units), centred on (x1, y1)-(x2, y2).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct EngravedLine {
+    pub kind: EngravedLineKind,
+    pub x1: f32,
+    pub y1: f32,
+    pub x2: f32,
+    pub y2: f32,
+    pub thickness: f32,
+}
+
+/// A SMuFL glyph with its origin at (`x`, `y`) in stave coordinates (y down). Painted
+/// with the music font at a size of 4 staff spaces per em (SMuFL).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct MusicGlyph {
+    pub glyph: crate::smufl::SmuflGlyph,
+    pub x: f32,
+    pub y: f32,
+}
+
+/// A beam: a band of `thickness` (vertical) whose centre line runs from (x1, y1) to
+/// (x2, y2).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Beam {
+    pub x1: f32,
+    pub y1: f32,
+    pub x2: f32,
+    pub y2: f32,
+    pub thickness: f32,
+}
+
+/// A tie from `x1` to `x2` whose ends sit at `y`; it bulges up (`up`) or down by
+/// `height`, with the end and middle thicknesses of the engraving defaults.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Tie {
+    pub x1: f32,
+    pub x2: f32,
+    pub y: f32,
+    pub up: bool,
+    pub height: f32,
+    pub end_thickness: f32,
+    pub mid_thickness: f32,
+}
+
+/// Facts about one laid-out note (checks, later hit testing). Not painted.
+#[derive(Clone, Debug, PartialEq)]
+pub struct NoteFact {
+    pub bar: usize,
+    pub voice: usize,
+    pub beat: usize,
+    pub string: u8,
+    pub written: mc_theory::SpelledPitch,
+    /// Half staff spaces above the bottom line (E4 written = 0, top line = 8).
+    pub position: i32,
+    pub accidental: Option<mc_theory::Alter>,
+    pub tie: mc_theory::notation::TieRole,
+    pub head: Rect,
+    /// The head sits on the other side of the stem (a second in a chord).
+    pub displaced: bool,
+    pub accidental_box: Option<Rect>,
+    pub ledgers: Vec<EngravedLine>,
+    /// Dot centres.
+    pub dots: Vec<(f32, f32)>,
+}
+
+/// Facts about one stem.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct StemFact {
+    pub bar: usize,
+    pub voice: usize,
+    pub beat: usize,
+    pub up: bool,
+    pub x: f32,
+    /// From the outermost head (away from the stem end) to the end, in staff spaces.
+    pub length_sp: f32,
+    pub beamed: bool,
+}
+
+/// A rest and its box.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RestFact {
+    pub bar: usize,
+    pub voice: usize,
+    pub beat: usize,
+    pub rect: Rect,
+}
+
+/// A beam group: its beats and the box of its beams.
+#[derive(Clone, Debug, PartialEq)]
+pub struct BeamFact {
+    pub bar: usize,
+    pub voice: usize,
+    pub up: bool,
+    pub beats: Vec<usize>,
+    pub band: Rect,
+}
+
+/// A tuplet number.
+#[derive(Clone, Debug, PartialEq)]
+pub struct TupletFact {
+    pub bar: usize,
+    pub voice: usize,
+    pub beats: Vec<usize>,
+    pub number: u8,
+    pub rect: Rect,
+}
+
+/// The x where a beat sits (notation and TAB share it, ADR-038 decision 4).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct AnchorFact {
+    pub bar: usize,
+    pub voice: usize,
+    pub beat: usize,
+    pub x: f32,
+}
+
+/// What the checks and hit testing need of a notation staff.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NotationFacts {
+    pub notes: Vec<NoteFact>,
+    pub stems: Vec<StemFact>,
+    pub rests: Vec<RestFact>,
+    /// Whole-bar rests of bars without beats.
+    pub bar_rests: Vec<RestFact>,
+    pub beams: Vec<BeamFact>,
+    pub tuplets: Vec<TupletFact>,
+    pub anchors: Vec<AnchorFact>,
+    /// x of every bar line drawn (in drawing order).
+    pub barlines: Vec<f32>,
+    /// Key-signature signs drawn (header and key changes).
+    pub key_signs: usize,
+}
+
+/// The content of a notation stave, in stave coordinates (y down). Empty on TAB staves.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct NotationStaff {
+    /// Layout units per staff space (`LayoutMetrics::staff_space`).
+    pub staff_space: f32,
+    /// y of the top staff line.
+    pub lines_top: f32,
+    pub lines: Vec<EngravedLine>,
+    pub glyphs: Vec<MusicGlyph>,
+    pub beams: Vec<Beam>,
+    pub ties: Vec<Tie>,
+    pub facts: NotationFacts,
 }
