@@ -140,6 +140,7 @@ Sub-phases can be reordered by user priority.
     | 6c-1 | 0.5 to 1 FTE weeks | 2026-11-12 15:16 to 15:30 | Criteria committed before code (`426bfe3`). User review time is not included. |
     | 6c-2 | 3 to 5 FTE weeks | 2026-11-16 08:35 to 09:18 (step 1), 09:23 to 09:56 (step 2) | Criteria approved first. Interrupted once for a decision on a dependency advisory (`skrifa`). L12 accepted 2026-11-16; closed. |
     | 6c-3 | 2 to 3 FTE weeks | 2026-11-16 10:27 to 11:38 (end-to-end runs included) | Criteria approved first. F8 accepted; LARGE accepted as an evidence gap (2026-11-16); closed. |
+    | 6c-4 | 0.5 to 1 FTE weeks | 2026-11-21 13:28 to 13:46 (end-to-end runs included); calendar from criteria to code 2026-11-16 to 2026-11-21 | H7 end to end and H8 pending the user. |
 
   - **Effort measure (user, 2026-11-16): option (c).**
     - The estimate is not checked against time. Progress is tracked by scope and risk.

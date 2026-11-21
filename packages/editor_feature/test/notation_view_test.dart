@@ -7,7 +7,9 @@ import 'package:core_bridge/core_bridge.dart';
 import 'package:core_bridge/testing.dart';
 import 'package:editor_feature/editor_feature.dart';
 import 'package:editor_feature/src/notation_painter.dart';
+import 'package:editor_feature/src/system_painter.dart' show CursorPainter;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ui_kit/ui_kit.dart';
@@ -83,21 +85,155 @@ void main() {
     expect(_notation(ids[1]), findsOneWidget);
   });
 
-  testWidgets('a tap on a notation stave selects its track, nothing else', (
+  // ---------------------------------------------------------------- 6c-4 (H5)
+
+  /// Both tracks get bar 0: beat 0 a note on string 3, beat 1 a note on string 1.
+  Future<void> notes(ProviderContainer c, List<int> ids, WidgetTester t) async {
+    final editor = c.read(editorProvider.notifier);
+    for (final track in ids) {
+      for (final (k, string) in [(0, 3), (1, 1)]) {
+        await editor.execute(
+          CommandDto.insertBeat(
+            track: track,
+            bar: 0,
+            voice: 0,
+            index: k,
+            duration: const DurationDto(base: 2, dots: 0),
+          ),
+        );
+        final beat = c.read(editorProvider).service.beats(track, 0, 0)[k];
+        await editor.execute(
+          CommandDto.setNote(
+            beat: BeatAddressDto(track: track, bar: 0, voice: 0, beat: beat.id),
+            string: string,
+            fret: 5,
+          ),
+        );
+      }
+    }
+    await t.pump();
+  }
+
+  /// The notation stave's hit arrays as the view has them, and its screen origin.
+  (SystemDto, Offset) staveOf(WidgetTester t, ProviderContainer c, int track) {
+    final s = c.read(editorProvider);
+    final width = t.getSize(find.byType(TabView)).width;
+    final m = measureTabMetrics(width: width);
+    s.service.scoreOutlineWith(s.shownStaves, m);
+    final sys = s.service.scoreSystemsWith(s.shownStaves, m, 0, 1).single;
+    final st = sys.staves.firstWhere(
+      (x) => x.track == track && x.kind == StaveKind.notation,
+    );
+    return (st.system, t.getTopLeft(_notation(track)));
+  }
+
+  /// Centre of the region of (beat index, string); string 0 is the beat region,
+  /// tapped near its bottom, away from the heads.
+  Offset point(SystemDto s, int beat, int string) {
+    for (var i = 0; i < s.hitMeta.length ~/ 4; i++) {
+      final slot = s.hitMeta[i * 4 + 3];
+      if (slot < 0 || s.beats[slot].index != beat) continue;
+      if (s.hitMeta[i * 4 + 1] != string) continue;
+      final (x, y, w, h) = (
+        s.hitRects[i * 4],
+        s.hitRects[i * 4 + 1],
+        s.hitRects[i * 4 + 2],
+        s.hitRects[i * 4 + 3],
+      );
+      return string == 0
+          ? Offset(x + w / 2, y + h - 2)
+          : Offset(x + w / 2, y + h / 2);
+    }
+    throw StateError('no region for beat $beat string $string');
+  }
+
+  testWidgets('H5: a tap on a notehead selects that beat and string', (
     tester,
   ) async {
     final (c, ids) = await _twoTracks(tester);
-    final before = c.read(editorProvider);
-    expect(before.activeTrack, ids[0]);
-    await tester.tapAt(tester.getCenter(_notation(ids[1])));
+    await notes(c, ids, tester);
+    final (s, origin) = staveOf(tester, c, ids[0]);
+    await tester.tapAt(origin + point(s, 1, 1));
     await tester.pump();
-    final after = c.read(editorProvider);
-    expect(after.activeTrack, ids[1]);
-    expect(after.cursor, EditorCursor.start);
-    // On the active track's notation, a tap moves nothing.
-    await tester.tapAt(tester.getCenter(_notation(ids[1])));
+    expect(
+      c.read(editorProvider).cursor,
+      const EditorCursor(bar: 0, voice: 0, string: 1, beat: 1),
+    );
+    await tester.tapAt(origin + point(s, 0, 3));
     await tester.pump();
-    expect(c.read(editorProvider).cursor, EditorCursor.start);
+    expect(
+      c.read(editorProvider).cursor,
+      const EditorCursor(bar: 0, voice: 0, string: 3, beat: 0),
+    );
+  });
+
+  testWidgets('H5: a tap on a beat region keeps the string', (tester) async {
+    final (c, ids) = await _twoTracks(tester);
+    await notes(c, ids, tester);
+    final (s, origin) = staveOf(tester, c, ids[0]);
+    await tester.tapAt(origin + point(s, 0, 3));
+    await tester.pump();
+    await tester.tapAt(origin + point(s, 1, 0));
+    await tester.pump();
+    expect(
+      c.read(editorProvider).cursor,
+      const EditorCursor(bar: 0, voice: 0, string: 3, beat: 1),
+    );
+    // The cursor is painted on the notation stave over the beat region.
+    final painter =
+        tester
+                .widget<CustomPaint>(
+                  find.byKey(const ValueKey('notation-cursor-0')),
+                )
+                .painter!
+            as CursorPainter;
+    expect(painter.rect, isNotNull);
+  });
+
+  testWidgets('H5: Shift+tap extends the selection', (tester) async {
+    final (c, ids) = await _twoTracks(tester);
+    await notes(c, ids, tester);
+    final (s, origin) = staveOf(tester, c, ids[0]);
+    await tester.tapAt(origin + point(s, 0, 3));
+    await tester.pump();
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.tapAt(origin + point(s, 1, 0));
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.pump();
+    final sel = c.read(editorProvider).selection;
+    expect(sel, isNotNull);
+    expect((sel!.$1.index, sel.$2.index), (0, 1));
+  });
+
+  testWidgets(
+    'H5: a tap on another track\'s notation selects it and places the cursor',
+    (tester) async {
+      final (c, ids) = await _twoTracks(tester);
+      await notes(c, ids, tester);
+      expect(c.read(editorProvider).activeTrack, ids[0]);
+      final (s, origin) = staveOf(tester, c, ids[1]);
+      await tester.tapAt(origin + point(s, 1, 1));
+      await tester.pump();
+      final after = c.read(editorProvider);
+      expect(after.activeTrack, ids[1]);
+      expect(
+        after.cursor,
+        const EditorCursor(bar: 0, voice: 0, string: 1, beat: 1),
+      );
+    },
+  );
+
+  testWidgets('H5: a tap outside every region changes nothing', (tester) async {
+    final (c, ids) = await _twoTracks(tester);
+    await notes(c, ids, tester);
+    final before = c.read(editorProvider).cursor;
+    // The header, left of every bar.
+    await tester.tapAt(
+      tester.getTopLeft(_notation(ids[0])) + const Offset(4, 4),
+    );
+    await tester.pump();
+    expect(c.read(editorProvider).cursor, before);
+    expect(c.read(editorProvider).activeTrack, ids[0]);
   });
 
   testWidgets('the painter draws exactly the DTO\'s glyphs, in Bravura', (

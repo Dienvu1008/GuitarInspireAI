@@ -1086,6 +1086,7 @@ impl Ctx<'_> {
         let mut x = m.margin_left + m.header_width + sys.header_extra;
         let mut bars = Vec::with_capacity(plans.len());
         let mut parts = Vec::with_capacity(plans.len());
+        let mut beat_hits = Vec::new();
         for (k, plan) in plans.iter().enumerate() {
             let width = bar_width(plan, k == 0, sys.scale);
             let geo = bar_geometry(
@@ -1101,6 +1102,26 @@ impl Ctx<'_> {
             let (np, cols) = plan.notation[self.stave]
                 .as_ref()
                 .expect("notation planned");
+            // Beat regions: the beat's column (TAB's x range) over the stave box.
+            let content = self.track.bar(plan.bar).expect("H-02");
+            for (i, pb) in np.beats.iter().enumerate() {
+                let (bx, bw) = geo.columns[cols[i]];
+                beat_hits.push(HitRegion {
+                    rect: Rect {
+                        x: bx,
+                        y: 0.0,
+                        w: bw,
+                        h: height,
+                    },
+                    bar: plan.bar,
+                    string: 0,
+                    target: HitTarget::Beat {
+                        voice: pb.voice,
+                        beat: pb.beat,
+                        beat_id: content.voices[pb.voice].beats[pb.beat].id,
+                    },
+                });
+            }
             parts.push((np, cols.as_slice(), geo, &self.master[plan.bar]));
             bars.push(BarLayout {
                 bar: plan.bar,
@@ -1117,6 +1138,37 @@ impl Ctx<'_> {
             key: self.master[sys.first_bar].key,
             plans: parts,
         };
+        let notation = stave.emit(x);
+        // Head regions first (one per note, the head's box grown by a pad), then the
+        // beat regions; `hit_test` prefers heads (ADR-041 section 10).
+        let pad = crate::engrave::HEAD_HIT_PAD_SP * m.staff_space();
+        let beat_id = |bar: usize, voice: usize, beat: usize| {
+            self.track.bar(bar).expect("H-02").voices[voice].beats[beat].id
+        };
+        let mut hits: Vec<HitRegion> = notation
+            .facts
+            .notes
+            .iter()
+            .map(|n| HitRegion {
+                rect: Rect {
+                    x: n.head.x - pad,
+                    y: (n.head.y - pad).max(0.0),
+                    w: n.head.w + 2.0 * pad,
+                    h: n.head.h + 2.0 * pad,
+                },
+                bar: n.bar,
+                string: n.string,
+                target: HitTarget::Beat {
+                    voice: n.voice,
+                    beat: n.beat,
+                    beat_id: beat_id(n.bar, n.voice, n.beat),
+                },
+            })
+            .collect();
+        for h in &mut hits {
+            h.rect.h = h.rect.h.min(height - h.rect.y);
+        }
+        hits.extend(beat_hits);
         SystemLayout {
             index: sys.index,
             y,
@@ -1125,8 +1177,8 @@ impl Ctx<'_> {
             bars,
             lines: Vec::new(),
             glyphs: Vec::new(),
-            hits: Vec::new(),
-            notation: stave.emit(x),
+            hits,
+            notation,
         }
     }
 

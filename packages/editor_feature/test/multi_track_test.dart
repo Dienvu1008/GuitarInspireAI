@@ -118,14 +118,26 @@ void main() {
       final after = c.read(editorProvider);
       expect(after.activeTrack, ids[1]);
       expect(after.cursor, EditorCursor(bar: 0, voice: 0, string: 1, beat: 0));
-      // The cursor is drawn on the active stave only.
+      // The cursor is drawn on the active track only: its TAB stave and, since
+      // 6c-4 (ADR-041 section 10, choice 2), its notation stave.
+      CursorPainter? cursorIn(Finder stave) => tester
+          .widgetList<CustomPaint>(
+            find.descendant(of: stave, matching: find.byType(CustomPaint)),
+          )
+          .map((p) => p.painter)
+          .whereType<CursorPainter>()
+          .firstOrNull;
       final cursors = tester
           .widgetList<CustomPaint>(find.byType(CustomPaint))
           .map((p) => p.painter)
           .whereType<CursorPainter>()
           .toList();
-      expect(cursors, hasLength(1));
-      expect(cursors.single.rect, isNotNull);
+      expect(cursors, hasLength(2));
+      expect(cursorIn(_stave(0, ids[1]))?.rect, isNotNull);
+      expect(
+        cursorIn(find.byKey(ValueKey('notation-0-${ids[1]}')))?.rect,
+        isNotNull,
+      );
     },
   );
 

@@ -141,7 +141,9 @@ pub enum HitTarget {
 pub struct HitRegion {
     pub rect: Rect,
     pub bar: usize,
-    /// 1-based string number (string 1 is the highest, Q-07).
+    /// 1-based string number (string 1 is the highest, Q-07). On a notation stave a
+    /// head region carries its note's string, and a beat region carries 0: "keep the
+    /// cursor's string" (ADR-041 section 10).
     pub string: u8,
     pub target: HitTarget,
 }
@@ -182,14 +184,29 @@ impl SystemLayout {
         self.bars.last().map_or(0, |b| b.bar + 1)
     }
 
-    /// The hit region at a point in system coordinates, preferring `voice`.
+    /// The hit region at a point in system coordinates. Preference (ADR-041 section
+    /// 10):
+    /// 1. a region with a string (a TAB string, or a notehead) of `voice`;
+    /// 2. one with a string of any voice;
+    /// 3. a region of `voice`;
+    /// 4. any region.
+    ///
+    /// On TAB every region has a string, so this is "`voice` first, then any".
     pub fn hit_test(&self, x: f32, y: f32, voice: usize) -> Option<&HitRegion> {
         let voice_of = |h: &HitRegion| match h.target {
             HitTarget::Beat { voice, .. } | HitTarget::Append { voice } => voice,
         };
-        let mut found = self.hits.iter().filter(|h| h.rect.contains(x, y));
-        let first = found.clone().next();
-        found.find(|h| voice_of(h) == voice).or(first)
+        let found: Vec<&HitRegion> = self.hits.iter().filter(|h| h.rect.contains(x, y)).collect();
+        let pick = |head: bool, own: bool| {
+            found
+                .iter()
+                .find(|h| (!head || h.string > 0) && (!own || voice_of(h) == voice))
+                .copied()
+        };
+        pick(true, true)
+            .or_else(|| pick(true, false))
+            .or_else(|| pick(false, true))
+            .or_else(|| pick(false, false))
     }
 }
 

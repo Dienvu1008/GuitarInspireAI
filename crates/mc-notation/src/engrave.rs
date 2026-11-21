@@ -70,6 +70,9 @@ const REST_VOICE_SHIFT: i32 = 4;
 const REST_CLEARANCE_SP: f32 = 0.25;
 /// Half the height of a notehead (SMuFL noteheads are one staff space tall).
 const HEAD_HALF_SP: f32 = 0.5;
+/// A notehead's hit region extends this far beyond its box (ADR-041 section 10), so a
+/// tap need not land exactly on the head.
+pub(crate) const HEAD_HIT_PAD_SP: f32 = 0.25;
 /// Pad between the notation content and the staff box, and the least box margin.
 pub(crate) const BOX_PAD_SP: f32 = 1.0;
 pub(crate) const BOX_MIN_SP: f32 = 2.5;

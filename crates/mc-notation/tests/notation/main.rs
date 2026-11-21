@@ -174,6 +174,193 @@ fn notation_keys_fixture_equals_the_s11_input() {
     );
 }
 
+// ------------------------------------------------------------------ 6c-4 hits
+
+/// H1 and H2 on one layout: coverage, boxes, no overlap within a voice, and the same
+/// addressing as the TAB stave.
+fn check_hits(name: &str, score: &Score, l: &ScoreLayout) -> usize {
+    use mc_notation::{HitTarget, StaveKind};
+    use std::collections::BTreeMap;
+    let mut regions = 0;
+    for sys in &l.systems {
+        for track in score.tracks() {
+            let of = |k| {
+                sys.staves
+                    .iter()
+                    .find(|s| s.track == track.id() && s.kind == k)
+            };
+            let (Some(n), Some(tab)) = (of(StaveKind::Notation), of(StaveKind::Tab)) else {
+                continue;
+            };
+            let tab_ids: BTreeMap<(usize, usize, usize), _> = tab
+                .layout
+                .hits
+                .iter()
+                .filter_map(|h| match h.target {
+                    HitTarget::Beat {
+                        voice,
+                        beat,
+                        beat_id,
+                    } => Some(((h.bar, voice, beat), beat_id)),
+                    HitTarget::Append { .. } => None,
+                })
+                .collect();
+            let facts = &n.layout.notation.facts;
+            let key = |h: &mc_notation::HitRegion| match h.target {
+                HitTarget::Beat {
+                    voice,
+                    beat,
+                    beat_id,
+                } => ((h.bar, voice, beat), beat_id),
+                HitTarget::Append { .. } => panic!("{name}: an append region on notation"),
+            };
+            let mut beat_regions: BTreeMap<(usize, usize, usize), Vec<mc_notation::Rect>> =
+                BTreeMap::new();
+            for h in &n.layout.hits {
+                regions += 1;
+                let (k, id) = key(h);
+                assert_eq!(
+                    tab_ids.get(&k),
+                    Some(&id),
+                    "{name}: {k:?} addressed as on TAB"
+                );
+                let r = h.rect;
+                assert!(
+                    r.x >= -0.01 && r.y >= -0.01 && r.bottom() <= n.layout.height + 0.01,
+                    "{name}: {k:?} in the box"
+                );
+                if h.string == 0 {
+                    beat_regions.entry(k).or_default().push(r);
+                } else {
+                    let note = facts
+                        .notes
+                        .iter()
+                        .find(|f| (f.bar, f.voice, f.beat) == k && f.string == h.string)
+                        .unwrap_or_else(|| panic!("{name}: head region for a missing note {k:?}"));
+                    let hd = note.head;
+                    assert!(
+                        r.x <= hd.x
+                            && r.right() >= hd.right()
+                            && r.y <= hd.y + 0.01
+                            && r.bottom() >= hd.bottom().min(n.layout.height) - 0.01,
+                        "{name}: {k:?} head region contains the head"
+                    );
+                }
+            }
+            // One beat region per notated beat; one head region per note.
+            let beats: std::collections::BTreeSet<_> = facts
+                .anchors
+                .iter()
+                .map(|a| (a.bar, a.voice, a.beat))
+                .collect();
+            assert_eq!(
+                beat_regions
+                    .keys()
+                    .copied()
+                    .collect::<std::collections::BTreeSet<_>>(),
+                beats,
+                "{name}"
+            );
+            assert!(
+                beat_regions.values().all(|v| v.len() == 1),
+                "{name}: one beat region each"
+            );
+            let heads = n.layout.hits.iter().filter(|h| h.string > 0).count();
+            assert_eq!(heads, facts.notes.len(), "{name}: one head region per note");
+            // Beat regions of one voice do not overlap.
+            let mut by_voice: BTreeMap<usize, Vec<mc_notation::Rect>> = BTreeMap::new();
+            for (k, v) in &beat_regions {
+                by_voice.entry(k.1).or_default().push(v[0]);
+            }
+            for rects in by_voice.values() {
+                for (i, a) in rects.iter().enumerate() {
+                    for b in &rects[i + 1..] {
+                        assert!(
+                            a.right() <= b.x + 0.01 || b.right() <= a.x + 0.01,
+                            "{name}: beat regions overlap"
+                        );
+                    }
+                }
+            }
+        }
+    }
+    regions
+}
+
+#[test]
+fn h1_h2_notation_hit_regions_cover_and_address_every_beat() {
+    let m = LayoutMetrics::default();
+    let mut regions = 0;
+    for (name, score, _) in inputs() {
+        regions += check_hits(name, &score, &layout(&score, &m));
+    }
+    for seed in 0..300 {
+        let score = random::random_score(seed);
+        regions += check_hits(&format!("seed {seed}"), &score, &layout(&score, &m));
+    }
+    assert!(regions > 5000, "{regions} regions");
+}
+
+#[test]
+fn h3_hit_test_prefers_heads_then_the_voice() {
+    use mc_notation::{HitTarget, StaveKind};
+    let m = LayoutMetrics::default();
+    let (mut heads, mut columns, mut two_voice) = (0, 0, 0);
+    let mut inputs = inputs();
+    inputs.extend((0..100).map(|s| ("random", random::random_score(s), false)));
+    for (name, score, _) in inputs {
+        let l = layout(&score, &m);
+        for sys in &l.systems {
+            for st in sys.staves.iter().filter(|s| s.kind == StaveKind::Notation) {
+                let lay = &st.layout;
+                let voice_of = |h: &mc_notation::HitRegion| match h.target {
+                    HitTarget::Beat { voice, .. } | HitTarget::Append { voice } => voice,
+                };
+                for n in &lay.notation.facts.notes {
+                    // At a head's centre: a head region of that note's voice, or a
+                    // coinciding head of another voice (crossing voices, ADR-041 8).
+                    let (cx, cy) = (n.head.x + n.head.w / 2.0, n.head.y + n.head.h / 2.0);
+                    let h = lay.hit_test(cx, cy, n.voice).expect("a region");
+                    assert!(h.string > 0, "{name}: a head wins at its centre");
+                    if voice_of(h) == n.voice {
+                        heads += 1;
+                    }
+                }
+                for b in lay.hits.iter().filter(|h| h.string == 0) {
+                    // At the bottom of the column, away from every head: the beat region.
+                    let (x, y) = (b.rect.x + b.rect.w / 2.0, b.rect.bottom() - 0.5);
+                    if lay
+                        .hits
+                        .iter()
+                        .any(|h| h.string > 0 && h.rect.contains(x, y))
+                    {
+                        continue;
+                    }
+                    let v = voice_of(b);
+                    let got = lay.hit_test(x, y, v).expect("a region");
+                    assert_eq!(got.string, 0, "{name}");
+                    assert_eq!(voice_of(got), v, "{name}: the given voice is preferred");
+                    columns += 1;
+                    let others = lay
+                        .hits
+                        .iter()
+                        .filter(|h| h.string == 0 && voice_of(h) != v && h.rect.contains(x, y))
+                        .count();
+                    if others > 0 {
+                        two_voice += 1;
+                    }
+                }
+                // Outside every region (left of the header, above nothing).
+                assert!(lay.hit_test(-5.0, -5.0, 0).is_none(), "{name}");
+            }
+        }
+    }
+    assert!(
+        heads > 1000 && columns > 500 && two_voice > 20,
+        "{heads} {columns} {two_voice}"
+    );
+}
+
 // ------------------------------------------------------------------ L5 breakages
 
 /// One input with every feature a breakage needs, laid out and checked clean.

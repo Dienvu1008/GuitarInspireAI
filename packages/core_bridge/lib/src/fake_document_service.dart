@@ -813,7 +813,7 @@ final class FakeDocumentService implements DocumentService {
     for (final (t, config) in shown) {
       final system = _stave(t, metrics, columns);
       if (config.notation) {
-        final notation = _notationStave(system, metrics);
+        final notation = _notationStave(t, system, metrics);
         staves.add(
           StaveDto(
             track: t.id,
@@ -857,9 +857,39 @@ final class FakeDocumentService implements DocumentService {
 
   /// The fake's notation stave over the same bars as [tab]: five staff lines and the
   /// treble 8vb clef (U+E052).
-  (SystemDto, NotationStaffDto) _notationStave(SystemDto tab, MetricsDto m) {
+  (SystemDto, NotationStaffDto) _notationStave(
+    _Track t,
+    SystemDto tab,
+    MetricsDto m,
+  ) {
     final sp = m.stringSpacing / 1.5;
     final top = 4 * sp;
+    final height = _notationHeight(m);
+    // Hit regions as the core makes them (ADR-041 section 10): per note a head
+    // region (here at a fixed height per string), then per beat a beat region over
+    // its TAB column with string 0.
+    final heads = <double>[];
+    final headMeta = <int>[];
+    final cols = <double>[];
+    final colMeta = <int>[];
+    for (var i = 0; i < tab.hitMeta.length ~/ 4; i++) {
+      final (bar, string, voice, slot) = (
+        tab.hitMeta[i * 4],
+        tab.hitMeta[i * 4 + 1],
+        tab.hitMeta[i * 4 + 2],
+        tab.hitMeta[i * 4 + 3],
+      );
+      if (string != 1 || slot < 0) continue;
+      final (x, w) = (tab.hitRects[i * 4], tab.hitRects[i * 4 + 2]);
+      final beat = t.bars[bar][voice][tab.beats[slot].index];
+      for (final n in beat.notes) {
+        final y = top + (n.string - 1) * sp * 0.6;
+        heads.addAll([x + w / 2 - sp, y - sp / 2, 2 * sp, sp]);
+        headMeta.addAll([bar, n.string, voice, slot]);
+      }
+      cols.addAll([x, 0, w, height]);
+      colMeta.addAll([bar, 0, voice, slot]);
+    }
     final end = tab.bars.isEmpty
         ? m.marginLeft + m.headerWidth
         : tab.bars.last.x + tab.bars.last.width;
@@ -872,15 +902,15 @@ final class FakeDocumentService implements DocumentService {
     final system = SystemDto(
       index: 0,
       y: 0,
-      height: _notationHeight(m),
+      height: height,
       staffTop: top,
       bars: tab.bars,
       lines: Float32List(0),
       lineKinds: Uint8List(0),
       glyphs: const [],
-      hitRects: Float32List(0),
-      hitMeta: Int32List(0),
-      beats: const [],
+      hitRects: Float32List.fromList([...heads, ...cols]),
+      hitMeta: Int32List.fromList([...headMeta, ...colMeta]),
+      beats: tab.beats,
     );
     return (
       system,

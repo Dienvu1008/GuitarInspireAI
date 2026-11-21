@@ -296,7 +296,15 @@ Reading:
 - Approved: the notation stave reuses `SystemDto`'s hit arrays, with no new DTO field.
 - Approved: the two kinds of region (head and beat); head before beat in `hit_test`; no append regions on notation.
 - Approved: all three behaviour choices as proposed (string from the head; cursor and selection on both staves; a tap on another track's notation selects it and places the cursor).
-- H1 to H9: approved in direction and scope. The user's message ended there, so possible conditions on the criteria are being confirmed before code.
+- H1 to H9: approved. The user confirmed that there are no added conditions, and coding may start (2026-11-16).
+
+**Precision added while designing the code (no change of scope).** "Head before beat, then the cursor's voice" becomes this preference order in `hit_test`, the same in Rust and in Dart:
+1. a head region of the given voice;
+2. a head region of any voice;
+3. a beat region of the given voice;
+4. any region.
+
+Every TAB region has a string of 1 or more, so on TAB this order is exactly the old one (the given voice first, then any). H4 checks that.
 
 **Scope:** read-only hit testing on the notation stave (decision 4). A tap on notation selects a beat (and a string where the tap identifies one). Editing stays on TAB. No editing command changes.
 
@@ -325,6 +333,40 @@ Reading:
 1. **String from a notehead.** Proposed: a tap on a notehead sets the cursor's string to that note's string; a tap elsewhere on the beat keeps the string. Alternative: always keep the string.
 2. **Cursor and selection on notation.** Proposed: **painted on both staves.** On notation the cursor is a column tint over the beat region, with the same colours as TAB, so the user sees which beat is selected. Alternative: TAB only, as in 6c-3.
 3. **A tap on another track's notation.** Proposed: select the track **and** place the cursor, consistent with TAB (ADR-031 M4). This changes 6c-3, where it only selected the track. Alternative: keep selecting the track only.
+
+### Results of 6c-4 (2026-11-21; H7 and H8 pending the user)
+
+| Id | Result |
+|---|---|
+| H1, H2 | **Pass** on the S11 inputs, the fixtures and 300 random scores:<br>– one beat region per notated beat and one head region per note;<br>– head regions contain their heads;<br>– every region lies in its stave box;<br>– beat regions of one voice do not overlap;<br>– every region is addressed as the TAB hit of the same beat.<br>The shared contract also checks the addressing on the real and the fake service. |
+| H3 | **Pass.** At a head's centre a head wins. At a column point away from heads the beat region of the given voice wins (seen with two voices more than 20 times). Outside every region there is none. |
+| H4 | **Pass.** L1 fingerprints, F1 and the ADR-031 tests unchanged. The new preference order is the old one on TAB, since every TAB region has a string. |
+| H5 | **Pass**, 5 widget tests: a head sets beat and string; a beat region keeps the string, and the cursor is painted on notation; Shift+tap extends the selection; a tap on another track's notation selects it and places the cursor; a tap outside changes nothing. The M4 test now expects the cursor on both staves of the active track (choice 2): the assertion was changed to the approved behaviour, and it still requires the cursor on the active track only. |
+| H6 | **Pass.** Dart reads the arrays and chooses among regions in the core's order; it computes no geometry. The F6 scan is unchanged. |
+| H7 | **Rust: pass.** L11 p99 is 0.74, 2.29 and 7.40 ms (budgets 16, 33, 33). **End to end: unclear (machine state).** See below. |
+| H8 | Pending the user (manual script below). |
+| H9 | **Pass** locally: fmt, clippy, 73 Rust suites, analyze and tests of every Dart package, cargo-deny, `fitness all`. FF-12: codegen gives no change. FF-22: no change (only the body of `hit_test` changed). CI pending the push. |
+
+**H7, end to end** (TYPICAL 4 tracks, profile build, one instance at a time; ms):
+
+| Runs | Notation: compute p99 | TAB only, interleaved: compute p99 | Edit to frame p99, both |
+|---|---|---|---|
+| First 3 | 9.6, 18.2, 21.6 | | 16.1 to 31.8 |
+| Interleaved 6 | 11.9, 12.0, 40.4 | 33.3, 13.9, 18.0 | 29.6 to 38.6 |
+
+- In the interleaved runs, TAB only (no notation, no notation hits) was as slow as with notation. Edit to frame was about 30 ms for both. This is the machine's slow state of ADR-031, not a cost of 6c-4.
+- In the 40.4 ms run, frame build p99 was 7.2 and raster 5.5; the command round trip spiked.
+- The thresholds are not changed. The proposal is that the user runs the tool on a quiet machine (no agent running).
+- Payload of system 0: 48 335 B with hits, against 37 327 B before (+11 kB).
+
+**H8 manual script (for the user):**
+1. Open a score with notes.
+2. Click several noteheads: the cursor moves to that beat and string on TAB, and a column tint appears on notation.
+3. Click between heads in a beat: the beat changes and the string stays.
+4. Shift+click another beat: the selection spans both staves.
+5. With two voices, click each voice's notehead.
+6. Click another track's notation: that track becomes active with the cursor on the beat.
+7. Click the clef area: nothing changes.
 
 ## Alternatives
 
