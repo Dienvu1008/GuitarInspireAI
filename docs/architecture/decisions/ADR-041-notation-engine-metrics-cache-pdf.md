@@ -290,6 +290,36 @@ Reading:
 - A test reproduced it (fails before the fix, passes after). The key now includes the service identity.
 - The bug existed before 6c-3; it showed now because the fake and the tool open documents in sequence.
 
+## 10. Slice 6c-4 acceptance criteria (Proposed 2026-11-16, pending the user; fixed before any code)
+
+**Scope:** read-only hit testing on the notation stave (decision 4). A tap on notation selects a beat (and a string where the tap identifies one). Editing stays on TAB. No editing command changes.
+
+**Design points the criteria rely on:**
+- **No new DTO field.** The notation stave's `SystemLayout.hits` (today empty) carries the regions, in the same packed arrays TAB uses: `hit_rects`, `hit_meta` (bar, string, voice, slot) and `beats`. Dart's existing `SystemHits` helpers then work on both staves.
+- Rust computes every region from the facts it already has. There are two kinds per beat:
+  - **Head region** (one per note): the notehead box grown by a pad, carrying the note's string.
+  - **Beat region:** the beat's column (TAB's x range) over the staff box, with string 0, meaning "keep the cursor's string". A rest has only the beat region.
+
+  `hit_test` prefers a head region over the beat region, then the cursor's voice.
+- **No append regions on notation.** The empty-bar or insertion slot is a TAB editing action.
+
+| Id | Criterion | Checked by |
+|---|---|---|
+| H1 | **Coverage.** On the S11 inputs, the fixtures and 300 random scores:<br>– every notated beat (notes or rest) has exactly one beat region and one head region per note;<br>– head regions contain their head's box;<br>– every region lies in its stave box;<br>– beat regions of one voice do not overlap. | Rust tests |
+| H2 | **Addressing.** Every region's (bar, voice, beat index, beat id) equals the TAB hit of the same beat; a head region's string is its note's string. | Rust tests |
+| H3 | **Hit test.**<br>– At each head's centre, `hit_test` returns that head.<br>– At a column point away from heads, it returns the beat region.<br>– With two voices, it prefers the given voice.<br>– Outside every region it returns none. | Rust tests |
+| H4 | **TAB unchanged.** The L1 fingerprints and the F1 tests pass unchanged (TAB staves carry exactly the same hits). | Existing tests |
+| H5 | **Dart behaviour**, widget tests:<br>– a tap on a notehead moves the cursor to that bar, voice, beat and string;<br>– a tap on a beat region keeps the cursor's string;<br>– Shift+tap extends the selection as on TAB;<br>– a tap on another track's notation makes it active and places the cursor (one click, as ADR-031 M4);<br>– a tap outside every region changes nothing. | `editor_feature` tests |
+| H6 | **Boundary.** Dart computes no hit geometry; it only reads the arrays. F6 scan unchanged. | Test and review |
+| H7 | **Performance.**<br>– The L11 bench stays within its thresholds.<br>– TYPICAL end to end stays within 16 ms compute p99 (3 runs).<br>– The payload growth per system is reported. | Bench and tool |
+| H8 | **Manual check by the user** in the app (a short script: tap heads, rests, two voices, another track). | The user |
+| H9 | **Non-functional.**<br>– fmt, clippy, analyze, all tests and CI green;<br>– FF-12 unchanged (no DTO change);<br>– FF-22 additions only;<br>– no new dependency. | CI |
+
+**Choices for the user before code:**
+1. **String from a notehead.** Proposed: a tap on a notehead sets the cursor's string to that note's string; a tap elsewhere on the beat keeps the string. Alternative: always keep the string.
+2. **Cursor and selection on notation.** Proposed: **painted on both staves.** On notation the cursor is a column tint over the beat region, with the same colours as TAB, so the user sees which beat is selected. Alternative: TAB only, as in 6c-3.
+3. **A tap on another track's notation.** Proposed: select the track **and** place the cursor, consistent with TAB (ADR-031 M4). This changes 6c-3, where it only selected the track. Alternative: keep selecting the track only.
+
 ## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.

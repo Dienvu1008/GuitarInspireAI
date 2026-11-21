@@ -141,7 +141,11 @@ Sub-phases can be reordered by user priority.
     | 6c-2 | 3 to 5 FTE weeks | 2026-11-16 08:35 to 09:18 (step 1), 09:23 to 09:56 (step 2) | Criteria approved first. Interrupted once for a decision on a dependency advisory (`skrifa`). L12 accepted 2026-11-16; closed. |
     | 6c-3 | 2 to 3 FTE weeks | 2026-11-16 10:27 to 11:38 (end-to-end runs included) | Criteria approved first. F8 accepted; LARGE accepted as an evidence gap (2026-11-16); closed. |
 
-  - **Review after 6c-3 (2026-11-16, proposed; pending the user).**
+  - **Effort measure (user, 2026-11-16): option (c).**
+    - The estimate is not checked against time. Progress is tracked by scope and risk.
+    - Each kind of time is still recorded separately: agent wall clock, the user's review and decisions when known, and calendar time to merge.
+    - The baseline of 9.5 to 15.5 FTE weeks stays as the planning envelope, and scope does not grow.
+  - **Review after 6c-3 (2026-11-16; accepted by the user: baseline kept, R-13 kept High).**
     - Scope delivered: 6c-1 to 6c-3, with every criterion met except the LARGE end-to-end gap (accepted).
     - Estimate check: open. The user has not yet chosen the measure to check against (the question above), and agent time cannot stand for it. Agent time for the three slices was about 3 hours, against an estimate of 5.5 to 9 FTE weeks.
     - Faults found during 6c-1 to 6c-3: five engine faults, all found by the planned tests or the review tools and fixed with a test. The S11 categories plus rests and tuplets with two voices, and the view cache key. None needed a model change.

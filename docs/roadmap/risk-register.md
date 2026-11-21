@@ -86,6 +86,8 @@ Against the three conditions for lowering likelihood to Medium:
    - Five faults were found and each was fixed locally with a test: two-voice rests, tuplet clearance, a check's column rule, the outline header, and the view cache key.
    - None changed the staff model, the boundary or the cache design.
 
-**Proposed: keep High.** Condition 1 cannot be judged and condition 2 is only partly met. The user's rule is not to lower likelihood without evidence.
+**Decision (user, 2026-11-16): keep High.**
+
+**Condition 1 replaced.** Effort is no longer checked against time, by the user's choice of measure (c). The condition is now: the slices since the last review delivered their fixed scope with no scope cut and no criterion failed except accepted evidence gaps. Conditions 2 and 3 are unchanged.
 
 The next review point is after 6c-5a, the pagination checkpoint: the largest unmeasured item.
