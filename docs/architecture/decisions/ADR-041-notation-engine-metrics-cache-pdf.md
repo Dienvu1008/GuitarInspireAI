@@ -290,7 +290,13 @@ Reading:
 - A test reproduced it (fails before the fix, passes after). The key now includes the service identity.
 - The bug existed before 6c-3; it showed now because the fake and the tool open documents in sequence.
 
-## 10. Slice 6c-4 acceptance criteria (Proposed 2026-11-16, pending the user; fixed before any code)
+## 10. Slice 6c-4 acceptance criteria (Proposed 2026-11-16; partly approved, see below; fixed before any code)
+
+**User decision (2026-11-16).**
+- Approved: the notation stave reuses `SystemDto`'s hit arrays, with no new DTO field.
+- Approved: the two kinds of region (head and beat); head before beat in `hit_test`; no append regions on notation.
+- Approved: all three behaviour choices as proposed (string from the head; cursor and selection on both staves; a tap on another track's notation selects it and places the cursor).
+- H1 to H9: approved in direction and scope. The user's message ended there, so possible conditions on the criteria are being confirmed before code.
 
 **Scope:** read-only hit testing on the notation stave (decision 4). A tap on notation selects a beat (and a string where the tap identifies one). Editing stays on TAB. No editing command changes.
 
