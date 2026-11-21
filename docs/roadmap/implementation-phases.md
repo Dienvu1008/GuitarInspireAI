@@ -139,7 +139,14 @@ Sub-phases can be reordered by user priority.
     |---|---|---|---|
     | 6c-1 | 0.5 to 1 FTE weeks | 2026-11-12 15:16 to 15:30 | Criteria committed before code (`426bfe3`). User review time is not included. |
     | 6c-2 | 3 to 5 FTE weeks | 2026-11-16 08:35 to 09:18 (step 1), 09:23 to 09:56 (step 2) | Criteria approved first. Interrupted once for a decision on a dependency advisory (`skrifa`). L12 accepted 2026-11-16; closed. |
-    | 6c-3 | 2 to 3 FTE weeks | 2026-11-16 10:27 to 11:38 (end-to-end runs included) | Criteria approved first. F8 review pending. |
+    | 6c-3 | 2 to 3 FTE weeks | 2026-11-16 10:27 to 11:38 (end-to-end runs included) | Criteria approved first. F8 accepted; LARGE accepted as an evidence gap (2026-11-16); closed. |
+
+  - **Review after 6c-3 (2026-11-16, proposed; pending the user).**
+    - Scope delivered: 6c-1 to 6c-3, with every criterion met except the LARGE end-to-end gap (accepted).
+    - Estimate check: open. The user has not yet chosen the measure to check against (the question above), and agent time cannot stand for it. Agent time for the three slices was about 3 hours, against an estimate of 5.5 to 9 FTE weeks.
+    - Faults found during 6c-1 to 6c-3: five engine faults, all found by the planned tests or the review tools and fixed with a test. The S11 categories plus rests and tuplets with two voices, and the view cache key. None needed a model change.
+    - Unmeasured items carried forward: pagination (6c-5a checkpoint), notation hit testing (6c-4), PDF (6c-5b), and LARGE end to end (evidence gap).
+    - Proposed for the remaining slices: keep the baseline of 9.5 to 15.5 FTE weeks and no scope growth.
 
     Agent wall-clock time is **not comparable** with the FTE-week estimate, which assumed a human developer. Before the review after 6c-3, the user decides which measure the estimate is checked against: the user's own hours, calendar time to merge, or agent time.
 - 6d Guitar Pro import: entry gate S10. Acceptance: fixture files of each supported version import with reports. Complexity: Medium to high with format risk. The scope is set by [ADR-036](../architecture/decisions/ADR-036-guitar-pro-adapter.md): GP3 to GP5 (5.00) import, and export to the same three versions (added by the user). GP5 5.10, GPX and GP7+ wait for lawful sample files.

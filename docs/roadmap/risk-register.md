@@ -73,3 +73,19 @@ The user's rule is that likelihood is not lowered on a plan alone.
 - a pagination checkpoint before the PDF export is committed to;
 - TAB-first stays;
 - an isolated third-party engine remains the fallback of ADR-018. It would need a license plan.
+
+### R-13 review after 6c-3 (2026-11-16, proposed; the decision is the user's)
+
+Against the three conditions for lowering likelihood to Medium:
+
+1. **Actual effort for 6c-1 to 6c-3 within their estimate: not assessable.** The user has not chosen the measure. Agent wall-clock time (about 3 hours) is not comparable with FTE weeks.
+2. **Flutter painting with notation meets the ADR-041 decision 7 criteria: partly.**
+   - TYPICAL meets 16 ms for edit and for scroll.
+   - LARGE meets 33 ms only in the fast machine state, and is accepted as an evidence gap.
+3. **No new class of engraving fault needing a model change: met.**
+   - Five faults were found and each was fixed locally with a test: two-voice rests, tuplet clearance, a check's column rule, the outline header, and the view cache key.
+   - None changed the staff model, the boundary or the cache design.
+
+**Proposed: keep High.** Condition 1 cannot be judged and condition 2 is only partly met. The user's rule is not to lower likelihood without evidence.
+
+The next review point is after 6c-5a, the pagination checkpoint: the largest unmeasured item.
