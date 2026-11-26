@@ -702,6 +702,62 @@ LARGE with 20 tracks is over 2 s. PD6 requires only that it is reported. It prod
 1. The PDF has no track names, so the staves of a many-track system are not labelled. The layout model carries no names.
 2. On a continued part, every track repeats the marker and the bar number, as on screen.
 
+## 13. Slice 6c-6 engraving polish: acceptance criteria (Proposed 2026-11-26, pending the user; fixed before any code)
+
+**Scope from the roadmap** (6c-6, 1 to 2 FTE weeks; no scope growth during 6c):
+- spacing;
+- courtesy signatures;
+- the double bar line at a key change;
+- centred bar rests;
+- ties.
+
+The S11 7.5 differences and ADR-041 section 9 choice 3 (the TAB rhythm, revisited here) add detail to these items.
+
+**State today, read from the code:**
+- **Spacing.** It is wider than MuseScore's: `keys` gets 3 bars on its first system where MuseScore gets 5. Every column reserves room for an accidental and a two-digit fret number, whether or not it has one.
+- **Courtesy signatures.** There is no courtesy key or time signature at the end of a system before a change.
+- **Key change.** There is no double bar line before a key change, and the old key's signs are not cancelled with naturals.
+- **Centred rests.**
+  - An empty bar's whole rest is already centred.
+  - A bar whose only beat is a rest filling the bar shows that rest at its onset, as in input `rests`, bar 1.
+- **Ties.**
+  - Every tie has the same height, 0.7 staff space, whatever its length.
+  - A tie across a system break is drawn only into the new system, as a stub of 2 staff spaces before the head. The note at the end of the earlier system has no outgoing tie.
+- **TAB rhythm.** Stems and beams below the TAB are still drawn when notation is shown, so the rhythm appears twice.
+
+**Where the rules go** (ADR-040, GR-05):
+- What the cancelling naturals of a key change are is a music rule, so it goes in `mc-theory`: a function from the old and new key signatures to the signs to cancel.
+- Everything else here is engraving and goes in `mc-notation`: positions, the courtesy signatures, the double bar line, the rest placement and the tie shape.
+- Dart and `mc-pdf` paint only. New line kinds get rows in the 12.1 table.
+
+| Id | Criterion | Checked by |
+|---|---|---|
+| EP1 | **Spacing.** A column reserves room for an accidental only if one of its notes has one, and for a fret number only as wide as its widest number. Bars per system on the S11 inputs, `feature_rich` and TYPICAL are reported before and after, at the screen width and the print width. Target: `keys` gets at least 4 bars on its first system at the default width. All checks (L2 to L4, H1 to H3, PR3) find no violation. | Tests and report |
+| EP2 | **Courtesy signatures.** When a system starts with a key or time change, the system before it ends with the new key or time signature after its final bar line position, in the space the outline reserves. A system ending the score gets none. | Check rules and tests |
+| EP3 | **Key change.** Before a bar with a new key, the bar line is a double thin line, on every stave of the system so bar lines stay aligned (N2). The signs of the old key that the new one drops are cancelled with naturals before the new signature. This uses the `mc-theory` rule, which is tested against the conventions for all 15 × 15 key pairs. | Unit tests, check rules |
+| EP4 | **Centred bar rests.** A voice whose bar holds one rest that fills the bar shows a whole rest centred in the bar, in any time signature. | Check rule |
+| EP5 | **Ties.** The tie height grows with its length, between two named limits in staff spaces. A tie across a system break is drawn as two halves: out of the last note to the end of its system, and into the first note from the header. | Check rules and tests |
+| EP6 | **TAB rhythm** (choice 2). | Tests |
+| EP7 | **Invariants.**<br>– L1: with notation off on every track the output is unchanged (the 20 fingerprints from `958bf6a`).<br>– Every notation check passes on the S11 inputs, the fixtures and 300 random scores. Each new rule gets a breakage test (L5 style).<br>– Goldens and the PD4 hashes change only as choice 3 decides.<br>– L11 thresholds hold, and PD6 holds for TYPICAL. | Tests and bench |
+| EP8 | **Non-functional.** No new dependency. FF-03 and FF-04 pass, and FF-22 has additions only. No `unsafe`. CI is green. | CI |
+| EP9 | **The user's review:** before-and-after images (screen SVG and PDF pages) of the S11 inputs, `feature_rich` and `techniques`, and the user's judgement. | The user |
+
+**Choices for the user before code:**
+1. **Double bar line with TAB only.** L1 forbids any change to TAB-only output.
+   - Proposed: the double bar line is drawn only when some shown track has notation, and TAB-only output stays exactly as today.
+   - Alternative: draw it in TAB-only mode too. That needs an ADR exception to L1 and new TAB fingerprints.
+2. **TAB rhythm when notation is shown.**
+   - Proposed: hide the stems, beams and rhythm dots below the TAB of a track whose notation is shown, as most guitar editions do. That stave's height then loses `below_staff`. TAB-only tracks keep their rhythm, so L1 holds.
+   - Alternative: keep the rhythm under the TAB.
+3. **Goldens and PD4 hashes.** ADR-041 decision 6 says goldens are append-only. Polish changes the notation output by design, so the seven notation goldens and the two PD4 hashes cannot stay as they are. This conflicts with a rule (GR-14), so it is the user's decision.
+   - Proposed: amend decision 6 for engraving changes. A golden may be replaced only in a slice whose ADR section lists the change. Every changed line is attributed to an EP item in a review diff the user approves. The old goldens stay in git history. Goldens are never changed to make a failing test pass.
+   - Alternative: freeze polish. Not proposed, because it contradicts the slice.
+4. **The two gaps found in 6c-5b** (no track names in print; markers repeated on continued parts). They are outside the roadmap scope of 6c-6, and the rule is no scope growth during 6c.
+   - Proposed: leave them for after 6c, recorded as known limitations.
+   - Alternative: add track names to this slice as a recorded scope change by the user. Repeated markers would still wait.
+5. **Crossing voices** (section 8 known limitation, "6c-6 or later"). Proposed: after 6c, because it is not in the roadmap scope.
+
+## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.
 - **Reading `Bravura.json` at run time in `mc-app`.** Possible, but it adds I/O and a parse on every start. A generated, pinned table is checked once.
