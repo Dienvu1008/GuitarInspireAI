@@ -82,7 +82,11 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   intermittent slow state was seen with code from before this feature, and its cause is
   not yet found (ADR-031). Typical scores (4 tracks, 150 bars) were within budget in
   every run of the last session. One machine only (ADR-025).
-- No standard notation, no PDF.
+- No standard notation, no PDF. (Both are added in Phase 6c.)
+  - Known limitations of Phase 6c, left until after 6c by the user (ADR-041 section 13, choices 4 and 5):
+    - The PDF has no track names, so the staves of a many-track system are not labelled.
+    - On a system split across pages, every track repeats the marker and bar number, as on screen.
+    - Two voices that cross put noteheads on top of each other at one position and onset. There is no collision rule for them.
 - Effects are tie, let ring, dead note and, from Phase 6a-1 (ADR-035), accent, palm mute,
   string-percussive and a down or up stroke per beat. They are set in the inspector; there
   are no keyboard shortcuts for them yet. No lyrics.

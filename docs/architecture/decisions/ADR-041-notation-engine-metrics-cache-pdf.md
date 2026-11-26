@@ -100,6 +100,10 @@ A bar's plan, for all shown tracks, is cached and reused only if all of these ar
 - N1 to N3, the bounds and page checks, and the key-signature count move into `mc-notation` as test support.
 - Each S11 breakage becomes a test that corrupts a layout model and expects the check to fail. There is no fault switch in production code.
 - One canonical layout per fixture is a golden (N8). Goldens are append-only.
+  - **Amendment (user, 2026-11-26, section 13 choice 3).** For an engraving change, a golden (and a recorded PDF hash) may be replaced only:
+    - in a slice whose ADR section lists the change;
+    - with every changed line attributed to a criterion of that section, in a review diff the user approves.
+  - The old goldens stay in git history. A golden is never changed to make a failing test pass (GR-14).
 - Per GR-14 these tests may be extended, never weakened.
 
 ### 7. Performance criteria for 6c (fixed now, before code)
@@ -702,7 +706,15 @@ LARGE with 20 tracks is over 2 s. PD6 requires only that it is reported. It prod
 1. The PDF has no track names, so the staves of a many-track system are not labelled. The layout model carries no names.
 2. On a continued part, every track repeats the marker and the bar number, as on screen.
 
-## 13. Slice 6c-6 engraving polish: acceptance criteria (Proposed 2026-11-26, pending the user; fixed before any code)
+## 13. Slice 6c-6 engraving polish: acceptance criteria (proposed and fixed 2026-11-26, before any code)
+
+**User decision (2026-11-26).** EP1 to EP9 approved. The choices:
+
+1. The double bar line is drawn only when some shown track has notation; TAB-only output stays as today. As proposed.
+2. The TAB rhythm is hidden under the TAB of a track whose notation is shown. As proposed.
+3. Decision 6 is amended as proposed (see the amendment under decision 6).
+4. Track names in print and markers repeated on continued parts wait until after 6c, recorded as known limitations.
+5. Crossing voices wait until after 6c.
 
 **Scope from the roadmap** (6c-6, 1 to 2 FTE weeks; no scope growth during 6c):
 - spacing;
