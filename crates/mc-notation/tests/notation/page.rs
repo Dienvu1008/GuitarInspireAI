@@ -2,19 +2,23 @@
 
 use crate::{both, random, samples};
 use mc_notation::{
-    LayoutMetrics, NotationError, PageSetup, PageSize, Pagination, ScoreSystem, ShownTrack,
-    StaffConfiguration, layout_score_systems, outline_score_with, paginate,
+    NotationError, PageSetup, PageSize, Pagination, ScoreSystem, ShownTrack, StaffConfiguration,
+    layout_score_systems, outline_score_with, paginate,
 };
 use mc_score::Score;
 use mc_score::fixtures::{Shape, reference};
 
 const EPS: f32 = 0.01;
 
-/// A4, Letter, and short pages that force splits: between tracks, and between a
-/// track's notation and TAB.
+/// A4 and Letter at the print staff size (PR2), and at scale 1.0: A4 and short pages
+/// that force splits, between tracks and between a track's notation and TAB.
 pub fn setups() -> Vec<(&'static str, PageSetup)> {
+    let screen = |size: PageSize| PageSetup {
+        staff_scale: 1.0,
+        ..PageSetup::new(size)
+    };
     let short = |h: f32| {
-        PageSetup::new(PageSize {
+        screen(PageSize {
             width: PageSize::A4.width,
             height: h,
         })
@@ -22,6 +26,7 @@ pub fn setups() -> Vec<(&'static str, PageSetup)> {
     vec![
         ("A4", PageSetup::new(PageSize::A4)),
         ("Letter", PageSetup::new(PageSize::LETTER)),
+        ("A4 scale 1", screen(PageSize::A4)),
         ("short 420", short(420.0)),
         ("short 330", short(330.0)),
         ("short 280", short(280.0)),
@@ -92,17 +97,11 @@ pub struct Counts {
 }
 
 /// Every PG1, PG3 and PG4 property of one pagination; returns what it saw.
-pub fn check(
-    name: &str,
-    score: &Score,
-    tracks: &[ShownTrack],
-    base: &LayoutMetrics,
-    setup: &PageSetup,
-) -> Counts {
-    let p = paginate(score, tracks, base, setup).unwrap_or_else(|e| panic!("{name}: {e}"));
+pub fn check(name: &str, score: &Score, tracks: &[ShownTrack], setup: &PageSetup) -> Counts {
+    let p = paginate(score, tracks, setup).unwrap_or_else(|e| panic!("{name}: {e}"));
     let mut counts = Counts::default();
     // PG3: the outline is the screen's at the content width; the systems as laid out.
-    let metrics = setup.metrics(base);
+    let metrics = setup.metrics();
     assert_eq!(p.metrics, metrics, "{name}");
     assert_eq!(p.metrics.width, setup.content_width(), "{name}");
     assert_eq!(
@@ -317,14 +316,13 @@ fn first_pages(p: &Pagination) -> Vec<(usize, bool)> {
 
 #[test]
 fn pg1_pg3_pg4_inputs_fixtures_and_shapes_at_every_page_size() {
-    let base = LayoutMetrics::default();
     let mut total = Counts::default();
     let mut multi_page = 0;
     for (name, score) in inputs() {
         for (view, tracks) in views(&score) {
             for (size, setup) in setups() {
                 let label = format!("{name} {view} {size}");
-                let c = check(&label, &score, &tracks, &base, &setup);
+                let c = check(&label, &score, &tracks, &setup);
                 if c.pages > 1 {
                     multi_page += 1;
                 }
@@ -344,7 +342,6 @@ fn pg1_pg3_pg4_inputs_fixtures_and_shapes_at_every_page_size() {
 
 #[test]
 fn pg1_random_scores_at_every_page_size() {
-    let base = LayoutMetrics::default();
     let mut multi_page = 0;
     let mut stave_splits = 0;
     let mut empty_first = 0;
@@ -352,13 +349,7 @@ fn pg1_random_scores_at_every_page_size() {
         let score = random::random_score(seed);
         let tracks = both(&score);
         for (size, setup) in setups() {
-            let c = check(
-                &format!("seed {seed} {size}"),
-                &score,
-                &tracks,
-                &base,
-                &setup,
-            );
+            let c = check(&format!("seed {seed} {size}"), &score, &tracks, &setup);
             multi_page += usize::from(c.pages > 1);
             stave_splits += c.stave_splits;
             empty_first += usize::from(c.empty_first);
@@ -378,7 +369,7 @@ fn pg1_a_stave_taller_than_the_body_is_an_error() {
         width: PageSize::A4.width,
         height: 150.0,
     });
-    let r = paginate(&score, &both(&score), &LayoutMetrics::default(), &setup);
+    let r = paginate(&score, &both(&score), &setup);
     assert!(
         matches!(
             r,
@@ -419,9 +410,9 @@ fn pg4_title_and_footer_reserve_their_space() {
     };
     let tab = vec![ShownTrack::tab(score.track_at(0).unwrap().id())];
     for setup in [a4, bare, tall] {
-        check("pg4", &score, &tab, &LayoutMetrics::default(), &setup);
+        check("pg4", &score, &tab, &setup);
     }
-    let p = paginate(&score, &tab, &LayoutMetrics::default(), &tall).unwrap();
+    let p = paginate(&score, &tab, &tall).unwrap();
     assert!(p.page_count() >= 3, "{}", p.page_count());
     assert!(p.pages[0].items.len() < p.pages[1].items.len());
     assert!(p.pages[0].items[0].y >= 36.0 + 300.0 - EPS);
@@ -435,7 +426,6 @@ fn pg4_title_and_footer_reserve_their_space() {
 fn pg2_an_edit_on_page_k_keeps_the_pages_before() {
     use mc_score::BeatRef;
     use mc_theory::fretted::{Fret, FretPosition, StringIndex};
-    let base = LayoutMetrics::default();
     let mut changed = 0;
     let mut checked = 0;
     for tracks in [1, 2, 4] {
@@ -448,7 +438,7 @@ fn pg2_an_edit_on_page_k_keeps_the_pages_before() {
         });
         for (_, setup) in setups().into_iter().take(3) {
             let shown = both(&score);
-            let before = paginate(&score, &shown, &base, &setup).unwrap();
+            let before = paginate(&score, &shown, &setup).unwrap();
             for page in &before.pages[1..] {
                 // A system starting on this page with two or more bars: edit its last
                 // bar, so the break of the system before is not involved.
@@ -477,7 +467,7 @@ fn pg2_an_edit_on_page_k_keeps_the_pages_before() {
                         },
                     )
                     .unwrap();
-                let after = paginate(&edited, &shown, &base, &setup).unwrap();
+                let after = paginate(&edited, &shown, &setup).unwrap();
                 let k = page.number - 1;
                 assert_eq!(
                     before.pages[..k],
@@ -509,7 +499,6 @@ fn pg2_an_edit_on_page_k_keeps_the_pages_before() {
 fn print_shape_page_counts() {
     use mc_score::fixtures::{LARGE, TYPICAL};
     for k in [1.0, 0.6] {
-        let base = crate::svg::scaled(k);
         for (name, shape, shown) in [
             ("typical", TYPICAL, 4),
             ("large", LARGE, 4),
@@ -518,7 +507,11 @@ fn print_shape_page_counts() {
             let score = reference(shape);
             let tracks: Vec<ShownTrack> = both(&score).into_iter().take(shown).collect();
             for (size, setup) in setups().into_iter().take(2) {
-                let p = paginate(&score, &tracks, &base, &setup).unwrap();
+                let setup = PageSetup {
+                    staff_scale: k,
+                    ..setup
+                };
+                let p = paginate(&score, &tracks, &setup).unwrap();
                 let split = (0..p.outline.systems.len())
                     .filter(|&s| items_of(&p, s).len() > 1)
                     .count();
@@ -544,12 +537,11 @@ fn print_shape_page_counts() {
 #[test]
 #[ignore = "prints the PG9 pagination report"]
 fn print_pagination_report() {
-    let base = LayoutMetrics::default();
     for (name, score) in inputs() {
         for (view, tracks) in views(&score) {
             for (size, setup) in setups() {
                 let label = format!("{name} {view} {size}");
-                match paginate(&score, &tracks, &base, &setup) {
+                match paginate(&score, &tracks, &setup) {
                     Ok(p) => {
                         let heights: Vec<String> = p
                             .outline
@@ -581,7 +573,6 @@ fn print_pagination_report() {
 #[test]
 #[ignore = "prints the PG9 page preview SVGs"]
 fn print_page_previews() {
-    let base = LayoutMetrics::default();
     let all = inputs();
     let find = |n: &str| all.iter().find(|(name, _)| name == n).unwrap().1.clone();
     let cases: Vec<(&str, Score, Vec<ShownTrack>, PageSetup, usize)> = {
@@ -589,6 +580,7 @@ fn print_page_previews() {
         let large = find("large-8");
         let keys = find("keys");
         let mixed = views(&large).remove(1).1;
+        let typical = find("typical-40");
         vec![
             (
                 "keys-a4",
@@ -611,11 +603,25 @@ fn print_page_previews() {
                 PageSetup::new(PageSize::LETTER),
                 2,
             ),
-            ("large8-mixed-a4", large, mixed, PageSetup::default(), 5),
+            (
+                "typical40-a4",
+                typical.clone(),
+                both(&typical),
+                PageSetup::default(),
+                2,
+            ),
+            (
+                "large8-a4",
+                large.clone(),
+                both(&large),
+                PageSetup::default(),
+                3,
+            ),
+            ("large8-mixed-a4", large, mixed, PageSetup::default(), 2),
         ]
     };
     for (name, score, tracks, setup, count) in cases {
-        let p = paginate(&score, &tracks, &base, &setup).unwrap();
+        let p = paginate(&score, &tracks, &setup).unwrap();
         let systems =
             layout_score_systems(&score, &p.outline, 0..p.outline.systems.len(), &p.metrics)
                 .unwrap();

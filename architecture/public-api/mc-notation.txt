@@ -764,12 +764,13 @@ pub struct mc_notation::PageSetup
 pub mc_notation::PageSetup::footer_height: f32
 pub mc_notation::PageSetup::margin: f32
 pub mc_notation::PageSetup::size: mc_notation::PageSize
+pub mc_notation::PageSetup::staff_scale: f32
 pub mc_notation::PageSetup::title_height: f32
 impl mc_notation::PageSetup
 pub fn mc_notation::PageSetup::body(&self, usize) -> mc_notation::Rect
 pub fn mc_notation::PageSetup::content_width(&self) -> f32
 pub fn mc_notation::PageSetup::footer(&self) -> mc_notation::Rect
-pub fn mc_notation::PageSetup::metrics(&self, &mc_notation::LayoutMetrics) -> mc_notation::LayoutMetrics
+pub fn mc_notation::PageSetup::metrics(&self) -> mc_notation::LayoutMetrics
 pub fn mc_notation::PageSetup::new(mc_notation::PageSize) -> Self
 pub fn mc_notation::PageSetup::title(&self) -> mc_notation::Rect
 impl core::clone::Clone for mc_notation::PageSetup
@@ -1121,6 +1122,7 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::TupletFact
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::TupletFact
 pub const mc_notation::FOOTER_HEIGHT_PT: f32
 pub const mc_notation::PAGE_MARGIN_PT: f32
+pub const mc_notation::PRINT_STAFF_SCALE: f32
 pub const mc_notation::TAB_STRING_GAP_SP: f32
 pub const mc_notation::TITLE_HEIGHT_PT: f32
 pub fn mc_notation::layout_score(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreLayout, mc_notation::NotationError>
@@ -1131,4 +1133,4 @@ pub fn mc_notation::outline_score(&mc_score::score::Score, &[mc_score::ids::Trac
 pub fn mc_notation::outline_score_cached(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics, &mut mc_notation::LayoutCache) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
 pub fn mc_notation::outline_score_cached_with(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics, &mut mc_notation::LayoutCache) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
 pub fn mc_notation::outline_score_with(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
-pub fn mc_notation::paginate(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics, &mc_notation::PageSetup) -> core::result::Result<mc_notation::Pagination, mc_notation::NotationError>
+pub fn mc_notation::paginate(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::PageSetup) -> core::result::Result<mc_notation::Pagination, mc_notation::NotationError>

@@ -76,6 +76,102 @@ fn l2_l3_l4_random_scores_have_no_violation() {
     );
 }
 
+/// Fret numbers on one string of one TAB stave that overlap horizontally (boxes
+/// centred on the glyph x, `width` wide). Numbers in the same column (two voices on
+/// one string at one onset) are not counted: they share a position by design.
+fn overlapping_frets(l: &ScoreLayout) -> (usize, Vec<String>) {
+    use mc_notation::GlyphKind;
+    let mut checked = 0;
+    let mut bad = Vec::new();
+    for sys in &l.systems {
+        for st in sys
+            .staves
+            .iter()
+            .filter(|s| s.kind == mc_notation::StaveKind::Tab)
+        {
+            let mut by_string: std::collections::BTreeMap<i64, Vec<(f32, f32)>> =
+                Default::default();
+            for g in &st.layout.glyphs {
+                if let GlyphKind::Fret { .. } = g.kind {
+                    by_string
+                        .entry((g.y * 100.0).round() as i64)
+                        .or_default()
+                        .push((g.x - g.width / 2.0, g.x + g.width / 2.0));
+                }
+            }
+            for v in by_string.values_mut() {
+                v.sort_by(|a, b| a.0.total_cmp(&b.0));
+                for w in v.windows(2) {
+                    checked += 1;
+                    let same_column = ((w[0].0 + w[0].1) - (w[1].0 + w[1].1)).abs() < 0.01;
+                    if !same_column && w[0].1 > w[1].0 + 0.01 {
+                        bad.push(format!(
+                            "system {} track {}: {:.2}..{:.2} and {:.2}..{:.2}",
+                            sys.index,
+                            st.track.raw(),
+                            w[0].0,
+                            w[0].1,
+                            w[1].0,
+                            w[1].1
+                        ));
+                    }
+                }
+            }
+        }
+    }
+    (checked, bad)
+}
+
+/// ADR-041 PR3: at the print metrics (A4, staff scale 0.6) the notation checks find no
+/// violation and TAB fret numbers on one string do not overlap.
+#[test]
+fn pr3_engraving_holds_at_the_print_staff_size() {
+    let m = mc_notation::PageSetup::default().metrics();
+    assert!((m.string_spacing - 7.2).abs() < 1e-4);
+    let (mut notes, mut pairs) = (0, 0);
+    let mut scores: Vec<(String, Score)> = inputs()
+        .into_iter()
+        .map(|(n, s, _)| (n.to_string(), s))
+        .collect();
+    scores.extend((0..300).map(|seed| (format!("seed {seed}"), random::random_score(seed))));
+    for (name, score) in &scores {
+        let l = layout(score, &m);
+        let r = check::check(score, &l);
+        notes += r.notes;
+        assert!(r.violations.is_empty(), "{name}:\n{}", r.summary());
+        let (n, bad) = overlapping_frets(&l);
+        pairs += n;
+        assert!(
+            bad.is_empty(),
+            "{name}: overlapping frets\n{}",
+            bad.join("\n")
+        );
+    }
+    assert!(
+        notes > 3000 && pairs > 3000,
+        "{notes} notes, {pairs} fret pairs"
+    );
+}
+
+/// The fret-overlap check catches overlap: with every fret box eight times wider,
+/// neighbouring numbers on one string collide.
+#[test]
+fn pr3_fret_overlap_check_catches_a_collision() {
+    let m = mc_notation::PageSetup::default().metrics();
+    let score = samples::scale();
+    let clean = layout(&score, &m);
+    assert!(overlapping_frets(&clean).1.is_empty());
+    let mut l = clean.clone();
+    for sys in &mut l.systems {
+        for st in &mut sys.staves {
+            for g in &mut st.layout.glyphs {
+                g.width *= 8.0;
+            }
+        }
+    }
+    assert!(!overlapping_frets(&l).1.is_empty());
+}
+
 /// The random scores exercise what the checks look at (no vacuous property).
 #[test]
 #[ignore = "diagnosis: prints one random score's notation facts (S11_SEED)"]

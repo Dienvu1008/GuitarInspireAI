@@ -517,6 +517,39 @@ Every TAB region has a string of 1 or more, so on TAB this order is exactly the 
 | PR4 | **PG7 again** at print size. | Bench |
 | PR5 | **Report and previews** at print size, with page counts. Then Go or Revise for 6c-5b, decided by the user. | The user |
 
+**Revise report (2026-11-26).**
+
+| Id | Result |
+|---|---|
+| PR1 | Met, with one deviation. `PageSetup.staff_scale` defaults to `PRINT_STAFF_SCALE` = 0.6. `paginate(score, shown, setup)` and `DocumentSession::paginate(shown, setup)` no longer take metrics. The unit test checks the values: string gap 7.2 pt, staff space 4.8 pt, digit width 4.2 pt, system gap 9.6 pt. **Deviation:** the right layout margin is not 0 but half the SMuFL thick bar line (0.25 sp = 1.2 pt). The layout centres the final bar line on the end of the system, so with a margin of 0 half of it fell into the page margin. PR3 found this. The screen layout is unchanged. |
+| PR2 | Met. The PG tests run at A4 and Letter at 0.6, and at scale 1.0 on A4 and on the 420, 330 and 280 pt pages, so splits stay tested. |
+| PR3 | Met after the fix above. The notation checks find no violation at the print metrics on the S11 inputs, the fixtures and 300 random scores. TAB fret numbers on one string do not overlap; a test shows the overlap check catches widened boxes. |
+| PR4 | Met; numbers below. |
+| PR5 | This report; the user decides. |
+
+**Page counts at print size (A4; Letter in brackets), notation and TAB on every shown track:**
+
+| Input | Systems | Pages | Split systems |
+|---|---|---|---|
+| keys, feature_rich, small | 2, 1, 4 | 1 each | 0 |
+| TYPICAL, 4 tracks | 76 (75) | 76 (75) | 0 |
+| LARGE, 4 tracks | 300 | 300 | 0 |
+| LARGE, 20 tracks | 300 | 1 500 | 300 |
+
+Against the default size: TYPICAL drops from 201 to 76 A4 pages. The reference scores are dense (8 or 16 notes per bar on every track), so they hold one or two bars per system.
+
+**PR4 (release build, 10 runs each, A4 at 0.6):**
+
+| Case | Paginate, p99 | Paginate and lay out every system, p99 |
+|---|---|---|
+| TYPICAL, 4 tracks | 5.1 ms | 15.9 ms |
+| LARGE, 4 tracks | 23.5 ms | 66.0 ms |
+| LARGE, 20 tracks | 112.9 ms | 353.4 ms |
+
+**Previews:** `Desktop\GuitarInspire-6c5a-pages-print\` holds keys, feature_rich at A4 and Letter, two pages of TYPICAL with 40 bars, three pages of LARGE with 8 bars (split systems), and two pages of the alternating view.
+- The test painter draws two-digit frets smaller than one-digit frets, because it divides the glyph width by the digit count. This is painting only; the PDF sets its own text size in 6c-5b.
+- At 0.6 the system gap is 9.6 pt, so a system's TAB rhythm sits close to the next system's notation without touching it. The gap is a candidate for review in 6c-5b.
+
 ## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.

@@ -336,7 +336,8 @@ fn notation_layout(c: &mut Criterion) {
         );
     }
 
-    // ADR-041 PG7: paginating what the view shows at A4, and paginating plus laying out
+    // ADR-041 PG7 and PR4: paginating what the view shows at A4 and the print staff
+    // size (0.6, section 11.2), and paginating plus laying out
     // every system (the export's layout work before any PDF bytes), against the 2 s
     // "open large project" budget as the reference for a one-off export.
     use mc_app::notation::PageSetup;
@@ -360,7 +361,7 @@ fn notation_layout(c: &mut Criterion) {
         let mut pages = (0, 0, 0);
         for _ in 0..10 {
             let t = Instant::now();
-            let p = s.paginate(&shown, &metrics, &setup).expect("pages");
+            let p = s.paginate(&shown, &setup).expect("pages");
             paginate.push(t.elapsed().as_nanos());
             let systems = mc_notation::layout_score_systems(
                 s.score(),

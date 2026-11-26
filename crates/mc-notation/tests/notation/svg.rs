@@ -263,14 +263,24 @@ fn stave(s: &mut String, st: &mc_notation::Stave, x: f32, y: f32) {
             }
         }
         StaveKind::Tab => {
+            let strings: Vec<f32> = lay
+                .lines
+                .iter()
+                .filter(|l| l.kind == mc_notation::LineKind::String)
+                .map(|l| l.y1)
+                .collect();
+            let gap = match strings.as_slice() {
+                [a, b, ..] => b - a,
+                _ => 12.0,
+            };
             for x in &lay.lines {
                 let w = if matches!(
                     x.kind,
                     mc_notation::LineKind::ThickBarLine | mc_notation::LineKind::Beam
                 ) {
-                    3.0
+                    3.0 * gap / 12.0
                 } else {
-                    1.0
+                    gap / 12.0
                 };
                 let _ = writeln!(
                     s,
@@ -296,7 +306,9 @@ fn stave(s: &mut String, st: &mc_notation::Stave, x: f32, y: f32) {
                     GlyphKind::Tuplet { actual } => actual.to_string(),
                     _ => continue,
                 };
-                let fs = g.width.max(10.0) / text.len().max(1) as f32 * 1.4;
+                // The floor scales with the string gap (12 at the default metrics).
+                let k = gap / 12.0;
+                let fs = g.width.max(10.0 * k) / text.len().max(1) as f32 * 1.4;
                 let _ = writeln!(
                     s,
                     r#"<rect x="{:.2}" y="{:.2}" width="{:.2}" height="{:.2}" fill="white"/><text x="{:.2}" y="{:.2}" font-family="Consolas" font-size="{fs:.1}" text-anchor="middle" dominant-baseline="central">{text}</text>"#,

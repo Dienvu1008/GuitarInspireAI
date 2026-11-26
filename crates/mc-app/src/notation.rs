@@ -111,14 +111,13 @@ impl DocumentSession {
     }
 
     /// Pages of the shown tracks at the current revision (ADR-041 section 11): what the
-    /// view shows, laid out at the page's content width. `base` gives the staff size.
+    /// view shows, at the print metrics of `setup` (section 11.2), not the screen's.
     /// The systems themselves are laid out from the result's outline and metrics.
     pub fn paginate(
         &self,
         shown: &[ShownTrack],
-        base: &LayoutMetrics,
         setup: &PageSetup,
     ) -> Result<Pagination, NotationError> {
-        mc_notation::paginate(self.score(), shown, base, setup)
+        mc_notation::paginate(self.score(), shown, setup)
     }
 }

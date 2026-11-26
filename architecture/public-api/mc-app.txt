@@ -1311,7 +1311,7 @@ pub fn mc_app::DocumentSession::undo(&mut self) -> core::result::Result<mc_app::
 pub fn mc_app::DocumentSession::undo_depth(&self) -> usize
 pub fn mc_app::DocumentSession::unknown_content(&self) -> &[alloc::string::String]
 impl mc_app::DocumentSession
-pub fn mc_app::DocumentSession::paginate(&self, &[mc_notation::staff::ShownTrack], &mc_notation::metrics::LayoutMetrics, &mc_notation::page::PageSetup) -> core::result::Result<mc_notation::page::Pagination, mc_notation::error::NotationError>
+pub fn mc_app::DocumentSession::paginate(&self, &[mc_notation::staff::ShownTrack], &mc_notation::page::PageSetup) -> core::result::Result<mc_notation::page::Pagination, mc_notation::error::NotationError>
 pub fn mc_app::DocumentSession::score_layout(&self, &[mc_score::ids::TrackId], &mc_notation::metrics::LayoutMetrics) -> core::result::Result<mc_notation::display::ScoreLayout, mc_notation::error::NotationError>
 pub fn mc_app::DocumentSession::score_outline(&mut self, &[mc_score::ids::TrackId], &mc_notation::metrics::LayoutMetrics) -> core::result::Result<&mc_notation::display::ScoreOutline, mc_notation::error::NotationError>
 pub fn mc_app::DocumentSession::score_outline_with(&mut self, &[mc_notation::staff::ShownTrack], &mc_notation::metrics::LayoutMetrics) -> core::result::Result<&mc_notation::display::ScoreOutline, mc_notation::error::NotationError>

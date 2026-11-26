@@ -30,6 +30,10 @@ pub const TITLE_HEIGHT_PT: f32 = 40.0;
 /// Space for "page n of N" at the foot of every page: one 10 pt line and as much again
 /// above it. Chosen in 6c-5a.
 pub const FOOTER_HEIGHT_PT: f32 = 20.0;
+/// Print staff size as a factor of the default layout metrics (ADR-041 section 11.2,
+/// user decision 2026-11-26): a TAB string gap of 7.2 pt and a staff space of 4.8 pt,
+/// close to common printed guitar editions.
+pub const PRINT_STAFF_SCALE: f32 = 0.6;
 
 /// A paper size in points, portrait.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -61,6 +65,9 @@ pub struct PageSetup {
     pub title_height: f32,
     /// Reserved on every page above the bottom margin.
     pub footer_height: f32,
+    /// Factor applied to every length of the default layout metrics (see
+    /// [`PageSetup::metrics`]).
+    pub staff_scale: f32,
 }
 
 impl Default for PageSetup {
@@ -70,13 +77,14 @@ impl Default for PageSetup {
 }
 
 impl PageSetup {
-    /// `size` with the default margin, title and footer.
+    /// `size` with the default margin, title, footer and print staff size.
     pub fn new(size: PageSize) -> Self {
         PageSetup {
             size,
             margin: PAGE_MARGIN_PT,
             title_height: TITLE_HEIGHT_PT,
             footer_height: FOOTER_HEIGHT_PT,
+            staff_scale: PRINT_STAFF_SCALE,
         }
     }
 
@@ -117,15 +125,35 @@ impl PageSetup {
         }
     }
 
-    /// `base` at this page's content width. The page margins replace the layout
-    /// margins, so the left and right layout margins are 0; every other value (staff
-    /// size, spacing, system gap) is kept, in points.
-    pub fn metrics(&self, base: &LayoutMetrics) -> LayoutMetrics {
+    /// The layout metrics of the printed page, in points: every length of
+    /// `LayoutMetrics::default()` times `staff_scale` (the duration spacing is a ratio
+    /// and is kept), at this page's content width. The page margins replace the layout
+    /// margins: the left one is 0, and the right one is half the thick bar line, whose
+    /// centre the layout puts at the end of the system, so the final bar line ends at
+    /// the content edge (found by PR3). The screen metrics and zoom take no part.
+    pub fn metrics(&self) -> LayoutMetrics {
+        let m = LayoutMetrics::default();
+        let k = self.staff_scale;
+        let string_spacing = m.string_spacing * k;
+        let staff_space = string_spacing / crate::TAB_STRING_GAP_SP;
         LayoutMetrics {
             width: self.content_width(),
             margin_left: 0.0,
-            margin_right: 0.0,
-            ..*base
+            margin_right: crate::smufl::DEFAULTS.thick_barline_thickness / 2.0 * staff_space,
+            string_spacing,
+            digit_width: m.digit_width * k,
+            glyph_padding: m.glyph_padding * k,
+            min_column_width: m.min_column_width * k,
+            duration_spacing: m.duration_spacing,
+            bar_padding: m.bar_padding * k,
+            empty_bar_width: m.empty_bar_width * k,
+            header_width: m.header_width * k,
+            time_signature_width: m.time_signature_width * k,
+            repeat_width: m.repeat_width * k,
+            above_staff: m.above_staff * k,
+            below_staff: m.below_staff * k,
+            system_gap: m.system_gap * k,
+            stem_length: m.stem_length * k,
         }
     }
 
@@ -136,6 +164,7 @@ impl PageSetup {
             ("margin", self.margin),
             ("title_height", self.title_height),
             ("footer_height", self.footer_height),
+            ("staff_scale", self.staff_scale),
         ];
         for (name, v) in values {
             if !v.is_finite() || v < 0.0 {
@@ -143,6 +172,9 @@ impl PageSetup {
                     "{name} must be finite and >= 0"
                 )));
             }
+        }
+        if self.staff_scale <= 0.0 {
+            return Err(NotationError::InvalidPage("staff_scale must be > 0".into()));
         }
         if self.content_width() <= 0.0 || self.body(1).h <= 0.0 {
             return Err(NotationError::InvalidPage(
@@ -208,19 +240,17 @@ impl Pagination {
 }
 
 /// Paginates the shown `tracks` of `score` (what the view shows, ADR-041 section 11
-/// choice 4). `base` gives the staff size and spacing; its width and margins are
-/// replaced by the page's ([`PageSetup::metrics`]).
+/// choice 4) at the print metrics of `setup` ([`PageSetup::metrics`], section 11.2).
 ///
-/// Errors: invalid metrics or page setup, unknown tracks, and
-/// [`NotationError::PageTooSmall`] when one stave is taller than a page body.
+/// Errors: invalid page setup, unknown tracks, and [`NotationError::PageTooSmall`]
+/// when one stave is taller than every page body.
 pub fn paginate(
     score: &Score,
     tracks: &[ShownTrack],
-    base: &LayoutMetrics,
     setup: &PageSetup,
 ) -> Result<Pagination, NotationError> {
     setup.validate()?;
-    let metrics = setup.metrics(base);
+    let metrics = setup.metrics();
     let (outline, staves) = outline_with_staves(score, tracks, &metrics)?;
     let mut packer = Packer::new(setup, metrics.system_gap);
     for (system, heights) in staves.iter().enumerate() {
@@ -419,13 +449,37 @@ mod tests {
                 h: 40.0
             }
         );
-        // The layout metrics: the page's content width, no layout margins.
-        let m = a4.metrics(&LayoutMetrics::default());
+        // PR1: the print metrics. Page content width, no layout margins, the defaults
+        // at 0.6: TAB string gap 7.2 pt, staff space 4.8 pt.
+        assert_eq!(PRINT_STAFF_SCALE, 0.6);
+        assert_eq!(a4.staff_scale, PRINT_STAFF_SCALE);
+        let m = a4.metrics();
+        assert_eq!((m.width, m.margin_left), (a4.content_width(), 0.0));
+        // Half of Bravura's 0.5 sp thick bar line: 0.25 x 4.8 pt.
+        assert!(near(m.margin_right, 1.2));
+        assert!(near(m.string_spacing, 7.2) && near(m.staff_space(), 4.8));
+        assert!(near(m.digit_width, 4.2) && near(m.system_gap, 9.6));
+        assert!(near(m.header_width, 16.8) && near(m.stem_length, 12.0));
         assert_eq!(
-            (m.width, m.margin_left, m.margin_right),
-            (a4.content_width(), 0.0, 0.0)
+            m.duration_spacing,
+            LayoutMetrics::default().duration_spacing
         );
-        assert_eq!(m.string_spacing, LayoutMetrics::default().string_spacing);
+        assert_eq!(m.validate(), Ok(()));
+        // At scale 1 the lengths are the defaults.
+        let one = PageSetup {
+            staff_scale: 1.0,
+            ..a4
+        }
+        .metrics();
+        assert_eq!(
+            one,
+            LayoutMetrics {
+                width: a4.content_width(),
+                margin_left: 0.0,
+                margin_right: 0.25 * 8.0,
+                ..LayoutMetrics::default()
+            }
+        );
     }
 
     #[test]
@@ -445,6 +499,14 @@ mod tests {
             },
             PageSetup {
                 margin: -1.0,
+                ..PageSetup::default()
+            },
+            PageSetup {
+                staff_scale: 0.0,
+                ..PageSetup::default()
+            },
+            PageSetup {
+                staff_scale: f32::INFINITY,
                 ..PageSetup::default()
             },
         ] {
