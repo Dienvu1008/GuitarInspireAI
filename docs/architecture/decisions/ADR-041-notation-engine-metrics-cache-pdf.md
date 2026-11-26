@@ -374,7 +374,14 @@ Every TAB region has a string of 1 or more, so on TAB this order is exactly the 
 6. Click another track's notation: that track becomes active with the cursor on the beat.
 7. Click the clef area: nothing changes.
 
-## 11. Slice 6c-5a pagination checkpoint: acceptance criteria (Proposed 2026-11-21, pending the user; fixed before any code)
+## 11. Slice 6c-5a pagination checkpoint: acceptance criteria (proposed 2026-11-21, fixed 2026-11-26 before any code)
+
+**User decision (2026-11-26).** PG1 to PG9 approved, with all four choices as proposed:
+
+1. A4 by default, with Letter as an option;
+2. the title on page 1 and "page n of N" on every page;
+3. a system taller than a page body breaks between tracks, keeping each track's notation and TAB together;
+4. the export contains what the view shows.
 
 **Purpose (decision 5).**
 - Settle how a layout becomes pages, before the PDF export (6c-5b) is committed to.
