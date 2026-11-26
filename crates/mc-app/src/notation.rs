@@ -8,9 +8,9 @@ use std::ops::Range;
 
 pub use mc_notation::{
     BarLayout, EngravedLineKind, Glyph, GlyphKind, HitRegion, HitTarget, LayoutCache,
-    LayoutMetrics, Line, LineKind, NotationError, NotationStaff, OutlineSystem, Rect, ScoreLayout,
-    ScoreOutline, ScoreSystem, ShownTrack, StaffConfiguration, Stave, StaveKind, SystemLayout,
-    TabLayout,
+    LayoutMetrics, Line, LineKind, NotationError, NotationStaff, OutlineSystem, Page, PageItem,
+    PageSetup, PageSize, Pagination, Rect, ScoreLayout, ScoreOutline, ScoreSystem, ShownTrack,
+    StaffConfiguration, Stave, StaveKind, SystemLayout, TabLayout,
 };
 
 /// The outline of one revision, shown tracks with their staves, and metrics (a view
@@ -108,5 +108,17 @@ impl DocumentSession {
         self.score_outline_with(shown, metrics)?;
         let outline = &self.outline_cache.as_ref().expect("set above").outline;
         mc_notation::layout_score_systems(self.score(), outline, range, metrics)
+    }
+
+    /// Pages of the shown tracks at the current revision (ADR-041 section 11): what the
+    /// view shows, laid out at the page's content width. `base` gives the staff size.
+    /// The systems themselves are laid out from the result's outline and metrics.
+    pub fn paginate(
+        &self,
+        shown: &[ShownTrack],
+        base: &LayoutMetrics,
+        setup: &PageSetup,
+    ) -> Result<Pagination, NotationError> {
+        mc_notation::paginate(self.score(), shown, base, setup)
     }
 }

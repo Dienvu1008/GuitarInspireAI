@@ -333,9 +333,13 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::LineKind
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::LineKind
 pub enum mc_notation::NotationError
 pub mc_notation::NotationError::InvalidMetrics(alloc::string::String)
+pub mc_notation::NotationError::InvalidPage(alloc::string::String)
 pub mc_notation::NotationError::NoStaves(mc_score::ids::TrackId)
 pub mc_notation::NotationError::NoTracks
 pub mc_notation::NotationError::Overflow
+pub mc_notation::NotationError::PageTooSmall
+pub mc_notation::NotationError::PageTooSmall::stave: usize
+pub mc_notation::NotationError::PageTooSmall::system: usize
 pub mc_notation::NotationError::StaleOutline
 pub mc_notation::NotationError::UnknownTrack(mc_score::ids::TrackId)
 impl core::clone::Clone for mc_notation::NotationError
@@ -714,6 +718,119 @@ impl core::marker::Unpin for mc_notation::OutlineSystem
 impl core::marker::UnsafeUnpin for mc_notation::OutlineSystem
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::OutlineSystem
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::OutlineSystem
+pub struct mc_notation::Page
+pub mc_notation::Page::body: mc_notation::Rect
+pub mc_notation::Page::footer: mc_notation::Rect
+pub mc_notation::Page::items: alloc::vec::Vec<mc_notation::PageItem>
+pub mc_notation::Page::number: usize
+pub mc_notation::Page::title: core::option::Option<mc_notation::Rect>
+impl core::clone::Clone for mc_notation::Page
+pub fn mc_notation::Page::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Page
+pub fn mc_notation::Page::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Page
+pub fn mc_notation::Page::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::Page
+impl core::marker::Freeze for mc_notation::Page
+impl core::marker::Send for mc_notation::Page
+impl core::marker::Sync for mc_notation::Page
+impl core::marker::Unpin for mc_notation::Page
+impl core::marker::UnsafeUnpin for mc_notation::Page
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Page
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Page
+pub struct mc_notation::PageItem
+pub mc_notation::PageItem::height: f32
+pub mc_notation::PageItem::staves: core::ops::range::Range<usize>
+pub mc_notation::PageItem::system: usize
+pub mc_notation::PageItem::whole: bool
+pub mc_notation::PageItem::y: f32
+impl mc_notation::PageItem
+pub fn mc_notation::PageItem::continued(&self) -> bool
+impl core::clone::Clone for mc_notation::PageItem
+pub fn mc_notation::PageItem::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::PageItem
+pub fn mc_notation::PageItem::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::PageItem
+pub fn mc_notation::PageItem::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::PageItem
+impl core::marker::Freeze for mc_notation::PageItem
+impl core::marker::Send for mc_notation::PageItem
+impl core::marker::Sync for mc_notation::PageItem
+impl core::marker::Unpin for mc_notation::PageItem
+impl core::marker::UnsafeUnpin for mc_notation::PageItem
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::PageItem
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::PageItem
+pub struct mc_notation::PageSetup
+pub mc_notation::PageSetup::footer_height: f32
+pub mc_notation::PageSetup::margin: f32
+pub mc_notation::PageSetup::size: mc_notation::PageSize
+pub mc_notation::PageSetup::title_height: f32
+impl mc_notation::PageSetup
+pub fn mc_notation::PageSetup::body(&self, usize) -> mc_notation::Rect
+pub fn mc_notation::PageSetup::content_width(&self) -> f32
+pub fn mc_notation::PageSetup::footer(&self) -> mc_notation::Rect
+pub fn mc_notation::PageSetup::metrics(&self, &mc_notation::LayoutMetrics) -> mc_notation::LayoutMetrics
+pub fn mc_notation::PageSetup::new(mc_notation::PageSize) -> Self
+pub fn mc_notation::PageSetup::title(&self) -> mc_notation::Rect
+impl core::clone::Clone for mc_notation::PageSetup
+pub fn mc_notation::PageSetup::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::PageSetup
+pub fn mc_notation::PageSetup::eq(&self, &Self) -> bool
+impl core::default::Default for mc_notation::PageSetup
+pub fn mc_notation::PageSetup::default() -> Self
+impl core::fmt::Debug for mc_notation::PageSetup
+pub fn mc_notation::PageSetup::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::PageSetup
+impl core::marker::StructuralPartialEq for mc_notation::PageSetup
+impl core::marker::Freeze for mc_notation::PageSetup
+impl core::marker::Send for mc_notation::PageSetup
+impl core::marker::Sync for mc_notation::PageSetup
+impl core::marker::Unpin for mc_notation::PageSetup
+impl core::marker::UnsafeUnpin for mc_notation::PageSetup
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::PageSetup
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::PageSetup
+pub struct mc_notation::PageSize
+pub mc_notation::PageSize::height: f32
+pub mc_notation::PageSize::width: f32
+impl mc_notation::PageSize
+pub const mc_notation::PageSize::A4: mc_notation::PageSize
+pub const mc_notation::PageSize::LETTER: mc_notation::PageSize
+impl core::clone::Clone for mc_notation::PageSize
+pub fn mc_notation::PageSize::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::PageSize
+pub fn mc_notation::PageSize::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::PageSize
+pub fn mc_notation::PageSize::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::PageSize
+impl core::marker::StructuralPartialEq for mc_notation::PageSize
+impl core::marker::Freeze for mc_notation::PageSize
+impl core::marker::Send for mc_notation::PageSize
+impl core::marker::Sync for mc_notation::PageSize
+impl core::marker::Unpin for mc_notation::PageSize
+impl core::marker::UnsafeUnpin for mc_notation::PageSize
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::PageSize
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::PageSize
+pub struct mc_notation::Pagination
+pub mc_notation::Pagination::metrics: mc_notation::LayoutMetrics
+pub mc_notation::Pagination::outline: mc_notation::ScoreOutline
+pub mc_notation::Pagination::pages: alloc::vec::Vec<mc_notation::Page>
+pub mc_notation::Pagination::setup: mc_notation::PageSetup
+impl mc_notation::Pagination
+pub fn mc_notation::Pagination::page_count(&self) -> usize
+impl core::clone::Clone for mc_notation::Pagination
+pub fn mc_notation::Pagination::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Pagination
+pub fn mc_notation::Pagination::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Pagination
+pub fn mc_notation::Pagination::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::Pagination
+impl core::marker::Freeze for mc_notation::Pagination
+impl core::marker::Send for mc_notation::Pagination
+impl core::marker::Sync for mc_notation::Pagination
+impl core::marker::Unpin for mc_notation::Pagination
+impl core::marker::UnsafeUnpin for mc_notation::Pagination
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Pagination
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Pagination
 pub struct mc_notation::Rect
 pub mc_notation::Rect::h: f32
 pub mc_notation::Rect::w: f32
@@ -1002,7 +1119,10 @@ impl core::marker::Unpin for mc_notation::TupletFact
 impl core::marker::UnsafeUnpin for mc_notation::TupletFact
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::TupletFact
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::TupletFact
+pub const mc_notation::FOOTER_HEIGHT_PT: f32
+pub const mc_notation::PAGE_MARGIN_PT: f32
 pub const mc_notation::TAB_STRING_GAP_SP: f32
+pub const mc_notation::TITLE_HEIGHT_PT: f32
 pub fn mc_notation::layout_score(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreLayout, mc_notation::NotationError>
 pub fn mc_notation::layout_score_systems(&mc_score::score::Score, &mc_notation::ScoreOutline, core::ops::range::Range<usize>, &mc_notation::LayoutMetrics) -> core::result::Result<alloc::vec::Vec<mc_notation::ScoreSystem>, mc_notation::NotationError>
 pub fn mc_notation::layout_score_with(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreLayout, mc_notation::NotationError>
@@ -1011,3 +1131,4 @@ pub fn mc_notation::outline_score(&mc_score::score::Score, &[mc_score::ids::Trac
 pub fn mc_notation::outline_score_cached(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics, &mut mc_notation::LayoutCache) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
 pub fn mc_notation::outline_score_cached_with(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics, &mut mc_notation::LayoutCache) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
 pub fn mc_notation::outline_score_with(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
+pub fn mc_notation::paginate(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics, &mc_notation::PageSetup) -> core::result::Result<mc_notation::Pagination, mc_notation::NotationError>

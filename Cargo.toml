@@ -42,6 +42,11 @@ proptest = "=1.12.0"
 # outline boxes and advance widths for the metrics-table check. MIT OR Apache-2.0.
 # Replaces ttf-parser, which is unmaintained (RUSTSEC-2026-0192; user decision 2026-11-16).
 skrifa = "=0.50.0"
+# mc-notation dev-dependency only in 6c-5a (ADR-041 section 11, PG6 font probe): subsets
+# Bravura and Noto Sans Mono for PDF embedding. MIT OR Apache-2.0. Without the default
+# `variable-fonts` feature, which would add a second skrifa (0.42), write-fonts and kurbo;
+# variable fonts are then subset at their default instance.
+subsetter = { version = "=0.2.6", default-features = false }
 # mc-audio only (FF-02 wrapper bans, ADR-007). Versions validated by spike S2.
 # cpal without the `realtime` feature (MPL-2.0 audio_thread_priority is banned, ADR-015).
 cpal = "=0.18.2"

@@ -336,6 +336,61 @@ fn notation_layout(c: &mut Criterion) {
         );
     }
 
+    // ADR-041 PG7: paginating what the view shows at A4, and paginating plus laying out
+    // every system (the export's layout work before any PDF bytes), against the 2 s
+    // "open large project" budget as the reference for a one-off export.
+    use mc_app::notation::PageSetup;
+    for (name, shape, shown) in [
+        ("PG7 typical/4 tracks", TYPICAL, 4),
+        ("PG7 large/4 tracks", LARGE, 4),
+        ("PG7 large/20 tracks", LARGE, 20),
+    ] {
+        let s = session(shape);
+        let shown: Vec<ShownTrack> = s
+            .score()
+            .tracks()
+            .take(shown)
+            .map(|t| ShownTrack {
+                track: t.id(),
+                staves: StaffConfiguration::NOTATION_AND_TAB,
+            })
+            .collect();
+        let setup = PageSetup::default();
+        let (mut paginate, mut full) = (Vec::new(), Vec::new());
+        let mut pages = (0, 0, 0);
+        for _ in 0..10 {
+            let t = Instant::now();
+            let p = s.paginate(&shown, &metrics, &setup).expect("pages");
+            paginate.push(t.elapsed().as_nanos());
+            let systems = mc_notation::layout_score_systems(
+                s.score(),
+                &p.outline,
+                0..p.outline.systems.len(),
+                &p.metrics,
+            )
+            .expect("systems");
+            full.push(t.elapsed().as_nanos());
+            let split = (0..systems.len())
+                .filter(|i| {
+                    p.pages
+                        .iter()
+                        .flat_map(|pg| &pg.items)
+                        .filter(|it| it.system == *i)
+                        .count()
+                        > 1
+                })
+                .count();
+            pages = (p.page_count(), systems.len(), split);
+            black_box(systems);
+        }
+        percentiles(&format!("paginate/{name} (reference 2 s)"), paginate);
+        percentiles(&format!("paginate_and_layout/{name} (reference 2 s)"), full);
+        eprintln!(
+            "pages/{name}: {} pages, {} systems, {} split systems (A4)",
+            pages.0, pages.1, pages.2
+        );
+    }
+
     let s = session(LARGE);
     let track = s.score().track_at(0).unwrap().id();
     let mut group = c.benchmark_group("notation");

@@ -17,6 +17,8 @@ serde_json.workspace = true
 sha2.workspace = true
 skrifa.workspace = true
 proptest.workspace = true
+# PG6 font probe (ADR-041 section 11). Test only.
+subsetter.workspace = true
 
 [lints]
 workspace = true

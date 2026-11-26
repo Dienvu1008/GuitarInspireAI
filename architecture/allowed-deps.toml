@@ -69,8 +69,9 @@ internal = ["mc-theory", "mc-score"]
 external = []
 # ADR-041 section 8 (user, 2026-11-12 and 2026-11-16): the metrics-table generator and
 # check (serde_json, skrifa), FF-35 (sha2), random scores for L2 and L9 (proptest).
+# ADR-041 section 11 (user, 2026-11-26): the PG6 font probe (subsetter).
 # Tests only; the crate itself keeps no external dependency.
-dev_external = ["proptest", "serde_json", "sha2", "skrifa"]
+dev_external = ["proptest", "serde_json", "sha2", "skrifa", "subsetter"]
 
 [mc-ffi]
 layer = "adapter"

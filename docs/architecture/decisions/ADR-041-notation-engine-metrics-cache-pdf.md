@@ -429,6 +429,77 @@ Every TAB region has a string of 1 or more, so on TAB this order is exactly the 
    - Alternative: export only what fits, and refuse with a message otherwise.
 4. **Which staves are exported.** Proposed: **what the view shows**, meaning the shown tracks and their notation and TAB setting. Alternative: always every track with notation and TAB.
 
+### 11.1 Checkpoint report (2026-11-26, for the user's Go or Revise on 6c-5b)
+
+**What was built.**
+- `mc-notation::paginate` (module `page.rs`) with `PageSize::A4` and `LETTER`, `PageSetup` (margin 36 pt, title 40 pt on page 1, footer 20 pt on every page), and `Pagination { setup, metrics, outline, pages }`.
+- Each page item is a system, or a range of its staves, with its y on the page.
+- `mc-app` re-exports the types, and `DocumentSession::paginate` paginates what the view shows.
+- No FFI or Dart change. No PDF bytes are written.
+- Two error variants were added: `InvalidPage` and `PageTooSmall`.
+
+**Rules as implemented.**
+- The layout is computed at the page content width (A4: 523.28 pt; Letter: 540 pt). The page margins replace the layout margins, which are set to 0. Every other metric is kept, in points.
+- Pages are filled greedily, with the layout's system gap between items.
+- A system that does not fit on the current page goes to the next page if it fits there. Otherwise it is split between tracks, filling the current page first. A track taller than a page body is split between its notation and TAB.
+- One case was not covered by choice 3: a single stave taller than page 1's shorter body but not taller than later pages' bodies. That stave goes to page 2, leaving page 1 with the title only. A stave taller than every page body gives `PageTooSmall`.
+
+**Criteria.**
+
+| Id | Result |
+|---|---|
+| PG1 | Met. Tested over the S11 inputs and fixtures, TYPICAL with 40 bars, two tracks with 60 bars, and LARGE with 8 bars, each in two views (notation and TAB everywhere; alternating TAB only and notation only) at five page sizes (A4, Letter, and short pages of 420, 330 and 280 pt that force splits). Also over 300 random scores at the same five sizes. Checks: order, no stave lost or repeated, no overfilled body, splits only when a system or track is taller than the body. Two mutations of the packer, one breaking greedy filling and one splitting tracks needlessly, were both caught. |
+| PG2 | Met. Each page takes as many items as fit; this is checked page by page in PG1. An edit to the last bar of a system starting on page k leaves pages before k and the earlier systems unchanged: 1, 2 and 4 tracks at three page sizes, with more than 20 edits checked and more than 10 changing later pages. |
+| PG3 | Met. The outline equals `outline_score_with` at the content width. Every item height equals the laid-out staves from `layout_score_systems`. |
+| PG4 | Met. The title area is on page 1 only and the footer is on every page, both outside the body. A 300 pt title moves systems down; zero title and footer give the expected bodies. |
+| PG5 | Met. Unit test: A4 595.28 × 841.89, Letter 612 × 792, margin 36, A4 content width 523.28, bodies 709.89 (page 1) and 749.89 (later pages), footer at 785.89. Page numbers run 1..N. |
+| PG6 | Met; result below. |
+| PG7 | Met; numbers below. |
+| PG8 | Met locally: `subsetter` is a dev-dependency only, without default features, and it adds only `rustc-hash` to the lock file. cargo-deny passes; FF-01, FF-03 and FF-04 pass; the public-API snapshots have additions only (mc-notation +121 lines, mc-app +6). CI: see the commit. |
+| PG9 | This report; the user decides. |
+
+**Page counts at A4, default staff size (string gap 12 pt), notation and TAB on every shown track:**
+
+| Input | Systems | Pages | Split systems |
+|---|---|---|---|
+| keys | 3 | 1 | 0 |
+| feature_rich (2 tracks) | 2 | 2 | 0 |
+| small (1 track, 8 bars) | 8 | 4 | 0 |
+| TYPICAL, 4 tracks | 150 | 201 | 150 |
+| LARGE, 4 tracks | 300 | 600 | 300 |
+| LARGE, 20 tracks | 300 | 3 000 | 300 |
+
+**Finding: the default staff size is large for print.**
+- With the screen metrics taken as points, one notation and TAB track is about 220 to 240 pt tall. A 4-track system is about 950 pt, taller than an A4 body, so every system of TYPICAL is split.
+- At 0.6 of the default (TAB string gap 7.2 pt, staff space 4.8 pt, close to common printed guitar editions), TYPICAL takes 76 pages with no split, LARGE with 4 tracks 300 pages with no split, and LARGE with 20 tracks 1 500 pages.
+- The reference scores are dense (8 or 16 notes per bar on every track), so they give one or two bars per system at either size.
+- A print staff size for 6c-5b is therefore a choice for the user. It is not decided here.
+
+**PG6 font probe (`subsetter` 0.2.6 without the `variable-fonts` feature).**
+- Bravura (CFF): the 13 glyphs `feature_rich` draws, plus `.notdef`, subset from 889 228 to 17 336 bytes.
+- Noto Sans Mono (variable, axes `wght` 100–900 with default 400, and `wdth` 62.5–100 with default 100): the digits, "()", "TAB" and the footer letters "page of" make 22 glyphs, subset from 1 708 408 to 3 764 bytes.
+- In both fonts, every kept glyph draws the same outline as in the full font, compared command by command at 1/1000 unit, and has the same advance width.
+- **Variable-font result: works at the default instance only.** The subset has no variation axes. The outlines are those stored in `glyf`, which are Regular, normal width. That is what the TAB uses.
+- Any other weight, such as a bold title, needs the `variable-fonts` feature. That feature adds a second `skrifa` (0.42.1) with `read-fonts`, `font-types`, `write-fonts`, `kurbo`, `euclid`, `polycool` and `arrayvec`: 8 crates in all. It is not needed for 6c-5b as scoped.
+- `subsetter` removes `cmap`, so the PDF must write its own CID-to-Unicode map, as the crate documents.
+
+**PG7 (release build on the reference machine, 10 runs each, A4):**
+
+| Case | Paginate, p99 | Paginate and lay out every system, p99 |
+|---|---|---|
+| TYPICAL, 4 tracks | 7.1 ms | 21.7 ms |
+| LARGE, 4 tracks | 32.9 ms | 99.8 ms |
+| LARGE, 20 tracks | 149.5 ms | 553.4 ms (max 590 ms) |
+
+- All are well within the 2 s reference. PDF writing and font subsetting are not included; they come in 6c-5b.
+
+**Previews:** `Desktop\GuitarInspire-6c5a-pages\` holds SVG and PNG files for keys and feature_rich at A4, feature_rich at Letter, and five pages of LARGE with 8 bars in the alternating view, where systems are split across pages. They are printed by the ignored test `print_page_previews`.
+
+**Open points for 6c-5b:**
+1. The print staff size (see the finding above).
+2. The title text: the document name comes from the app. The score holds no title.
+3. Whether a page 1 that holds only the title is acceptable. It happens only on very short pages.
+
 ## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.

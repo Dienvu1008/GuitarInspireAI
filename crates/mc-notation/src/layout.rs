@@ -112,6 +112,31 @@ pub fn outline_score_with(
     Ok(break_systems(score, &shown, &widths, metrics))
 }
 
+/// The staves of one system: (position of the stave's track among the shown tracks,
+/// height), in emission order.
+pub(crate) type SystemStaves = Vec<(usize, f32)>;
+
+/// [`outline_score_with`] and the staves of every system, for pagination (ADR-041
+/// section 11). Each stave is (position of its track among the shown tracks, height),
+/// in the order `layout_score_systems` emits them: tracks in score order, notation
+/// before TAB. The heights are the ones emitted, computed without emitting anything.
+pub(crate) fn outline_with_staves(
+    score: &Score,
+    tracks: &[ShownTrack],
+    metrics: &LayoutMetrics,
+) -> Result<(ScoreOutline, Vec<SystemStaves>), NotationError> {
+    let shown = shown_tracks(score, tracks, metrics)?;
+    let plans = plan_all(score, &shown, metrics)?;
+    let widths: Vec<BarWidths> = plans.iter().map(BarPlan::widths).collect();
+    let outline = break_systems(score, &shown, &widths, metrics);
+    let staves = outline
+        .systems
+        .iter()
+        .map(|s| stave_heights(&shown, &widths[s.first_bar..s.end_bar], metrics))
+        .collect();
+    Ok((outline, staves))
+}
+
 /// Bar widths kept between revisions (ADR-031 fallback 1): a bar is measured again
 /// only when its content in a shown track, its master bar, the previous bar's time
 /// signature, the shown tracks or the metrics changed. Edits copy only what they
@@ -417,6 +442,21 @@ fn system_height(shown: &Shown, widths: &[BarWidths], m: &LayoutMetrics) -> f32 
             notation + tab
         })
         .sum()
+}
+
+/// The staves of one system in emission order: (track position, height). The same
+/// heights as [`system_height`] adds up, and as `emit_systems` emits.
+fn stave_heights(shown: &Shown, widths: &[BarWidths], m: &LayoutMetrics) -> SystemStaves {
+    let mut out = Vec::new();
+    for (i, (t, s)) in shown.tracks.iter().zip(&shown.staves).enumerate() {
+        if s.notation {
+            out.push((i, notation_box(widths, i, m).1));
+        }
+        if s.tab {
+            out.push((i, stave_height(t.fretted().tuning.string_count(), m)));
+        }
+    }
+    out
 }
 
 fn break_systems(

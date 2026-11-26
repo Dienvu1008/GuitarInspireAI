@@ -91,3 +91,17 @@ Against the three conditions for lowering likelihood to Medium:
 **Condition 1 replaced.** Effort is no longer checked against time, by the user's choice of measure (c). The condition is now: the slices since the last review delivered their fixed scope with no scope cut and no criterion failed except accepted evidence gaps. Conditions 2 and 3 are unchanged.
 
 The next review point is after 6c-5a, the pagination checkpoint: the largest unmeasured item.
+
+### R-13 review after 6c-5a (2026-11-26, proposed; the decision is the user's)
+
+Against the three conditions for lowering likelihood to Medium (condition 1 as replaced on 2026-11-16):
+
+1. **Fixed scope delivered, no scope cut, no criterion failed except accepted gaps: met for 6c-4 and 6c-5a.**
+   - 6c-4 is closed, with H7 and H8 passed by the user.
+   - 6c-5a met PG1 to PG8 locally. PG9 is the user's decision.
+2. **Flutter painting with notation meets the ADR-041 decision 7 criteria: unchanged since 6c-3.** TYPICAL is met. LARGE remains an accepted evidence gap.
+3. **No new class of engraving fault needing a model change: met.**
+   - Pagination needed no change to the system model. It reads stave heights that the outline already computes.
+   - One open design question was found: the default staff size gives very large print. It is a choice of metrics for 6c-5b, not a model change.
+
+**Proposed: keep High until 6c-5b.** The PDF export is the last unmeasured item: embedding, determinism, and the user's Edge check. Lowering the likelihood before that would rest on half of 6c-5. The next review point is after 6c-5b.

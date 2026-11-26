@@ -118,133 +118,197 @@ pub fn scaled(k: f32) -> LayoutMetrics {
     }
 }
 
-pub fn render(l: &ScoreLayout) -> String {
+fn header(s: &mut String, w: f32, h: f32) {
     let font = concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/../../packages/ui_kit/fonts/bravura/Bravura.otf"
     )
     .replace('\\', "/");
-    let mut s = String::new();
     let _ = writeln!(
         s,
-        r#"<svg xmlns="http://www.w3.org/2000/svg" width="{w:.0}" height="{h:.0}" viewBox="0 0 {w:.1} {h:.1}">"#,
-        w = l.width,
-        h = l.height
+        r#"<svg xmlns="http://www.w3.org/2000/svg" width="{w:.0}" height="{h:.0}" viewBox="0 0 {w:.1} {h:.1}">"#
     );
     let _ = writeln!(
         s,
         r#"<style>@font-face {{ font-family: Bravura; src: url("file:///{font}"); }}</style>"#
     );
     let _ = writeln!(s, r#"<rect width="100%" height="100%" fill="white"/>"#);
+}
+
+pub fn render(l: &ScoreLayout) -> String {
+    let mut s = String::new();
+    header(&mut s, l.width, l.height);
     for sys in &l.systems {
         for st in &sys.staves {
-            let lay = &st.layout;
-            let _ = writeln!(s, r#"<g transform="translate(0 {:.2})">"#, sys.y + st.top);
-            match st.kind {
-                StaveKind::Notation => {
-                    let n = &lay.notation;
-                    for x in &n.lines {
-                        let _ = writeln!(
-                            s,
-                            r#"<line x1="{:.2}" y1="{:.2}" x2="{:.2}" y2="{:.2}" stroke="black" stroke-width="{:.2}"/>"#,
-                            x.x1, x.y1, x.x2, x.y2, x.thickness
-                        );
-                    }
-                    for b in &n.beams {
-                        let h = b.thickness / 2.0;
-                        let _ = writeln!(
-                            s,
-                            r#"<polygon points="{:.2},{:.2} {:.2},{:.2} {:.2},{:.2} {:.2},{:.2}"/>"#,
-                            b.x1,
-                            b.y1 - h,
-                            b.x2,
-                            b.y2 - h,
-                            b.x2,
-                            b.y2 + h,
-                            b.x1,
-                            b.y1 + h
-                        );
-                    }
-                    for t in &n.ties {
-                        let d = if t.up { -t.height } else { t.height };
-                        let m = (t.x1 + t.x2) / 2.0;
-                        let _ = writeln!(
-                            s,
-                            r#"<path d="M {:.2} {:.2} Q {:.2} {:.2} {:.2} {:.2} Q {:.2} {:.2} {:.2} {:.2} Z"/>"#,
-                            t.x1,
-                            t.y,
-                            m,
-                            t.y + 2.0 * d,
-                            t.x2,
-                            t.y,
-                            m,
-                            t.y + 2.0 * d - d * 0.5,
-                            t.x1,
-                            t.y
-                        );
-                    }
-                    for g in &n.glyphs {
-                        let _ = writeln!(
-                            s,
-                            r#"<text x="{:.2}" y="{:.2}" font-family="Bravura" font-size="{:.2}">&#x{:X};</text>"#,
-                            g.x,
-                            g.y,
-                            4.0 * n.staff_space,
-                            g.glyph.codepoint()
-                        );
-                    }
-                }
-                StaveKind::Tab => {
-                    for x in &lay.lines {
-                        let w = if matches!(
-                            x.kind,
-                            mc_notation::LineKind::ThickBarLine | mc_notation::LineKind::Beam
-                        ) {
-                            3.0
-                        } else {
-                            1.0
-                        };
-                        let _ = writeln!(
-                            s,
-                            r#"<line x1="{:.2}" y1="{:.2}" x2="{:.2}" y2="{:.2}" stroke="black" stroke-width="{w}"/>"#,
-                            x.x1, x.y1, x.x2, x.y2
-                        );
-                    }
-                    for g in &lay.glyphs {
-                        let text = match &g.kind {
-                            GlyphKind::Fret { fret, tied, .. } => {
-                                if *tied {
-                                    format!("({fret})")
-                                } else {
-                                    fret.to_string()
-                                }
-                            }
-                            GlyphKind::TabClef => "TAB".into(),
-                            GlyphKind::TimeSignature {
-                                numerator,
-                                denominator,
-                            } => format!("{numerator}/{denominator}"),
-                            GlyphKind::Rest { .. } => "r".into(),
-                            GlyphKind::Tuplet { actual } => actual.to_string(),
-                            _ => continue,
-                        };
-                        let fs = g.width.max(10.0) / text.len().max(1) as f32 * 1.4;
-                        let _ = writeln!(
-                            s,
-                            r#"<rect x="{:.2}" y="{:.2}" width="{:.2}" height="{:.2}" fill="white"/><text x="{:.2}" y="{:.2}" font-family="Consolas" font-size="{fs:.1}" text-anchor="middle" dominant-baseline="central">{text}</text>"#,
-                            g.x - g.width / 2.0,
-                            g.y - fs * 0.45,
-                            g.width,
-                            fs * 0.9,
-                            g.x,
-                            g.y
-                        );
-                    }
-                }
-            }
-            let _ = writeln!(s, "</g>");
+            stave(&mut s, st, 0.0, sys.y + st.top);
         }
     }
     let _ = writeln!(s, "</svg>");
     s
+}
+
+/// One page of a pagination (PG9 preview): the paper, the title and footer areas
+/// outlined in grey with placeholder text, and the staves of each item where the
+/// pagination puts them. `systems` are all systems of `p.outline`.
+pub fn render_page(
+    p: &mc_notation::Pagination,
+    systems: &[mc_notation::ScoreSystem],
+    page: usize,
+    title: &str,
+) -> String {
+    let pg = &p.pages[page];
+    let mut s = String::new();
+    header(&mut s, p.setup.size.width, p.setup.size.height);
+    let area = |s: &mut String, r: mc_notation::Rect, dash: &str| {
+        let _ = writeln!(
+            s,
+            r##"<rect x="{:.2}" y="{:.2}" width="{:.2}" height="{:.2}" fill="none" stroke="#bbb" stroke-width="0.5" stroke-dasharray="{dash}"/>"##,
+            r.x, r.y, r.w, r.h
+        );
+    };
+    area(&mut s, pg.body, "4 2");
+    area(&mut s, pg.footer, "1 1");
+    let _ = writeln!(
+        s,
+        r#"<text x="{:.2}" y="{:.2}" font-family="Consolas" font-size="9" text-anchor="middle">page {} of {}</text>"#,
+        pg.footer.x + pg.footer.w / 2.0,
+        pg.footer.bottom() - 3.0,
+        pg.number,
+        p.page_count()
+    );
+    if let Some(t) = pg.title {
+        area(&mut s, t, "1 1");
+        let _ = writeln!(
+            s,
+            r#"<text x="{:.2}" y="{:.2}" font-family="Consolas" font-size="20" text-anchor="middle">{title}</text>"#,
+            t.x + t.w / 2.0,
+            t.y + 22.0
+        );
+    }
+    for item in &pg.items {
+        let sys = &systems[item.system];
+        let offset = item.y - sys.staves[item.staves.start].top;
+        if item.continued() {
+            let _ = writeln!(
+                s,
+                r##"<text x="{:.2}" y="{:.2}" font-family="Consolas" font-size="7" fill="#888">system {} continued</text>"##,
+                pg.body.x,
+                item.y + 6.0,
+                item.system + 1
+            );
+        }
+        for st in &sys.staves[item.staves.clone()] {
+            stave(&mut s, st, pg.body.x, offset + st.top);
+        }
+    }
+    let _ = writeln!(s, "</svg>");
+    s
+}
+
+fn stave(s: &mut String, st: &mc_notation::Stave, x: f32, y: f32) {
+    let lay = &st.layout;
+    let _ = writeln!(s, r#"<g transform="translate({x:.2} {y:.2})">"#);
+    match st.kind {
+        StaveKind::Notation => {
+            let n = &lay.notation;
+            for x in &n.lines {
+                let _ = writeln!(
+                    s,
+                    r#"<line x1="{:.2}" y1="{:.2}" x2="{:.2}" y2="{:.2}" stroke="black" stroke-width="{:.2}"/>"#,
+                    x.x1, x.y1, x.x2, x.y2, x.thickness
+                );
+            }
+            for b in &n.beams {
+                let h = b.thickness / 2.0;
+                let _ = writeln!(
+                    s,
+                    r#"<polygon points="{:.2},{:.2} {:.2},{:.2} {:.2},{:.2} {:.2},{:.2}"/>"#,
+                    b.x1,
+                    b.y1 - h,
+                    b.x2,
+                    b.y2 - h,
+                    b.x2,
+                    b.y2 + h,
+                    b.x1,
+                    b.y1 + h
+                );
+            }
+            for t in &n.ties {
+                let d = if t.up { -t.height } else { t.height };
+                let m = (t.x1 + t.x2) / 2.0;
+                let _ = writeln!(
+                    s,
+                    r#"<path d="M {:.2} {:.2} Q {:.2} {:.2} {:.2} {:.2} Q {:.2} {:.2} {:.2} {:.2} Z"/>"#,
+                    t.x1,
+                    t.y,
+                    m,
+                    t.y + 2.0 * d,
+                    t.x2,
+                    t.y,
+                    m,
+                    t.y + 2.0 * d - d * 0.5,
+                    t.x1,
+                    t.y
+                );
+            }
+            for g in &n.glyphs {
+                let _ = writeln!(
+                    s,
+                    r#"<text x="{:.2}" y="{:.2}" font-family="Bravura" font-size="{:.2}">&#x{:X};</text>"#,
+                    g.x,
+                    g.y,
+                    4.0 * n.staff_space,
+                    g.glyph.codepoint()
+                );
+            }
+        }
+        StaveKind::Tab => {
+            for x in &lay.lines {
+                let w = if matches!(
+                    x.kind,
+                    mc_notation::LineKind::ThickBarLine | mc_notation::LineKind::Beam
+                ) {
+                    3.0
+                } else {
+                    1.0
+                };
+                let _ = writeln!(
+                    s,
+                    r#"<line x1="{:.2}" y1="{:.2}" x2="{:.2}" y2="{:.2}" stroke="black" stroke-width="{w}"/>"#,
+                    x.x1, x.y1, x.x2, x.y2
+                );
+            }
+            for g in &lay.glyphs {
+                let text = match &g.kind {
+                    GlyphKind::Fret { fret, tied, .. } => {
+                        if *tied {
+                            format!("({fret})")
+                        } else {
+                            fret.to_string()
+                        }
+                    }
+                    GlyphKind::TabClef => "TAB".into(),
+                    GlyphKind::TimeSignature {
+                        numerator,
+                        denominator,
+                    } => format!("{numerator}/{denominator}"),
+                    GlyphKind::Rest { .. } => "r".into(),
+                    GlyphKind::Tuplet { actual } => actual.to_string(),
+                    _ => continue,
+                };
+                let fs = g.width.max(10.0) / text.len().max(1) as f32 * 1.4;
+                let _ = writeln!(
+                    s,
+                    r#"<rect x="{:.2}" y="{:.2}" width="{:.2}" height="{:.2}" fill="white"/><text x="{:.2}" y="{:.2}" font-family="Consolas" font-size="{fs:.1}" text-anchor="middle" dominant-baseline="central">{text}</text>"#,
+                    g.x - g.width / 2.0,
+                    g.y - fs * 0.45,
+                    g.width,
+                    fs * 0.9,
+                    g.x,
+                    g.y
+                );
+            }
+        }
+    }
+    let _ = writeln!(s, "</g>");
 }

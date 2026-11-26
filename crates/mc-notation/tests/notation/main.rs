@@ -1,6 +1,8 @@
 //! Notation staff tests (ADR-041 section 8): L2 to L6 and L10.
 
 mod check;
+mod fonts;
+mod page;
 mod random;
 mod samples;
 mod svg;

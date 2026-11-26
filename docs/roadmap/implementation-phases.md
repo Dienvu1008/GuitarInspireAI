@@ -141,6 +141,7 @@ Sub-phases can be reordered by user priority.
     | 6c-2 | 3 to 5 FTE weeks | 2026-11-16 08:35 to 09:18 (step 1), 09:23 to 09:56 (step 2) | Criteria approved first. Interrupted once for a decision on a dependency advisory (`skrifa`). L12 accepted 2026-11-16; closed. |
     | 6c-3 | 2 to 3 FTE weeks | 2026-11-16 10:27 to 11:38 (end-to-end runs included) | Criteria approved first. F8 accepted; LARGE accepted as an evidence gap (2026-11-16); closed. |
     | 6c-4 | 0.5 to 1 FTE weeks | 2026-11-21 13:28 to 13:46 (end-to-end runs included); calendar from criteria to code 2026-11-16 to 2026-11-21 | H7 end to end passed on the user's quiet-machine runs (9 071 µs); H8 passed by the user's manual check. Closed 2026-11-21. User time: the manual check and three tool runs (duration not recorded). |
+    | 6c-5a | part of 6c-5 (2 to 3 FTE weeks with 6c-5b) | 2026-11-26 11:46 to 12:15 (bench and previews included); calendar from criteria to code 2026-11-21 to 2026-11-26 | PG1 to PG8 met locally; PG9 report in ADR-041 section 11.1, waiting for the user's Go or Revise. Finding: the default staff size gives very large print (TYPICAL 201 A4 pages). |
 
   - **Effort measure (user, 2026-11-16): option (c).**
     - The estimate is not checked against time. Progress is tracked by scope and risk.

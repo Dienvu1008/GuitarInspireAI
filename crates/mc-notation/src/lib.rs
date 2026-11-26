@@ -12,6 +12,7 @@ mod engrave;
 mod error;
 mod layout;
 mod metrics;
+mod page;
 mod semantic;
 pub mod smufl;
 mod staff;
@@ -28,4 +29,8 @@ pub use layout::{
     outline_score_cached, outline_score_cached_with, outline_score_with,
 };
 pub use metrics::{LayoutMetrics, TAB_STRING_GAP_SP};
+pub use page::{
+    FOOTER_HEIGHT_PT, PAGE_MARGIN_PT, Page, PageItem, PageSetup, PageSize, Pagination,
+    TITLE_HEIGHT_PT, paginate,
+};
 pub use staff::{ShownTrack, StaffConfiguration, StaveKind};
