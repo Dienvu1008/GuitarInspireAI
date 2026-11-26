@@ -118,3 +118,5 @@ Against the three conditions for lowering likelihood to Medium (condition 1 as r
    Two gaps were found and recorded, not fixed: no track names in print, and markers repeated on continued parts.
 
 **Proposed:** lower the likelihood to **Medium** once the user's Edge check (PD9) passes. Keep High if it fails. The next review point is the 6c exit (6c-6).
+
+**Update (2026-11-26):** PD9 passed (user), so condition 1 is met for 6c-5b. Lowering the likelihood to Medium waits for the user's confirmation.

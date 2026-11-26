@@ -646,7 +646,7 @@ Positions always come from the layout. The rules below cover only symbols, sizes
 - The title is set at 20 pt, centred in the upper half of the title area.
 - "page n of N" is set at 10 pt, centred in the lower half of the footer.
 
-### 12.2 Slice 6c-5b report (2026-11-26, for the user's Edge check)
+### 12.2 Slice 6c-5b report (2026-11-26; closed 2026-11-26 after the user's Edge check passed)
 
 **What was built.**
 - New adapter crate `mc-pdf`: `export_pdf(score, shown, setup, title) -> PdfExport { bytes, pages, fonts }`.
@@ -669,7 +669,7 @@ Positions always come from the layout. The rules below cover only symbols, sizes
 | PD6 | Met for TYPICAL. Release build, 5 runs; Spacious and Compact give the same times. |
 | PD7 | Met locally. cargo-deny passes; the new lock entries are `pdf-writer` 0.15.0 and `ryu`. FF-01 passes with the new `mc-pdf` row, and FF-03, FF-04 and FF-34 pass. FF-22 has additions only (mc-notation +23, mc-app +1). There is no `unsafe`. CI: see the commit. |
 | PD8 | Met. Below. |
-| PD9 | For the user. |
+| PD9 | **Passed (user, 2026-11-26):** every PDF passed the Edge check. |
 
 **PD6 timings (release build, export including layout, painting, subsetting and compression):**
 
