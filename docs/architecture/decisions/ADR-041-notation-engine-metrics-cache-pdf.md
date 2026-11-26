@@ -500,6 +500,23 @@ Every TAB region has a string of 1 or more, so on TAB this order is exactly the 
 2. The title text: the document name comes from the app. The score holds no title.
 3. Whether a page 1 that holds only the title is acceptable. It happens only on very short pages.
 
+### 11.2 Revise of 6c-5a: print staff size (user decision 2026-11-26)
+
+**User decision (2026-11-26).**
+- PG9: **Revise** before 6c-5b.
+- Print uses its own staff size: **0.6 of the default metrics**, a TAB string gap of 7.2 pt and a staff space of 4.8 pt.
+- The title is the document name, supplied by the app (open point 2).
+
+**Criteria of the Revise (the scope the user approved; fixed before code):**
+
+| Id | Criterion | Checked by |
+|---|---|---|
+| PR1 | **Print metrics belong to the page setup.** `PageSetup` carries the staff scale, 0.6 by default, as a named constant. `paginate` takes no screen metrics: the layout metrics are the defaults scaled by the staff scale, with the page content width and layout margins of 0. An export therefore cannot use the screen zoom. | Unit tests with values |
+| PR2 | **PG1 to PG5 hold at print size**: A4 and Letter at 0.6, and scale 1.0 on short pages so that splits between tracks and between staves stay tested. | The PG tests |
+| PR3 | **Engraving holds at print size.** The notation checks (L2 to L4) find no violation at the print metrics on the S11 inputs, the fixtures and 300 random scores. TAB fret numbers on one string do not overlap. | Tests |
+| PR4 | **PG7 again** at print size. | Bench |
+| PR5 | **Report and previews** at print size, with page counts. Then Go or Revise for 6c-5b, decided by the user. | The user |
+
 ## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.
