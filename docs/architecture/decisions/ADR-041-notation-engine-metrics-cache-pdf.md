@@ -550,6 +550,37 @@ Against the default size: TYPICAL drops from 201 to 76 A4 pages. The reference s
 - The test painter draws two-digit frets smaller than one-digit frets, because it divides the glyph width by the digit count. This is painting only; the PDF sets its own text size in 6c-5b.
 - At 0.6 the system gap is 9.6 pt, so a system's TAB rhythm sits close to the next system's notation without touching it. The gap is a candidate for review in 6c-5b.
 
+**User decision on the Revise (2026-11-26):** go on to 6c-5b, with adjustments to its scope and approach (option B). The adjustments are the choices in section 12.
+
+## 12. Slice 6c-5b PDF export: acceptance criteria (Proposed 2026-11-26, pending the user; fixed before any code)
+
+**Design, from decision 5 and sections 11 to 11.2:**
+- **New adapter crate `mc-pdf`** (layer adapter). Internal dependency: `mc-notation`, plus `mc-score` for the score type `paginate` takes. External: `pdf-writer` 0.15.0, `subsetter` 0.2.6 (without default features), `miniz_oxide` 0.9.1, and `skrifa` 0.50.0, which moves from a dev-dependency to a runtime dependency here for reading cmap and advances. Users: `mc-cli`, and `mc-ffi` if choice 2 includes the app.
+- **Input:** the score, the shown tracks, a `PageSetup` and the title text. `mc-pdf` calls `paginate` and `layout_score_systems`, then only paints. It makes no layout decision (GR-05).
+- **Output:** PDF bytes. The file write belongs to the CLI or the app.
+- **Fonts:** only the bundled Bravura and Noto Sans Mono, subset and embedded as CID fonts with a ToUnicode map, so TAB text can be searched and copied. No system font and no standard-14 font. A character missing from the font is an error that names the character. It is never substituted.
+- **TAB text size:** chosen so that the font's digit advance equals `digit_width`. Noto Sans Mono's advance is 0.6 em, so 4.2 pt / 0.6 = 7 pt at the print size. The ADR-018 test that the Rust and Dart widths agree is added.
+- **Painting of TAB items** (fret numbers with the string cleared behind them, rests, dots, the TAB clef, time signatures, repeat signs, voltas, markers, bar numbers, string names, accent, stroke arrow, percussive "S", palm mute). They follow the Flutter painter (`system_painter.dart`). See choice 3.
+- **Determinism:** no creation date and no random ID. The document ID is derived from the content. The output is byte-identical across runs, processes, and debug or release builds.
+
+| Id | Criterion | Checked by |
+|---|---|---|
+| PD1 | **Positions read back equal the layout.** Every glyph, line and beam in the PDF content streams, parsed back in a test, is at the layout model's position on its page (pagination y plus stave top), within 0.01 pt. Checked on the S11 inputs, the fixtures and 50 random scores, at A4 and Letter. | Tests |
+| PD2 | **Fonts.** The file holds exactly the fonts it uses, at most the two. Each is embedded, with a subset name (`ABCDEF+Bravura`, `ABCDEF+NotoSansMono`). No font reference is left unembedded. Each embedded glyph has the outline of the full font (the PG6 comparison, now on the export's own subsets). | Tests |
+| PD3 | **No substitution.** Text with a character missing from the fonts, for example in the title or a marker, fails with an error naming the character. No PDF is written. | Test |
+| PD4 | **Deterministic.** Two runs give identical bytes, in-process and across a debug and a release build of the CLI. | Test and CI |
+| PD5 | **Pages.** The page count, page size, title on page 1 and "page n of N" on every page match the pagination. Split systems are continued on the next page. | Tests |
+| PD6 | **Performance.** Exporting TYPICAL (4 tracks, notation and TAB, A4) takes at most 2 s in release, the "open large project" budget. LARGE with 4 and 20 tracks is measured and reported. A failure is reported, and the threshold is not changed. | Bench |
+| PD7 | **Non-functional.** cargo-deny passes with the new runtime dependencies. FF-01 gets a new `mc-pdf` row in `allowed-deps.toml` with this trailer. FF-03, FF-04 and FF-34 pass. FF-22 has additions only. No `unsafe`. CI is green. | CI |
+| PD8 | **Reproducible artefacts.** The PDFs given to the user are produced by one CLI command from fixtures. The command, the fixtures and the list of embedded fonts with subset names are kept with them. | Review |
+| PD9 | **The user's check in Microsoft Edge**, per the decision 5 checklist: Bravura glyphs correct, with no boxes or substitutes; notation and TAB aligned; vector at every zoom; no dependence on installed fonts; several pages. Then the user closes 6c-5b. | The user |
+
+**Choices for the user before code (the adjustments of option B):**
+1. **System gap in print.** Today it is 0.6 × 16 = 9.6 pt, tight between a TAB rhythm and the next notation. Proposed: 4 staff spaces (19.2 pt) in the print metrics only. Page counts are measured again; TYPICAL grows by a few pages. Alternative: keep 9.6 pt.
+2. **Where export is available.** Proposed: the CLI (`mc-cli export-pdf`) and the app, with a File menu item "Export PDF..." that offers A4 or Letter and the shown tracks. That needs FFI, Dart codegen and a save dialog. Alternative: the CLI only in 6c-5b, with the app in a later slice. This is smaller, and the Edge check works the same.
+3. **TAB painting rules in two places.** The Flutter painter holds its own text scales, dot sizes and arrow shapes. Proposed: `mc-pdf` follows them, from a table in this ADR that both painters refer to, and the Edge check compares. Alternative: move those values into the layout model so both only paint. This is cleaner, but it changes FFI, Dart and the TAB goldens, so it is a larger slice.
+4. **Where the font files come from.** Proposed: `mc-pdf` includes the bundled files at compile time with `include_bytes!`. This is deterministic and needs no I/O, but adds about 2.6 MB to the CLI and app binaries. Alternative: the app passes the font bytes it already bundles as Flutter assets. The binary then stays smaller, but the CLI needs another way to find the fonts.
+
 ## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.
