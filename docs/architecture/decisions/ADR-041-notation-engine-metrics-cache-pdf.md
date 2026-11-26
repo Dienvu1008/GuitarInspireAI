@@ -334,7 +334,13 @@ Every TAB region has a string of 1 or more, so on TAB this order is exactly the 
 2. **Cursor and selection on notation.** Proposed: **painted on both staves.** On notation the cursor is a column tint over the beat region, with the same colours as TAB, so the user sees which beat is selected. Alternative: TAB only, as in 6c-3.
 3. **A tap on another track's notation.** Proposed: select the track **and** place the cursor, consistent with TAB (ADR-031 M4). This changes 6c-3, where it only selected the track. Alternative: keep selecting the track only.
 
-### Results of 6c-4 (2026-11-21; H7 and H8 pending the user)
+### Results of 6c-4 (2026-11-21; closed)
+
+**User results (2026-11-21).**
+- **H7 end to end: pass.** The user ran the tool three times on a quiet machine (no agent running), TYPICAL with 4 tracks and notation. `p99_compute_bound_us` stayed within 16 000 µs in all three runs (9 071 µs reported). This settles the unclear agent runs below.
+- **H8: pass.** The user's manual check in the release app covered all seven steps of the script. Step 3, where a click in the beat column away from the head keeps the string, was explained and then confirmed.
+
+6c-4 is closed.
 
 | Id | Result |
 |---|---|
@@ -367,6 +373,54 @@ Every TAB region has a string of 1 or more, so on TAB this order is exactly the 
 5. With two voices, click each voice's notehead.
 6. Click another track's notation: that track becomes active with the cursor on the beat.
 7. Click the clef area: nothing changes.
+
+## 11. Slice 6c-5a pagination checkpoint: acceptance criteria (Proposed 2026-11-21, pending the user; fixed before any code)
+
+**Purpose (decision 5).**
+- Settle how a layout becomes pages, before the PDF export (6c-5b) is committed to.
+- The checkpoint ends with a Go or Revise for 6c-5b, decided by the user.
+- No PDF bytes are written in 6c-5a.
+
+**Dependency re-check (follow-up of section 8, 2026-11-21, crates.io):**
+- `pdf-writer` 0.15.0: bitflags, itoa, memchr, ryu.
+- `subsetter` 0.2.6: rustc-hash, plus optional skrifa, kurbo and write-fonts. It **no longer uses `ttf-parser`**.
+- `miniz_oxide` 0.9.1: adler2.
+- All are MIT OR Apache-2.0 (`miniz_oxide` also Zlib).
+- The list for 6c-5b is therefore `pdf-writer`, `subsetter` and `miniz_oxide`, with `skrifa` (already a dev-dependency) for font reading. cargo-deny runs in 6c-5b, when they are added.
+- A larger alternative, `krilla` (by the same authors, with about 15 dependencies), is noted and not proposed.
+
+**Design points the criteria rely on:**
+- **Pagination is a layout decision, so it lives in `mc-notation`** as a pure function. No new crate in 6c-5a.
+  - Input: the score, the shown staves and a page description (size and margins in points).
+  - Output: pages, each a list of system indices (or stave ranges, see choice 3) with their y on the page.
+- **Units.** One layout unit is one PDF point (1/72 inch). The layout width is the page width minus the margins. The staff size comes from `LayoutMetrics::string_spacing` (default 12 pt). It is fixed per export and is not the screen zoom.
+- **Page geometry, proposed defaults:**
+  - A4, 595.28 × 841.89 pt; margins 36 pt (0.5 in);
+  - systems placed from the top with the existing system gap;
+  - a page holds whole systems;
+  - no system is stretched vertically to fill a page.
+- **Header and footer, proposed:** the title (document name) on page 1, and "page n of N" at the foot of every page. Their space comes out of the page body.
+- **TAB text font in the PDF.** It is Noto Sans Mono (ADR-021), which is a variable font. Embedding a variable-font subset is a known risk. 6c-5a checks with `subsetter` that the TAB digits can be subset and embedded at the default instance. That is a probe, not the export.
+
+| Id | Criterion | Checked by |
+|---|---|---|
+| PG1 | **Whole systems, in order.** Every system appears exactly once, in order. No page body is overfilled. A page break happens only between systems, or, for a system taller than a page body, as choice 3 decides. | Rust property tests over the S11 inputs, the fixtures and 300 random scores, at two page sizes |
+| PG2 | **Greedy and stable.** Each page takes as many systems as fit. An edit that changes only bars on page k does not change pages before k. | Tests |
+| PG3 | **Same systems as the screen.** At the page's content width, system breaks and system content equal `outline_score_with` and `layout_score_systems` at that width. Pagination only stacks systems; it re-lays nothing out. | Equality test |
+| PG4 | **Header and footer.** Page 1 reserves the title; every page reserves the footer. Systems never overlap them. | Tests |
+| PG5 | **Page geometry values.** A4 and Letter sizes in points, margins and content width are tested as numbers. Every distance is a named constant with its source. | Unit tests |
+| PG6 | **Font probe.** `subsetter` subsets Bravura (glyphs used by `feature_rich`) and Noto Sans Mono (digits, parentheses, "TAB"). Each subset parses back with `skrifa`, and each glyph maps to the same outline as in the full font. The result for the variable font (works, or the limits found) is reported for the 6c-5b decision. | A test with dev-dependencies only |
+| PG7 | **Performance.** Paginating TYPICAL and LARGE (4 and 20 tracks with notation) is measured, and reported against the 2 s "open large project" budget as the reference for a one-off export. | Bench |
+| PG8 | **Non-functional.**<br>– No runtime dependency added in 6c-5a; `subsetter` is a dev-dependency for PG6, checked by cargo-deny.<br>– FF-03, FF-04 and FF-22 additions only.<br>– CI green. | CI |
+| PG9 | **Checkpoint report** in this section: page counts for the fixtures, the oversize-system cases found, the PG6 font result and a page preview (SVG from the test renderer) for the user. Then **Go or Revise for 6c-5b**, decided by the user. | The user |
+
+**Choices for the user before code:**
+1. **Page size.** Proposed: A4 by default, Letter as an option (both supported in 6c-5b). Alternative: A4 only.
+2. **Header and footer.** Proposed: title on page 1, and "page n of N" on every page. Alternative: page numbers only.
+3. **A system taller than a page body.** This happens with many tracks: LARGE with 20 tracks gives a system of about 2 500 units, against a body of about 770 pt.
+   - Proposed: **break between tracks**, keeping each track's notation and TAB together. The next page continues the same bars, with the clef and the key repeated. Only if one track alone is taller than a page (not seen in practice), break between its notation and TAB.
+   - Alternative: export only what fits, and refuse with a message otherwise.
+4. **Which staves are exported.** Proposed: **what the view shows**, meaning the shown tracks and their notation and TAB setting. Alternative: always every track with notation and TAB.
 
 ## Alternatives
 
