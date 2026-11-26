@@ -552,7 +552,18 @@ Against the default size: TYPICAL drops from 201 to 76 A4 pages. The reference s
 
 **User decision on the Revise (2026-11-26):** go on to 6c-5b, with adjustments to its scope and approach (option B). The adjustments are the choices in section 12.
 
-## 12. Slice 6c-5b PDF export: acceptance criteria (Proposed 2026-11-26, pending the user; fixed before any code)
+## 12. Slice 6c-5b PDF export: acceptance criteria (proposed and fixed 2026-11-26, before any code)
+
+**User decision (2026-11-26).** PD1 to PD9 approved. The choices:
+
+1. **System gap:** both options, chosen by the person exporting.
+   - "Spacious" is 4 staff spaces (19.2 pt at the print size).
+   - "Compact" is the scaled default (9.6 pt).
+   - The agent assumes "Spacious" is the default; the user may change this.
+   - PD5 and PD6 are checked with both.
+2. **Where export is available:** as proposed, the CLI and the app (File menu "Export PDF...", A4 or Letter, and the spacing).
+3. **TAB painting rules:** as proposed. `mc-pdf` follows the Flutter painter from a table in this ADR (section 12.1), and the Edge check compares the two.
+4. **Font files:** as proposed, included at compile time with `include_bytes!`.
 
 **Design, from decision 5 and sections 11 to 11.2:**
 - **New adapter crate `mc-pdf`** (layer adapter). Internal dependency: `mc-notation`, plus `mc-score` for the score type `paginate` takes. External: `pdf-writer` 0.15.0, `subsetter` 0.2.6 (without default features), `miniz_oxide` 0.9.1, and `skrifa` 0.50.0, which moves from a dev-dependency to a runtime dependency here for reading cmap and advances. Users: `mc-cli`, and `mc-ffi` if choice 2 includes the app.
