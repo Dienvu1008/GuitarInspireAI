@@ -20,7 +20,7 @@ Scale: Likelihood and impact are Low, Medium, High.
 | R-10 | MIDI import string assignment produces unplayable TAB | High | Low | Report and playability heuristic; user edits | 4 |
 | R-11 | Tuner unstable on low E or with noisy input | Medium | Medium | S3; window size tuning; clarity threshold | 5 |
 | R-12 | Mobile packaging and audio latency | Medium | Medium | S12 before Phase 7 | 7 |
-| R-13 | Engraving quality for standard notation consumes far more time than estimated | High (kept after S11, 2026-11-12; review after 6c-3) | Medium (unchanged) | See the R-13 note below the table | 6c |
+| R-13 | Engraving quality for standard notation consumes far more time than estimated | Medium (lowered from High by the user, 2026-11-26, after 6c-5b; review at the 6c exit) | Medium (unchanged) | See the R-13 note below the table | 6c |
 | R-14 | Guitar Pro format and legal uncertainty | Medium | Medium | S10 done (2026-11-11): GP3 to GP5 5.00 read and GP5 written, checked against TuxGuitar 2.0.1 only. Mitigation: clean-room implementation (ADR-036 section 2), refusal of unverified layouts, and import reports. Open: no file written by Guitar Pro, no 5.10 file, brush direction, text encoding, and a legal review before a commercial release | 6d |
 | R-15 | AI features fail to reach useful quality | High | Medium | Candidates only; timeboxes; agreed quality thresholds | 9, 10 |
 | R-16 | License issues in dependencies or bundled data (SoundFont, model weights) | Medium (S7: Rust trees clean except optional MPL-2.0 `audio_thread_priority`; SoundFont choice pending) | High | ADR-015; cargo-deny in CI; own MMCSS call instead of MPL crate; FluidR3 GM (MIT) proposed; Dart audit in Phase 3; S9 for model weights | 0, 3, 9 |
@@ -117,6 +117,8 @@ Against the three conditions for lowering likelihood to Medium (condition 1 as r
    - a test reader counting font descriptors as fonts.
    Two gaps were found and recorded, not fixed: no track names in print, and markers repeated on continued parts.
 
-**Proposed:** lower the likelihood to **Medium** once the user's Edge check (PD9) passes. Keep High if it fails. The next review point is the 6c exit (6c-6).
+**Proposed:** lower the likelihood to **Medium** once the user's Edge check (PD9) passes. Keep High if it fails. The next review point is the 6c exit (6c-7; "6c-6" in the first version of this line was a slip).
 
-**Update (2026-11-26):** PD9 passed (user), so condition 1 is met for 6c-5b. Lowering the likelihood to Medium waits for the user's confirmation.
+**Update (2026-11-26):** PD9 passed (user), so condition 1 is met for 6c-5b.
+
+**Decision (user, 2026-11-26): likelihood lowered to Medium.** The next review is at the 6c exit (6c-7).
