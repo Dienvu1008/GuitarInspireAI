@@ -32,6 +32,7 @@ mc-audio = { path = "crates/mc-audio" }
 mc-project = { path = "crates/mc-project" }
 mc-app = { path = "crates/mc-app" }
 mc-pattern = { path = "crates/mc-pattern" }
+mc-pdf = { path = "crates/mc-pdf" }
 serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "=1.0.154"
 zip = { version = "=9.1.3", default-features = false, features = ["deflate-flate2-zlib-rs"] }
@@ -47,6 +48,10 @@ skrifa = "=0.50.0"
 # `variable-fonts` feature, which would add a second skrifa (0.42), write-fonts and kurbo;
 # variable fonts are then subset at their default instance.
 subsetter = { version = "=0.2.6", default-features = false }
+# mc-pdf only (ADR-041 decision 5 and section 12): PDF writing and content-stream
+# compression. pdf-writer MIT OR Apache-2.0; miniz_oxide MIT OR Zlib OR Apache-2.0.
+pdf-writer = "=0.15.0"
+miniz_oxide = "=0.9.1"
 # mc-audio only (FF-02 wrapper bans, ADR-007). Versions validated by spike S2.
 # cpal without the `realtime` feature (MPL-2.0 audio_thread_priority is banned, ADR-015).
 cpal = "=0.18.2"

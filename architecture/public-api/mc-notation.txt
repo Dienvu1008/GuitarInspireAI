@@ -381,6 +381,27 @@ impl core::marker::Unpin for mc_notation::StaveKind
 impl core::marker::UnsafeUnpin for mc_notation::StaveKind
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::StaveKind
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::StaveKind
+pub enum mc_notation::SystemSpacing
+pub mc_notation::SystemSpacing::Compact
+pub mc_notation::SystemSpacing::Spacious
+impl core::clone::Clone for mc_notation::SystemSpacing
+pub fn mc_notation::SystemSpacing::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::SystemSpacing
+impl core::cmp::PartialEq for mc_notation::SystemSpacing
+pub fn mc_notation::SystemSpacing::eq(&self, &Self) -> bool
+impl core::default::Default for mc_notation::SystemSpacing
+pub fn mc_notation::SystemSpacing::default() -> Self
+impl core::fmt::Debug for mc_notation::SystemSpacing
+pub fn mc_notation::SystemSpacing::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::SystemSpacing
+impl core::marker::StructuralPartialEq for mc_notation::SystemSpacing
+impl core::marker::Freeze for mc_notation::SystemSpacing
+impl core::marker::Send for mc_notation::SystemSpacing
+impl core::marker::Sync for mc_notation::SystemSpacing
+impl core::marker::Unpin for mc_notation::SystemSpacing
+impl core::marker::UnsafeUnpin for mc_notation::SystemSpacing
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::SystemSpacing
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::SystemSpacing
 pub struct mc_notation::AnchorFact
 pub mc_notation::AnchorFact::bar: usize
 pub mc_notation::AnchorFact::beat: usize
@@ -765,6 +786,7 @@ pub mc_notation::PageSetup::footer_height: f32
 pub mc_notation::PageSetup::margin: f32
 pub mc_notation::PageSetup::size: mc_notation::PageSize
 pub mc_notation::PageSetup::staff_scale: f32
+pub mc_notation::PageSetup::system_spacing: mc_notation::SystemSpacing
 pub mc_notation::PageSetup::title_height: f32
 impl mc_notation::PageSetup
 pub fn mc_notation::PageSetup::body(&self, usize) -> mc_notation::Rect
@@ -1123,6 +1145,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_notation::TupletFact
 pub const mc_notation::FOOTER_HEIGHT_PT: f32
 pub const mc_notation::PAGE_MARGIN_PT: f32
 pub const mc_notation::PRINT_STAFF_SCALE: f32
+pub const mc_notation::SPACIOUS_SYSTEM_GAP_SP: f32
 pub const mc_notation::TAB_STRING_GAP_SP: f32
 pub const mc_notation::TITLE_HEIGHT_PT: f32
 pub fn mc_notation::layout_score(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreLayout, mc_notation::NotationError>

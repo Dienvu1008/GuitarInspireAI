@@ -10,7 +10,7 @@ pub use mc_notation::{
     BarLayout, EngravedLineKind, Glyph, GlyphKind, HitRegion, HitTarget, LayoutCache,
     LayoutMetrics, Line, LineKind, NotationError, NotationStaff, OutlineSystem, Page, PageItem,
     PageSetup, PageSize, Pagination, Rect, ScoreLayout, ScoreOutline, ScoreSystem, ShownTrack,
-    StaffConfiguration, Stave, StaveKind, SystemLayout, TabLayout,
+    StaffConfiguration, Stave, StaveKind, SystemLayout, SystemSpacing, TabLayout,
 };
 
 /// The outline of one revision, shown tracks with their staves, and metrics (a view

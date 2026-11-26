@@ -44,7 +44,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1494858265;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1907665793;
 
 // Section: executor
 
@@ -2907,6 +2907,67 @@ fn wire__crate__api__musicxml__export_musicxml_impl(
         },
     )
 }
+fn wire__crate__api__pdf__export_pdf_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "export_pdf",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_document = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DocumentHandle>,
+            >>::sse_decode(&mut deserializer);
+            let api_shown = <Vec<crate::api::layout::ShownTrackDto>>::sse_decode(&mut deserializer);
+            let api_paper = <crate::api::pdf::PaperDto>::sse_decode(&mut deserializer);
+            let api_spacing = <crate::api::pdf::SystemSpacingDto>::sse_decode(&mut deserializer);
+            let api_title = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, crate::api::types::ApiError>((move || {
+                    let mut api_document_guard = None;
+                    let decode_indices_ =
+                        flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                            flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                &api_document,
+                                0,
+                                false,
+                            ),
+                        ]);
+                    for i in decode_indices_ {
+                        match i {
+                            0 => api_document_guard = Some(api_document.lockable_decode_sync_ref()),
+                            _ => unreachable!(),
+                        }
+                    }
+                    let api_document_guard = api_document_guard.unwrap();
+                    let output_ok = crate::api::pdf::export_pdf(
+                        &*api_document_guard,
+                        api_shown,
+                        api_paper,
+                        api_spacing,
+                        api_title,
+                    )?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__pattern_grid__gestures_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -5637,6 +5698,18 @@ impl SseDecode for crate::api::layout::OutlineSystemDto {
     }
 }
 
+impl SseDecode for crate::api::pdf::PaperDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::pdf::PaperDto::A4,
+            1 => crate::api::pdf::PaperDto::Letter,
+            _ => unreachable!("Invalid variant for PaperDto: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for crate::api::pattern::PatternInfoDto {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -5705,6 +5778,20 @@ impl SseDecode for crate::api::pattern::PatternReportDto {
             notes: var_notes,
             dropped: var_dropped,
             shortened: var_shortened,
+        };
+    }
+}
+
+impl SseDecode for crate::api::pdf::PdfExportResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_bytes = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_pages = <u32>::sse_decode(deserializer);
+        let mut var_fonts = <Vec<String>>::sse_decode(deserializer);
+        return crate::api::pdf::PdfExportResult {
+            bytes: var_bytes,
+            pages: var_pages,
+            fonts: var_fonts,
         };
     }
 }
@@ -5910,6 +5997,18 @@ impl SseDecode for crate::api::layout::SystemDto {
             hit_rects: var_hitRects,
             hit_meta: var_hitMeta,
             beats: var_beats,
+        };
+    }
+}
+
+impl SseDecode for crate::api::pdf::SystemSpacingDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::pdf::SystemSpacingDto::Spacious,
+            1 => crate::api::pdf::SystemSpacingDto::Compact,
+            _ => unreachable!("Invalid variant for SystemSpacingDto: {}", inner),
         };
     }
 }
@@ -6155,18 +6254,19 @@ fn pde_ffi_dispatcher_primary_impl(
         }
         57 => wire__crate__api__midi__export_midi_impl(port, ptr, rust_vec_len, data_len),
         58 => wire__crate__api__musicxml__export_musicxml_impl(port, ptr, rust_vec_len, data_len),
-        61 => {
+        59 => wire__crate__api__pdf__export_pdf_impl(port, ptr, rust_vec_len, data_len),
+        62 => {
             wire__crate__api__guitarpro__import_guitar_pro_impl(port, ptr, rust_vec_len, data_len)
         }
-        62 => wire__crate__api__midi__import_midi_impl(port, ptr, rust_vec_len, data_len),
-        63 => wire__crate__api__info__init_app_impl(port, ptr, rust_vec_len, data_len),
-        64 => wire__crate__api__layout__notation_staff_dto_default_impl(
+        63 => wire__crate__api__midi__import_midi_impl(port, ptr, rust_vec_len, data_len),
+        64 => wire__crate__api__info__init_app_impl(port, ptr, rust_vec_len, data_len),
+        65 => wire__crate__api__layout__notation_staff_dto_default_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        69 => wire__crate__api__pattern_grid__techniques_dto_default_impl(
+        70 => wire__crate__api__pattern_grid__techniques_dto_default_impl(
             port,
             ptr,
             rust_vec_len,
@@ -6309,16 +6409,16 @@ fn pde_ffi_dispatcher_sync_impl(
         53 => wire__crate__api__tuner__TunerHandle_stop_impl(ptr, rust_vec_len, data_len),
         54 => wire__crate__api__info__core_version_impl(ptr, rust_vec_len, data_len),
         55 => wire__crate__api__layout__default_metrics_impl(ptr, rust_vec_len, data_len),
-        59 => wire__crate__api__pattern_grid__gestures_impl(ptr, rust_vec_len, data_len),
-        60 => wire__crate__api__guitarpro__guitar_pro_export_extension_supported_impl(
+        60 => wire__crate__api__pattern_grid__gestures_impl(ptr, rust_vec_len, data_len),
+        61 => wire__crate__api__guitarpro__guitar_pro_export_extension_supported_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        65 => wire__crate__api__pattern_grid__pattern_grid_impl(ptr, rust_vec_len, data_len),
-        66 => wire__crate__api__pattern__patterns_impl(ptr, rust_vec_len, data_len),
-        67 => wire__crate__api__pattern__preview_pattern_impl(ptr, rust_vec_len, data_len),
-        68 => wire__crate__api__pattern__sample_pattern_impl(ptr, rust_vec_len, data_len),
+        66 => wire__crate__api__pattern_grid__pattern_grid_impl(ptr, rust_vec_len, data_len),
+        67 => wire__crate__api__pattern__patterns_impl(ptr, rust_vec_len, data_len),
+        68 => wire__crate__api__pattern__preview_pattern_impl(ptr, rust_vec_len, data_len),
+        69 => wire__crate__api__pattern__sample_pattern_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -8004,6 +8104,22 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::OutlineSystemDto>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pdf::PaperDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::A4 => 0.into_dart(),
+            Self::Letter => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for crate::api::pdf::PaperDto {}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pdf::PaperDto> for crate::api::pdf::PaperDto {
+    fn into_into_dart(self) -> crate::api::pdf::PaperDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::pattern::PatternInfoDto {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -8096,6 +8212,28 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::pattern::PatternReportDto>
     for crate::api::pattern::PatternReportDto
 {
     fn into_into_dart(self) -> crate::api::pattern::PatternReportDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pdf::PdfExportResult {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.bytes.into_into_dart().into_dart(),
+            self.pages.into_into_dart().into_dart(),
+            self.fonts.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::pdf::PdfExportResult
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pdf::PdfExportResult>
+    for crate::api::pdf::PdfExportResult
+{
+    fn into_into_dart(self) -> crate::api::pdf::PdfExportResult {
         self
     }
 }
@@ -8372,6 +8510,27 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::layout::SystemDto>
     for crate::api::layout::SystemDto
 {
     fn into_into_dart(self) -> crate::api::layout::SystemDto {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::pdf::SystemSpacingDto {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Spacious => 0.into_dart(),
+            Self::Compact => 1.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::pdf::SystemSpacingDto
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::pdf::SystemSpacingDto>
+    for crate::api::pdf::SystemSpacingDto
+{
+    fn into_into_dart(self) -> crate::api::pdf::SystemSpacingDto {
         self
     }
 }
@@ -10234,6 +10393,22 @@ impl SseEncode for crate::api::layout::OutlineSystemDto {
     }
 }
 
+impl SseEncode for crate::api::pdf::PaperDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::pdf::PaperDto::A4 => 0,
+                crate::api::pdf::PaperDto::Letter => 1,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
 impl SseEncode for crate::api::pattern::PatternInfoDto {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -10283,6 +10458,15 @@ impl SseEncode for crate::api::pattern::PatternReportDto {
         <u32>::sse_encode(self.notes, serializer);
         <Vec<crate::api::pattern::StepChangeDto>>::sse_encode(self.dropped, serializer);
         <Vec<crate::api::pattern::StepChangeDto>>::sse_encode(self.shortened, serializer);
+    }
+}
+
+impl SseEncode for crate::api::pdf::PdfExportResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.bytes, serializer);
+        <u32>::sse_encode(self.pages, serializer);
+        <Vec<String>>::sse_encode(self.fonts, serializer);
     }
 }
 
@@ -10436,6 +10620,22 @@ impl SseEncode for crate::api::layout::SystemDto {
         <Vec<f32>>::sse_encode(self.hit_rects, serializer);
         <Vec<i32>>::sse_encode(self.hit_meta, serializer);
         <Vec<crate::api::layout::HitBeatDto>>::sse_encode(self.beats, serializer);
+    }
+}
+
+impl SseEncode for crate::api::pdf::SystemSpacingDto {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::pdf::SystemSpacingDto::Spacious => 0,
+                crate::api::pdf::SystemSpacingDto::Compact => 1,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
     }
 }
 

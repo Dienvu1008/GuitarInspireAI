@@ -105,3 +105,16 @@ Against the three conditions for lowering likelihood to Medium (condition 1 as r
    - One open design question was found: the default staff size gives very large print. It is a choice of metrics for 6c-5b, not a model change.
 
 **Proposed: keep High until 6c-5b.** The PDF export is the last unmeasured item: embedding, determinism, and the user's Edge check. Lowering the likelihood before that would rest on half of 6c-5. The next review point is after 6c-5b.
+
+### R-13 review after 6c-5b (2026-11-26, proposed; the decision is the user's)
+
+1. **Fixed scope delivered, no scope cut, no criterion failed except accepted gaps: met, if PD9 passes.**
+   - 6c-5a was revised once by the user's choice (the print staff size), not by a failed criterion.
+   - 6c-5b met PD1 to PD8 locally. LARGE with 20 tracks exports in 2.8 s, which PD6 only requires to be reported.
+2. **Flutter painting with notation meets the ADR-041 decision 7 criteria: unchanged.** TYPICAL is met. LARGE remains the accepted evidence gap.
+3. **No new class of engraving fault needing a model change: met.** Two local faults were found and fixed with a test, neither changing the model:
+   - the final bar line crossing the content edge at a layout margin of 0;
+   - a test reader counting font descriptors as fonts.
+   Two gaps were found and recorded, not fixed: no track names in print, and markers repeated on continued parts.
+
+**Proposed:** lower the likelihood to **Medium** once the user's Edge check (PD9) passes. Keep High if it fails. The next review point is the 6c exit (6c-6).

@@ -248,6 +248,7 @@ pub use mc_app::notation::StaffConfiguration
 pub use mc_app::notation::Stave
 pub use mc_app::notation::StaveKind
 pub use mc_app::notation::SystemLayout
+pub use mc_app::notation::SystemSpacing
 pub use mc_app::notation::TabLayout
 pub mod mc_app::pattern
 pub use mc_app::pattern::Action

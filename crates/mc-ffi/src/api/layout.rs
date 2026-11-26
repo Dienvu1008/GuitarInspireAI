@@ -261,7 +261,7 @@ pub struct ShownTrackDto {
 }
 
 impl ShownTrackDto {
-    fn to_core(self) -> mc_app::notation::ShownTrack {
+    pub(crate) fn to_core(self) -> mc_app::notation::ShownTrack {
         mc_app::notation::ShownTrack {
             track: track_id(self.track),
             staves: mc_app::notation::StaffConfiguration {

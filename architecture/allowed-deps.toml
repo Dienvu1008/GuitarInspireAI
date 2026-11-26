@@ -48,8 +48,8 @@ dev_external = ["proptest", "criterion"]
 layer = "adapter"
 phase = 1
 # mc-midi added in Phase 4 (ADR-023); mc-musicxml in Phase 6 (ADR-033); mc-guitarpro in
-# Phase 6d (ADR-036).
-internal = ["mc-app", "mc-project", "mc-midi", "mc-musicxml", "mc-guitarpro"]
+# Phase 6d (ADR-036); mc-pdf in Phase 6c-5b (ADR-041 section 12).
+internal = ["mc-app", "mc-project", "mc-midi", "mc-musicxml", "mc-guitarpro", "mc-pdf"]
 external = []
 dev_external = []
 
@@ -77,8 +77,8 @@ dev_external = ["proptest", "serde_json", "sha2", "skrifa", "subsetter"]
 layer = "adapter"
 phase = 3
 # mc-midi added in Phase 4 (ADR-023); mc-musicxml in Phase 6 (ADR-033); mc-guitarpro in
-# Phase 6d (ADR-036).
-internal = ["mc-app", "mc-audio", "mc-midi", "mc-musicxml", "mc-guitarpro"]
+# Phase 6d (ADR-036); mc-pdf in Phase 6c-5b (ADR-041 section 12).
+internal = ["mc-app", "mc-audio", "mc-midi", "mc-musicxml", "mc-guitarpro", "mc-pdf"]
 external = ["flutter_rust_bridge"]
 dev_external = []
 
@@ -122,6 +122,18 @@ phase = 6
 internal = ["mc-theory", "mc-score"]
 external = []
 dev_external = ["proptest"]
+
+[mc-pdf]
+layer = "adapter"
+phase = 6
+# PDF export (ADR-041 decision 5 and section 12, user 2026-11-26). Paints the paginated
+# layout of mc-notation; mc-score for the score type paginate takes. skrifa reads the
+# bundled fonts' cmap and metrics; subsetter subsets them; pdf-writer writes the file;
+# miniz_oxide compresses its streams. mc-theory for the tests' shared scores only.
+# Only mc-ffi and mc-cli use this crate.
+internal = ["mc-theory", "mc-score", "mc-notation"]
+external = ["pdf-writer", "subsetter", "miniz_oxide", "skrifa"]
+dev_external = []
 
 [mc-dsp]
 layer = "domain"

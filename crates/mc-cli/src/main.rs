@@ -142,6 +142,17 @@ fn run(args: &[String]) -> Result<(), String> {
             &positional(rest, 0, "source")?,
             &positional(rest, 1, "output path")?,
         )?,
+        "export-pdf" => interchange::export_pdf(
+            &positional(rest, 0, "source")?,
+            &positional(rest, 1, "output path")?,
+            &interchange::PdfOptions {
+                paper: flag(rest, "--paper"),
+                spacing: flag(rest, "--spacing"),
+                staves: flag(rest, "--staves"),
+                tracks: flag(rest, "--tracks"),
+                title: flag(rest, "--title"),
+            },
+        )?,
         "new" => {
             let out = output_path(&positional(rest, 0, "output path")?);
             let bars = flag(rest, "--bars")

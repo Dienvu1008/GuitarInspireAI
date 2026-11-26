@@ -34,6 +34,20 @@ pub const FOOTER_HEIGHT_PT: f32 = 20.0;
 /// user decision 2026-11-26): a TAB string gap of 7.2 pt and a staff space of 4.8 pt,
 /// close to common printed guitar editions.
 pub const PRINT_STAFF_SCALE: f32 = 0.6;
+/// The "Spacious" gap between systems in staff spaces (ADR-041 section 12, choice 1):
+/// room between a TAB rhythm and the next system's notation.
+pub const SPACIOUS_SYSTEM_GAP_SP: f32 = 4.0;
+
+/// The gap between systems on a printed page, chosen by the person exporting (ADR-041
+/// section 12, choice 1).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub enum SystemSpacing {
+    /// [`SPACIOUS_SYSTEM_GAP_SP`] staff spaces (19.2 pt at the print size).
+    #[default]
+    Spacious,
+    /// The default layout gap times the staff scale (9.6 pt at the print size).
+    Compact,
+}
 
 /// A paper size in points, portrait.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -68,6 +82,7 @@ pub struct PageSetup {
     /// Factor applied to every length of the default layout metrics (see
     /// [`PageSetup::metrics`]).
     pub staff_scale: f32,
+    pub system_spacing: SystemSpacing,
 }
 
 impl Default for PageSetup {
@@ -85,6 +100,7 @@ impl PageSetup {
             title_height: TITLE_HEIGHT_PT,
             footer_height: FOOTER_HEIGHT_PT,
             staff_scale: PRINT_STAFF_SCALE,
+            system_spacing: SystemSpacing::default(),
         }
     }
 
@@ -152,7 +168,10 @@ impl PageSetup {
             repeat_width: m.repeat_width * k,
             above_staff: m.above_staff * k,
             below_staff: m.below_staff * k,
-            system_gap: m.system_gap * k,
+            system_gap: match self.system_spacing {
+                SystemSpacing::Spacious => SPACIOUS_SYSTEM_GAP_SP * staff_space,
+                SystemSpacing::Compact => m.system_gap * k,
+            },
             stem_length: m.stem_length * k,
         }
     }
@@ -458,7 +477,14 @@ mod tests {
         // Half of Bravura's 0.5 sp thick bar line: 0.25 x 4.8 pt.
         assert!(near(m.margin_right, 1.2));
         assert!(near(m.string_spacing, 7.2) && near(m.staff_space(), 4.8));
-        assert!(near(m.digit_width, 4.2) && near(m.system_gap, 9.6));
+        // System gap: Spacious by default (4 sp = 19.2 pt), Compact 0.6 x 16 = 9.6 pt.
+        assert_eq!(a4.system_spacing, SystemSpacing::Spacious);
+        assert!(near(m.digit_width, 4.2) && near(m.system_gap, 19.2));
+        let compact = PageSetup {
+            system_spacing: SystemSpacing::Compact,
+            ..a4
+        };
+        assert!(near(compact.metrics().system_gap, 9.6));
         assert!(near(m.header_width, 16.8) && near(m.stem_length, 12.0));
         assert_eq!(
             m.duration_spacing,
@@ -468,6 +494,7 @@ mod tests {
         // At scale 1 the lengths are the defaults.
         let one = PageSetup {
             staff_scale: 1.0,
+            system_spacing: SystemSpacing::Compact,
             ..a4
         }
         .metrics();

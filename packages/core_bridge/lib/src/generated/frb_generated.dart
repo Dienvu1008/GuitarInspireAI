@@ -12,6 +12,7 @@ import 'api/midi.dart';
 import 'api/musicxml.dart';
 import 'api/pattern.dart';
 import 'api/pattern_grid.dart';
+import 'api/pdf.dart';
 import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -79,7 +80,7 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
                   String get codegenVersion => '2.13.0';
 
                   @override
-                  int get rustContentHash => 1494858265;
+                  int get rustContentHash => -1907665793;
 
                   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
                     stem: 'mc_ffi',
@@ -206,6 +207,8 @@ Future<GuitarProExportResult> crateApiGuitarproExportGuitarPro({required Documen
 Future<ExportResult> crateApiMidiExportMidi({required DocumentHandle document });
 
 Future<MusicXmlExportResult> crateApiMusicxmlExportMusicxml({required DocumentHandle document });
+
+Future<PdfExportResult> crateApiPdfExportPdf({required DocumentHandle document , required List<ShownTrackDto> shown , required PaperDto paper , required SystemSpacingDto spacing , required String title });
 
 List<GestureInfoDto> crateApiPatternGridGestures({required DocumentHandle document });
 
@@ -1792,11 +1795,40 @@ sse_encode_String(extension_, serializer);
         );
         
 
+@override Future<PdfExportResult> crateApiPdfExportPdf({required DocumentHandle document , required List<ShownTrackDto> shown , required PaperDto paper , required SystemSpacingDto spacing , required String title })  { return handler.executeNormal(NormalTask(
+            callFfi: (port_) {
+              
+            final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
+sse_encode_list_shown_track_dto(shown, serializer);
+sse_encode_paper_dto(paper, serializer);
+sse_encode_system_spacing_dto(spacing, serializer);
+sse_encode_String(title, serializer);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 59, port: port_);
+            
+            },
+            codec: 
+        SseCodec(
+          decodeSuccessData: sse_decode_pdf_export_result,
+          decodeErrorData: sse_decode_api_error,
+        )
+        ,
+            constMeta: kCrateApiPdfExportPdfConstMeta,
+            argValues: [document, shown, paper, spacing, title],
+            apiImpl: this,
+        )); }
+
+
+        TaskConstMeta get kCrateApiPdfExportPdfConstMeta => const TaskConstMeta(
+            debugName: "export_pdf",
+            argNames: ["document", "shown", "paper", "spacing", "title"],
+        );
+        
+
 @override List<GestureInfoDto> crateApiPatternGridGestures({required DocumentHandle document })  { return handler.executeSync(SyncTask(
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 59)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 60)!;
             
             },
             codec: 
@@ -1821,7 +1853,7 @@ sse_encode_String(extension_, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_String(extension_, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 60)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 61)!;
             
             },
             codec: 
@@ -1846,7 +1878,7 @@ sse_encode_String(extension_, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_list_prim_u_8_loose(bytes, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 61, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 62, port: port_);
             
             },
             codec: 
@@ -1871,7 +1903,7 @@ sse_encode_String(extension_, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_list_prim_u_8_loose(bytes, serializer);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 62, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 63, port: port_);
             
             },
             codec: 
@@ -1896,7 +1928,7 @@ sse_encode_String(extension_, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 63, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 64, port: port_);
             
             },
             codec: 
@@ -1921,7 +1953,7 @@ sse_encode_String(extension_, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 64, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 65, port: port_);
             
             },
             codec: 
@@ -1948,7 +1980,7 @@ sse_encode_String(extension_, serializer);
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_i_64(pattern, serializer);
 sse_encode_list_prim_u_8_loose(snaps, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 65)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 66)!;
             
             },
             codec: 
@@ -1973,7 +2005,7 @@ sse_encode_list_prim_u_8_loose(snaps, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 66)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 67)!;
             
             },
             codec: 
@@ -1999,7 +2031,7 @@ sse_encode_list_prim_u_8_loose(snaps, serializer);
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
 sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 67)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 68)!;
             
             },
             codec: 
@@ -2024,7 +2056,7 @@ sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
             callFfi: () {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDocumentHandle(document, serializer);
-            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 68)!;
+            return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 69)!;
             
             },
             codec: 
@@ -2049,7 +2081,7 @@ sse_encode_box_autoadd_apply_pattern_dto(args, serializer);
             callFfi: (port_) {
               
             final serializer = SseSerializer(generalizedFrbRustBinding);
-            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 69, port: port_);
+            pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 70, port: port_);
             
             },
             codec: 
@@ -2857,6 +2889,9 @@ height: dco_decode_f_32(arr[2]),
 firstBar: dco_decode_u_32(arr[3]),
 endBar: dco_decode_u_32(arr[4]),); }
 
+@protected PaperDto dco_decode_paper_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return PaperDto.values[raw as int]; }
+
 @protected PatternInfoDto dco_decode_pattern_info_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
                 if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
@@ -2888,6 +2923,13 @@ repetitions: dco_decode_u_32(arr[4]),
 notes: dco_decode_u_32(arr[5]),
 dropped: dco_decode_list_step_change_dto(arr[6]),
 shortened: dco_decode_list_step_change_dto(arr[7]),); }
+
+@protected PdfExportResult dco_decode_pdf_export_result(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+final arr = raw as List<dynamic>;
+                if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+                return PdfExportResult(bytes: dco_decode_list_prim_u_8_strict(arr[0]),
+pages: dco_decode_u_32(arr[1]),
+fonts: dco_decode_list_String(arr[2]),); }
 
 @protected PlaybackStateDto dco_decode_playback_state_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 return PlaybackStateDto.values[raw as int]; }
@@ -2979,6 +3021,9 @@ glyphs: dco_decode_list_glyph_dto(arr[7]),
 hitRects: dco_decode_list_prim_f_32_strict(arr[8]),
 hitMeta: dco_decode_list_prim_i_32_strict(arr[9]),
 beats: dco_decode_list_hit_beat_dto(arr[10]),); }
+
+@protected SystemSpacingDto dco_decode_system_spacing_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
+return SystemSpacingDto.values[raw as int]; }
 
 @protected TabLayoutDto dco_decode_tab_layout_dto(dynamic raw){ // Codec=Dco (DartCObject based), see doc to use other codecs
 final arr = raw as List<dynamic>;
@@ -4096,6 +4141,10 @@ var var_firstBar = sse_decode_u_32(deserializer);
 var var_endBar = sse_decode_u_32(deserializer);
 return OutlineSystemDto(index: var_index, y: var_y, height: var_height, firstBar: var_firstBar, endBar: var_endBar); }
 
+@protected PaperDto sse_decode_paper_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return PaperDto.values[inner]; }
+
 @protected PatternInfoDto sse_decode_pattern_info_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_id = sse_decode_i_64(deserializer);
 var var_name = sse_decode_String(deserializer);
@@ -4125,6 +4174,12 @@ var var_notes = sse_decode_u_32(deserializer);
 var var_dropped = sse_decode_list_step_change_dto(deserializer);
 var var_shortened = sse_decode_list_step_change_dto(deserializer);
 return PatternReportDto(first: var_first, last: var_last, voices: var_voices, overwritten: var_overwritten, repetitions: var_repetitions, notes: var_notes, dropped: var_dropped, shortened: var_shortened); }
+
+@protected PdfExportResult sse_decode_pdf_export_result(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var var_bytes = sse_decode_list_prim_u_8_strict(deserializer);
+var var_pages = sse_decode_u_32(deserializer);
+var var_fonts = sse_decode_list_String(deserializer);
+return PdfExportResult(bytes: var_bytes, pages: var_pages, fonts: var_fonts); }
 
 @protected PlaybackStateDto sse_decode_playback_state_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var inner = sse_decode_i_32(deserializer);
@@ -4210,6 +4265,10 @@ var var_hitRects = sse_decode_list_prim_f_32_strict(deserializer);
 var var_hitMeta = sse_decode_list_prim_i_32_strict(deserializer);
 var var_beats = sse_decode_list_hit_beat_dto(deserializer);
 return SystemDto(index: var_index, y: var_y, height: var_height, staffTop: var_staffTop, bars: var_bars, lines: var_lines, lineKinds: var_lineKinds, glyphs: var_glyphs, hitRects: var_hitRects, hitMeta: var_hitMeta, beats: var_beats); }
+
+@protected SystemSpacingDto sse_decode_system_spacing_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+var inner = sse_decode_i_32(deserializer);
+        return SystemSpacingDto.values[inner]; }
 
 @protected TabLayoutDto sse_decode_tab_layout_dto(SseDeserializer deserializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 var var_track = sse_decode_i_64(deserializer);
@@ -5181,6 +5240,9 @@ sse_encode_u_32(self.firstBar, serializer);
 sse_encode_u_32(self.endBar, serializer);
  }
 
+@protected void sse_encode_paper_dto(PaperDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
+
 @protected void sse_encode_pattern_info_dto(PatternInfoDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self.id, serializer);
 sse_encode_String(self.name, serializer);
@@ -5208,6 +5270,12 @@ sse_encode_u_32(self.repetitions, serializer);
 sse_encode_u_32(self.notes, serializer);
 sse_encode_list_step_change_dto(self.dropped, serializer);
 sse_encode_list_step_change_dto(self.shortened, serializer);
+ }
+
+@protected void sse_encode_pdf_export_result(PdfExportResult self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_list_prim_u_8_strict(self.bytes, serializer);
+sse_encode_u_32(self.pages, serializer);
+sse_encode_list_String(self.fonts, serializer);
  }
 
 @protected void sse_encode_playback_state_dto(PlaybackStateDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
@@ -5291,6 +5359,9 @@ sse_encode_list_prim_f_32_strict(self.hitRects, serializer);
 sse_encode_list_prim_i_32_strict(self.hitMeta, serializer);
 sse_encode_list_hit_beat_dto(self.beats, serializer);
  }
+
+@protected void sse_encode_system_spacing_dto(SystemSpacingDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
+sse_encode_i_32(self.index, serializer); }
 
 @protected void sse_encode_tab_layout_dto(TabLayoutDto self, SseSerializer serializer){ // Codec=Sse (Serialization based), see doc to use other codecs
 sse_encode_i_64(self.track, serializer);

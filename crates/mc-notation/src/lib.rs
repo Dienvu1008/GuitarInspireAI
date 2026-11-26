@@ -31,6 +31,6 @@ pub use layout::{
 pub use metrics::{LayoutMetrics, TAB_STRING_GAP_SP};
 pub use page::{
     FOOTER_HEIGHT_PT, PAGE_MARGIN_PT, PRINT_STAFF_SCALE, Page, PageItem, PageSetup, PageSize,
-    Pagination, TITLE_HEIGHT_PT, paginate,
+    Pagination, SPACIOUS_SYSTEM_GAP_SP, SystemSpacing, TITLE_HEIGHT_PT, paginate,
 };
 pub use staff::{ShownTrack, StaffConfiguration, StaveKind};

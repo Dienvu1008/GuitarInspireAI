@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'src/close_guard.dart';
 import 'src/guitar_pro_menu.dart';
 import 'src/musicxml_menu.dart';
+import 'src/pdf_menu.dart';
 import 'src/playback_wiring.dart';
 import 'src/soundfont.dart';
 import 'src/startup.dart';
@@ -34,6 +35,7 @@ Future<void> main() async {
         documentFactoryProvider.overrideWithValue(CoreBridge.documents),
         ...playbackOverrides(playback, CoreBridge.midi),
         musicXmlServiceProvider.overrideWithValue(CoreBridge.musicXml),
+        pdfServiceProvider.overrideWithValue(CoreBridge.pdf),
         guitarProServiceProvider.overrideWithValue(CoreBridge.guitarPro),
         ...tunerOverrides(),
         ...toolsOverrides(),

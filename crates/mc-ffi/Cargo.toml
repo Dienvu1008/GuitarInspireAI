@@ -21,6 +21,8 @@ mc-audio.workspace = true
 mc-midi.workspace = true
 mc-musicxml.workspace = true
 mc-guitarpro.workspace = true
+# mc-pdf: PDF export (ADR-041 section 12).
+mc-pdf.workspace = true
 flutter_rust_bridge.workspace = true
 
 [dev-dependencies]

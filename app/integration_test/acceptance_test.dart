@@ -55,6 +55,11 @@ final class _Dialogs implements FileDialogs {
   List<int>? guitarProBytes;
   String? guitarProSavePath;
   @override
+  Future<String?> savePdf(
+    List<int> bytes, {
+    required String suggestedName,
+  }) async => null;
+  @override
   Future<List<int>?> pickGuitarProToImport() async => guitarProBytes;
   @override
   Future<String?> pickGuitarProToSave({required String suggestedName}) async =>

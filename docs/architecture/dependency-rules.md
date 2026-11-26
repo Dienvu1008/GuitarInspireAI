@@ -10,25 +10,26 @@ Criticality: Critical blocks merge. Important requires review. Advisory reports 
 
 Rows may depend on columns marked Y. Everything else is forbidden. The matrix is stored as a version-controlled file (planned `architecture/allowed-deps.toml`) and checked by FF-01.
 
-| From \ To | theory | score | guitar | pattern | notation | playback | project | dsp | app | audio | midi | musicxml | guitarpro | ffi |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| theory | | | | | | | | | | | | | | |
-| score | Y | | | | | | | | | | | | | |
-| guitar | Y | | | | | | | | | | | | | |
-| pattern | Y | Y | Y | | | | | | | | | | | |
-| notation | Y | Y | | | | | | | | | | | | |
-| playback | Y | Y | | | | | | | | | | | | |
-| project | Y | Y | | Y (Phase 6) | | | | | | | | | | |
-| dsp | | | | | | | | | | | | | | |
-| app | Y | Y | Y | Y (Phase 6) | Y | Y | Y | Y | | | | | | |
-| audio | Y | | | | | Y | | Y | Y | | | | | |
-| midi | Y | Y | Y | | | Y | | | | | | | | |
-| musicxml | Y | Y | | | | | | | | | | | | |
-| guitarpro | Y | Y | | | | | | | | | | | | |
-| ffi | | | | | | | | | Y | Y | Y (Phase 4) | Y (Phase 6) | Y (Phase 6d) | |
-| cli | | | | | | | Y | | Y | Y (optional) | Y (Phase 4) | Y (Phase 6) | Y (Phase 6d) | |
+| From \ To | theory | score | guitar | pattern | notation | playback | project | dsp | app | audio | midi | musicxml | guitarpro | pdf | ffi |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| theory | | | | | | | | | | | | | | | |
+| score | Y | | | | | | | | | | | | | | |
+| guitar | Y | | | | | | | | | | | | | | |
+| pattern | Y | Y | Y | | | | | | | | | | | | |
+| notation | Y | Y | | | | | | | | | | | | | |
+| playback | Y | Y | | | | | | | | | | | | | |
+| project | Y | Y | | Y (Phase 6) | | | | | | | | | | | |
+| dsp | | | | | | | | | | | | | | | |
+| app | Y | Y | Y | Y (Phase 6) | Y | Y | Y | Y | | | | | | | |
+| audio | Y | | | | | Y | | Y | Y | | | | | | |
+| midi | Y | Y | Y | | | Y | | | | | | | | | |
+| musicxml | Y | Y | | | | | | | | | | | | | |
+| guitarpro | Y | Y | | | | | | | | | | | | | |
+| pdf | Y (tests) | Y | | | Y | | | | | | | | | | |
+| ffi | | | | | | | | | Y | Y | Y (Phase 4) | Y (Phase 6) | Y (Phase 6d) | Y (Phase 6c) | |
+| cli | | | | | | | Y | | Y | Y (optional) | Y (Phase 4) | Y (Phase 6) | Y (Phase 6d) | Y (Phase 6c) | |
 
-`midi` (`mc-midi`, Phase 4) is the SMF import and export adapter ([ADR-023](decisions/ADR-023-midi-adapter-crate.md)); only the adapters `ffi` and `cli` use it. `musicxml` (`mc-musicxml`, Phase 6) is the MusicXML export adapter ([ADR-033](decisions/ADR-033-musicxml-export-adapter.md)); it reads the score through `mc-score` and spells pitches through `mc-theory`, and only `ffi` and `cli` use it. `guitarpro` (`mc-guitarpro`, Phase 6d) is the Guitar Pro GP3 to GP5 import and export adapter ([ADR-036](decisions/ADR-036-guitar-pro-adapter.md)). It has no external dependency, builds scores only through `Score::from_parts`, and only `ffi` and `cli` use it.
+`midi` (`mc-midi`, Phase 4) is the SMF import and export adapter ([ADR-023](decisions/ADR-023-midi-adapter-crate.md)); only the adapters `ffi` and `cli` use it. `musicxml` (`mc-musicxml`, Phase 6) is the MusicXML export adapter ([ADR-033](decisions/ADR-033-musicxml-export-adapter.md)); it reads the score through `mc-score` and spells pitches through `mc-theory`, and only `ffi` and `cli` use it. `guitarpro` (`mc-guitarpro`, Phase 6d) is the Guitar Pro GP3 to GP5 import and export adapter ([ADR-036](decisions/ADR-036-guitar-pro-adapter.md)). It has no external dependency, builds scores only through `Score::from_parts`, and only `ffi` and `cli` use it. `pdf` (`mc-pdf`, Phase 6c) is the PDF export adapter ([ADR-041](decisions/ADR-041-notation-engine-metrics-cache-pdf.md) decision 5 and section 12). It paints the paginated layout of `notation`, takes the score type from `score`, uses `theory` in its tests only, and only `ffi` and `cli` use it.
 
 Future `mc-analysis` (Phase 8): may depend on `theory` and `dsp` only. `app` may depend on it. It is added to the matrix file in Phase 8 by ADR.
 

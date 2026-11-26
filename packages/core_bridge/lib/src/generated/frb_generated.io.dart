@@ -12,6 +12,7 @@ import 'api/midi.dart';
 import 'api/musicxml.dart';
 import 'api/pattern.dart';
 import 'api/pattern_grid.dart';
+import 'api/pdf.dart';
 import 'api/tuner.dart';
 import 'api/types.dart';
 import 'dart:async';
@@ -321,6 +322,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected OutlineSystemDto dco_decode_outline_system_dto(dynamic raw);
 
+@protected PaperDto dco_decode_paper_dto(dynamic raw);
+
 @protected PatternInfoDto dco_decode_pattern_info_dto(dynamic raw);
 
 @protected PatternLaneDto dco_decode_pattern_lane_dto(dynamic raw);
@@ -328,6 +331,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected PatternPreviewDto dco_decode_pattern_preview_dto(dynamic raw);
 
 @protected PatternReportDto dco_decode_pattern_report_dto(dynamic raw);
+
+@protected PdfExportResult dco_decode_pdf_export_result(dynamic raw);
 
 @protected PlaybackStateDto dco_decode_playback_state_dto(dynamic raw);
 
@@ -352,6 +357,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected StrokeDto dco_decode_stroke_dto(dynamic raw);
 
 @protected SystemDto dco_decode_system_dto(dynamic raw);
+
+@protected SystemSpacingDto dco_decode_system_spacing_dto(dynamic raw);
 
 @protected TabLayoutDto dco_decode_tab_layout_dto(dynamic raw);
 
@@ -655,6 +662,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected OutlineSystemDto sse_decode_outline_system_dto(SseDeserializer deserializer);
 
+@protected PaperDto sse_decode_paper_dto(SseDeserializer deserializer);
+
 @protected PatternInfoDto sse_decode_pattern_info_dto(SseDeserializer deserializer);
 
 @protected PatternLaneDto sse_decode_pattern_lane_dto(SseDeserializer deserializer);
@@ -662,6 +671,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected PatternPreviewDto sse_decode_pattern_preview_dto(SseDeserializer deserializer);
 
 @protected PatternReportDto sse_decode_pattern_report_dto(SseDeserializer deserializer);
+
+@protected PdfExportResult sse_decode_pdf_export_result(SseDeserializer deserializer);
 
 @protected PlaybackStateDto sse_decode_playback_state_dto(SseDeserializer deserializer);
 
@@ -686,6 +697,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected StrokeDto sse_decode_stroke_dto(SseDeserializer deserializer);
 
 @protected SystemDto sse_decode_system_dto(SseDeserializer deserializer);
+
+@protected SystemSpacingDto sse_decode_system_spacing_dto(SseDeserializer deserializer);
 
 @protected TabLayoutDto sse_decode_tab_layout_dto(SseDeserializer deserializer);
 
@@ -989,6 +1002,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 
 @protected void sse_encode_outline_system_dto(OutlineSystemDto self, SseSerializer serializer);
 
+@protected void sse_encode_paper_dto(PaperDto self, SseSerializer serializer);
+
 @protected void sse_encode_pattern_info_dto(PatternInfoDto self, SseSerializer serializer);
 
 @protected void sse_encode_pattern_lane_dto(PatternLaneDto self, SseSerializer serializer);
@@ -996,6 +1011,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_pattern_preview_dto(PatternPreviewDto self, SseSerializer serializer);
 
 @protected void sse_encode_pattern_report_dto(PatternReportDto self, SseSerializer serializer);
+
+@protected void sse_encode_pdf_export_result(PdfExportResult self, SseSerializer serializer);
 
 @protected void sse_encode_playback_state_dto(PlaybackStateDto self, SseSerializer serializer);
 
@@ -1020,6 +1037,8 @@ CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TunerHandlePtr => 
 @protected void sse_encode_stroke_dto(StrokeDto self, SseSerializer serializer);
 
 @protected void sse_encode_system_dto(SystemDto self, SseSerializer serializer);
+
+@protected void sse_encode_system_spacing_dto(SystemSpacingDto self, SseSerializer serializer);
 
 @protected void sse_encode_tab_layout_dto(TabLayoutDto self, SseSerializer serializer);
 

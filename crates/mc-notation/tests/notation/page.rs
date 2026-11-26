@@ -26,6 +26,13 @@ pub fn setups() -> Vec<(&'static str, PageSetup)> {
     vec![
         ("A4", PageSetup::new(PageSize::A4)),
         ("Letter", PageSetup::new(PageSize::LETTER)),
+        (
+            "A4 compact",
+            PageSetup {
+                system_spacing: mc_notation::SystemSpacing::Compact,
+                ..PageSetup::new(PageSize::A4)
+            },
+        ),
         ("A4 scale 1", screen(PageSize::A4)),
         ("short 420", short(420.0)),
         ("short 330", short(330.0)),

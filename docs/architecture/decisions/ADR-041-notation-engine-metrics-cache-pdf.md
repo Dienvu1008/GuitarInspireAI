@@ -592,7 +592,116 @@ Against the default size: TYPICAL drops from 201 to 76 A4 pages. The reference s
 3. **TAB painting rules in two places.** The Flutter painter holds its own text scales, dot sizes and arrow shapes. Proposed: `mc-pdf` follows them, from a table in this ADR that both painters refer to, and the Edge check compares. Alternative: move those values into the layout model so both only paint. This is cleaner, but it changes FFI, Dart and the TAB goldens, so it is a larger slice.
 4. **Where the font files come from.** Proposed: `mc-pdf` includes the bundled files at compile time with `include_bytes!`. This is deterministic and needs no I/O, but adds about 2.6 MB to the CLI and app binaries. Alternative: the app passes the font bytes it already bundles as Flutter assets. The binary then stays smaller, but the CLI needs another way to find the fonts.
 
-## Alternatives
+### 12.1 Painting rules shared by the Flutter painters and `mc-pdf` (choice 3)
+
+Positions always come from the layout. The rules below cover only symbols, sizes and greys. `mc-pdf` implements them in `paint.rs`. The Flutter painters are `system_painter.dart` (TAB) and `notation_painter.dart`. A change to one painter is made to the other and to this table.
+
+**Units.**
+- *k* = string gap ÷ 12. The Flutter TAB painter's absolute sizes are screen pixels at a string gap of 12, so print multiplies them by *k* (0.6).
+- *fs* is the TAB text size.
+  - Screen: 11 px per zoom step.
+  - Print: the size at which Noto Sans Mono's digit advance (0.6 em) equals `digit_width`, which gives 7 pt.
+- Text is centred on its point. Its line box is *fs* high (Flutter `height: 1.0`), with the baseline where the font's ascent and descent divide the box.
+
+**Greys.**
+- Ink: black.
+- Staff: ink at 45 % on white, so grey 0.55. Used for staff and string lines, bar numbers and string names.
+- Paper: white, behind fret numbers.
+
+**Notation:**
+
+| Item | Rule |
+|---|---|
+| Lines | Stroked at their own thickness with butt caps. Staff lines in the staff grey; ledger lines, stems and bar lines in ink. |
+| Beams | A filled band: the centre line ± thickness ÷ 2. |
+| Ties | A filled crescent of two quadratic arcs, peaking at the height and at the height minus the middle thickness. PDF writes them as the equal cubics. |
+| Glyphs | Bravura at 4 staff spaces per em, origin on the baseline. |
+
+**TAB:**
+
+| Item | Rule |
+|---|---|
+| String lines | Staff grey, width 1 *k*. |
+| Thick bar line | Width 3 *k*. |
+| Rhythm beam | Width 2.5 *k*. |
+| Other lines | Width 1 *k*. |
+| Fret number | `x` when dead, `(n)` when tied, else `n`, at *fs*. A paper rectangle of (text width + 2 *k*) × 0.8 *fs* is drawn behind it first. |
+| Whole and half rest | A block 8 *k* × 3 *k* (the whole rest hangs above *y*). |
+| Shorter rests | A slash and one dot (radius 1.4 *k*) per level below a quarter. |
+| Rhythm dot | Radius 1.6 *k*. |
+| Repeat dots | Two dots of radius 1.8 *k* at *y* ± 0.6 *fs*. |
+| Tuplet number | 0.8 *fs*. |
+| Time signature | 1.4 *fs*, at *y* ± 0.75 *fs*. |
+| Repeat count `xN`, volta `1., 2.` | 0.85 *fs*. |
+| Marker | 0.9 *fs*. |
+| Bar number, string name | 0.75 *fs*, staff grey. |
+| TAB clef | T, A and B at 1.1 *fs*, 1.05 *fs* apart. |
+| Accent `>` | 0.9 *fs*. |
+| Percussive `S` | 0.75 *fs*. |
+| Stroke arrow | Strokes 1.2 *k* wide; shaft ± 0.45 *fs*; head 0.22 *fs*. |
+| Palm mute | `P.M.` at 0.7 *fs*. A run continues with 4 *k* dashes and 3 *k* gaps, and a 6 *k* end tick. |
+| Diagnostic bar tint | Not printed: it is editor feedback. |
+
+**Page:**
+- The title is set at 20 pt, centred in the upper half of the title area.
+- "page n of N" is set at 10 pt, centred in the lower half of the footer.
+
+### 12.2 Slice 6c-5b report (2026-11-26, for the user's Edge check)
+
+**What was built.**
+- New adapter crate `mc-pdf`: `export_pdf(score, shown, setup, title) -> PdfExport { bytes, pages, fonts }`.
+- The CLI gets `mc-cli export-pdf <source> <out.pdf> [--paper a4|letter] [--spacing spacious|compact] [--staves both|tab|notation] [--tracks N] [--title TEXT]`.
+- FFI: `export_pdf(document, shown, paper, spacing, title)`.
+- Dart: `PdfService`, with the real service and a fake that pass one contract.
+- The app: File menu "Export PDF..." opens a dialog for paper and spacing (defaults A4 and Spacious) and exports what the view shows. The title is the file name without its extension, or "Untitled".
+- `mc-notation` gains `SystemSpacing` in `PageSetup` (choice 1).
+- CI gets one step: the PD4 test in a release build.
+
+**Criteria.**
+
+| Id | Result |
+|---|---|
+| PD1 | Met. The test reads the PDF back with its own reader (objects, Flate, content operators, ToUnicode) and computes every expected position from the pagination and the layout. Every notation glyph (one to one, by character), every notation and TAB line (with width and grey), every beam and every fret number (text, centre and baseline) is in place within 0.01 pt. Covered: the S11 inputs, the fixtures, TYPICAL with 12 bars and 50 random scores, at A4 Spacious and Letter Compact; over 20 000 items and 120 pages. A mutation that moved TAB text by 0.05 pt was caught. |
+| PD2 | Met. Only Type 0 fonts, one or two (Bravura only when notation is shown), with names of the form `ABCDEF+Bravura` and `ABCDEF+NotoSansMono`. Each is embedded: Bravura as `FontFile3`/OpenType, Noto Sans Mono as `FontFile2`. No Type 1, TrueType, Type 3 or MM font appears. Every character in each ToUnicode map draws the full font's outline in the embedded subset (over 60 glyphs compared). |
+| PD3 | Met. A title `Song 曲` and a marker `Intro ♫` both fail with `MissingGlyph` naming the character and its code point. A Vietnamese title (`Bài hát số một`) works. |
+| PD4 | Met. Two runs in one process give equal bytes. The hash of two fixtures' PDFs is recorded in the test, and it matches in debug and in release (CI runs both). The eight review PDFs below are byte-identical from a debug and a release CLI. There is no date in the file; the document ID is a hash of the content. |
+| PD5 | Met. Page count, media box, the footer "page n of N" on every page and the title on page 1 only, checked through the ToUnicode maps. Split systems continue on the next page (LARGE with 8 bars, 20 tracks). The spacing choice moves the second system on a page by exactly 9.6 pt. |
+| PD6 | Met for TYPICAL. Release build, 5 runs; Spacious and Compact give the same times. |
+| PD7 | Met locally. cargo-deny passes; the new lock entries are `pdf-writer` 0.15.0 and `ryu`. FF-01 passes with the new `mc-pdf` row, and FF-03, FF-04 and FF-34 pass. FF-22 has additions only (mc-notation +23, mc-app +1). There is no `unsafe`. CI: see the commit. |
+| PD8 | Met. Below. |
+| PD9 | For the user. |
+
+**PD6 timings (release build, export including layout, painting, subsetting and compression):**
+
+| Case | Median | Max | Pages | Size |
+|---|---|---|---|---|
+| TYPICAL, 4 tracks | 101 ms | 113 ms | 76 | 0.6 MB |
+| LARGE, 4 tracks | 549 ms | 571 ms | 300 | 3.1 MB |
+| LARGE, 20 tracks | 2.80 s | 2.87 s | 1 500 | 15.6 MB |
+
+LARGE with 20 tracks is over 2 s. PD6 requires only that it is reported. It produces 1 500 pages. The app runs the export synchronously through the bridge.
+
+**The two spacings give identical files for TYPICAL and LARGE.** Every system of those dense scores fills a page on its own, so the gap never appears. Scores with several systems per page differ, as the test above shows.
+
+**Artefacts (PD8)** in `Desktop\GuitarInspire-6c5b-pdf\`. Each file is produced by the command in `export-log.txt` (with `target/release/mc-cli.exe`, from the fixtures of `mc-cli`). The log also lists the embedded fonts with their subset names:
+
+| File | Pages | Notes |
+|---|---|---|
+| `keys-a4.pdf` | 1 | keys and accidentals |
+| `feature-rich-a4.pdf` | 1 | two tracks: drop D with capo, voltas, repeat, ties, triplet, key change |
+| `feature-rich-letter-compact.pdf` | 1 | Letter, Compact |
+| `techniques-a4.pdf` | 1 | accent, stroke arrows, palm mute, dead and percussive notes |
+| `small-a4-tab-only.pdf` | 3 | TAB only (one font) |
+| `typical-a4.pdf` | 76 | four tracks |
+| `large-4-tracks-a4.pdf` | 300 | |
+| `large-20-tracks-a4.pdf` | 1 500 | split systems |
+
+**Checked by the agent, not acceptance.** Each first page was rendered with the Windows PDF renderer (`render.ps1`, `Windows.Data.Pdf`); images are in `preview\`. Glyphs, alignment and splits looked as intended. Headless Edge does not render PDFs, so the Edge check is the user's (PD9).
+
+**Found, not in scope:**
+1. The PDF has no track names, so the staves of a many-track system are not labelled. The layout model carries no names.
+2. On a continued part, every track repeats the marker and the bar number, as on screen.
+
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.
 - **Reading `Bravura.json` at run time in `mc-app`.** Possible, but it adds I/O and a parse on every start. A generated, pinned table is checked once.
