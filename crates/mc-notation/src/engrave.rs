@@ -27,8 +27,8 @@ use crate::display::*;
 use crate::semantic::NotatedBeat;
 use crate::smufl::{Anchor, DEFAULTS, SmuflGlyph};
 use mc_score::MasterBar;
-use mc_theory::Alter;
 use mc_theory::notation::TieRole;
+use mc_theory::{Alter, KeySignature};
 use std::collections::BTreeMap;
 
 // ------------------------------------------------------------------ constants (sp)
@@ -55,11 +55,23 @@ const DOT_GAP_SP: f32 = 0.35;
 const DOT_STEP_SP: f32 = 0.5;
 /// Space kept on each side of a column's content.
 const COLUMN_PAD_SP: f32 = 0.25;
-/// Tie: offset of its ends from the head centre, and its height.
+/// Tie: offset of its ends from the head centre.
 const TIE_OFFSET_SP: f32 = 0.6;
-const TIE_HEIGHT_SP: f32 = 0.7;
-/// Tie at a system start: starts this far left of the head.
-const TIE_LEAD_SP: f32 = 2.0;
+/// Tie height (EP5): `TIE_HEIGHT_PER_SP` of its length, kept between the two limits,
+/// so short ties are flat and long ones arch more (0.7 staff space, the height before
+/// EP5, at a length of about 4.7 staff spaces).
+pub(crate) const TIE_HEIGHT_MIN_SP: f32 = 0.5;
+pub(crate) const TIE_HEIGHT_MAX_SP: f32 = 1.0;
+pub(crate) const TIE_HEIGHT_PER_SP: f32 = 0.15;
+/// A tie half at a system break is at least this long.
+const TIE_HALF_MIN_SP: f32 = 1.0;
+/// The gap between a tie end and a head.
+const TIE_HEAD_GAP_SP: f32 = 0.1;
+
+/// The height of a tie of `length` layout units (EP5).
+pub(crate) fn tie_height(length: f32, sp: f32) -> f32 {
+    (TIE_HEIGHT_PER_SP * length / sp).clamp(TIE_HEIGHT_MIN_SP, TIE_HEIGHT_MAX_SP) * sp
+}
 /// Gap between a tuplet number and the farthest item of its beats.
 pub(crate) const TUPLET_GAP_SP: f32 = 0.5;
 /// Beam stub length for a lone shorter value.
@@ -84,6 +96,48 @@ const KEY_AFTER_SP: f32 = 0.8;
 const KEY_SIGN_GAP_SP: f32 = 0.15;
 /// Space before a key change inside a bar.
 const KEY_BEFORE_SP: f32 = 0.5;
+/// Gap between the cancelling naturals and the new key signature (EP3).
+const KEY_CANCEL_GAP_SP: f32 = 0.5;
+/// Gap between a system's last bar line and its courtesy signatures (EP2).
+const COURTESY_BEFORE_SP: f32 = 0.5;
+/// Space after the courtesy signatures, to the end of the staff (EP2).
+const COURTESY_AFTER_SP: f32 = 0.5;
+
+/// Width of the courtesy signatures for a change from `old` to `new` (EP2): the key
+/// change with its naturals and the new time signature, each when it changes, with the
+/// gaps around them; 0 when nothing changes.
+/// Offset of the courtesy time signature's centre from the system's last bar line, in
+/// staff spaces, when the time changes (EP2); TAB centres its courtesy time there too.
+pub(crate) fn courtesy_time_centre_sp(old: &MasterBar, new: &MasterBar) -> Option<f32> {
+    if old.time_signature == new.time_signature {
+        return None;
+    }
+    let key = if old.key != new.key {
+        cancel_width_sp(old.key, new.key) + key_width_sp(new.key.fifths()) + KEY_AFTER_SP
+    } else {
+        0.0
+    };
+    let ts = new.time_signature;
+    let w = digits_width(ts.numerator()).max(digits_width(ts.denominator()));
+    Some(COURTESY_BEFORE_SP + key + w / 2.0)
+}
+
+pub(crate) fn courtesy_sp(old: &MasterBar, new: &MasterBar) -> f32 {
+    let key = old.key != new.key;
+    let time = old.time_signature != new.time_signature;
+    if !key && !time {
+        return 0.0;
+    }
+    let mut w = COURTESY_BEFORE_SP + COURTESY_AFTER_SP;
+    if key {
+        w += cancel_width_sp(old.key, new.key) + key_width_sp(new.key.fifths()) + KEY_AFTER_SP;
+    }
+    if time {
+        let ts = new.time_signature;
+        w += digits_width(ts.numerator()).max(digits_width(ts.denominator()));
+    }
+    w
+}
 /// Space around a time signature (both sides together).
 const TIME_SIGNATURE_PAD_SP: f32 = 1.0;
 /// Clef position: on the second line (G4 written, position 2).
@@ -117,6 +171,8 @@ pub(crate) struct PNote {
     pub position: i32,
     pub accidental: Option<Alter>,
     pub tie: TieRole,
+    /// A tie leaves this note into the next bar (EP5).
+    pub ties_out: bool,
     pub displaced: bool,
     pub acc_column: usize,
 }
@@ -134,6 +190,9 @@ pub(crate) struct PBeat {
     pub group: Option<usize>,
     /// Staff position of a rest (rests only).
     pub rest_position: i32,
+    /// The only beat of its voice, a rest as long as the bar: drawn as a whole rest
+    /// centred in the bar, in any time signature (EP4).
+    pub bar_rest: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -183,6 +242,7 @@ fn stem_up_for(positions: impl Iterator<Item = i32> + Clone) -> bool {
 }
 
 pub(crate) fn plan(notated: Vec<NotatedBeat>, master: &MasterBar) -> NotationPlan {
+    let lengths: Vec<mc_theory::Rational> = notated.iter().map(|b| b.value.length()).collect();
     let mut beats: Vec<PBeat> = notated
         .into_iter()
         .map(|b| PBeat {
@@ -201,6 +261,7 @@ pub(crate) fn plan(notated: Vec<NotatedBeat>, master: &MasterBar) -> NotationPla
                     position: staff_position(n.written),
                     accidental: n.accidental,
                     tie: n.tie,
+                    ties_out: n.ties_out,
                     displaced: false,
                     acc_column: 0,
                 })
@@ -208,8 +269,24 @@ pub(crate) fn plan(notated: Vec<NotatedBeat>, master: &MasterBar) -> NotationPla
             stem_up: true,
             group: None,
             rest_position: 0,
+            bar_rest: false,
         })
         .collect();
+    // EP4: a lone rest that fills the bar is shown as a centred whole rest. Its value
+    // was the bar's length, so the whole rest stands for the bar, as engravers do.
+    let bar_length = master.time_signature.length();
+    for i in 0..beats.len() {
+        let voice = beats[i].voice;
+        let alone = beats.iter().filter(|b| b.voice == voice).count() == 1;
+        let pb = &beats[i];
+        if alone && pb.notes.is_empty() && lengths[i] == bar_length {
+            let pb = &mut beats[i];
+            pb.bar_rest = true;
+            pb.exponent = 0;
+            pb.dots = 0;
+            pb.tuplet = None;
+        }
+    }
     let voice_count = beats.iter().map(|b| b.voice + 1).max().unwrap_or(0);
     let voices = (0..voice_count)
         .filter(|v| beats.iter().any(|b| b.voice == *v))
@@ -447,9 +524,13 @@ impl NotationPlan {
                     b = b.min(u + ab.sw.1);
                 }
             }
-            if pb.notes.iter().any(|n| n.tie != TieRole::NotTied) {
-                a = a.max(hi + TIE_OFFSET_SP + TIE_HEIGHT_SP + 0.1);
-                b = b.min(lo - TIE_OFFSET_SP - TIE_HEIGHT_SP - 0.1);
+            if pb
+                .notes
+                .iter()
+                .any(|n| n.tie != TieRole::NotTied || n.ties_out)
+            {
+                a = a.max(hi + TIE_OFFSET_SP + TIE_HEIGHT_MAX_SP + 0.1);
+                b = b.min(lo - TIE_OFFSET_SP - TIE_HEIGHT_MAX_SP - 0.1);
             }
             if pb.exponent >= 1 {
                 let middle = MIDDLE_LINE as f32 / 2.0;
@@ -511,9 +592,10 @@ impl NotationPlan {
         self.below = -bottom;
     }
 
-    /// Half the width a beat's column needs, in staff spaces, so the content stays
-    /// within the column when it is centred on the column's anchor (as TAB is).
-    pub(crate) fn half_reserve(&self, i: usize) -> f32 {
+    /// The width a beat's content needs left and right of its column's anchor, in
+    /// staff spaces (ADR-041 section 13, EP1): accidentals and a displaced head on one
+    /// side only take room on that side.
+    pub(crate) fn reserve(&self, i: usize) -> (f32, f32) {
         let pb = &self.beats[i];
         let ext = DEFAULTS.leger_line_extension;
         let hw = if pb.notes.is_empty() {
@@ -556,7 +638,7 @@ impl NotationPlan {
         if pb.group.is_none() && pb.exponent >= 3 && !pb.notes.is_empty() && pb.stem_up {
             r = r.max(hw + glyph_width(SmuflGlyph::flag(pb.exponent, true)) - hw / 2.0);
         }
-        l.max(r) + COLUMN_PAD_SP
+        (l + COLUMN_PAD_SP, r + COLUMN_PAD_SP)
     }
 }
 
@@ -582,8 +664,19 @@ pub(crate) fn header_sp(fifths: i8) -> f32 {
 }
 
 /// Room for a key change inside a bar.
-pub(crate) fn key_change_sp(fifths: i8) -> f32 {
-    KEY_BEFORE_SP + key_width_sp(fifths) + KEY_AFTER_SP
+pub(crate) fn key_change_sp(old: KeySignature, new: KeySignature) -> f32 {
+    KEY_BEFORE_SP + cancel_width_sp(old, new) + key_width_sp(new.fifths()) + KEY_AFTER_SP
+}
+
+/// Width of the cancelling naturals of a change from `old` to `new`, with the gap
+/// before the new signature (EP3); 0 when nothing is cancelled.
+pub(crate) fn cancel_width_sp(old: KeySignature, new: KeySignature) -> f32 {
+    let n = old.cancelled_by(new).len();
+    if n == 0 {
+        return 0.0;
+    }
+    let w = glyph_width(SmuflGlyph::AccidentalNatural);
+    n as f32 * (w + KEY_SIGN_GAP_SP) - KEY_SIGN_GAP_SP + KEY_CANCEL_GAP_SP
 }
 
 fn digits_width(n: u8) -> f32 {
@@ -625,6 +718,20 @@ pub(crate) struct BarGeometry {
     /// Repeat dots centres.
     pub repeat_dots: Vec<f32>,
     pub last_in_system: bool,
+    /// The extra thin line of a double bar line before a key change (EP3): at the bar's
+    /// start, or at the system's end when the next system starts with the change.
+    pub double_left: Option<f32>,
+    pub double_right: Option<f32>,
+}
+
+/// Courtesy signatures at the end of a system for the bar starting the next (EP2).
+pub(crate) struct Courtesy {
+    pub bar: usize,
+    /// (old, new) when the key changes at `bar`.
+    pub key: Option<(KeySignature, KeySignature)>,
+    pub time: Option<mc_theory::TimeSignature>,
+    /// Left edge of the courtesy area (the system's last bar line).
+    pub x: f32,
 }
 
 /// One notation stave of one system.
@@ -634,6 +741,9 @@ pub(crate) struct Stave<'a> {
     pub header_x: f32,
     pub key: mc_theory::KeySignature,
     pub plans: Vec<(&'a NotationPlan, &'a [usize], BarGeometry, &'a MasterBar)>,
+    /// Every master bar of the score (the key before a change, EP3).
+    pub masters: &'a [MasterBar],
+    pub courtesy: Option<Courtesy>,
 }
 
 impl Stave<'_> {
@@ -681,7 +791,88 @@ impl Stave<'_> {
         for (plan, cols, geo, master) in &self.plans {
             self.emit_bar(&mut st, plan, cols, geo, master);
         }
+        if let Some(c) = &self.courtesy {
+            self.emit_courtesy(&mut st, c);
+        }
         st
+    }
+
+    /// EP2: after the system's last bar line, the next system's new key (with its
+    /// cancelling naturals) and then its new time signature.
+    fn emit_courtesy(&self, st: &mut NotationStaff, c: &Courtesy) {
+        let sp = self.sp;
+        let x = c.x + COURTESY_BEFORE_SP * sp;
+        st.facts.courtesy.push(CourtesyFact {
+            bar: c.bar,
+            key: c.key.map(|k| k.1),
+            time: c.time,
+            x,
+        });
+        if let Some((old, new)) = c.key {
+            self.emit_key_change(st, old, new, x, c.bar);
+        }
+        if let Some(ts) = c.time {
+            let (old, new) = (&self.masters[c.bar - 1], &self.masters[c.bar]);
+            let centre = courtesy_time_centre_sp(old, new).expect("the time changes");
+            self.emit_time(st, ts, c.x + centre * sp);
+        }
+    }
+
+    /// A time signature centred on `cx`.
+    fn emit_time(&self, st: &mut NotationStaff, ts: mc_theory::TimeSignature, cx: f32) {
+        let sp = self.sp;
+        for (value, p) in [
+            (ts.numerator(), TIME_TOP_POSITION),
+            (ts.denominator(), TIME_BOTTOM_POSITION),
+        ] {
+            let mut x = cx - digits_width(value) / 2.0 * sp;
+            for d in value.to_string().bytes() {
+                let g = SmuflGlyph::time_digit(d - b'0');
+                st.glyphs.push(MusicGlyph {
+                    glyph: g,
+                    x,
+                    y: self.y_of(p),
+                });
+                x += glyph_width(g) * sp;
+            }
+        }
+    }
+
+    /// A key change at `x` (EP3): the naturals cancelling the signs of `old` that `new`
+    /// drops (the rule is `mc-theory`'s), at those signs' positions and in their order,
+    /// then `new`'s signature. Records the cancelled letters for `bar`.
+    fn emit_key_change(
+        &self,
+        st: &mut NotationStaff,
+        old: KeySignature,
+        new: KeySignature,
+        x: f32,
+        bar: usize,
+    ) {
+        let cancelled = old.cancelled_by(new);
+        let positions = if old.fifths() > 0 {
+            &KEY_SHARP_POSITIONS
+        } else {
+            &KEY_FLAT_POSITIONS
+        };
+        let g = SmuflGlyph::AccidentalNatural;
+        let step = (glyph_width(g) + KEY_SIGN_GAP_SP) * self.sp;
+        let mut cx = x;
+        for (sign, p) in old.signs().iter().zip(positions) {
+            if cancelled.contains(sign) {
+                st.glyphs.push(MusicGlyph {
+                    glyph: g,
+                    x: cx,
+                    y: self.y_of(*p),
+                });
+                cx += step;
+            }
+        }
+        if !cancelled.is_empty() {
+            cx += (KEY_CANCEL_GAP_SP - KEY_SIGN_GAP_SP) * self.sp;
+        }
+        st.facts.cancellations.push((bar, cancelled));
+        self.emit_key(st, new.fifths(), cx);
     }
 
     fn emit_key(&self, st: &mut NotationStaff, fifths: i8, x: f32) {
@@ -746,26 +937,15 @@ impl Stave<'_> {
             }
         }
         if let Some(kx) = geo.key_x {
-            self.emit_key(st, master.key.fifths(), kx + KEY_BEFORE_SP * sp);
+            let old = self.masters[geo.bar - 1].key;
+            self.emit_key_change(st, old, master.key, kx + KEY_BEFORE_SP * sp, geo.bar);
         }
         if let Some(cx) = geo.time_signature_centre {
-            let ts = master.time_signature;
-            for (value, p) in [
-                (ts.numerator(), TIME_TOP_POSITION),
-                (ts.denominator(), TIME_BOTTOM_POSITION),
-            ] {
-                let mut x = cx - digits_width(value) / 2.0 * sp;
-                for d in value.to_string().bytes() {
-                    let g = SmuflGlyph::time_digit(d - b'0');
-                    st.glyphs.push(MusicGlyph {
-                        glyph: g,
-                        x,
-                        y: self.y_of(p),
-                    });
-                    x += glyph_width(g) * sp;
-                }
-            }
+            self.emit_time(st, master.time_signature, cx);
         }
+        st.facts
+            .contents
+            .push((geo.bar, geo.content_start, geo.content_end));
         if plan.beats.is_empty() {
             let g = SmuflGlyph::RestWhole;
             let b = g.metrics().bbox;
@@ -792,10 +972,16 @@ impl Stave<'_> {
                 x: ax,
             });
             if pb.notes.is_empty() {
-                self.emit_rest(st, geo.bar, pb, ax);
+                // EP4: a rest filling its voice's bar is centred in the bar.
+                let x = if pb.bar_rest {
+                    (geo.content_start + geo.content_end) / 2.0
+                } else {
+                    ax
+                };
+                self.emit_rest(st, geo.bar, pb, x);
                 continue;
             }
-            self.emit_notes(st, geo.bar, pb, ax);
+            self.emit_notes(st, geo, pb, ax);
             if pb.exponent >= 1 {
                 let head = SmuflGlyph::notehead(pb.exponent).metrics();
                 let hw = head.bbox.width() * sp;
@@ -1014,7 +1200,8 @@ impl Stave<'_> {
         }
     }
 
-    fn emit_notes(&self, st: &mut NotationStaff, bar: usize, pb: &PBeat, ax: f32) {
+    fn emit_notes(&self, st: &mut NotationStaff, geo: &BarGeometry, pb: &PBeat, ax: f32) {
+        let bar = geo.bar;
         let sp = self.sp;
         let head = SmuflGlyph::notehead(pb.exponent);
         let hw = glyph_width(head) * sp;
@@ -1115,6 +1302,20 @@ impl Stave<'_> {
                 let b = SmuflGlyph::AugmentationDot.metrics().bbox;
                 dots.push((dx + (b.sw.0 + b.width() / 2.0) * sp, dy));
             }
+            let y = if up {
+                hy + TIE_OFFSET_SP * sp
+            } else {
+                hy - TIE_OFFSET_SP * sp
+            };
+            let tie = |x1: f32, x2: f32| Tie {
+                x1,
+                x2,
+                y,
+                up: !up,
+                height: tie_height(x2 - x1, sp),
+                end_thickness: DEFAULTS.tie_endpoint_thickness * sp,
+                mid_thickness: DEFAULTS.tie_midpoint_thickness * sp,
+            };
             if n.tie != TieRole::NotTied {
                 let source = st.facts.notes.iter().rev().find(|f| {
                     f.voice == pb.voice
@@ -1122,23 +1323,18 @@ impl Stave<'_> {
                         && (f.bar < bar || f.beat < pb.beat)
                         && f.position == n.position
                 });
-                let x1 = source
-                    .map(|s| s.head.right() + 0.1 * sp)
-                    .unwrap_or(hx - TIE_LEAD_SP * sp);
-                let y = if up {
-                    hy + TIE_OFFSET_SP * sp
-                } else {
-                    hy - TIE_OFFSET_SP * sp
-                };
-                st.ties.push(Tie {
-                    x1,
-                    x2: hx - 0.1 * sp,
-                    y,
-                    up: !up,
-                    height: TIE_HEIGHT_SP * sp,
-                    end_thickness: DEFAULTS.tie_endpoint_thickness * sp,
-                    mid_thickness: DEFAULTS.tie_midpoint_thickness * sp,
+                let x2 = hx - TIE_HEAD_GAP_SP * sp;
+                // EP5: a tie from the previous system starts after the header.
+                let x1 = source.map_or(geo.content_start.min(x2 - TIE_HALF_MIN_SP * sp), |s| {
+                    s.head.right() + TIE_HEAD_GAP_SP * sp
                 });
+                st.ties.push(tie(x1, x2));
+            }
+            // EP5: a tie into the next system leaves the last note to the system end.
+            if n.ties_out && geo.last_in_system {
+                let x1 = head_rect.right() + TIE_HEAD_GAP_SP * sp;
+                let end = geo.barlines.iter().map(|b| b.0).fold(f32::MIN, f32::max);
+                st.ties.push(tie(x1, end.max(x1 + TIE_HALF_MIN_SP * sp)));
             }
             st.facts.notes.push(NoteFact {
                 bar,

@@ -1,97 +1,104 @@
-layout width 1000.000 height 469.440
-system 0 y 0.000 h 230.144
+layout width 1000.000 height 423.840
+system 0 y 0.000 h 206.144
  stave Notation track 1 top 0.000 h 106.144
-  bar 0 x 77.040 w 188.420
-  bar 1 x 265.460 w 128.208
-  bar 2 x 393.668 w 199.490
-  bar 3 x 593.159 w 198.137
-  bar 4 x 791.296 w 184.704
+  bar 0 x 77.040 w 185.642
+  bar 1 x 262.682 w 134.208
+  bar 2 x 396.890 w 191.565
+  bar 3 x 588.455 w 190.313
+  bar 4 x 778.768 w 197.232
   line StaffLine 24.000 46.048 976.000 46.048 1.040
   line StaffLine 24.000 54.048 976.000 54.048 1.040
   line StaffLine 24.000 62.048 976.000 62.048 1.040
   line StaffLine 24.000 70.048 976.000 70.048 1.040
   line StaffLine 24.000 78.048 976.000 78.048 1.040
   line BarLine 77.040 46.048 77.040 78.048 1.280
-  line LedgerLine 226.445 38.048 242.285 38.048 1.280
-  line LedgerLine 226.445 30.048 242.285 30.048 1.280
-  line Stem 119.972 47.392 119.972 74.048 0.960
-  line Stem 154.795 47.392 154.795 74.048 0.960
-  line Stem 189.618 47.392 189.618 74.048 0.960
-  line Stem 230.125 31.392 230.125 62.048 0.960
-  line BarLine 265.460 46.048 265.460 78.048 1.280
-  line Stem 286.632 47.392 286.632 74.048 0.960
-  line Stem 321.455 51.392 321.455 78.048 0.960
-  line Stem 360.148 43.392 360.148 70.048 0.960
-  line BarLine 393.668 46.048 393.668 78.048 1.280
-  line LedgerLine 429.992 38.048 445.832 38.048 1.280
-  line LedgerLine 467.713 38.048 483.553 38.048 1.280
-  line LedgerLine 510.326 38.048 526.166 38.048 1.280
-  line LedgerLine 554.935 38.048 570.775 38.048 1.280
-  line LedgerLine 554.935 30.048 570.775 30.048 1.280
-  line LedgerLine 554.935 22.048 570.775 22.048 1.280
-  line Stem 433.672 35.392 433.672 62.048 0.960
-  line Stem 471.393 35.392 471.393 62.048 0.960
-  line Stem 514.006 35.392 514.006 62.048 0.960
-  line Stem 558.615 23.392 558.615 62.048 0.960
-  line BarLine 593.159 46.048 593.159 78.048 1.280
-  line LedgerLine 712.453 38.048 728.293 38.048 1.280
-  line LedgerLine 755.067 38.048 770.907 38.048 1.280
-  line Stem 641.594 51.392 641.594 78.048 0.960
-  line Stem 676.417 51.392 676.417 78.048 0.960
-  line Stem 716.133 39.392 716.133 66.048 0.960
-  line Stem 758.747 39.392 758.747 66.048 0.960
-  line BarLine 791.296 46.048 791.296 78.048 1.280
+  line LedgerLine 233.266 38.048 249.106 38.048 1.280
+  line LedgerLine 233.266 30.048 249.106 30.048 1.280
+  line Stem 120.903 47.392 120.903 74.048 0.960
+  line Stem 161.537 47.392 161.537 74.048 0.960
+  line Stem 194.273 47.392 194.273 74.048 0.960
+  line Stem 236.946 31.392 236.946 62.048 0.960
+  line BarLine 262.682 46.048 262.682 78.048 1.280
+  line Stem 288.734 47.392 288.734 74.048 0.960
+  line Stem 321.470 51.392 321.470 78.048 0.960
+  line Stem 367.648 43.392 367.648 70.048 0.960
+  line BarLine 392.410 46.048 392.410 78.048 1.280
+  line BarLine 396.890 46.048 396.890 78.048 1.280
+  line LedgerLine 443.521 38.048 459.361 38.048 1.280
+  line LedgerLine 484.155 38.048 499.995 38.048 1.280
+  line LedgerLine 522.045 38.048 537.885 38.048 1.280
+  line LedgerLine 559.039 38.048 574.879 38.048 1.280
+  line LedgerLine 559.039 30.048 574.879 30.048 1.280
+  line LedgerLine 559.039 22.048 574.879 22.048 1.280
+  line Stem 447.201 35.392 447.201 62.048 0.960
+  line Stem 487.835 35.392 487.835 62.048 0.960
+  line Stem 525.725 35.392 525.725 62.048 0.960
+  line Stem 562.719 23.392 562.719 62.048 0.960
+  line BarLine 583.975 46.048 583.975 78.048 1.280
+  line BarLine 588.455 46.048 588.455 78.048 1.280
+  line LedgerLine 712.666 38.048 728.506 38.048 1.280
+  line LedgerLine 748.455 38.048 764.295 38.048 1.280
+  line Stem 637.822 51.392 637.822 78.048 0.960
+  line Stem 678.456 51.392 678.456 78.048 0.960
+  line Stem 716.346 39.392 716.346 66.048 0.960
+  line Stem 752.135 39.392 752.135 66.048 0.960
+  line BarLine 774.288 46.048 774.288 78.048 1.280
+  line BarLine 778.768 46.048 778.768 78.048 1.280
   line BarLine 976.000 46.048 976.000 78.048 1.280
-  line LedgerLine 855.859 38.048 871.700 38.048 1.280
-  line LedgerLine 855.859 30.048 871.700 30.048 1.280
-  line LedgerLine 893.580 38.048 909.420 38.048 1.280
-  line LedgerLine 893.580 30.048 909.420 30.048 1.280
-  line LedgerLine 936.985 38.048 952.825 38.048 1.280
-  line LedgerLine 936.985 30.048 952.825 30.048 1.280
-  line Stem 859.539 27.392 859.539 62.048 0.960
-  line Stem 897.260 27.392 897.260 62.048 0.960
-  line Stem 940.665 27.392 940.665 62.048 0.960
+  line LedgerLine 860.215 38.048 876.055 38.048 1.280
+  line LedgerLine 860.215 30.048 876.055 30.048 1.280
+  line LedgerLine 900.849 38.048 916.689 38.048 1.280
+  line LedgerLine 900.849 30.048 916.689 30.048 1.280
+  line LedgerLine 943.078 38.048 958.918 38.048 1.280
+  line LedgerLine 943.078 30.048 958.918 30.048 1.280
+  line Stem 863.895 27.392 863.895 62.048 0.960
+  line Stem 904.529 27.392 904.529 62.048 0.960
+  line Stem 946.758 27.392 946.758 62.048 0.960
   glyph gClef8vb 32.000 70.048
   glyph accidentalSharp 61.472 46.048
   glyph timeSig4 85.040 54.048
   glyph timeSig4 85.040 70.048
-  glyph noteheadBlack 119.492 46.048
-  glyph noteheadBlack 154.315 46.048
-  glyph accidentalNatural 147.339 46.048
-  glyph noteheadBlack 189.138 46.048
-  glyph noteheadBlack 229.645 30.048
-  glyph accidentalSharp 220.077 30.048
-  glyph noteheadBlack 286.152 46.048
-  glyph accidentalNatural 279.176 46.048
-  glyph noteheadBlack 320.975 50.048
-  glyph noteheadHalf 359.668 42.048
-  glyph accidentalSharp 350.100 42.048
-  glyph accidentalFlat 397.668 62.048
-  glyph noteheadBlack 433.192 34.048
-  glyph noteheadBlack 470.913 34.048
-  glyph accidentalNatural 463.937 34.048
-  glyph noteheadBlack 513.526 34.048
-  glyph accidentalFlat 504.694 34.048
-  glyph noteheadBlack 558.135 22.048
-  glyph accidentalFlat 549.303 22.048
-  glyph accidentalFlat 597.159 62.048
-  glyph accidentalFlat 605.591 50.048
-  glyph noteheadBlack 641.114 50.048
-  glyph noteheadBlack 675.938 50.048
-  glyph accidentalNatural 668.962 50.048
-  glyph noteheadBlack 715.653 38.048
-  glyph accidentalFlat 706.821 38.048
-  glyph noteheadBlack 758.267 38.048
-  glyph accidentalNatural 751.291 38.048
-  glyph accidentalSharp 795.296 46.048
-  glyph accidentalSharp 804.464 58.048
-  glyph accidentalSharp 813.632 42.048
-  glyph accidentalSharp 822.800 54.048
-  glyph noteheadBlack 859.060 26.048
-  glyph noteheadBlack 896.780 26.048
-  glyph accidentalNatural 889.805 26.048
-  glyph noteheadHalf 940.185 26.048
-  glyph accidentalSharp 930.617 26.048
+  glyph noteheadBlack 120.423 46.048
+  glyph noteheadBlack 161.057 46.048
+  glyph accidentalNatural 154.081 46.048
+  glyph noteheadBlack 193.793 46.048
+  glyph noteheadBlack 236.466 30.048
+  glyph accidentalSharp 226.898 30.048
+  glyph noteheadBlack 288.254 46.048
+  glyph accidentalNatural 281.278 46.048
+  glyph noteheadBlack 320.990 50.048
+  glyph noteheadHalf 367.168 42.048
+  glyph accidentalSharp 357.600 42.048
+  glyph accidentalNatural 400.890 46.048
+  glyph accidentalFlat 410.266 62.048
+  glyph noteheadBlack 446.721 34.048
+  glyph noteheadBlack 487.355 34.048
+  glyph accidentalNatural 480.379 34.048
+  glyph noteheadBlack 525.245 34.048
+  glyph accidentalFlat 516.413 34.048
+  glyph noteheadBlack 562.239 22.048
+  glyph accidentalFlat 553.407 22.048
+  glyph accidentalFlat 592.455 62.048
+  glyph accidentalFlat 600.887 50.048
+  glyph noteheadBlack 637.342 50.048
+  glyph noteheadBlack 677.976 50.048
+  glyph accidentalNatural 671.000 50.048
+  glyph noteheadBlack 715.866 38.048
+  glyph accidentalFlat 707.034 38.048
+  glyph noteheadBlack 751.655 38.048
+  glyph accidentalNatural 744.679 38.048
+  glyph accidentalNatural 782.768 62.048
+  glyph accidentalNatural 789.344 50.048
+  glyph accidentalSharp 798.720 46.048
+  glyph accidentalSharp 807.888 58.048
+  glyph accidentalSharp 817.056 42.048
+  glyph accidentalSharp 826.224 54.048
+  glyph noteheadBlack 863.415 26.048
+  glyph noteheadBlack 904.049 26.048
+  glyph accidentalNatural 897.073 26.048
+  glyph noteheadHalf 946.278 26.048
+  glyph accidentalSharp 936.710 26.048
+  tie 956.518 976.000 21.248 true
   note 0:0:0 F#5 pos 8 acc None NotTied displaced false
   note 0:0:1 F5 pos 8 acc Some(0) NotTied displaced false
   note 0:0:2 F5 pos 8 acc None NotTied displaced false
@@ -110,73 +117,73 @@ system 0 y 0.000 h 230.144
   note 4:0:0 D#6 pos 13 acc None NotTied displaced false
   note 4:0:1 D6 pos 13 acc Some(0) NotTied displaced false
   note 4:0:2 D#6 pos 13 acc Some(1) NotTied displaced false
- stave Tab track 1 top 106.144 h 124.000
-  bar 0 x 77.040 w 188.420
-  bar 1 x 265.460 w 128.208
-  bar 2 x 393.668 w 199.490
-  bar 3 x 593.159 w 198.137
-  bar 4 x 791.296 w 184.704
-  fret 2 124.212 28.000
-  fret 1 159.035 28.000
-  fret 1 193.858 28.000
-  fret 9 234.365 28.000
-  fret 1 290.872 28.000
-  fret 0 325.695 28.000
-  fret 4 364.388 28.000
-  fret 6 437.912 28.000
-  fret 7 475.633 28.000
-  fret 6 518.246 28.000
-  fret 11 562.854 28.000
-  fret 4 645.834 40.000
-  fret 0 680.657 28.000
-  fret 4 720.373 28.000
-  fret 5 762.987 28.000
-  fret 11 863.779 28.000
-  fret 10 901.500 28.000
-  fret 11 944.905 28.000
-system 1 y 246.144 h 223.296
- stave Notation track 1 top 0.000 h 99.296
-  bar 5 x 104.544 w 166.960
-  line StaffLine 24.000 39.200 271.504 39.200 1.040
-  line StaffLine 24.000 47.200 271.504 47.200 1.040
-  line StaffLine 24.000 55.200 271.504 55.200 1.040
-  line StaffLine 24.000 63.200 271.504 63.200 1.040
-  line StaffLine 24.000 71.200 271.504 71.200 1.040
-  line BarLine 104.544 39.200 104.544 71.200 1.280
-  line BarLine 267.504 39.200 267.504 71.200 1.280
-  line ThickBarLine 270.504 39.200 270.504 71.200 4.000
-  line LedgerLine 120.824 31.200 136.664 31.200 1.280
-  line LedgerLine 120.824 23.200 136.664 23.200 1.280
-  line LedgerLine 155.920 31.200 171.760 31.200 1.280
-  line LedgerLine 155.920 23.200 171.760 23.200 1.280
-  line LedgerLine 196.304 31.200 212.144 31.200 1.280
-  line LedgerLine 196.304 23.200 212.144 23.200 1.280
-  line LedgerLine 236.688 31.200 252.528 31.200 1.280
-  line LedgerLine 236.688 23.200 252.528 23.200 1.280
-  line Stem 124.504 20.544 124.504 55.200 0.960
-  line Stem 159.600 20.544 159.600 55.200 0.960
-  line Stem 199.984 20.544 199.984 55.200 0.960
-  line Stem 240.368 20.544 240.368 55.200 0.960
-  glyph gClef8vb 32.000 63.200
-  glyph accidentalSharp 61.472 39.200
-  glyph accidentalSharp 70.640 51.200
-  glyph accidentalSharp 79.808 35.200
-  glyph accidentalSharp 88.976 47.200
-  glyph noteheadBlack 124.024 19.200
-  glyph noteheadBlack 159.120 19.200
-  glyph accidentalNatural 152.144 19.200
-  glyph noteheadBlack 199.504 19.200
-  glyph accidentalSharp 189.936 19.200
-  glyph noteheadBlack 239.888 19.200
-  glyph accidentalNatural 232.912 19.200
-  tie 108.024 123.224 14.400 true
+ stave Tab track 1 top 106.144 h 100.000
+  bar 0 x 77.040 w 185.642
+  bar 1 x 262.682 w 134.208
+  bar 2 x 396.890 w 191.565
+  bar 3 x 588.455 w 190.313
+  bar 4 x 778.768 w 197.232
+  fret 2 125.143 28.000
+  fret 1 165.777 28.000
+  fret 1 198.513 28.000
+  fret 9 241.186 28.000
+  fret 1 292.974 28.000
+  fret 0 325.710 28.000
+  fret 4 371.888 28.000
+  fret 6 451.441 28.000
+  fret 7 492.075 28.000
+  fret 6 529.965 28.000
+  fret 11 566.959 28.000
+  fret 4 642.062 40.000
+  fret 0 682.696 28.000
+  fret 4 720.586 28.000
+  fret 5 756.375 28.000
+  fret 11 868.135 28.000
+  fret 10 908.769 28.000
+  fret 11 950.998 28.000
+system 1 y 222.144 h 201.696
+ stave Notation track 1 top 0.000 h 101.696
+  bar 5 x 104.544 w 146.608
+  line StaffLine 24.000 41.600 251.152 41.600 1.040
+  line StaffLine 24.000 49.600 251.152 49.600 1.040
+  line StaffLine 24.000 57.600 251.152 57.600 1.040
+  line StaffLine 24.000 65.600 251.152 65.600 1.040
+  line StaffLine 24.000 73.600 251.152 73.600 1.040
+  line BarLine 104.544 41.600 104.544 73.600 1.280
+  line BarLine 247.152 41.600 247.152 73.600 1.280
+  line ThickBarLine 250.152 41.600 250.152 73.600 4.000
+  line LedgerLine 120.824 33.600 136.664 33.600 1.280
+  line LedgerLine 120.824 25.600 136.664 25.600 1.280
+  line LedgerLine 156.712 33.600 172.552 33.600 1.280
+  line LedgerLine 156.712 25.600 172.552 25.600 1.280
+  line LedgerLine 190.912 33.600 206.752 33.600 1.280
+  line LedgerLine 190.912 25.600 206.752 25.600 1.280
+  line LedgerLine 222.520 33.600 238.360 33.600 1.280
+  line LedgerLine 222.520 25.600 238.360 25.600 1.280
+  line Stem 124.504 22.944 124.504 57.600 0.960
+  line Stem 160.392 22.944 160.392 57.600 0.960
+  line Stem 194.592 22.944 194.592 57.600 0.960
+  line Stem 226.200 22.944 226.200 57.600 0.960
+  glyph gClef8vb 32.000 65.600
+  glyph accidentalSharp 61.472 41.600
+  glyph accidentalSharp 70.640 53.600
+  glyph accidentalSharp 79.808 37.600
+  glyph accidentalSharp 88.976 49.600
+  glyph noteheadBlack 124.024 21.600
+  glyph noteheadBlack 159.912 21.600
+  glyph accidentalNatural 152.936 21.600
+  glyph noteheadBlack 194.112 21.600
+  glyph accidentalSharp 184.544 21.600
+  glyph noteheadBlack 225.720 21.600
+  glyph accidentalNatural 218.744 21.600
+  tie 112.544 123.224 16.800 true
   note 5:0:0 D#6 pos 13 acc None TiedAcrossBarLine displaced false
   note 5:0:1 D6 pos 13 acc Some(0) NotTied displaced false
   note 5:0:2 D#6 pos 13 acc Some(1) NotTied displaced false
   note 5:0:3 D6 pos 13 acc Some(0) NotTied displaced false
- stave Tab track 1 top 99.296 h 124.000
-  bar 5 x 104.544 w 166.960
+ stave Tab track 1 top 101.696 h 100.000
+  bar 5 x 104.544 w 146.608
   fret 11t 128.744 28.000
-  fret 10 163.840 28.000
-  fret 11 204.224 28.000
-  fret 10 244.608 28.000
+  fret 10 164.632 28.000
+  fret 11 198.832 28.000
+  fret 10 230.440 28.000

@@ -18,6 +18,8 @@ use std::collections::BTreeMap;
 pub struct Report {
     pub notes: usize,
     pub rule_checks: usize,
+    /// Tie halves at system breaks that EP5 checked (coverage).
+    pub tie_halves: usize,
     pub violations: Vec<(&'static str, String)>,
 }
 
@@ -392,6 +394,8 @@ pub fn check(score: &Score, layout: &ScoreLayout) -> Report {
         }
     }
     n2(score, layout, &mut r);
+    centred_bar_rests(score, layout, &mut r);
+    tie_shapes(score, layout, &mut r);
     bounds(layout, &mut r);
     r
 }
@@ -411,6 +415,11 @@ fn key_signs(score: &Score, layout: &ScoreLayout, sys: usize, n: &NotationStaff,
             expected += masters[b].key.fifths().unsigned_abs() as usize;
         }
     }
+    // EP2: the courtesy key at the end, for a key change starting the next system.
+    if z < masters.len() && masters[z].key != masters[z - 1].key {
+        expected += masters[z].key.fifths().unsigned_abs() as usize;
+    }
+    key_changes_and_courtesy(score, layout, sys, n, r);
     r.rule_checks += 1;
     let drawn = n
         .glyphs
@@ -438,6 +447,258 @@ fn key_signs(score: &Score, layout: &ScoreLayout, sys: usize, n: &NotationStaff,
     }
 }
 
+/// EP2 and EP3 (ADR-041 section 13) on one notation staff:
+/// - every key change drawn (inside the system, or as the courtesy for the next) cancels
+///   exactly the letters `mc-theory` gives, and as many naturals are drawn as cancelled
+///   signs plus natural accidentals of notes;
+/// - a courtesy is drawn exactly when the next system starts with a key or time change,
+///   announcing that change, after the system's last bar line;
+/// - a double thin bar line precedes every key change (inside the system, and at the
+///   system's end before a change in the next).
+fn key_changes_and_courtesy(
+    score: &Score,
+    layout: &ScoreLayout,
+    sys: usize,
+    n: &NotationStaff,
+    r: &mut Report,
+) {
+    const EPS: f32 = 0.01;
+    let masters = score.master_bars();
+    let s = &layout.systems[sys];
+    let Some(first) = s.staves.first() else {
+        return;
+    };
+    let (a, z) = (first.layout.first_bar(), first.layout.end_bar());
+    let changes_at = |b: usize| b > 0 && b < masters.len() && masters[b].key != masters[b - 1].key;
+    // Cancellations.
+    let mut want: Vec<(usize, Vec<mc_theory::Letter>)> = (a + 1..z)
+        .filter(|b| changes_at(*b))
+        .map(|b| (b, masters[b - 1].key.cancelled_by(masters[b].key)))
+        .collect();
+    if changes_at(z) {
+        want.push((z, masters[z - 1].key.cancelled_by(masters[z].key)));
+    }
+    r.rule_checks += 1;
+    if n.facts.cancellations != want {
+        r.fail(
+            "key-cancellation",
+            format!(
+                "system {sys}: {:?}, expected {want:?}",
+                n.facts.cancellations
+            ),
+        );
+    }
+    let naturals = n
+        .glyphs
+        .iter()
+        .filter(|g| g.glyph == SmuflGlyph::AccidentalNatural)
+        .count();
+    let note_naturals = n
+        .facts
+        .notes
+        .iter()
+        .filter(|x| x.accidental.map(|a| a.semitones()) == Some(0))
+        .count();
+    let cancelled: usize = want.iter().map(|w| w.1.len()).sum();
+    r.rule_checks += 1;
+    if naturals != cancelled + note_naturals {
+        r.fail(
+            "key-cancellation",
+            format!("system {sys}: {naturals} naturals, expected {cancelled} + {note_naturals}"),
+        );
+    }
+    // Courtesy.
+    let last_line = n.facts.barlines.iter().copied().fold(f32::MIN, f32::max);
+    let time_changes =
+        z < masters.len() && masters[z].time_signature != masters[z - 1].time_signature;
+    r.rule_checks += 1;
+    match (n.facts.courtesy.as_slice(), changes_at(z) || time_changes) {
+        ([], false) => {}
+        ([c], true) => {
+            let key = changes_at(z).then_some(masters[z].key);
+            let time = time_changes.then_some(masters[z].time_signature);
+            if c.bar != z || c.key != key || c.time != time || c.x < last_line - EPS {
+                r.fail("courtesy", format!("system {sys}: {c:?} for bar {z}"));
+            }
+        }
+        (got, expected) => r.fail(
+            "courtesy",
+            format!("system {sys}: {got:?}, expected one: {expected}"),
+        ),
+    }
+    // Double bar lines: two thin lines 0.56 staff spaces apart before each change.
+    let sep = 0.56 * n.staff_space;
+    let thin: Vec<f32> = n
+        .lines
+        .iter()
+        .filter(|l| l.kind == EngravedLineKind::BarLine)
+        .map(|l| l.x1)
+        .collect();
+    let pair_at = |x: f32| {
+        thin.iter().any(|t| (t - x).abs() <= EPS)
+            && thin.iter().any(|t| (t - (x - sep)).abs() <= EPS)
+    };
+    let bar_x = |b: usize| first.layout.bars.iter().find(|l| l.bar == b).map(|l| l.x);
+    for b in (a + 1..z).filter(|b| changes_at(*b)) {
+        if masters[b].repeat_start || masters[b - 1].repeat_end.is_some() {
+            continue;
+        }
+        r.rule_checks += 1;
+        if !bar_x(b).is_some_and(pair_at) {
+            r.fail(
+                "double-bar-line",
+                format!("system {sys}: none before bar {b}"),
+            );
+        }
+    }
+    if changes_at(z) && !masters[z].repeat_start && masters[z - 1].repeat_end.is_none() {
+        r.rule_checks += 1;
+        if !pair_at(last_line) {
+            r.fail(
+                "double-bar-line",
+                format!("system {sys}: none at the end before bar {z}"),
+            );
+        }
+    }
+}
+
+/// EP4 (ADR-041 section 13): a voice whose bar holds one rest as long as the bar shows a
+/// whole rest centred in the bar's content, in any time signature; other rests keep
+/// their own value.
+fn centred_bar_rests(score: &Score, layout: &ScoreLayout, r: &mut Report) {
+    const EPS: f32 = 0.01;
+    let whole = SmuflGlyph::RestWhole.metrics().bbox.width();
+    for sys in &layout.systems {
+        for st in sys.staves.iter().filter(|s| s.kind == StaveKind::Notation) {
+            let n = &st.layout.notation;
+            let track = score.track(st.track).expect("shown track");
+            for &(bar, start, end) in &n.facts.contents {
+                let length = score.master_bars()[bar].time_signature.length();
+                let content = track.bar(bar).expect("bar");
+                for (v, voice) in content.voices.iter().enumerate() {
+                    let lone = voice.beats.len() == 1
+                        && voice.beats[0].notes.is_empty()
+                        && voice.beats[0].value.length() == length;
+                    let Some(rest) = n
+                        .facts
+                        .rests
+                        .iter()
+                        .find(|x| x.bar == bar && x.voice == v && x.beat == 0)
+                    else {
+                        continue;
+                    };
+                    r.rule_checks += 1;
+                    let is_whole = (rest.rect.w - whole * n.staff_space).abs() <= EPS;
+                    let centred =
+                        (rest.rect.x + rest.rect.w / 2.0 - (start + end) / 2.0).abs() <= EPS;
+                    if lone && !(is_whole && centred) {
+                        r.fail(
+                            "centred-bar-rest",
+                            format!(
+                                "bar {bar} voice {v}: whole {is_whole}, centre {:.2} in {start:.2}..{end:.2}",
+                                rest.rect.x + rest.rect.w / 2.0
+                            ),
+                        );
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// EP5 (ADR-041 section 13):
+/// - a tie's height is 0.15 of its length, kept within 0.5 to 1.0 staff space;
+/// - a tie across a system break is two halves: out of the last note of the earlier
+///   system to its end, and into the first note of the next system from its content
+///   start.
+fn tie_shapes(score: &Score, layout: &ScoreLayout, r: &mut Report) {
+    const EPS: f32 = 0.01;
+    let mut halves = 0;
+    for sys in &layout.systems {
+        for st in sys.staves.iter().filter(|s| s.kind == StaveKind::Notation) {
+            let n = &st.layout.notation;
+            let sp = n.staff_space;
+            for t in &n.ties {
+                r.rule_checks += 1;
+                let want = (0.15 * (t.x2 - t.x1) / sp).clamp(0.5, 1.0) * sp;
+                if (t.height - want).abs() > EPS {
+                    r.fail(
+                        "tie-shape",
+                        format!(
+                            "system {}: tie height {} for {}",
+                            sys.index,
+                            t.height,
+                            t.x2 - t.x1
+                        ),
+                    );
+                }
+            }
+            let (Some(first), Some(last)) = (st.layout.bars.first(), st.layout.bars.last()) else {
+                continue;
+            };
+            let system_end = n.facts.barlines.iter().copied().fold(f32::MIN, f32::max);
+            let track = score.track(st.track).expect("shown track");
+            for f in &n.facts.notes {
+                // Into the first note of a system, from a note of the previous system.
+                if f.bar == first.bar && f.bar > 0 && f.tie == TieRole::TiedAcrossBarLine {
+                    r.rule_checks += 1;
+                    halves += 1;
+                    let start = n
+                        .facts
+                        .contents
+                        .iter()
+                        .find(|c| c.0 == f.bar)
+                        .map_or(f32::MAX, |c| c.1);
+                    let ok = n.ties.iter().any(|t| {
+                        (t.x2 - (f.head.x - 0.1 * sp)).abs() <= EPS
+                            && t.x1 <= start + EPS
+                            && t.x2 - t.x1 >= 1.0 * sp - EPS
+                    });
+                    if !ok {
+                        r.fail(
+                            "tie-across-systems",
+                            format!("bar {} voice {}: no tie in from the header", f.bar, f.voice),
+                        );
+                    }
+                }
+                // Out of the last note of a system into the next system.
+                let next_tied = f.bar == last.bar
+                    && track.bar(f.bar + 1).is_some_and(|nb| {
+                        nb.voices
+                            .get(f.voice)
+                            .and_then(|v| v.beats.first())
+                            .is_some_and(|b| {
+                                b.notes
+                                    .iter()
+                                    .any(|x| x.tie && x.position().string.get() == f.string)
+                            })
+                    })
+                    && track
+                        .bar(f.bar)
+                        .is_some_and(|b| b.voices[f.voice].beats.len() == f.beat + 1);
+                if next_tied {
+                    r.rule_checks += 1;
+                    halves += 1;
+                    let ok = n.ties.iter().any(|t| {
+                        (t.x1 - (f.head.right() + 0.1 * sp)).abs() <= EPS
+                            && (t.x2 - system_end.max(t.x1 + sp)).abs() <= EPS
+                    });
+                    if !ok {
+                        r.fail(
+                            "tie-across-systems",
+                            format!(
+                                "bar {} voice {}: no tie out to the system end",
+                                f.bar, f.voice
+                            ),
+                        );
+                    }
+                }
+            }
+        }
+    }
+    r.tie_halves += halves;
+}
+
 /// N2: notation anchors equal the TAB beat columns, bar lines equal (0.01 units).
 fn n2(score: &Score, layout: &ScoreLayout, r: &mut Report) {
     const EPS: f32 = 0.01;
@@ -451,28 +712,47 @@ fn n2(score: &Score, layout: &ScoreLayout, r: &mut Report) {
             let (Some(n), Some(tab)) = (of(StaveKind::Notation), of(StaveKind::Tab)) else {
                 continue;
             };
-            let tab_x: BTreeMap<Key, f32> = tab
-                .layout
-                .hits
-                .iter()
-                .filter_map(|h| match h.target {
-                    HitTarget::Beat { voice, beat, .. } => {
-                        Some(((h.bar, voice, beat), h.rect.x + h.rect.w / 2.0))
+            // What TAB draws for each beat: its column (the hit regions, one per
+            // string) and the x of the fret numbers inside them. Since EP1 a column with
+            // notation need not be centred on its anchor, so the column centre is not
+            // the TAB position; the fret numbers are (ADR-041 section 13).
+            let mut columns: BTreeMap<Key, (f32, f32)> = BTreeMap::new();
+            let mut frets: BTreeMap<Key, Vec<f32>> = BTreeMap::new();
+            for h in &tab.layout.hits {
+                let HitTarget::Beat { voice, beat, .. } = h.target else {
+                    continue;
+                };
+                let k = (h.bar, voice, beat);
+                columns.insert(k, (h.rect.x, h.rect.right()));
+                for g in &tab.layout.glyphs {
+                    if matches!(g.kind, mc_notation::GlyphKind::Fret { .. })
+                        && h.rect.contains(g.x, g.y)
+                    {
+                        frets.entry(k).or_default().push(g.x);
                     }
-                    HitTarget::Append { .. } => None,
-                })
-                .collect();
+                }
+            }
             for a in &n.layout.notation.facts.anchors {
                 r.rule_checks += 1;
-                match tab_x.get(&(a.bar, a.voice, a.beat)) {
-                    Some(x) if (a.x - x).abs() <= EPS => {}
-                    other => r.fail(
+                let k = (a.bar, a.voice, a.beat);
+                let in_column = columns
+                    .get(&k)
+                    .is_some_and(|(l, rt)| a.x >= l - EPS && a.x <= rt + EPS);
+                let on_frets = frets
+                    .get(&k)
+                    .is_none_or(|xs| xs.iter().all(|x| (a.x - x).abs() <= EPS));
+                if !(in_column && on_frets) {
+                    r.fail(
                         "alignment",
                         format!(
-                            "bar {} beat {}: notation {} TAB {other:?}",
-                            a.bar, a.beat, a.x
+                            "bar {} beat {}: notation {} TAB column {:?} frets {:?}",
+                            a.bar,
+                            a.beat,
+                            a.x,
+                            columns.get(&k),
+                            frets.get(&k)
                         ),
-                    ),
+                    );
                 }
             }
             let mut tab_lines: Vec<f32> = tab

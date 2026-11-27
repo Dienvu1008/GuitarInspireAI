@@ -769,6 +769,58 @@ The S11 7.5 differences and ADR-041 section 9 choice 3 (the TAB rhythm, revisite
    - Alternative: add track names to this slice as a recorded scope change by the user. Repeated markers would still wait.
 5. **Crossing voices** (section 8 known limitation, "6c-6 or later"). Proposed: after 6c, because it is not in the roadmap scope.
 
+### 13.1 Slice 6c-6 report (2026-11-27; the golden review and EP9 approved by the user)
+
+**Correction to "State today".** At the default width `keys` already had 5 bars on its first system before this slice. The "3 bars" above is the S11 measurement, not the code at the start of 6c-6. The EP1 target (at least 4) holds, but `keys` does not show the gain.
+
+**What was built.**
+
+- **EP1 (spacing).** `NotationPlan::reserve` returns the room on each side of a beat's anchor: accidentals and a displaced head on the left, dots, a displaced head and a flag on the right.
+  - A column with notation places its anchor at its left share, and is as wide as both sides or the duration width, whichever is more.
+  - A column with TAB only is centred by the same expression as before (L1).
+  - The TAB stave reads the anchors from the shared geometry.
+- **EP2 (courtesy).** A bar records the width of the courtesy its previous system needs, and line breaking keeps that room after the last bar.
+  - The notation stave draws the new key (with its naturals) and the new time signature after the last bar line.
+  - TAB draws a courtesy time signature at the same centre and runs its strings over the area.
+- **EP3 (key change).**
+  - `KeySignature::signs` and `KeySignature::cancelled_by` in `mc-theory`: a sign is cancelled when the new key leaves its letter natural (Gould).
+  - The engraver draws the naturals at the old signs' positions, then the new signature. The key-change room includes them.
+  - A thin second bar line is drawn 0.56 staff space (Bravura's separation plus a thin line) before the bar line of a key change, inside the system and at a system's end. It is drawn only with notation shown, and not where a repeat sign already marks the bar line.
+- **EP4 (centred bar rests).** A voice's only beat, a rest as long as the bar, is drawn as a whole rest centred in the bar's content.
+- **EP5 (ties).**
+  - The height is 0.15 of the length, kept between `TIE_HEIGHT_MIN_SP` 0.5 and `TIE_HEIGHT_MAX_SP` 1.0.
+  - A tie into the next system leaves the last note to the system's last bar line. The tie into the first note starts at the bar's content start.
+  - The ties leaving a bar are a new component of the bar-plan cache key (`leaving`), with its own mutation test.
+- **EP6 (TAB rhythm).** A track whose notation is shown has no stems, beams, rests, dots or tuplet numbers under its TAB. That stave's space below the strings is one string gap instead of `below_staff`.
+- **Facts for the checks.** The new fields are `contents`, `cancellations` and `courtesy` (`CourtesyFact`) on `NotationFacts`, and `courtesy` on `OutlineSystem`. All are additions.
+
+**Painting rules (12.1) gained no row.** The new items are existing kinds: thin bar lines, the natural glyph, time digits and ties. Flutter and `mc-pdf` paint them unchanged.
+
+| Id | Result |
+|---|---|
+| EP1 | Met. Bars per system, notation and TAB, before → after: TYPICAL at the default width 75 → 51 systems (2 → 3 bars on most), `small` 4 → 3. At print size TYPICAL goes from 76 to 75 systems, and the S11 inputs are unchanged at both sizes. `keys` stays at 5 bars on its first system (see the correction). All checks pass, PR3 at print size included. |
+| EP2 | Met. A new check rule (`courtesy`) is applied on every notation staff. Courtesy signatures occur over 20 times in the random scores at two widths. A breakage test removes one and is caught. |
+| EP3 | Met. Unit tests cover the convention cases and all 15 × 15 key pairs. New check rules: `key-cancellation` (letters and the count of naturals) and `double-bar-line`. The `key-signature` count includes the courtesy key. Each rule has coverage (over 20 cases each) and a breakage test. |
+| EP4 | Met. A new check rule (`centred-bar-rest`) with a breakage test. In `rests` the bar's only column already filled the content, so the picture does not change. |
+| EP5 | Met. New check rules: `tie-shape` (height for length) and `tie-across-systems` (both halves). A tied chord over 8 one-bar systems gives exactly 42 halves checked; random scores add more. Each rule has a breakage test. |
+| EP6 | Met. A test over the S11 inputs and a two-track score: no rhythm under shown notation, the TAB stave shorter by `below_staff − string_spacing`, and the rhythm of TAB-only tracks unchanged. |
+| EP7 | Met. **L1**: the 20 fingerprints are equal in debug and release. Every check passes on the S11 inputs, the fixtures and 300 random scores. **Adjusted tests, not loosened:** (1) N2 alignment now compares the notation anchor with TAB's fret numbers and requires it inside TAB's column, because a column with notation is no longer centred; (2) two L9 cache cases changed width (one-bar systems at 200 units; short columns for `staves`), because EP1 made the old setup fit two bars, and both still catch their mutation. **L11** p99: TYPICAL 0.64 ms, LARGE 4 tracks 0.73 ms, LARGE 20 tracks 5.8 ms. **PD6** TYPICAL 95 ms max. Goldens and PD4 hashes replaced as below. |
+| EP8 | No new dependency; cargo-deny passes. FF-03, FF-04 and FF-34 pass. FF-22 has additions only (mc-notation +23, mc-theory +2). CI: see the commit. |
+| EP9 | **Approved by the user (2026-11-27)** on the before and after images of the S11 inputs, `feature_rich` and `techniques` (SVG and PDF), and the golden review. |
+
+**Golden review (decision 6 amendment), approved by the user on 2026-11-27.**
+- A review test (`print_golden_review`) asserts that every `note` line and every fret's number and string row are unchanged in all seven goldens. The changes are only these:
+
+| Golden | Changed lines | Attribution |
+|---|---|---|
+| `scale`, `rhythm`, `rests` | layout, system and TAB stave heights only | EP6 (no rhythm under the TAB) |
+| `chords`, `tuplets` | the heights; x of bars, frets, glyphs, lines and beams | EP6; EP1 (columns) |
+| `keys` | the heights; x of every item; 3 natural glyphs and 3 thin bar lines added; 1 tie → 2 | EP6; EP1; EP3 (the change to F major cancels F, the change to E major cancels B and E, and three double bar lines); EP5 (the tie across the system break as two halves) |
+| `feature_rich` | the heights; x of every item; 2 thin bar lines added; the tie's x | EP6; EP1; EP3 (two double bar lines before key changes); EP5 |
+
+- PD4 hashes: `feature_rich` `0xf471347aea5df19d` (18 202 bytes) and `keys` `0xf0dc0a0c5608b7ad` (16 435 bytes, the file the user reviewed). They are equal in debug and release.
+- The review material is in `Desktop\GuitarInspire-6c6-review\`: `before\`, `after\`, `goldens\` with diffs, and `golden-review.txt`.
+
 ## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.

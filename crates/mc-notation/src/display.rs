@@ -253,6 +253,9 @@ pub struct OutlineSystem {
     /// Width added to the header for the notation clef and key signature (0 with no
     /// notation staff).
     pub header_extra: f32,
+    /// Width kept after the last bar for the courtesy signatures of the next system's
+    /// key or time change (ADR-041 section 13, EP2); 0 with no notation staff.
+    pub courtesy: f32,
 }
 
 /// Line breaking of the shown tracks for the whole score: enough to size a scroll
@@ -461,6 +464,28 @@ pub struct NotationFacts {
     pub barlines: Vec<f32>,
     /// Key-signature signs drawn (header and key changes).
     pub key_signs: usize,
+    /// Per bar: the x range of its content (after any signs, before its end), where a
+    /// bar rest is centred (ADR-041 section 13, EP4).
+    pub contents: Vec<(usize, f32, f32)>,
+    /// Per key change drawn (inside a system or as a courtesy at a system's end): the
+    /// bar of the new key and the letters cancelled with naturals (EP3).
+    pub cancellations: Vec<(usize, Vec<mc_theory::Letter>)>,
+    /// Courtesy signatures at the end of this system for the bar that starts the next
+    /// (EP2).
+    pub courtesy: Vec<CourtesyFact>,
+}
+
+/// A courtesy signature at the end of a system (EP2): what it announces for `bar`, the
+/// first bar of the next system, and where it starts.
+#[derive(Clone, Debug, PartialEq)]
+pub struct CourtesyFact {
+    pub bar: usize,
+    /// The new key, when the key changes at `bar`.
+    pub key: Option<mc_theory::KeySignature>,
+    /// The new time signature, when it changes at `bar`.
+    pub time: Option<mc_theory::TimeSignature>,
+    /// Left edge of the courtesy signs.
+    pub x: f32,
 }
 
 /// The content of a notation stave, in stave coordinates (y down). Empty on TAB staves.

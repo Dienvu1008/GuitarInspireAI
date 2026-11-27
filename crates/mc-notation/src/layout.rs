@@ -148,7 +148,8 @@ pub(crate) fn outline_with_staves(
 /// Key of a bar (ADR-041 decision 3): the content `Arc` of each shown track; the
 /// master bar; the previous bar's time signature and key; each shown track's instrument
 /// (tuning, capo, fret count) and staff configuration; and, on notation staves, the
-/// spellings of ties entering the bar. The metrics key the whole cache. The font
+/// spellings of ties entering the bar, and the ties leaving it into the next bar (EP5,
+/// ADR-041 section 13). The metrics key the whole cache. The font
 /// metrics and the layout constants are compiled in, so one process never sees two
 /// versions of them.
 #[derive(Debug, Default)]
@@ -166,6 +167,7 @@ struct CachedBar {
     instruments: Vec<mc_score::InstrumentSpec>,
     staves: Vec<StaffConfiguration>,
     entering: Vec<Vec<(usize, u8, mc_theory::SpelledPitch)>>,
+    leaving: Vec<Vec<(usize, u8)>>,
     widths: BarWidths,
 }
 
@@ -257,6 +259,20 @@ pub fn outline_score_cached_with(
                 }
             })
             .collect();
+        // EP5: a tie leaving the bar adds reach, so the next bar's first-beat ties
+        // are part of the key on notation staves.
+        let leaving: Vec<Vec<(usize, u8)>> = shown
+            .tracks
+            .iter()
+            .zip(&shown.staves)
+            .map(|(t, s)| {
+                if s.notation {
+                    crate::semantic::leaving_ties(t, b)
+                } else {
+                    Vec::new()
+                }
+            })
+            .collect();
         let skip = key_mutation::skip;
         let hit = cache.bars[b].as_ref().filter(|c| {
             (skip("master") || c.master == *master)
@@ -270,6 +286,7 @@ pub fn outline_score_cached_with(
                 && (skip("instruments") || c.instruments == instruments)
                 && (skip("staves") || c.staves == shown.staves)
                 && (skip("entering") || c.entering == entering)
+                && (skip("leaving") || c.leaving == leaving)
         });
         let w = match hit {
             Some(c) => c.widths.clone(),
@@ -283,6 +300,7 @@ pub fn outline_score_cached_with(
                     instruments: instruments.clone(),
                     staves: shown.staves.clone(),
                     entering,
+                    leaving,
                     widths: w.clone(),
                 });
                 w
@@ -393,8 +411,18 @@ fn plan_all(
 
 /// Height of one stave: the space above, the strings, and the space below (the same
 /// value `emit_system` reports, without emitting anything).
-fn stave_height(strings: u8, m: &LayoutMetrics) -> f32 {
-    m.above_staff + (strings as f32 - 1.0) * m.string_spacing + m.below_staff
+fn stave_height(strings: u8, rhythm: bool, m: &LayoutMetrics) -> f32 {
+    m.above_staff + (strings as f32 - 1.0) * m.string_spacing + tab_below(rhythm, m)
+}
+
+/// Space below the bottom string: room for the rhythm, or, when the notation stave
+/// carries the rhythm (EP6), one string gap for the bottom string's fret numbers.
+fn tab_below(rhythm: bool, m: &LayoutMetrics) -> f32 {
+    if rhythm {
+        m.below_staff
+    } else {
+        m.string_spacing
+    }
 }
 
 /// Extra header width (layout units) for the notation clef and key signature of a
@@ -435,7 +463,7 @@ fn system_height(shown: &Shown, widths: &[BarWidths], m: &LayoutMetrics) -> f32 
                 0.0
             };
             let tab = if s.tab {
-                stave_height(t.fretted().tuning.string_count(), m)
+                stave_height(t.fretted().tuning.string_count(), !s.notation, m)
             } else {
                 0.0
             };
@@ -453,7 +481,10 @@ fn stave_heights(shown: &Shown, widths: &[BarWidths], m: &LayoutMetrics) -> Syst
             out.push((i, notation_box(widths, i, m).1));
         }
         if s.tab {
-            out.push((i, stave_height(t.fretted().tuning.string_count(), m)));
+            out.push((
+                i,
+                stave_height(t.fretted().tuning.string_count(), !s.notation, m),
+            ));
         }
     }
     out
@@ -471,12 +502,15 @@ fn break_systems(
     while start < plans.len() {
         let extra = header_extra(score, shown, start, metrics);
         let available = metrics.content_width() - extra;
+        // EP2: a system ending before bar `e` keeps room for `e`'s courtesy signs.
+        let courtesy_at = |e: usize| plans.get(e).map_or(0.0, |p| p.courtesy);
         let mut end = start + 1;
         let mut used = plans[start].natural();
-        while end < plans.len() && used + plans[end].natural() <= available {
+        while end < plans.len() && used + plans[end].natural() + courtesy_at(end + 1) <= available {
             used += plans[end].natural();
             end += 1;
         }
+        let courtesy = courtesy_at(end);
         let height = system_height(shown, &plans[start..end], metrics);
         systems.push(OutlineSystem {
             index: systems.len(),
@@ -484,8 +518,14 @@ fn break_systems(
             height,
             first_bar: start,
             end_bar: end,
-            scale: system_scale(&plans[start..end], end == plans.len(), metrics, extra),
+            scale: system_scale(
+                &plans[start..end],
+                end == plans.len(),
+                metrics,
+                extra + courtesy,
+            ),
             header_extra: extra,
+            courtesy,
         });
         y += height + metrics.system_gap;
         start = end;
@@ -524,6 +564,7 @@ fn emit_systems<'p>(
             stave,
             strings: track.fretted().tuning.string_count(),
             master: score.master_bars(),
+            rhythm: !shown.staves[stave].notation,
         })
         .collect();
     let mut out = Vec::with_capacity(systems.len());
@@ -554,14 +595,7 @@ fn emit_systems<'p>(
                 top += height;
             }
             if config.tab {
-                let layout = ctx.emit_system(
-                    sys.index,
-                    sys.y + top,
-                    &group,
-                    sys.scale,
-                    sys.header_extra,
-                    &diagnostic_bars,
-                );
+                let layout = ctx.emit_system(sys, sys.y + top, &group, &diagnostic_bars);
                 let height = layout.height;
                 staves.push(Stave {
                     track: ctx.track.id(),
@@ -581,6 +615,26 @@ fn emit_systems<'p>(
         });
     }
     Ok(out)
+}
+
+/// The courtesy signatures at the end of `sys`, whose last bar ends at `x` (EP2): for
+/// the next system's first bar, when the outline kept room for them.
+fn courtesy_of(
+    masters: &[MasterBar],
+    sys: &OutlineSystem,
+    x: f32,
+) -> Option<crate::engrave::Courtesy> {
+    let b = sys.end_bar;
+    if sys.courtesy <= 0.0 || b == 0 || b >= masters.len() {
+        return None;
+    }
+    let (old, new) = (&masters[b - 1], &masters[b]);
+    Some(crate::engrave::Courtesy {
+        bar: b,
+        key: (old.key != new.key).then_some((old.key, new.key)),
+        time: (old.time_signature != new.time_signature).then_some(new.time_signature),
+        x,
+    })
 }
 
 /// Justification factor of a system's flexible width, shared by all its staves. The
@@ -628,6 +682,10 @@ struct BarPlan {
     /// distinct onsets of all voices of all shown tracks, ascending (ADR-031 5.1), so
     /// beats that start together line up across staves.
     columns: Vec<f32>,
+    /// Per column: the anchor's distance from the column's left edge (natural width),
+    /// for a column with notation content; `None` for a TAB-only column, which is
+    /// centred (EP1).
+    lefts: Vec<Option<f32>>,
     /// Width of the time signature, repeat start sign and left padding.
     fixed_left: f32,
     fixed_right: f32,
@@ -639,6 +697,11 @@ struct BarPlan {
     /// Room kept for a key change shown in the bar (notation only; 0 otherwise). Not
     /// used when the bar starts a system: the header shows the key.
     key_reserve: f32,
+    /// Width of the courtesy signatures the previous system needs when this bar starts
+    /// a system (EP2); 0 without notation or without a change.
+    courtesy: f32,
+    /// Some shown track has notation (the double bar line, EP3 and choice 1).
+    any_notation: bool,
     /// Per shown track: its notation plan and the column of each planned beat.
     notation: Vec<Option<(crate::engrave::NotationPlan, Vec<usize>)>>,
 }
@@ -650,6 +713,7 @@ impl BarPlan {
             flexible: self.flexible,
             fixed_right: self.fixed_right,
             key_reserve: self.key_reserve,
+            courtesy: self.courtesy,
             reach: self
                 .notation
                 .iter()
@@ -667,6 +731,7 @@ struct BarWidths {
     flexible: f32,
     fixed_right: f32,
     key_reserve: f32,
+    courtesy: f32,
     reach: Vec<Option<(f32, f32)>>,
 }
 
@@ -734,9 +799,10 @@ fn plan_bar(
             voice_cols,
         });
     }
-    // Notation: plan each notation track and widen the columns it needs, centred on the
-    // anchor TAB uses (ADR-038 decision 4).
+    // Notation: plan each notation track and record the room its content needs on
+    // each side of the anchor TAB uses (ADR-038 decision 4, EP1).
     let sp = m.staff_space();
+    let mut sides: Vec<Option<(f32, f32)>> = vec![None; onsets.len()];
     let mut notation = Vec::with_capacity(tracks.len());
     for ((track, config), stave) in tracks.iter().zip(&shown.staves).zip(&staves) {
         if !config.notation {
@@ -750,16 +816,36 @@ fn plan_bar(
             .collect();
         let plan = crate::engrave::plan(notated, master);
         for (i, &c) in cols.iter().enumerate() {
-            widest[c] = widest[c].max(2.0 * plan.half_reserve(i) * sp);
+            let (l, r) = plan.reserve(i);
+            let side = sides[c].get_or_insert((0.0, 0.0));
+            side.0 = side.0.max(l * sp);
+            side.1 = side.1.max(r * sp);
         }
         notation.push(Some((plan, cols)));
     }
     let mut columns = Vec::with_capacity(onsets.len());
+    let mut lefts = Vec::with_capacity(onsets.len());
     for (i, onset) in onsets.iter().enumerate() {
         let next = onsets.get(i + 1).copied().unwrap_or(end);
         let gap = to_f32(next.checked_sub(*onset).ok_or(NotationError::Overflow)?);
         let factor = (1.0 + m.duration_spacing * (gap * 16.0).log2()).max(0.6);
-        columns.push((m.min_column_width * factor).max(widest[i] + 2.0 * m.glyph_padding));
+        let least = m.min_column_width * factor;
+        match sides[i] {
+            // TAB only in this column: centred, exactly as before notation (L1).
+            None => {
+                columns.push(least.max(widest[i] + 2.0 * m.glyph_padding));
+                lefts.push(None);
+            }
+            // EP1: the anchor sits where the left side needs it; the column is as
+            // wide as both sides, or the duration's width, whichever is more.
+            Some((l, r)) => {
+                let left = l.max(widest[i] / 2.0) + m.glyph_padding;
+                let right = r.max(widest[i] / 2.0) + m.glyph_padding;
+                let width = least.max(left + right);
+                columns.push(width);
+                lefts.push(Some(left + (width - left - right) / 2.0));
+            }
+        }
     }
     let previous = b.checked_sub(1).map(|p| &score.master_bars()[p]);
     let show_time_signature = previous.is_none_or(|p| p.time_signature != master.time_signature);
@@ -770,10 +856,16 @@ fn plan_bar(
     } else {
         m.time_signature_width
     };
-    let key_reserve = if any_notation && crate::semantic::key_changes(master, previous) {
-        crate::engrave::key_change_sp(master.key.fifths()) * sp
-    } else {
-        0.0
+    let key_reserve = match previous {
+        Some(p) if any_notation && crate::semantic::key_changes(master, previous) => {
+            crate::engrave::key_change_sp(p.key, master.key) * sp
+        }
+        _ => 0.0,
+    };
+    // EP2: what the system before needs at its end when this bar starts a system.
+    let courtesy = match previous {
+        Some(p) if any_notation => crate::engrave::courtesy_sp(p, master) * sp,
+        _ => 0.0,
     };
     let fixed_left = m.bar_padding
         + if show_time_signature {
@@ -802,12 +894,15 @@ fn plan_bar(
         bar: b,
         staves,
         columns,
+        lefts,
         fixed_left,
         fixed_right,
         show_time_signature,
         flexible,
         time_signature_width,
         key_reserve,
+        courtesy,
+        any_notation,
         notation,
     })
 }
@@ -842,6 +937,28 @@ fn bar_geometry(
     let mut barlines = Vec::new();
     let mut repeat_dots = Vec::new();
     let mut cursor = x;
+    // EP3: a double thin bar line before a key change, only with notation shown
+    // (choice 1). The second line sits in the bar before, within its padding. Repeat
+    // signs keep their own lines.
+    let separation = (crate::smufl::DEFAULTS.barline_separation
+        + crate::smufl::DEFAULTS.thin_barline_thickness)
+        * m.staff_space();
+    let key_change_at = |b: usize| {
+        b > 0
+            && b < masters.len()
+            && masters[b].key != masters[b - 1].key
+            && !masters[b].repeat_start
+            && masters[b - 1].repeat_end.is_none()
+    };
+    let double_left = (plan.any_notation && !first_in_system && key_change_at(plan.bar))
+        .then_some(x - separation);
+    let is_last_bar = plan.bar + 1 == masters.len();
+    let double_right =
+        (plan.any_notation && last_in_system && !is_last_bar && key_change_at(plan.bar + 1))
+            .then_some(end - separation);
+    if let Some(dx) = double_left {
+        barlines.push((dx, false));
+    }
     if master.repeat_start {
         barlines.push((x + 1.0, true));
         barlines.push((x + 4.0, false));
@@ -875,12 +992,23 @@ fn bar_geometry(
         barlines.push((end - 4.0, false));
         barlines.push((end - 1.0, true));
     } else if last_in_system {
+        if let Some(dx) = double_right {
+            barlines.push((dx, false));
+        }
         barlines.push((end, false));
     }
     let mut columns = Vec::with_capacity(plan.columns.len());
+    let mut centres = Vec::with_capacity(plan.columns.len());
     let mut cx = content_start;
-    for w in &plan.columns {
-        columns.push((cx, w * scale));
+    for (w, left) in plan.columns.iter().zip(&plan.lefts) {
+        let (bx, bw) = (cx, w * scale);
+        columns.push((bx, bw));
+        // A column without notation stays centred by the same expression as before
+        // notation existed (L1); with notation the anchor is at its left share.
+        centres.push(match left {
+            None => bx + bw / 2.0,
+            Some(l) => bx + l * scale,
+        });
         cx += w * scale;
     }
     let content_end = if plan.columns.is_empty() {
@@ -892,13 +1020,15 @@ fn bar_geometry(
         bar: plan.bar,
         content_start,
         content_end,
-        centres: columns.iter().map(|(bx, bw)| bx + bw / 2.0).collect(),
+        centres,
         columns,
         time_signature_centre,
         key_x,
         barlines,
         repeat_dots,
         last_in_system,
+        double_left,
+        double_right,
     }
 }
 
@@ -923,6 +1053,10 @@ struct Ctx<'a> {
     stave: usize,
     strings: u8,
     master: &'a [MasterBar],
+    /// Stems, beams, dots, rests and tuplet numbers under (and, for a second voice,
+    /// over) the TAB. Off on a track whose notation is shown, which carries the rhythm
+    /// (ADR-041 section 13, EP6).
+    rhythm: bool,
 }
 
 struct Out {
@@ -1005,13 +1139,12 @@ impl Ctx<'_> {
     /// `scale` is shared by every stave of the system so bar lines line up.
     fn emit_system(
         &self,
-        index: usize,
+        sys: &OutlineSystem,
         y: f32,
         plans: &[&BarPlan],
-        scale: f32,
-        header_extra: f32,
         diagnostic_bars: &BTreeSet<usize>,
     ) -> SystemLayout {
+        let (index, scale, header_extra) = (sys.index, sys.scale, sys.header_extra);
         let m = self.m;
         let mut out = Out {
             lines: Vec::new(),
@@ -1084,6 +1217,24 @@ impl Ctx<'_> {
             x += width;
         }
         out.emit_palm_mute(top - m.above_staff * 0.6, m);
+        // EP2: the courtesy area after the last bar (0 with TAB only): the strings run
+        // over it, and a courtesy time signature is centred where notation has its own.
+        if let Some(c) = courtesy_of(self.master, sys, x)
+            && let Some(ts) = c.time
+        {
+            let (old, new) = (&self.master[c.bar - 1], &self.master[c.bar]);
+            let centre = crate::engrave::courtesy_time_centre_sp(old, new).expect("changes");
+            out.glyph(
+                GlyphKind::TimeSignature {
+                    numerator: ts.numerator(),
+                    denominator: ts.denominator(),
+                },
+                x + centre * m.staff_space(),
+                (top + bottom) / 2.0,
+                m.time_signature_width,
+            );
+        }
+        let string_end = x + sys.courtesy;
         let staff_start = m.margin_left;
         for s in 1..=self.strings {
             let sy = self.string_y(s);
@@ -1093,7 +1244,7 @@ impl Ctx<'_> {
                     kind: LineKind::String,
                     x1: staff_start,
                     y1: sy,
-                    x2: x,
+                    x2: string_end,
                     y2: sy,
                 },
             );
@@ -1101,7 +1252,7 @@ impl Ctx<'_> {
         SystemLayout {
             index,
             y,
-            height: bottom + m.below_staff,
+            height: bottom + tab_below(self.rhythm, m),
             staff_top: top,
             bars,
             lines: out.lines,
@@ -1177,8 +1328,10 @@ impl Ctx<'_> {
             header_x: m.margin_left,
             key: self.master[sys.first_bar].key,
             plans: parts,
+            masters: self.master,
+            courtesy: courtesy_of(self.master, sys, x),
         };
-        let notation = stave.emit(x);
+        let notation = stave.emit(x + sys.courtesy);
         // Head regions first (one per note, the head's box grown by a pad), then the
         // beat regions; `hit_test` prefers heads (ADR-041 section 10).
         let pad = crate::engrave::HEAD_HIT_PAD_SP * m.staff_space();
@@ -1243,6 +1396,10 @@ impl Ctx<'_> {
             );
         } else {
             out.line(LineKind::BarLine, x, top, x, bottom);
+        }
+        // EP3: the double bar line before a key change (notation shown only).
+        for dx in [geo.double_left, geo.double_right].into_iter().flatten() {
+            out.line(LineKind::BarLine, dx, top, dx, bottom);
         }
         if let Some(centre) = geo.time_signature_centre {
             out.glyph(
@@ -1327,8 +1484,9 @@ impl Ctx<'_> {
             let mut placed = Vec::with_capacity(voice.beats.len());
             for (k, beat) in voice.beats.iter().enumerate() {
                 let t = stave.voice_onsets[v][k];
-                let (bx, bw) = col_x[stave.voice_cols[v][k]];
-                let center = bx + bw / 2.0;
+                let col = stave.voice_cols[v][k];
+                let (bx, bw) = col_x[col];
+                let center = geo.centres[col];
                 for note in &beat.notes {
                     let p = note.position();
                     let x_mark = note.effects.dead || note.effects.string_percussive;
@@ -1359,7 +1517,9 @@ impl Ctx<'_> {
                 }
                 placed.push((center, t, beat));
             }
-            self.emit_rhythm(out, master, v, &placed);
+            if self.rhythm {
+                self.emit_rhythm(out, master, v, &placed);
+            }
             // Append slot after the last beat (the whole content area when empty).
             let (ax, aw) = if voice.beats.is_empty() {
                 (

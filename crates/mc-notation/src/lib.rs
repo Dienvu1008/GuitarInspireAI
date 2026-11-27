@@ -18,10 +18,10 @@ pub mod smufl;
 mod staff;
 
 pub use display::{
-    AnchorFact, BarLayout, Beam, BeamFact, EngravedLine, EngravedLineKind, Glyph, GlyphKind,
-    HitRegion, HitTarget, Line, LineKind, MusicGlyph, NotationFacts, NotationStaff, NoteFact,
-    OutlineSystem, Rect, RestFact, ScoreLayout, ScoreOutline, ScoreSystem, Stave, StemFact,
-    SystemLayout, TabLayout, Tie, TupletFact,
+    AnchorFact, BarLayout, Beam, BeamFact, CourtesyFact, EngravedLine, EngravedLineKind, Glyph,
+    GlyphKind, HitRegion, HitTarget, Line, LineKind, MusicGlyph, NotationFacts, NotationStaff,
+    NoteFact, OutlineSystem, Rect, RestFact, ScoreLayout, ScoreOutline, ScoreSystem, Stave,
+    StemFact, SystemLayout, TabLayout, Tie, TupletFact,
 };
 pub use error::NotationError;
 pub use layout::{

@@ -309,14 +309,29 @@ fn l9_a_note_edit_without_ties_replans_at_most_two_bars() {
 /// With one key component left out, a change only it detects gives a stale outline.
 /// Narrow systems (one bar each), so every bar sets its own box height.
 fn caught(part: &'static str, change: impl Fn(&mut Score, &mut Vec<ShownTrack>)) {
-    let (mut s, _) = chain();
+    // 200 units: since EP1 (narrower notation columns) 260 fit two whole notes.
     let m = LayoutMetrics {
-        width: 260.0,
+        width: 200.0,
         ..LayoutMetrics::default()
     };
+    caught_with(part, m, true, change);
+}
+
+/// [`caught`] at metrics `m`; `one_bar` asserts the one-bar-per-system precondition.
+fn caught_with(
+    part: &'static str,
+    m: LayoutMetrics,
+    one_bar: bool,
+    change: impl Fn(&mut Score, &mut Vec<ShownTrack>),
+) {
+    let (mut s, _) = chain();
     let mut shown = all(&s, BOTH);
     let mut cache = LayoutCache::new();
-    outline_score_cached_with(&s, &shown, &m, &mut cache).unwrap();
+    let before = outline_score_cached_with(&s, &shown, &m, &mut cache).unwrap();
+    assert!(
+        !one_bar || before.systems.iter().all(|x| x.end_bar - x.first_bar == 1),
+        "the precondition: one bar per system"
+    );
     change(&mut s, &mut shown);
     SKIP.with(|k| k.set(Some(part)));
     let cached = outline_score_cached_with(&s, &shown, &m, &mut cache).unwrap();
@@ -331,11 +346,13 @@ fn l9_every_key_component_is_needed() {
     caught("master", |s, _| {
         s.set_master_bar(3, key(-6)).unwrap();
     });
-    // previous: bar 2's time signature changes, so bar 3 must show one.
+    // previous: bar 1's time signature changes, so bar 2 must show one. (Bar 2, not
+    // bar 3: one bar per system leaves the last system at natural width, where the
+    // missing time signature would not change the outline.)
     caught("previous", |s, _| {
-        let mut mb = s.master_bars()[2].clone();
+        let mut mb = s.master_bars()[1].clone();
         mb.time_signature = TimeSignature::new(3, 4).unwrap();
-        s.set_master_bar(2, mb).unwrap();
+        s.set_master_bar(1, mb).unwrap();
     });
     // contents: a note edit.
     caught("contents", |s, _| {
@@ -356,8 +373,15 @@ fn l9_every_key_component_is_needed() {
         i.capo = Capo(3);
         s.set_instrument(t, InstrumentSpec::Fretted(i)).unwrap();
     });
-    // staves: notation switched off.
-    caught("staves", |_, shown| {
+    // staves: notation switched off. With short columns the notation reserve (the
+    // sharp and the ledger lines of F#6) sets the widths, so they change; at the
+    // default column width a whole note's duration width hides it (EP1).
+    let short_columns = LayoutMetrics {
+        width: 260.0,
+        min_column_width: 4.0,
+        ..LayoutMetrics::default()
+    };
+    caught_with("staves", short_columns, false, |_, shown| {
         shown[0].staves = StaffConfiguration::TAB;
     });
     // entering: the chain's spelling changes (F#6 to Gb6 written, one position up),
@@ -365,5 +389,20 @@ fn l9_every_key_component_is_needed() {
     // master bar (bar 1, C major) are unchanged.
     caught("entering", |s, _| {
         s.set_master_bar(0, key(-1)).unwrap();
+    });
+    // leaving (EP5): bar 1's note is no longer tied, so no tie leaves bar 0 and bar 0's
+    // high note loses the tie's reach. Bar 0's content, master bars and entering ties
+    // are unchanged.
+    caught("leaving", |s, _| {
+        let t = s.track_at(0).unwrap().id();
+        let beat = &s.track(t).unwrap().bar(1).unwrap().voices[0].beats[0];
+        let (beat_id, note) = (beat.id, beat.notes[0].id);
+        let r = mc_score::BeatRef {
+            track: t,
+            bar: 1,
+            voice: 0,
+            beat: beat_id,
+        };
+        s.set_tie(r, note, false).unwrap();
     });
 }

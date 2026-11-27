@@ -76,6 +76,88 @@ fn l2_l3_l4_random_scores_have_no_violation() {
     );
 }
 
+/// `bars` whole-note bars of the chord D3 G3 D4 sounding (string 4 open, string 3 open,
+/// string 2 fret 3), each tied from the previous bar.
+fn tied_chord_chain(bars: usize) -> Score {
+    use mc_score::{BeatRef, FrettedInstrument, InstrumentSpec, MasterBar};
+    use mc_theory::fretted::{Fret, FretPosition, StringIndex};
+    use mc_theory::{BaseValue, NoteValue, Tempo};
+    let mut s = Score::new(
+        "Chain",
+        InstrumentSpec::Fretted(FrettedInstrument::standard_guitar()),
+        MasterBar::default(),
+        Tempo::from_bpm(100).unwrap(),
+    )
+    .unwrap();
+    s.insert_master_bars(1, bars - 1, MasterBar::default())
+        .unwrap();
+    let t = s.track_at(0).unwrap().id();
+    for bar in 0..bars {
+        let (beat, _) = s
+            .insert_beat(t, bar, 0, 0, NoteValue::plain(BaseValue::WHOLE))
+            .unwrap();
+        let r = BeatRef {
+            track: t,
+            bar,
+            voice: 0,
+            beat,
+        };
+        for (string, fret) in [(4, 0), (3, 0), (2, 3)] {
+            let p = FretPosition {
+                string: StringIndex::new(string).unwrap(),
+                fret: Fret(fret),
+            };
+            let (id, _) = s.set_note(r, p).unwrap();
+            if bar > 0 {
+                s.set_tie(r, id, true).unwrap();
+            }
+        }
+    }
+    s
+}
+
+/// EP5 coverage: the random scores at a narrow width (about one bar per system) break
+/// ties across systems, and every half is checked (no vacuous rule).
+#[test]
+fn ep5_ties_across_system_breaks_are_checked() {
+    let m = LayoutMetrics {
+        width: 400.0,
+        ..LayoutMetrics::default()
+    };
+    let mut halves = 0;
+    for seed in 0..300 {
+        let score = random::random_score(seed);
+        let r = check::check(&score, &layout(&score, &m));
+        // The EP5 rules. At this width a dense bar can be wider than its system and
+        // is compressed (beats overlap, a limit older than 6c-6); every rule is
+        // checked at the normal widths by the L2 to L4 tests.
+        let ties: Vec<_> = r
+            .violations
+            .iter()
+            .filter(|(rule, _)| rule.starts_with("tie"))
+            .collect();
+        assert!(ties.is_empty(), "seed {seed}: {ties:?}");
+        halves += r.tie_halves;
+    }
+    // A chord of three notes tied through eight bars, one bar per system: 7 breaks.
+    let chain = tied_chord_chain(8);
+    let narrow = LayoutMetrics {
+        width: 200.0,
+        ..LayoutMetrics::default()
+    };
+    let l = layout(&chain, &narrow);
+    assert_eq!(l.systems.len(), 8, "one bar per system");
+    let r = check::check(&chain, &l);
+    assert!(r.violations.is_empty(), "chain:\n{}", r.summary());
+    assert_eq!(
+        r.tie_halves,
+        7 * 3 * 2,
+        "every break, both halves, three strings"
+    );
+    halves += r.tie_halves;
+    assert!(halves > 20, "{halves} tie halves at system breaks");
+}
+
 /// Fret numbers on one string of one TAB stave that overlap horizontally (boxes
 /// centred on the glyph x, `width` wide). Numbers in the same column (two voices on
 /// one string at one onset) are not counted: they share a position by design.
@@ -628,6 +710,156 @@ fn l5_no_bar_rest() {
     });
 }
 
+/// EP2 and EP3 coverage: over the random scores at two widths, courtesy signatures,
+/// cancelling naturals and double bar lines all occur, and every check passes there.
+#[test]
+fn ep2_ep3_courtesy_naturals_and_double_bars_occur() {
+    let (mut courtesy, mut cancelled, mut doubles) = (0, 0, 0);
+    for width in [1000.0, 600.0] {
+        let m = LayoutMetrics {
+            width,
+            ..LayoutMetrics::default()
+        };
+        for seed in 0..300 {
+            let score = random::random_score(seed);
+            let l = layout(&score, &m);
+            let r = check::check(&score, &l);
+            assert!(
+                r.violations.is_empty(),
+                "seed {seed} width {width}:\n{}",
+                r.summary()
+            );
+            for sys in &l.systems {
+                for st in sys
+                    .staves
+                    .iter()
+                    .filter(|s| s.kind == mc_notation::StaveKind::Notation)
+                {
+                    let f = &st.layout.notation.facts;
+                    courtesy += f.courtesy.len();
+                    cancelled += f.cancellations.iter().filter(|c| !c.1.is_empty()).count();
+                    let thin: Vec<f32> = st
+                        .layout
+                        .notation
+                        .lines
+                        .iter()
+                        .filter(|x| x.kind == mc_notation::EngravedLineKind::BarLine)
+                        .map(|x| x.x1)
+                        .collect();
+                    let sep = 0.56 * st.layout.notation.staff_space;
+                    doubles += thin
+                        .iter()
+                        .filter(|a| thin.iter().any(|b| (*b - *a - sep).abs() < 0.01))
+                        .count();
+                }
+            }
+        }
+    }
+    assert!(
+        courtesy > 20 && cancelled > 20 && doubles > 20,
+        "{courtesy} courtesy, {cancelled} cancellations, {doubles} double bar lines"
+    );
+}
+
+/// EP3: a missing cancelling natural is caught.
+#[test]
+fn l5_no_cancelling_natural() {
+    expect_caught("keys", "key-cancellation", |n| {
+        let Some(i) = n
+            .glyphs
+            .iter()
+            .position(|g| g.glyph == mc_notation::smufl::SmuflGlyph::AccidentalNatural)
+        else {
+            return false;
+        };
+        n.glyphs.remove(i);
+        true
+    });
+}
+
+/// EP3: a key change without its double bar line is caught.
+#[test]
+fn l5_no_double_bar_line() {
+    expect_caught("keys", "double-bar-line", |n| {
+        let thin: Vec<usize> = (0..n.lines.len())
+            .filter(|i| n.lines[*i].kind == mc_notation::EngravedLineKind::BarLine)
+            .collect();
+        let sep = 0.56 * n.staff_space;
+        let Some(&i) = thin.iter().find(|i| {
+            thin.iter()
+                .any(|j| (n.lines[*j].x1 - n.lines[**i].x1 - sep).abs() < 0.01)
+        }) else {
+            return false;
+        };
+        n.lines.remove(i);
+        true
+    });
+}
+
+/// EP2: a system whose next one starts with a change, but without its courtesy, is
+/// caught. `feature_rich` changes key and time at its last bar; the test takes the
+/// first width at which that bar starts a system.
+#[test]
+fn l5_no_courtesy() {
+    let score = mc_score::fixtures::feature_rich();
+    let (m, mut l) = (300..1000)
+        .step_by(10)
+        .map(|w| LayoutMetrics {
+            width: w as f32,
+            ..LayoutMetrics::default()
+        })
+        .map(|m| (m, layout(&score, &m)))
+        .find(|(_, l)| {
+            l.systems
+                .iter()
+                .flat_map(|s| &s.staves)
+                .any(|s| !s.layout.notation.facts.courtesy.is_empty())
+        })
+        .expect("a width with a courtesy");
+    assert!(
+        check::check(&score, &l).violations.is_empty(),
+        "width {}",
+        m.width
+    );
+    let st = l
+        .systems
+        .iter_mut()
+        .flat_map(|s| &mut s.staves)
+        .find(|s| !s.layout.notation.facts.courtesy.is_empty())
+        .unwrap();
+    st.layout.notation.facts.courtesy.clear();
+    assert!(check::check(&score, &l).has("courtesy"));
+}
+
+/// EP5: a tie of the wrong height is caught.
+#[test]
+fn l5_tie_height() {
+    expect_caught("keys", "tie-shape", |n| {
+        n.ties.first_mut().map(|t| t.height *= 2.0).is_some()
+    });
+}
+
+/// EP5: a tie into the next system without its outgoing half is caught. In `keys` the
+/// first system's only tie is the half leaving bar 5.
+#[test]
+fn l5_no_outgoing_half_tie() {
+    expect_caught("keys", "tie-across-systems", |n| n.ties.pop().is_some());
+}
+
+/// EP4: a bar-filling rest moved off the bar's centre is caught.
+#[test]
+fn l5_off_centre_bar_rest() {
+    expect_caught("rests", "centred-bar-rest", |n| {
+        let sp = n.staff_space;
+        n.facts
+            .rests
+            .iter_mut()
+            .find(|x| x.bar == 0)
+            .map(|x| x.rect.x += sp)
+            .is_some()
+    });
+}
+
 #[test]
 fn l5_double_key() {
     expect_caught("keys", "key-signature", |n| {
@@ -727,6 +959,284 @@ fn print_review_svgs() {
         println!(
             "----- BEGIN {name}.svg -----\n{}----- END {name}.svg -----",
             svg::render(&l)
+        );
+    }
+}
+
+/// TAB rhythm items of a stave: stems and beams, rests, rhythm dots, tuplet numbers.
+fn rhythm_items(lay: &mc_notation::SystemLayout) -> usize {
+    use mc_notation::{GlyphKind, LineKind};
+    lay.lines
+        .iter()
+        .filter(|l| matches!(l.kind, LineKind::Stem | LineKind::Beam))
+        .count()
+        + lay
+            .glyphs
+            .iter()
+            .filter(|g| {
+                matches!(
+                    g.kind,
+                    GlyphKind::Rest { .. } | GlyphKind::Dot | GlyphKind::Tuplet { .. }
+                )
+            })
+            .count()
+}
+
+/// EP6 (ADR-041 section 13, choice 2): a track whose notation is shown has no rhythm
+/// under its TAB, and that TAB stave is shorter by `below_staff - string_spacing`; a
+/// TAB-only track in the same view keeps its rhythm.
+#[test]
+fn ep6_the_tab_rhythm_is_hidden_under_shown_notation() {
+    use mc_notation::{ShownTrack, StaffConfiguration, StaveKind};
+    let m = LayoutMetrics::default();
+    let mut hidden_staves = 0;
+    let mut kept = 0;
+    let mut scores = inputs();
+    scores.push((
+        "two tracks",
+        mc_score::fixtures::reference(mc_score::fixtures::Shape {
+            tracks: 2,
+            bars: 8,
+            beats: 8,
+            notes_per_beat: 2,
+        }),
+        false,
+    ));
+    for (name, score, _) in scores {
+        let tracks: Vec<mc_score::TrackId> = score.tracks().map(|t| t.id()).collect();
+        // Track 1 with notation, the others TAB only.
+        let shown: Vec<ShownTrack> = tracks
+            .iter()
+            .enumerate()
+            .map(|(i, t)| ShownTrack {
+                track: *t,
+                staves: if i == 0 {
+                    StaffConfiguration::NOTATION_AND_TAB
+                } else {
+                    StaffConfiguration::TAB
+                },
+            })
+            .collect();
+        let with = layout_score_with(&score, &shown, &m).unwrap();
+        let tab_only = mc_notation::layout_score(&score, &tracks, &m).unwrap();
+        // Line breaks differ with notation shown, so totals per track are compared.
+        let total = |l: &mc_notation::ScoreLayout, t| -> usize {
+            l.systems
+                .iter()
+                .flat_map(|s| &s.staves)
+                .filter(|s| s.kind == StaveKind::Tab && s.track == t)
+                .map(|s| rhythm_items(&s.layout))
+                .sum()
+        };
+        let tab_height = |l: &mc_notation::ScoreLayout, t| {
+            l.systems
+                .iter()
+                .flat_map(|s| &s.staves)
+                .find(|s| s.kind == StaveKind::Tab && s.track == t)
+                .unwrap()
+                .layout
+                .height
+        };
+        let first = tracks[0];
+        assert_eq!(total(&with, first), 0, "{name}: rhythm under notation");
+        let shorter = tab_height(&tab_only, first) - tab_height(&with, first);
+        assert!(
+            (shorter - (m.below_staff - m.string_spacing)).abs() < 1e-3,
+            "{name}: {shorter}"
+        );
+        hidden_staves += usize::from(total(&tab_only, first) > 0);
+        for t in &tracks[1..] {
+            assert_eq!(
+                total(&with, *t),
+                total(&tab_only, *t),
+                "{name}: TAB-only track"
+            );
+            kept += total(&tab_only, *t);
+        }
+    }
+    assert!(hidden_staves > 5 && kept > 10, "{hidden_staves} {kept}");
+}
+
+/// EP1 report (ADR-041 section 13): bars per system, notation and TAB on every track,
+/// at the screen metrics and at the print metrics (A4).
+#[test]
+#[ignore = "prints the EP1 spacing report"]
+fn print_ep1_spacing() {
+    let mut scores: Vec<(String, Score)> = inputs()
+        .into_iter()
+        .map(|(n, s, _)| (n.to_string(), s))
+        .collect();
+    scores.push((
+        "TYPICAL".into(),
+        mc_score::fixtures::reference(mc_score::fixtures::TYPICAL),
+    ));
+    let print = mc_notation::PageSetup::default().metrics();
+    for (name, score) in &scores {
+        let mut row = Vec::new();
+        for (label, m) in [("screen", LayoutMetrics::default()), ("print", print)] {
+            let o = outline_score_with(score, &both(score), &m).unwrap();
+            let bars: Vec<usize> = o.systems.iter().map(|s| s.end_bar - s.first_bar).collect();
+            let shown: Vec<String> = bars.iter().take(6).map(usize::to_string).collect();
+            row.push(format!(
+                "{label}: {} systems, first {:?}",
+                o.systems.len(),
+                shown
+            ));
+        }
+        println!("EP1 {name}: {}", row.join("; "));
+    }
+}
+
+/// The golden review (ADR-041 decision 6 amendment, section 13 choice 3): for each
+/// golden, the old and new canonical dumps compared by item kind. Asserts that the
+/// musical content is unchanged (every `note` line, and every fret's number and string
+/// row), and prints the changed lines per kind for the attribution to EP items.
+#[test]
+#[ignore = "prints the 6c-6 golden review"]
+fn print_golden_review() {
+    use std::collections::BTreeMap;
+    let m = LayoutMetrics::default();
+    let kind = |l: &str| l.split_whitespace().next().unwrap_or("").to_string();
+    for (name, score, _) in inputs() {
+        let old = golden_of(name).replace("\r\n", "\n");
+        if old.is_empty() {
+            continue;
+        }
+        let new = svg::canonical(&layout(&score, &m));
+        // Invariants: notes and fret values with their rows.
+        let pick = |t: &str, k: &str| -> Vec<String> {
+            t.lines()
+                .filter(|l| l.trim_start().starts_with(k))
+                .map(str::to_string)
+                .collect()
+        };
+        assert_eq!(
+            pick(&old, "note "),
+            pick(&new, "note "),
+            "{name}: notes changed"
+        );
+        let frets = |t: &str| -> Vec<(String, String)> {
+            pick(t, "fret ")
+                .iter()
+                .map(|l| {
+                    let w: Vec<&str> = l.split_whitespace().collect();
+                    (w[1].to_string(), w[3].to_string())
+                })
+                .collect()
+        };
+        assert_eq!(
+            frets(&old),
+            frets(&new),
+            "{name}: fret numbers or rows changed"
+        );
+        // Changed lines per kind (multiset difference both ways).
+        let count = |t: &str| {
+            let mut c: BTreeMap<String, i64> = BTreeMap::new();
+            for l in t.lines() {
+                *c.entry(l.trim().to_string()).or_default() += 1;
+            }
+            c
+        };
+        let (a, b) = (count(&old), count(&new));
+        let mut removed: BTreeMap<String, i64> = BTreeMap::new();
+        let mut added: BTreeMap<String, i64> = BTreeMap::new();
+        for (l, n) in &a {
+            let d = n - b.get(l).copied().unwrap_or(0);
+            if d > 0 {
+                *removed.entry(kind(l)).or_default() += d;
+            }
+        }
+        for (l, n) in &b {
+            let d = n - a.get(l).copied().unwrap_or(0);
+            if d > 0 {
+                *added.entry(kind(l)).or_default() += d;
+            }
+        }
+        // Glyph and line names that appear or disappear (not only move).
+        let names = |t: &str, k: &str| -> BTreeMap<String, i64> {
+            let mut c = BTreeMap::new();
+            for l in pick(t, k) {
+                let w: Vec<&str> = l.split_whitespace().collect();
+                *c.entry(w[1].to_string()).or_default() += 1;
+            }
+            c
+        };
+        let mut delta = Vec::new();
+        for k in ["glyph ", "line "] {
+            let (o, n) = (names(&old, k), names(&new, k));
+            for g in o
+                .keys()
+                .chain(n.keys())
+                .collect::<std::collections::BTreeSet<_>>()
+            {
+                let d = n.get(g).copied().unwrap_or(0) - o.get(g).copied().unwrap_or(0);
+                if d != 0 {
+                    delta.push(format!("{}{g} {d:+}", k.trim()));
+                }
+            }
+        }
+        // Where kinds keep their count, pair lines in order and record which fields
+        // changed: x (horizontal), y (vertical), or a size (w, h, height, thickness).
+        let mut fields: BTreeMap<String, BTreeMap<&'static str, usize>> = BTreeMap::new();
+        for k in [
+            "bar ", "fret ", "glyph ", "line ", "beam ", "tie ", "stave ", "system ",
+        ] {
+            // The naturals and bar lines EP3 adds are counted above; pair the rest.
+            let keep = |l: &String| !l.contains("accidentalNatural") && !l.contains(" BarLine ");
+            let (o, n): (Vec<String>, Vec<String>) = (
+                pick(&old, k).into_iter().filter(keep).collect(),
+                pick(&new, k).into_iter().filter(keep).collect(),
+            );
+            if o.len() != n.len() {
+                continue;
+            }
+            for (x, y) in o.iter().zip(&n) {
+                if x == y {
+                    continue;
+                }
+                let (xs, ys): (Vec<&str>, Vec<&str>) = (
+                    x.split_whitespace().collect(),
+                    y.split_whitespace().collect(),
+                );
+                let roles: &[&'static str] = match k.trim() {
+                    "bar" => &["", "", "", "x", "", "size"],
+                    "fret" => &["", "", "x", "y"],
+                    "glyph" => &["", "", "x", "y"],
+                    "line" => &["", "", "x", "y", "x", "y", "size"],
+                    "beam" => &["", "x", "y", "x", "y", "size"],
+                    "tie" => &["", "x", "x", "y", ""],
+                    "stave" => &["", "", "", "", "", "y", "", "size"],
+                    _ => &["", "", "", "y", "", "size"],
+                };
+                let mut which: Vec<&str> = xs
+                    .iter()
+                    .zip(&ys)
+                    .enumerate()
+                    .filter(|(_, (a, b))| a != b)
+                    .map(|(i, _)| roles.get(i).copied().unwrap_or("other"))
+                    .collect();
+                which.sort_unstable();
+                which.dedup();
+                *fields
+                    .entry(k.trim().to_string())
+                    .or_default()
+                    .entry(match which.as_slice() {
+                        ["x"] => "x",
+                        ["y"] => "y",
+                        ["size"] => "size",
+                        _ => "mixed",
+                    })
+                    .or_default() += 1;
+            }
+        }
+        println!("FIELDS {name}: {fields:?}");
+        let ties = (pick(&old, "tie ").len(), pick(&new, "tie ").len());
+        println!(
+            "REVIEW {name}: {} -> {} lines; removed {removed:?}; added {added:?}; kinds appearing or disappearing {delta:?}; ties {} -> {}",
+            old.lines().count(),
+            new.lines().count(),
+            ties.0,
+            ties.1
         );
     }
 }

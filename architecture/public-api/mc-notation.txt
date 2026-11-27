@@ -483,6 +483,25 @@ impl core::marker::Unpin for mc_notation::BeamFact
 impl core::marker::UnsafeUnpin for mc_notation::BeamFact
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::BeamFact
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::BeamFact
+pub struct mc_notation::CourtesyFact
+pub mc_notation::CourtesyFact::bar: usize
+pub mc_notation::CourtesyFact::key: core::option::Option<mc_theory::key::KeySignature>
+pub mc_notation::CourtesyFact::time: core::option::Option<mc_theory::time::TimeSignature>
+pub mc_notation::CourtesyFact::x: f32
+impl core::clone::Clone for mc_notation::CourtesyFact
+pub fn mc_notation::CourtesyFact::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::CourtesyFact
+pub fn mc_notation::CourtesyFact::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::CourtesyFact
+pub fn mc_notation::CourtesyFact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::CourtesyFact
+impl core::marker::Freeze for mc_notation::CourtesyFact
+impl core::marker::Send for mc_notation::CourtesyFact
+impl core::marker::Sync for mc_notation::CourtesyFact
+impl core::marker::Unpin for mc_notation::CourtesyFact
+impl core::marker::UnsafeUnpin for mc_notation::CourtesyFact
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::CourtesyFact
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::CourtesyFact
 pub struct mc_notation::EngravedLine
 pub mc_notation::EngravedLine::kind: mc_notation::EngravedLineKind
 pub mc_notation::EngravedLine::thickness: f32
@@ -643,6 +662,9 @@ pub mc_notation::NotationFacts::anchors: alloc::vec::Vec<mc_notation::AnchorFact
 pub mc_notation::NotationFacts::bar_rests: alloc::vec::Vec<mc_notation::RestFact>
 pub mc_notation::NotationFacts::barlines: alloc::vec::Vec<f32>
 pub mc_notation::NotationFacts::beams: alloc::vec::Vec<mc_notation::BeamFact>
+pub mc_notation::NotationFacts::cancellations: alloc::vec::Vec<(usize, alloc::vec::Vec<mc_theory::pitch::Letter>)>
+pub mc_notation::NotationFacts::contents: alloc::vec::Vec<(usize, f32, f32)>
+pub mc_notation::NotationFacts::courtesy: alloc::vec::Vec<mc_notation::CourtesyFact>
 pub mc_notation::NotationFacts::key_signs: usize
 pub mc_notation::NotationFacts::notes: alloc::vec::Vec<mc_notation::NoteFact>
 pub mc_notation::NotationFacts::rests: alloc::vec::Vec<mc_notation::RestFact>
@@ -717,6 +739,7 @@ impl core::marker::UnsafeUnpin for mc_notation::NoteFact
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::NoteFact
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::NoteFact
 pub struct mc_notation::OutlineSystem
+pub mc_notation::OutlineSystem::courtesy: f32
 pub mc_notation::OutlineSystem::end_bar: usize
 pub mc_notation::OutlineSystem::first_bar: usize
 pub mc_notation::OutlineSystem::header_extra: f32

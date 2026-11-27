@@ -6,6 +6,17 @@ pub enum Mode {
     Minor,
 }
 
+/// The order of sharps in a key signature; flats are the reverse.
+const SHARP_ORDER: [Letter; 7] = [
+    Letter::F,
+    Letter::C,
+    Letter::G,
+    Letter::D,
+    Letter::A,
+    Letter::E,
+    Letter::B,
+];
+
 /// Key signature as a position on the circle of fifths: -7 (seven flats) to +7.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct KeySignature {
@@ -34,18 +45,33 @@ impl KeySignature {
         self.mode
     }
 
+    /// The letters this key signature alters, in the order its signs are written:
+    /// sharps F C G D A E B, flats B E A D G C F.
+    pub fn signs(self) -> Vec<Letter> {
+        let n = self.fifths.unsigned_abs() as usize;
+        if self.fifths >= 0 {
+            SHARP_ORDER[..n].to_vec()
+        } else {
+            SHARP_ORDER.iter().rev().take(n).copied().collect()
+        }
+    }
+
+    /// The signs of this key that a change to `next` cancels with a natural, in this
+    /// key's order (ADR-041 section 13, EP3). A sign is cancelled when its letter is
+    /// natural in `next`. A letter that `next` alters again (sharp to flat, or the same
+    /// sign) needs no natural: the new signature states it. This is the usual modern
+    /// convention (Gould, *Behind Bars*), so a change to C major cancels every sign,
+    /// and D major (F♯ C♯) to F major (B♭) cancels F and C.
+    pub fn cancelled_by(self, next: KeySignature) -> Vec<Letter> {
+        self.signs()
+            .into_iter()
+            .filter(|l| next.alteration(*l) == Alter::NATURAL)
+            .collect()
+    }
+
     /// The alteration this key signature gives `letter`: sharps in the order F C G D A E
     /// B, flats in the order B E A D G C F, as many as `fifths` says.
     pub fn alteration(self, letter: Letter) -> Alter {
-        const SHARP_ORDER: [Letter; 7] = [
-            Letter::F,
-            Letter::C,
-            Letter::G,
-            Letter::D,
-            Letter::A,
-            Letter::E,
-            Letter::B,
-        ];
         let n = self.fifths.unsigned_abs() as usize;
         let altered = if self.fifths > 0 {
             SHARP_ORDER[..n].contains(&letter)
@@ -258,5 +284,69 @@ mod tests {
             KeySignature::new(8, Mode::Major),
             Err(TheoryError::InvalidKey(8))
         );
+    }
+
+    #[test]
+    fn signs_are_written_in_the_order_of_sharps_and_flats() {
+        use Letter::*;
+        assert_eq!(key(0).signs(), Vec::<Letter>::new());
+        assert_eq!(key(3).signs(), vec![F, C, G]);
+        assert_eq!(key(-4).signs(), vec![B, E, A, D]);
+        assert_eq!(key(7).signs(), vec![F, C, G, D, A, E, B]);
+        assert_eq!(key(-7).signs(), vec![B, E, A, D, G, C, F]);
+    }
+
+    /// EP3 (ADR-041 section 13): the cancelling naturals of a key change, by convention.
+    #[test]
+    fn ep3_cancelled_signs_by_convention() {
+        use Letter::*;
+        let cases: [(i8, i8, Vec<Letter>); 10] = [
+            // To C major every sign is cancelled.
+            (2, 0, vec![F, C]),
+            (-3, 0, vec![B, E, A]),
+            // Fewer signs of the same kind: the dropped ones.
+            (4, 1, vec![C, G, D]),
+            (-5, -2, vec![A, D, G]),
+            // More signs of the same kind: nothing to cancel.
+            (1, 4, vec![]),
+            (-2, -6, vec![]),
+            // Sharps to flats: the sharps whose letter the new key leaves natural.
+            (2, -1, vec![F, C]),
+            (7, -1, vec![F, C, G, D, A, E]),
+            (-2, 3, vec![B, E]),
+            // No change: nothing.
+            (5, 5, vec![]),
+        ];
+        for (from, to, want) in cases {
+            assert_eq!(key(from).cancelled_by(key(to)), want, "{from} to {to}");
+        }
+    }
+
+    /// EP3: all 15 x 15 pairs. A cancelled letter was altered and becomes natural; a
+    /// letter the old key alters is either cancelled or altered by the new key.
+    #[test]
+    fn ep3_cancellation_holds_for_all_key_pairs() {
+        for from in -7..=7 {
+            for to in -7..=7 {
+                let (a, b) = (key(from), key(to));
+                let c = a.cancelled_by(b);
+                for l in &c {
+                    assert_ne!(a.alteration(*l), Alter::NATURAL, "{from} {to} {l:?}");
+                    assert_eq!(b.alteration(*l), Alter::NATURAL, "{from} {to} {l:?}");
+                }
+                for l in a.signs() {
+                    assert!(
+                        c.contains(&l) != (b.alteration(l) != Alter::NATURAL),
+                        "{from} {to} {l:?}"
+                    );
+                }
+                // In the old key's order, without repeats.
+                let order: Vec<Letter> = a.signs().into_iter().filter(|l| c.contains(l)).collect();
+                assert_eq!(c, order, "{from} {to}");
+                // The mode never changes the result.
+                let minor = KeySignature::new(from, Mode::Minor).unwrap();
+                assert_eq!(minor.cancelled_by(b), c);
+            }
+        }
     }
 }

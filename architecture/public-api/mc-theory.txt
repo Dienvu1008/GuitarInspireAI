@@ -471,9 +471,11 @@ pub struct mc_theory::KeySignature
 impl mc_theory::KeySignature
 pub const mc_theory::KeySignature::C_MAJOR: mc_theory::KeySignature
 pub fn mc_theory::KeySignature::alteration(self, mc_theory::Letter) -> mc_theory::Alter
+pub fn mc_theory::KeySignature::cancelled_by(self, mc_theory::KeySignature) -> alloc::vec::Vec<mc_theory::Letter>
 pub const fn mc_theory::KeySignature::fifths(self) -> i8
 pub const fn mc_theory::KeySignature::mode(self) -> mc_theory::Mode
 pub fn mc_theory::KeySignature::new(i8, mc_theory::Mode) -> core::result::Result<Self, mc_theory::TheoryError>
+pub fn mc_theory::KeySignature::signs(self) -> alloc::vec::Vec<mc_theory::Letter>
 pub fn mc_theory::KeySignature::spell(self, i32) -> mc_theory::SpelledPitch
 impl core::clone::Clone for mc_theory::KeySignature
 pub fn mc_theory::KeySignature::clone(&self) -> Self

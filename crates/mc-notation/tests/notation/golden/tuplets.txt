@@ -1,41 +1,41 @@
-layout width 1000.000 height 212.256
-system 0 y 0.000 h 212.256
+layout width 1000.000 height 188.256
+system 0 y 0.000 h 188.256
  stave Notation track 1 top 0.000 h 88.256
-  bar 0 x 61.472 w 223.817
-  line StaffLine 24.000 24.000 285.289 24.000 1.040
-  line StaffLine 24.000 32.000 285.289 32.000 1.040
-  line StaffLine 24.000 40.000 285.289 40.000 1.040
-  line StaffLine 24.000 48.000 285.289 48.000 1.040
-  line StaffLine 24.000 56.000 285.289 56.000 1.040
+  bar 0 x 61.472 w 217.017
+  line StaffLine 24.000 24.000 278.489 24.000 1.040
+  line StaffLine 24.000 32.000 278.489 32.000 1.040
+  line StaffLine 24.000 40.000 278.489 40.000 1.040
+  line StaffLine 24.000 48.000 278.489 48.000 1.040
+  line StaffLine 24.000 56.000 278.489 56.000 1.040
   line BarLine 61.472 24.000 61.472 56.000 1.280
-  line BarLine 281.289 24.000 281.289 56.000 1.280
-  line ThickBarLine 284.289 24.000 284.289 56.000 4.000
-  line LedgerLine 226.809 16.000 242.649 16.000 1.280
-  line LedgerLine 257.449 16.000 273.289 16.000 1.280
+  line BarLine 274.489 24.000 274.489 56.000 1.280
+  line ThickBarLine 277.489 24.000 277.489 56.000 4.000
+  line LedgerLine 220.009 16.000 235.849 16.000 1.280
+  line LedgerLine 250.649 16.000 266.489 16.000 1.280
   line Stem 97.486 37.344 97.486 64.000 0.960
   line Stem 118.474 33.344 118.474 64.000 0.960
   line Stem 139.463 29.344 139.463 64.000 0.960
-  line Stem 168.263 25.344 168.263 52.000 0.960
+  line Stem 164.863 25.344 164.863 52.000 0.960
   line Stem 199.169 21.344 199.169 48.000 0.960
-  line Stem 230.489 17.344 230.489 44.000 0.960
-  line Stem 261.129 13.344 261.129 44.000 0.960
+  line Stem 223.689 17.344 223.689 44.000 0.960
+  line Stem 254.329 13.344 254.329 44.000 0.960
   glyph gClef8vb 32.000 48.000
   glyph timeSig4 69.472 32.000
   glyph timeSig4 69.472 48.000
   glyph noteheadBlack 97.006 36.000
   glyph noteheadBlack 117.994 32.000
   glyph noteheadBlack 138.983 28.000
-  glyph noteheadBlack 167.783 24.000
-  glyph augmentationDot 180.023 20.000
+  glyph noteheadBlack 164.383 24.000
+  glyph augmentationDot 176.623 20.000
   glyph noteheadBlack 198.689 20.000
-  glyph noteheadBlack 230.009 16.000
-  glyph augmentationDot 242.249 12.000
-  glyph noteheadBlack 260.649 12.000
+  glyph noteheadBlack 223.209 16.000
+  glyph augmentationDot 235.449 12.000
+  glyph noteheadBlack 253.849 12.000
   glyph flag8thDown 198.689 49.056
   glyph tuplet3 117.658 80.000
   beam 97.486 62.000 139.463 62.000 4.000
-  beam 230.489 42.000 261.129 42.000 4.000
-  beam 252.329 36.000 261.129 36.000 4.000
+  beam 223.689 42.000 254.329 42.000 4.000
+  beam 245.529 36.000 254.329 36.000 4.000
   note 0:0:0 C5 pos 5 acc None NotTied displaced false
   note 0:0:1 D5 pos 6 acc None NotTied displaced false
   note 0:0:2 E5 pos 7 acc None NotTied displaced false
@@ -43,12 +43,12 @@ system 0 y 0.000 h 212.256
   note 0:0:4 G5 pos 9 acc None NotTied displaced false
   note 0:0:5 A5 pos 10 acc None NotTied displaced false
   note 0:0:6 B5 pos 11 acc None NotTied displaced false
- stave Tab track 1 top 88.256 h 124.000
-  bar 0 x 61.472 w 223.817
+ stave Tab track 1 top 88.256 h 100.000
+  bar 0 x 61.472 w 217.017
   fret 1 101.726 40.000
   fret 3 122.714 40.000
   fret 0 143.703 28.000
-  fret 1 172.503 28.000
+  fret 1 169.103 28.000
   fret 3 203.409 28.000
-  fret 5 234.729 28.000
-  fret 7 265.369 28.000
+  fret 5 227.929 28.000
+  fret 7 258.569 28.000

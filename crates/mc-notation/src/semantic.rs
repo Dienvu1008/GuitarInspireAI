@@ -25,6 +25,8 @@ pub(crate) struct NotatedNote {
     pub written: SpelledPitch,
     pub accidental: Option<Alter>,
     pub tie: TieRole,
+    /// A tie leaves this note into the next bar (the voice's last beat only, EP5).
+    pub ties_out: bool,
 }
 
 /// One beat of one voice.
@@ -47,6 +49,7 @@ pub(crate) fn notate_bar(
     let content = track.bar(bar).expect("H-02: bars aligned");
     let inst = track.fretted();
     let transposition = track.instrument().written_transposition();
+    let leaving = leaving_ties(track, bar);
     let mut beats = Vec::new();
     for (v, voice) in content.voices.iter().enumerate() {
         let mut onset = Rational::ZERO;
@@ -71,12 +74,15 @@ pub(crate) fn notate_bar(
                 let written = transposition
                     .written(sounding)
                     .map_err(|_| NotationError::Overflow)?;
+                let ties_out =
+                    k + 1 == voice.beats.len() && leaving.contains(&(v, pos.string.get()));
                 notes.push(NotatedNote {
                     string: pos.string.get(),
                     sounding,
                     written,
                     accidental: None,
                     tie,
+                    ties_out,
                 });
             }
             beats.push(NotatedBeat {
@@ -167,6 +173,24 @@ pub(crate) fn entering_ties(
             let s = n.position().string.get();
             if let Some(p) = tie_source(score, track, bar, v, 0, s) {
                 out.push((v, s, p));
+            }
+        }
+    }
+    out
+}
+
+/// The ties that leave `bar` into the next bar, per voice and string: the next bar's
+/// first beat of the voice has a tied note on that string (H-06). Part of the
+/// bar-plan cache key, because a leaving tie adds reach to the bar (EP5).
+pub(crate) fn leaving_ties(track: &Track, bar: usize) -> Vec<(usize, u8)> {
+    let Some(next) = track.bar(bar + 1) else {
+        return Vec::new();
+    };
+    let mut out = Vec::new();
+    for (v, voice) in next.voices.iter().enumerate() {
+        if let Some(first) = voice.beats.first() {
+            for n in first.notes.iter().filter(|n| n.tie) {
+                out.push((v, n.position().string.get()));
             }
         }
     }

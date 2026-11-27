@@ -523,12 +523,14 @@ fn pd4_bytes_are_identical_across_runs_and_builds() {
         (
             "feature_rich",
             mc_score::fixtures::feature_rich(),
-            0xf4de_5f4c_4219_3879,
+            // Replaced in 6c-6 (ADR-041 section 13, choice 3), approved by the user.
+            0xf471_347a_ea5d_f19d,
         ),
         (
             "keys",
             mc_score::fixtures::notation_keys(),
-            0xbe80_e994_5ac5_7610,
+            // Replaced in 6c-6 (ADR-041 section 13, choice 3), approved by the user.
+            0xf0dc_0a0c_5608_b7ad,
         ),
     ];
     let mut report = Vec::new();
