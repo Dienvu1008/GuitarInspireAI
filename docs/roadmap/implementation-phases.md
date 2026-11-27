@@ -112,7 +112,53 @@ Sub-phases can be reordered by user priority.
 
 - 6a Pattern engine: Objective: reusable patterns bound to chords. Prerequisites: Q-01 to Q-06 answered (done 2026-11-09), example corpus confirmed by the user. Design: [ADR-034](../architecture/decisions/ADR-034-pattern-engine-ir-first.md) (the Pattern IR is the source of truth; grid editor, gesture palette and text DSL all edit it) and [ADR-035](../architecture/decisions/ADR-035-playing-techniques-in-the-score.md) (accent, palm mute, string-percussive and stroke direction in the score, format 1.1). Both accepted on 2026-11-09. Slices: 6a-1 techniques in the score (format 1.1); 6a-2 IR and validation; 6a-3 binding, placement and ApplyPattern (voices 1 and 2, overwrite safeguard, explicit fit); 6a-4 text DSL and the confirmed corpus; 6a-5 grid editor, palette and library storage (format 1.2). Later, each with its own ADR: figures, tap-to-create, StrokeOnly, more lanes, a chord track, pickup support, muted-string or body percussion, strum spread. Acceptance: the criteria of both ADRs. Complexity: Medium to high. Accepted on 2026-11-11 with five evidence gaps as conditions ([phase-6a-exit-report.md](phase-6a-exit-report.md)).
 - 6b Multi-track polish and MusicXML export: simultaneous multi-track notation display (deferred from MVP by Q-17), track mixer basics, MusicXML export with ExportReport. Complexity: Medium. The scope of the MusicXML export is set by [ADR-033](../architecture/decisions/ADR-033-musicxml-export-adapter.md): TAB staff only, uncompressed `.musicxml`. Recorded for later, not scheduled: compressed `.mxl` export, and truncating overfull bars as an option that is never the default.
-- 6c Standard notation and PDF: entry gate S11. High uncertainty; engraving quality is a long tail. Complexity: High.
+- 6c Standard notation and PDF: entry gate S11 (done 2026-11-12). High uncertainty; engraving quality is a long tail. Complexity: High.
+  - Design: ADR-037 (Bravura), ADR-038 (staff model), ADR-039 (pitch and capo), ADR-040 (theory, notation and rendering boundary; its spelling rule is pending the user), ADR-041 (metrics, cache, PDF, hit testing).
+  - **Baseline estimate: 9.5 to 15.5 FTE weeks** (user, 2026-11-12). It is an engineering estimate, not historical velocity. 16 weeks is the planning envelope, not a commitment.
+
+  | Slice | Content | FTE weeks |
+  |---|---|---|
+  | 6c-1 | Spelling, tie continuation and bar accidental state in `mc-theory`; `Transposition` | 0.5 to 1 |
+  | 6c-2 | `mc-notation` semantic and layout layers for the notation staff; bundled Bravura and the generated metrics table; bar-plan cache; checks as tests; goldens | 3 to 5 |
+  | 6c-3 | DTO, Flutter painting above TAB, the view setting; paint cost measured | 2 to 3 |
+  | 6c-4 | Read-only hit testing on the notation staff | 0.5 to 1 |
+  | 6c-5a | Pagination checkpoint (criteria fixed before code) | part of 6c-5 |
+  | 6c-5b | `mc-pdf` vector export with embedded fonts; the user's Edge check | 2 to 3 together with 6c-5a |
+  | 6c-6 | Engraving polish: spacing, courtesy signatures, double bar line at a key change, centred bar rests, ties | 1 to 2 |
+  | 6c-7 | Benchmarks and exit report | 0.5 |
+
+  - Rules:
+    - No scope growth during 6c.
+    - Actual effort is recorded per slice from 6c-1.
+    - The estimate and R-13 are reviewed after 6c-3.
+    - PDF export is committed to only after the pagination checkpoint.
+    - Tests and correctness are not cut to meet a date.
+  - Actual effort:
+
+    | Slice | Estimate | Agent time (wall clock) | Notes |
+    |---|---|---|---|
+    | 6c-1 | 0.5 to 1 FTE weeks | 2026-11-12 15:16 to 15:30 | Criteria committed before code (`426bfe3`). User review time is not included. |
+    | 6c-2 | 3 to 5 FTE weeks | 2026-11-16 08:35 to 09:18 (step 1), 09:23 to 09:56 (step 2) | Criteria approved first. Interrupted once for a decision on a dependency advisory (`skrifa`). L12 accepted 2026-11-16; closed. |
+    | 6c-3 | 2 to 3 FTE weeks | 2026-11-16 10:27 to 11:38 (end-to-end runs included) | Criteria approved first. F8 accepted; LARGE accepted as an evidence gap (2026-11-16); closed. |
+    | 6c-4 | 0.5 to 1 FTE weeks | 2026-11-21 13:28 to 13:46 (end-to-end runs included); calendar from criteria to code 2026-11-16 to 2026-11-21 | H7 end to end passed on the user's quiet-machine runs (9 071 µs); H8 passed by the user's manual check. Closed 2026-11-21. User time: the manual check and three tool runs (duration not recorded). |
+    | 6c-5a | part of 6c-5 (2 to 3 FTE weeks with 6c-5b) | 2026-11-26 11:46 to 12:15 (bench and previews included); calendar from criteria to code 2026-11-21 to 2026-11-26 | PG1 to PG8 met locally; PG9 report in ADR-041 section 11.1. Finding: the default staff size gives very large print (TYPICAL 201 A4 pages). The user chose Revise with a print staff size of 0.6. |
+    | 6c-5b | 2 to 3 FTE weeks with 6c-5a | 2026-11-26 13:19 to 14:59 (criteria and choices from 13:14; CI and the Release app build included) | PD1 to PD8 met (CI #127); PD9 passed by the user's Edge check. Closed 2026-11-26. Report in ADR-041 section 12.2. User time: the Edge check (duration not recorded). |
+    | 6c-6 | 1 to 2 FTE weeks | 2026-11-26 15:34 to 16:15, and 2026-11-27 08:38 to 09:22 (golden replacement after approval, CI #133 included) | EP1 to EP9 met; the golden review approved by the user. Report in ADR-041 section 13.1. User time: the image and golden review (duration not recorded). |
+    | 6c-7 | 0.5 FTE weeks | 2026-11-27 09:30 to 10:15 (benchmarks, the end-to-end and A/B runs, the report) | EX1 to EX9 met, EX2 as an evidence gap accepted by the user. Phase 6c accepted and merged 2026-11-27. Exit report: [phase-6c-exit-report.md](phase-6c-exit-report.md). |
+    | 6c-5a Revise | (within 6c-5) | 2026-11-26 12:41 to 12:54 | PR1 to PR4 met locally (one fault found and fixed: the final bar line crossed the content edge at a layout margin of 0). Report in ADR-041 section 11.2, waiting for the user's Go or Revise on 6c-5b. TYPICAL now 76 A4 pages. |
+
+  - **Effort measure (user, 2026-11-16): option (c).**
+    - The estimate is not checked against time. Progress is tracked by scope and risk.
+    - Each kind of time is still recorded separately: agent wall clock, the user's review and decisions when known, and calendar time to merge.
+    - The baseline of 9.5 to 15.5 FTE weeks stays as the planning envelope, and scope does not grow.
+  - **Review after 6c-3 (2026-11-16; accepted by the user: baseline kept, R-13 kept High).**
+    - Scope delivered: 6c-1 to 6c-3, with every criterion met except the LARGE end-to-end gap (accepted).
+    - Estimate check: open. The user has not yet chosen the measure to check against (the question above), and agent time cannot stand for it. Agent time for the three slices was about 3 hours, against an estimate of 5.5 to 9 FTE weeks.
+    - Faults found during 6c-1 to 6c-3: five engine faults, all found by the planned tests or the review tools and fixed with a test. The S11 categories plus rests and tuplets with two voices, and the view cache key. None needed a model change.
+    - Unmeasured items carried forward: pagination (6c-5a checkpoint), notation hit testing (6c-4), PDF (6c-5b), and LARGE end to end (evidence gap).
+    - Proposed for the remaining slices: keep the baseline of 9.5 to 15.5 FTE weeks and no scope growth.
+
+    Agent wall-clock time is **not comparable** with the FTE-week estimate, which assumed a human developer. Before the review after 6c-3, the user decides which measure the estimate is checked against: the user's own hours, calendar time to merge, or agent time.
 - 6d Guitar Pro import: entry gate S10. Acceptance: fixture files of each supported version import with reports. Complexity: Medium to high with format risk. The scope is set by [ADR-036](../architecture/decisions/ADR-036-guitar-pro-adapter.md): GP3 to GP5 (5.00) import, and export to the same three versions (added by the user). GP5 5.10, GPX and GP7+ wait for lawful sample files.
 
 Common testing: golden files, fuzzing for importers, format fixtures appended (format minor bump for patterns).

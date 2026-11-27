@@ -1,6 +1,6 @@
 # ADR-018 Notation layout in Rust, painting in Flutter
 
-Status: Accepted (2026-10-31, after S4)
+Status: Accepted (2026-10-31, after S4). Amended by [ADR-041](ADR-041-notation-engine-metrics-cache-pdf.md) (2026-11-12): standard-notation metrics come from SMuFL metadata in Rust; TAB digit metrics stay Dart-measured.
 Date: 2026-10-31
 Related documents: [cross-platform-ui.md](../cross-platform-ui.md), [bounded-contexts.md](../bounded-contexts.md), [technical-spikes.md](../../research/technical-spikes.md)
 

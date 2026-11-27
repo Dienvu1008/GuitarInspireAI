@@ -1,0 +1,10 @@
+﻿scale: 20 of 20 notes agree with MuseScore
+keys: 22 of 22 notes agree with MuseScore
+chords: 11 of 11 notes agree with MuseScore
+rhythm: 17 of 17 notes agree with MuseScore
+tuplets: 7 of 7 notes agree with MuseScore
+rests: 0 of 0 notes agree with MuseScore
+feature_rich: 6 of 6 notes agree with MuseScore
+techniques: 18 of 18 notes agree with MuseScore
+small: 128 of 128 notes agree with MuseScore
+total: 229 agree, 0 differ

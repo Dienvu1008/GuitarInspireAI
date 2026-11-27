@@ -118,14 +118,26 @@ void main() {
       final after = c.read(editorProvider);
       expect(after.activeTrack, ids[1]);
       expect(after.cursor, EditorCursor(bar: 0, voice: 0, string: 1, beat: 0));
-      // The cursor is drawn on the active stave only.
+      // The cursor is drawn on the active track only: its TAB stave and, since
+      // 6c-4 (ADR-041 section 10, choice 2), its notation stave.
+      CursorPainter? cursorIn(Finder stave) => tester
+          .widgetList<CustomPaint>(
+            find.descendant(of: stave, matching: find.byType(CustomPaint)),
+          )
+          .map((p) => p.painter)
+          .whereType<CursorPainter>()
+          .firstOrNull;
       final cursors = tester
           .widgetList<CustomPaint>(find.byType(CustomPaint))
           .map((p) => p.painter)
           .whereType<CursorPainter>()
           .toList();
-      expect(cursors, hasLength(1));
-      expect(cursors.single.rect, isNotNull);
+      expect(cursors, hasLength(2));
+      expect(cursorIn(_stave(0, ids[1]))?.rect, isNotNull);
+      expect(
+        cursorIn(find.byKey(ValueKey('notation-0-${ids[1]}')))?.rect,
+        isNotNull,
+      );
     },
   );
 
@@ -133,18 +145,25 @@ void main() {
     tester,
   ) async {
     final (_, ids) = await _threeTracks(tester);
-    // One cursor segment per stave, each covering its stave; together they run
-    // from the top of the first stave to the bottom of the last, without gaps.
+    // One cursor segment per stave (notation and TAB of every track, ADR-041
+    // section 9), each covering its stave; together they run from the top of the
+    // first stave to the bottom of the last, without gaps.
+    final staves = [
+      for (final t in ids) ...[
+        find.byKey(ValueKey('notation-0-$t')),
+        _stave(0, t),
+      ],
+    ];
     final segments = find
         .byKey(const ValueKey('play-cursor'))
         .evaluate()
         .toList();
-    expect(segments, hasLength(ids.length));
+    expect(segments, hasLength(staves.length));
     final rects = [
       for (final e in segments) tester.getRect(find.byWidget(e.widget)),
     ]..sort((a, b) => a.top.compareTo(b.top));
-    for (final (k, t) in ids.indexed) {
-      final stave = tester.getRect(_stave(0, t));
+    for (final (k, finder) in staves.indexed) {
+      final stave = tester.getRect(finder);
       expect(rects[k].top, closeTo(stave.top, 0.5));
       expect(rects[k].height, closeTo(stave.height, 0.5));
     }

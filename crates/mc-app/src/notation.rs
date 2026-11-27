@@ -7,18 +7,24 @@ use mc_score::TrackId;
 use std::ops::Range;
 
 pub use mc_notation::{
-    BarLayout, Glyph, GlyphKind, HitRegion, HitTarget, LayoutCache, LayoutMetrics, Line, LineKind,
-    NotationError, OutlineSystem, Rect, ScoreLayout, ScoreOutline, ScoreSystem, Stave,
-    SystemLayout, TabLayout,
+    BarLayout, EngravedLineKind, Glyph, GlyphKind, HitRegion, HitTarget, LayoutCache,
+    LayoutMetrics, Line, LineKind, NotationError, NotationStaff, OutlineSystem, Page, PageItem,
+    PageSetup, PageSize, Pagination, Rect, ScoreLayout, ScoreOutline, ScoreSystem, ShownTrack,
+    StaffConfiguration, Stave, StaveKind, SystemLayout, SystemSpacing, TabLayout,
 };
 
-/// The outline of one revision, tracks and metrics (a view cache, not document state).
+/// The outline of one revision, shown tracks with their staves, and metrics (a view
+/// cache, not document state).
 #[derive(Debug)]
 pub(crate) struct OutlineCache {
     revision: Revision,
-    tracks: Vec<TrackId>,
+    shown: Vec<ShownTrack>,
     metrics: LayoutMetrics,
     outline: ScoreOutline,
+}
+
+fn tab_only(tracks: &[TrackId]) -> Vec<ShownTrack> {
+    tracks.iter().map(|t| ShownTrack::tab(*t)).collect()
 }
 
 impl DocumentSession {
@@ -54,15 +60,25 @@ impl DocumentSession {
         tracks: &[TrackId],
         metrics: &LayoutMetrics,
     ) -> Result<&ScoreOutline, NotationError> {
+        self.score_outline_with(&tab_only(tracks), metrics)
+    }
+
+    /// [`Self::score_outline`] with the staves of each shown track (ADR-038): notation
+    /// above TAB where asked. The staff configuration is view state the adapter passes.
+    pub fn score_outline_with(
+        &mut self,
+        shown: &[ShownTrack],
+        metrics: &LayoutMetrics,
+    ) -> Result<&ScoreOutline, NotationError> {
         let fresh = self.outline_cache.as_ref().is_some_and(|c| {
-            c.revision == self.revision() && c.tracks == tracks && c.metrics == *metrics
+            c.revision == self.revision() && c.shown == shown && c.metrics == *metrics
         });
         if !fresh {
             let (score, widths) = self.score_and_width_cache();
-            let outline = mc_notation::outline_score_cached(score, tracks, metrics, widths)?;
+            let outline = mc_notation::outline_score_cached_with(score, shown, metrics, widths)?;
             self.outline_cache = Some(OutlineCache {
                 revision: self.revision(),
-                tracks: tracks.to_vec(),
+                shown: shown.to_vec(),
                 metrics: *metrics,
                 outline,
             });
@@ -79,8 +95,29 @@ impl DocumentSession {
         metrics: &LayoutMetrics,
         range: Range<usize>,
     ) -> Result<Vec<ScoreSystem>, NotationError> {
-        self.score_outline(tracks, metrics)?;
+        self.score_systems_with(&tab_only(tracks), metrics, range)
+    }
+
+    /// [`Self::score_systems`] with the staves of each shown track (ADR-038).
+    pub fn score_systems_with(
+        &mut self,
+        shown: &[ShownTrack],
+        metrics: &LayoutMetrics,
+        range: Range<usize>,
+    ) -> Result<Vec<ScoreSystem>, NotationError> {
+        self.score_outline_with(shown, metrics)?;
         let outline = &self.outline_cache.as_ref().expect("set above").outline;
         mc_notation::layout_score_systems(self.score(), outline, range, metrics)
+    }
+
+    /// Pages of the shown tracks at the current revision (ADR-041 section 11): what the
+    /// view shows, at the print metrics of `setup` (section 11.2), not the screen's.
+    /// The systems themselves are laid out from the result's outline and metrics.
+    pub fn paginate(
+        &self,
+        shown: &[ShownTrack],
+        setup: &PageSetup,
+    ) -> Result<Pagination, NotationError> {
+        mc_notation::paginate(self.score(), shown, setup)
     }
 }

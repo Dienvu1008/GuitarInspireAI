@@ -13,6 +13,7 @@ import 'generated/api/types.dart';
 import 'generated/frb_generated.dart';
 import 'guitar_pro_service.dart' show GuitarProService, RustGuitarProService;
 import 'musicxml_service.dart' show MusicXmlService, RustMusicXmlService;
+import 'pdf_service.dart' show PdfService, RustPdfService;
 import 'playback_service.dart' show MidiService, PlaybackFactory;
 import 'rust_playback_service.dart' show RustMidiService, RustPlaybackFactory;
 import 'rust_tuner_service.dart' show RustTunerFactory;
@@ -47,6 +48,9 @@ abstract final class CoreBridge {
 
   /// MusicXML export (ADR-033); no audio device needed.
   static MusicXmlService get musicXml => const RustMusicXmlService();
+
+  /// PDF export (ADR-041 section 12); no audio device needed.
+  static PdfService get pdf => const RustPdfService();
 
   /// Guitar Pro import and export (ADR-036); no audio device needed.
   static GuitarProService get guitarPro => const RustGuitarProService();
@@ -193,6 +197,25 @@ final class RustDocumentService implements DocumentService {
     int count,
   ) => _handle.scoreSystems(
     tracks: Int64List.fromList(tracks),
+    metrics: metrics,
+    first: first,
+    count: count,
+  );
+
+  @override
+  ScoreOutlineDto scoreOutlineWith(
+    List<ShownTrackDto> shown,
+    MetricsDto metrics,
+  ) => _handle.scoreOutlineWith(shown: shown, metrics: metrics);
+
+  @override
+  List<ScoreSystemDto> scoreSystemsWith(
+    List<ShownTrackDto> shown,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) => _handle.scoreSystemsWith(
+    shown: shown,
     metrics: metrics,
     first: first,
     count: count,

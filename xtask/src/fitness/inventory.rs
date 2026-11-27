@@ -412,7 +412,8 @@ check = "xtask:trailers"
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
         let inv = parse(&read(root, INVENTORY).unwrap()).unwrap();
         let cat = catalogue_phases(&read(root, CATALOGUE).unwrap()).unwrap();
-        assert_eq!(cat.len(), 34);
+        // 35 since FF-35 (bundled Bravura provenance, ADR-037 and ADR-041).
+        assert_eq!(cat.len(), 35);
         let errs = consistency(&inv, &cat);
         assert!(errs.is_empty(), "{errs:?}");
     }

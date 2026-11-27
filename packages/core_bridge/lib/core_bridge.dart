@@ -18,9 +18,12 @@ export 'src/generated/api/musicxml.dart'
 export 'src/generated/api/pattern.dart'
     hide patterns, previewPattern, samplePattern;
 export 'src/generated/api/pattern_grid.dart' hide gestures, patternGrid;
+export 'src/generated/api/pdf.dart'
+    show PaperDto, PdfExportResult, SystemSpacingDto;
 export 'src/generated/api/types.dart';
 export 'src/guitar_pro_service.dart' show GuitarProImport, GuitarProService;
 export 'src/musicxml_service.dart' show MusicXmlService;
+export 'src/pdf_service.dart' show PdfService;
 export 'src/playback_service.dart';
 export 'src/rust_document_service.dart' show CoreBridge, RustDocumentService;
 export 'src/tuner_service.dart';

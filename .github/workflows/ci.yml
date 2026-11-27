@@ -30,6 +30,9 @@ jobs:
       - name: Tests (FF-11 round trip, FF-13 and FF-14 properties, FF-23 memory, FF-32 schema, xtask self-tests)
         run: cargo test --workspace --all-features --locked
 
+      - name: PDF bytes equal in a release build (ADR-041 PD4; the debug run is above)
+        run: cargo test -p mc-pdf --release --locked pd4
+
       - name: Benchmarks compile (FF-21; timings are measured on the reference machine)
         run: cargo bench --workspace --no-run --locked
 

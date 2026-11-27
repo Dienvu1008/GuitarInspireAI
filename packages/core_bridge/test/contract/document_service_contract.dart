@@ -601,6 +601,108 @@ void documentServiceContract(
       },
     );
 
+    test('ADR-041 F3: notation staves come above TAB, aligned, sized', () async {
+      await d.execute(
+        CommandDto.addTrack(
+          name: 'Second',
+          instrument: d.summary().tracks.single.instrument,
+        ),
+      );
+      final ids = d.summary().tracks.map((t) => t.id).toList();
+      final a = await insertBeat(0);
+      await d.execute(CommandDto.setNote(beat: a, string: 1, fret: 5));
+      final m = metrics();
+      final shown = [
+        for (final t in ids.reversed)
+          ShownTrackDto(track: t, notation: true, tab: true),
+      ];
+      final outline = d.scoreOutlineWith(shown, m);
+      final systems = d.scoreSystemsWith(shown, m, 0, outline.systems.length);
+      expect(systems.length, outline.systems.length);
+      var total = 0.0;
+      for (final s in systems) {
+        // Per track, notation then TAB, tracks in score order.
+        expect(s.staves.map((st) => (st.track, st.kind)), [
+          for (final t in ids) ...[(t, StaveKind.notation), (t, StaveKind.tab)],
+        ]);
+        final bars = s.staves.first.system.bars;
+        var top = 0.0;
+        for (final st in s.staves) {
+          expect(
+            st.system.bars.map((b) => (b.bar, b.x, b.width)),
+            bars.map((b) => (b.bar, b.x, b.width)),
+            reason: 'bar lines line up on every stave',
+          );
+          expect(st.top, closeTo(top, 1e-3));
+          top += st.system.height;
+          if (st.kind == StaveKind.notation) {
+            // ADR-041 H2: notation regions address the same beats as TAB; a beat
+            // region per beat (string 0), a head region per note (its string).
+            final tab = s.staves.firstWhere(
+              (x) => x.track == st.track && x.kind == StaveKind.tab,
+            );
+            Set<(int, int, int, int)> beatsOf(
+              SystemDto sd,
+              bool Function(int) f,
+            ) => {
+              for (var i = 0; i < sd.hitMeta.length ~/ 4; i++)
+                if (sd.hitMeta[i * 4 + 3] >= 0 && f(sd.hitMeta[i * 4 + 1]))
+                  (
+                    sd.hitMeta[i * 4],
+                    sd.hitMeta[i * 4 + 2],
+                    sd.beats[sd.hitMeta[i * 4 + 3]].index,
+                    sd.beats[sd.hitMeta[i * 4 + 3]].id,
+                  ),
+            };
+            expect(
+              beatsOf(st.system, (string) => string == 0),
+              beatsOf(tab.system, (_) => true),
+            );
+            for (var i = 0; i < st.system.hitMeta.length ~/ 4; i++) {
+              final string = st.system.hitMeta[i * 4 + 1];
+              if (string == 0) continue;
+              final b = st.system.beats[st.system.hitMeta[i * 4 + 3]];
+              final notes = d
+                  .beats(st.track, b.bar, b.voice)[b.index]
+                  .notes
+                  .map((n) => n.string);
+              expect(notes, contains(string));
+            }
+            expect(st.notation.staffSpace, greaterThan(0));
+            expect(st.notation.lineKinds, isNotEmpty);
+            expect(st.notation.glyphCodepoints, isNotEmpty);
+            expect(
+              st.notation.glyphPositions.length,
+              st.notation.glyphCodepoints.length * 2,
+            );
+          } else {
+            expect(st.notation.glyphCodepoints, isEmpty);
+          }
+        }
+        expect(s.height, closeTo(top, 1e-3), reason: 'sum of stave heights');
+        total += s.height;
+      }
+      expect(
+        outline.height,
+        closeTo(total + m.systemGap * (systems.length - 1), 1e-2),
+      );
+      // TAB only through the new call equals the old call.
+      final tabOnly = [
+        for (final t in ids)
+          ShownTrackDto(track: t, notation: false, tab: true),
+      ];
+      expect(
+        d.scoreOutlineWith(tabOnly, m).height,
+        closeTo(d.scoreOutline(ids, m).height, 1e-3),
+      );
+      expect(
+        () => d.scoreOutlineWith([
+          ShownTrackDto(track: ids.first, notation: false, tab: false),
+        ], m),
+        throwsA(isA<ApiError>()),
+      );
+    });
+
     test('save requires a location; save as then save succeed', () async {
       await expectLater(
         d.save(),

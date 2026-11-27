@@ -115,9 +115,19 @@ static Future<DocumentHandle>  openFromRecovery({required String dir , required 
  ScoreOutlineDto  scoreOutline({required Int64List tracks , required MetricsDto metrics });
 
 
+/// [`Self::score_outline`] with the staves of each shown track (ADR-038, ADR-041
+/// section 9): notation above TAB where asked.
+ ScoreOutlineDto  scoreOutlineWith({required List<ShownTrackDto> shown , required MetricsDto metrics });
+
+
 /// The content of `count` systems starting at `first`, for the current outline of
 /// the same tracks and metrics. Only these systems are laid out.
  List<ScoreSystemDto>  scoreSystems({required Int64List tracks , required MetricsDto metrics , required int first , required int count });
+
+
+/// [`Self::score_systems`] with the staves of each shown track (ADR-038), for the
+/// current outline of the same configuration and metrics.
+ List<ScoreSystemDto>  scoreSystemsWith({required List<ShownTrackDto> shown , required MetricsDto metrics , required int first , required int count });
 
 
  Stream<EventDto>  subscribeEvents();

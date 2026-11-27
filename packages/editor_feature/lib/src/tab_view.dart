@@ -6,6 +6,7 @@ import 'package:ui_kit/ui_kit.dart';
 
 import 'document_controller.dart';
 import 'editor_cursor.dart';
+import 'notation_painter.dart';
 import 'system_painter.dart';
 import 'tab_metrics.dart';
 
@@ -20,25 +21,56 @@ extension SystemHits on SystemDto {
     hitRects[i * 4 + 3],
   );
 
-  EditorCursor hitCursor(int i) {
+  /// The cursor a hit region addresses. A notation beat region carries string 0
+  /// ("keep the cursor's string", ADR-041 section 10): [keepString] is used then.
+  EditorCursor hitCursor(int i, {int keepString = 1}) {
     final slot = hitMeta[i * 4 + 3];
+    final string = hitMeta[i * 4 + 1];
     return EditorCursor(
       bar: hitMeta[i * 4],
-      string: hitMeta[i * 4 + 1],
+      string: string == 0 ? keepString : string,
       voice: hitMeta[i * 4 + 2],
       beat: slot < 0 ? null : beats[slot].index,
     );
   }
 
-  /// Hit region at a point in system coordinates, preferring [voice].
+  /// Hit region at a point in system coordinates, in the core's order (ADR-041
+  /// section 10): a region with a string of [voice], one with a string of any voice,
+  /// a region of [voice], any region. On TAB every region has a string, so this is
+  /// "[voice] first, then any".
   int? hitAt(Offset p, {int voice = 0}) {
-    int? first;
-    for (var i = 0; i < hitCount; i++) {
-      if (!hitRect(i).contains(p)) continue;
-      if (hitMeta[i * 4 + 2] == voice) return i;
-      first ??= i;
+    int? pick({required bool head, required bool own}) {
+      for (var i = 0; i < hitCount; i++) {
+        if (!hitRect(i).contains(p)) continue;
+        if (head && hitMeta[i * 4 + 1] == 0) continue;
+        if (own && hitMeta[i * 4 + 2] != voice) continue;
+        return i;
+      }
+      return null;
     }
-    return first;
+
+    return pick(head: true, own: true) ??
+        pick(head: true, own: false) ??
+        pick(head: false, own: true) ??
+        pick(head: false, own: false);
+  }
+
+  /// The beat region (string 0) of a cursor on a notation stave, if the cursor is
+  /// on a beat in this system.
+  int? beatHitOf(EditorCursor c) {
+    if (c.beat == null) return null;
+    for (var i = 0; i < hitCount; i++) {
+      final slot = hitMeta[i * 4 + 3];
+      if (hitMeta[i * 4 + 1] != 0 ||
+          slot < 0 ||
+          hitMeta[i * 4] != c.bar ||
+          hitMeta[i * 4 + 2] != c.voice ||
+          beats[slot].index != c.beat) {
+        continue;
+      }
+      return i;
+    }
+    return null;
   }
 
   /// One rectangle per selected beat in this system (the union of its string hit
@@ -97,21 +129,29 @@ class _TabViewState extends ConsumerState<TabView> {
 
   String? _key;
   late MetricsDto _metrics;
-  late List<int> _tracks;
+  late List<ShownTrackDto> _shown;
   ScoreOutlineDto? _outline;
   final Map<int, ScoreSystemDto> _systems = {};
 
+  /// Staves per system: a notation stave (if on) and a TAB stave per shown track.
+  int get _staveCount =>
+      _shown.fold(0, (n, t) => n + (t.notation ? 1 : 0) + (t.tab ? 1 : 0));
+
   /// The outline is recomputed and the system cache cleared only when revision,
-  /// shown tracks, width or zoom change (projection cache, cross-platform-ui
+  /// shown staves, width or zoom change (projection cache, cross-platform-ui
   /// section 4).
   ScoreOutlineDto _outlineFor(EditorState s, double width) {
-    final tracks = s.shownTracks;
+    final shown = s.shownStaves;
+    final staves = shown.map((t) => '${t.track}${t.notation ? 'n' : ''}');
+    // The service identity too: another document can have the same revision and
+    // track ids (found by the 6c-3 screenshot tool; the key had no document).
     final key =
-        '${s.summary.revision}|${tracks.join(',')}|$width|${widget.zoom}';
+        '${identityHashCode(s.service)}|${s.summary.revision}|'
+        '${staves.join(',')}|$width|${widget.zoom}';
     if (_key != key || _outline == null) {
       _metrics = measureTabMetrics(width: width, zoom: widget.zoom);
-      _tracks = tracks;
-      _outline = s.service.scoreOutline(tracks, _metrics);
+      _shown = shown;
+      _outline = s.service.scoreOutlineWith(shown, _metrics);
       _systems.clear();
       _key = key;
     }
@@ -121,8 +161,8 @@ class _TabViewState extends ConsumerState<TabView> {
   ScoreSystemDto _system(EditorState s, int index) {
     final cached = _systems[index];
     if (cached != null) return cached;
-    for (final sys in s.service.scoreSystems(
-      _tracks,
+    for (final sys in s.service.scoreSystemsWith(
+      _shown,
       _metrics,
       index,
       _batch,
@@ -172,8 +212,8 @@ class _TabViewState extends ConsumerState<TabView> {
         final width = constraints.maxWidth.clamp(320.0, 4000.0);
         final outline = _outlineFor(s, width);
         final gap = 16.0 * widget.zoom;
-        final staves = _tracks.length;
-        final labelled = staves > 1;
+        final staves = _staveCount;
+        final labelled = _shown.length > 1;
         return ColoredBox(
           color: colors.paper,
           // One list item per stave, not per system (ADR-031 6b-2d): a system of
@@ -188,6 +228,8 @@ class _TabViewState extends ConsumerState<TabView> {
               if (k >= sys.staves.length) return const SizedBox.shrink();
               final stave = sys.staves[k];
               final height = stave.system.height;
+              // The track name goes on the track's first stave only.
+              final first = k == 0 || sys.staves[k - 1].track != stave.track;
               return Padding(
                 // The gap between systems follows the last stave.
                 padding: EdgeInsets.only(bottom: k == staves - 1 ? gap : 0),
@@ -205,7 +247,7 @@ class _TabViewState extends ConsumerState<TabView> {
                           state: s,
                           colors: colors,
                           fontSize: fontSize,
-                          label: labelled ? names[stave.track] : null,
+                          label: labelled && first ? names[stave.track] : null,
                         ),
                       ),
                       // The playback cursor at the same x on every stave of the
@@ -251,10 +293,85 @@ class _StaveView extends ConsumerWidget {
   /// Track name shown at the stave's top left when several tracks are shown.
   final String? label;
 
+  /// A notation stave. Read-only (ADR-038 decision 7, ADR-041 section 10): a tap
+  /// selects a beat, and on a notehead its string, from the core's hit regions;
+  /// editing stays on the TAB stave. The cursor and the selection are painted here
+  /// too, over the beat regions.
+  Widget _notation(WidgetRef ref, bool active) {
+    final system = stave.system;
+    final cursorHit = active ? system.beatHitOf(state.cursor) : null;
+    return GestureDetector(
+      key: ValueKey('notation-$index-${stave.track}'),
+      behavior: HitTestBehavior.opaque,
+      onTapDown: (d) {
+        final editor = ref.read(editorProvider.notifier);
+        final hit = system.hitAt(
+          d.localPosition,
+          voice: active ? state.cursor.voice : 0,
+        );
+        if (!active) editor.selectTrack(stave.track);
+        if (hit == null) return;
+        final current = ref.read(editorProvider).cursor;
+        final target = system.hitCursor(hit, keepString: current.string);
+        final extend =
+            active &&
+            HardwareKeyboard.instance.isShiftPressed &&
+            target.beat != null;
+        editor.moveCursor(target, extend: extend);
+      },
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: RepaintBoundary(
+              child: CustomPaint(
+                painter: NotationPainter(staff: stave.notation, colors: colors),
+              ),
+            ),
+          ),
+          if (active) ...[
+            Positioned.fill(
+              child: CustomPaint(
+                key: ValueKey('notation-selection-$index'),
+                painter: SelectionPainter(
+                  rects: system.selectionRects(state.selection),
+                  color: colors.cursor,
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: CustomPaint(
+                key: ValueKey('notation-cursor-$index'),
+                painter: CursorPainter(
+                  rect: cursorHit == null ? null : system.hitRect(cursorHit),
+                  color: colors.cursor,
+                ),
+              ),
+            ),
+          ],
+          if (label != null) _label(active),
+        ],
+      ),
+    );
+  }
+
+  Widget _label(bool active) => Positioned(
+    left: 4,
+    top: 0,
+    child: Text(
+      label!,
+      style: TextStyle(
+        fontSize: fontSize * 0.9,
+        color: active ? colors.cursor : colors.staff,
+        fontWeight: active ? FontWeight.w600 : FontWeight.normal,
+      ),
+    ),
+  );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final system = stave.system;
     final active = stave.track == state.activeTrack;
+    if (stave.kind == StaveKind.notation) return _notation(ref, active);
     final cursorHit = active ? system.hitOf(state.cursor) : null;
     return GestureDetector(
       key: ValueKey('stave-$index-${stave.track}'),
@@ -307,19 +424,7 @@ class _StaveView extends ConsumerWidget {
               ),
             ),
           ],
-          if (label != null)
-            Positioned(
-              left: 4,
-              top: 0,
-              child: Text(
-                label!,
-                style: TextStyle(
-                  fontSize: fontSize * 0.9,
-                  color: active ? colors.cursor : colors.staff,
-                  fontWeight: active ? FontWeight.w600 : FontWeight.normal,
-                ),
-              ),
-            ),
+          if (label != null) _label(active),
         ],
       ),
     );

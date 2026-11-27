@@ -468,9 +468,8 @@ final class FakeDocumentService implements DocumentService {
   List<PatternInfoDto> patterns() => _state.library.infos();
 
   @override
-  int samplePattern() => _state.library.sampleUnchanged
-      ? FakePatternLibrary.sampleId
-      : -1;
+  int samplePattern() =>
+      _state.library.sampleUnchanged ? FakePatternLibrary.sampleId : -1;
 
   @override
   GridViewDto patternGrid(int pattern, List<int> snaps) =>
@@ -731,13 +730,58 @@ final class FakeDocumentService implements DocumentService {
       shown.map((t) => t.bars[bar][0].length).reduce((a, b) => a > b ? a : b),
   ];
 
+  static List<ShownTrackDto> _tabOnly(List<int> tracks) => [
+    for (final t in tracks) ShownTrackDto(track: t, notation: false, tab: true),
+  ];
+
+  /// The shown tracks in score order with their configuration (first one wins).
+  List<(_Track, ShownTrackDto)> _shownWith(List<ShownTrackDto> shown) {
+    for (final s in shown) {
+      if (!s.notation && !s.tab) {
+        throw ApiError(
+          rule: 'layout',
+          message: 'track ${s.track} has no staff',
+        );
+      }
+    }
+    final tracks = _shown([for (final s in shown) s.track]);
+    return [
+      for (final t in tracks) (t, shown.firstWhere((s) => s.track == t.id)),
+    ];
+  }
+
+  /// The fake's notation stave: five lines and a clef in a box of 12 staff spaces.
+  double _notationHeight(MetricsDto metrics) =>
+      12 * metrics.stringSpacing / 1.5;
+
+  double _systemHeight(List<(_Track, ShownTrackDto)> shown, MetricsDto m) =>
+      shown
+          .map(
+            (e) =>
+                (e.$2.notation ? _notationHeight(m) : 0.0) +
+                (e.$2.tab ? _staveHeight(e.$1, m) : 0.0),
+          )
+          .reduce((a, b) => a + b);
+
+  @override
+  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics) =>
+      scoreOutlineWith(_tabOnly(tracks), metrics);
+
+  @override
+  List<ScoreSystemDto> scoreSystems(
+    List<int> tracks,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) => scoreSystemsWith(_tabOnly(tracks), metrics, first, count);
+
   /// The whole score is one system in the fake.
   @override
-  ScoreOutlineDto scoreOutline(List<int> tracks, MetricsDto metrics) {
-    final shown = _shown(tracks);
-    final height = shown
-        .map((t) => _staveHeight(t, metrics))
-        .reduce((a, b) => a + b);
+  ScoreOutlineDto scoreOutlineWith(
+    List<ShownTrackDto> shownTracks,
+    MetricsDto metrics,
+  ) {
+    final height = _systemHeight(_shownWith(shownTracks), metrics);
     return ScoreOutlineDto(
       revision: _revision,
       width: metrics.width,
@@ -755,30 +799,133 @@ final class FakeDocumentService implements DocumentService {
   }
 
   @override
-  List<ScoreSystemDto> scoreSystems(
-    List<int> tracks,
+  List<ScoreSystemDto> scoreSystemsWith(
+    List<ShownTrackDto> shownTracks,
     MetricsDto metrics,
     int first,
     int count,
   ) {
-    final shown = _shown(tracks);
+    final shown = _shownWith(shownTracks);
     if (first > 0 || count <= 0) return const [];
-    final columns = _columns(shown);
+    final columns = _columns([for (final e in shown) e.$1]);
     final staves = <StaveDto>[];
     var top = 0.0;
-    for (final t in shown) {
+    for (final (t, config) in shown) {
       final system = _stave(t, metrics, columns);
-      staves.add(
-        StaveDto(
-          track: t.id,
-          strings: t.instrument.tuning.length,
-          top: top,
-          system: system,
-        ),
-      );
-      top += system.height;
+      if (config.notation) {
+        final notation = _notationStave(t, system, metrics);
+        staves.add(
+          StaveDto(
+            track: t.id,
+            kind: StaveKind.notation,
+            strings: t.instrument.tuning.length,
+            top: top,
+            system: notation.$1,
+            notation: notation.$2,
+          ),
+        );
+        top += notation.$1.height;
+      }
+      if (config.tab) {
+        staves.add(
+          StaveDto(
+            track: t.id,
+            kind: StaveKind.tab,
+            strings: t.instrument.tuning.length,
+            top: top,
+            system: system,
+            notation: _emptyNotation,
+          ),
+        );
+        top += system.height;
+      }
     }
     return [ScoreSystemDto(index: 0, y: 0, height: top, staves: staves)];
+  }
+
+  static final _emptyNotation = NotationStaffDto(
+    staffSpace: 0,
+    linesTop: 0,
+    lines: Float32List(0),
+    lineKinds: Uint8List(0),
+    glyphCodepoints: Uint32List(0),
+    glyphPositions: Float32List(0),
+    beams: Float32List(0),
+    ties: Float32List(0),
+    tieUp: Uint8List(0),
+  );
+
+  /// The fake's notation stave over the same bars as [tab]: five staff lines and the
+  /// treble 8vb clef (U+E052).
+  (SystemDto, NotationStaffDto) _notationStave(
+    _Track t,
+    SystemDto tab,
+    MetricsDto m,
+  ) {
+    final sp = m.stringSpacing / 1.5;
+    final top = 4 * sp;
+    final height = _notationHeight(m);
+    // Hit regions as the core makes them (ADR-041 section 10): per note a head
+    // region (here at a fixed height per string), then per beat a beat region over
+    // its TAB column with string 0.
+    final heads = <double>[];
+    final headMeta = <int>[];
+    final cols = <double>[];
+    final colMeta = <int>[];
+    for (var i = 0; i < tab.hitMeta.length ~/ 4; i++) {
+      final (bar, string, voice, slot) = (
+        tab.hitMeta[i * 4],
+        tab.hitMeta[i * 4 + 1],
+        tab.hitMeta[i * 4 + 2],
+        tab.hitMeta[i * 4 + 3],
+      );
+      if (string != 1 || slot < 0) continue;
+      final (x, w) = (tab.hitRects[i * 4], tab.hitRects[i * 4 + 2]);
+      final beat = t.bars[bar][voice][tab.beats[slot].index];
+      for (final n in beat.notes) {
+        final y = top + (n.string - 1) * sp * 0.6;
+        heads.addAll([x + w / 2 - sp, y - sp / 2, 2 * sp, sp]);
+        headMeta.addAll([bar, n.string, voice, slot]);
+      }
+      cols.addAll([x, 0, w, height]);
+      colMeta.addAll([bar, 0, voice, slot]);
+    }
+    final end = tab.bars.isEmpty
+        ? m.marginLeft + m.headerWidth
+        : tab.bars.last.x + tab.bars.last.width;
+    final lines = <double>[];
+    final kinds = <int>[];
+    for (var l = 0; l < 5; l++) {
+      lines.addAll([m.marginLeft, top + l * sp, end, top + l * sp, 0.13 * sp]);
+      kinds.add(NotationLineKind.staff);
+    }
+    final system = SystemDto(
+      index: 0,
+      y: 0,
+      height: height,
+      staffTop: top,
+      bars: tab.bars,
+      lines: Float32List(0),
+      lineKinds: Uint8List(0),
+      glyphs: const [],
+      hitRects: Float32List.fromList([...heads, ...cols]),
+      hitMeta: Int32List.fromList([...headMeta, ...colMeta]),
+      beats: tab.beats,
+    );
+    return (
+      system,
+      NotationStaffDto(
+        staffSpace: sp,
+        linesTop: top,
+        lines: Float32List.fromList(lines),
+        lineKinds: Uint8List.fromList(kinds),
+        glyphCodepoints: Uint32List.fromList([0xE052]),
+        glyphPositions: Float32List.fromList([m.marginLeft + sp, top + 3 * sp]),
+        beams: Float32List(0),
+        ties: Float32List(0),
+        tieUp: Uint8List(0),
+      ),
+    );
   }
 
   double _staveHeight(_Track t, MetricsDto metrics) =>
@@ -1036,6 +1183,18 @@ final class _Tracked implements DocumentService {
     int count,
   ) => _inner.scoreSystems(tracks, metrics, first, count);
   @override
+  ScoreOutlineDto scoreOutlineWith(
+    List<ShownTrackDto> shown,
+    MetricsDto metrics,
+  ) => _inner.scoreOutlineWith(shown, metrics);
+  @override
+  List<ScoreSystemDto> scoreSystemsWith(
+    List<ShownTrackDto> shown,
+    MetricsDto metrics,
+    int first,
+    int count,
+  ) => _inner.scoreSystemsWith(shown, metrics, first, count);
+  @override
   Stream<EventDto> get events => _inner.events;
   @override
   bool autosaveDue() => _inner.autosaveDue();
@@ -1071,8 +1230,11 @@ final class _Track {
 }
 
 final class _State {
-  _State({required this.tracks, required this.bars, FakePatternLibrary? library})
-    : library = library ?? FakePatternLibrary.sample();
+  _State({
+    required this.tracks,
+    required this.bars,
+    FakePatternLibrary? library,
+  }) : library = library ?? FakePatternLibrary.sample();
   final List<_Track> tracks;
   int bars;
   final FakePatternLibrary library;

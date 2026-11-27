@@ -1,0 +1,9 @@
+﻿scale (hand-built): 20 notes; N1 0 errors; N2 0 errors (max bar line 0.0000 units, max anchor 0.0000 sp over 20 beats); N3 0 violations in 209 rule checks
+keys (hand-built): 22 notes; N1 0 errors; N2 0 errors (max bar line 0.0000 units, max anchor 0.0000 sp over 22 beats); N3 0 violations in 370 rule checks
+chords (hand-built): 11 notes; N1 0 errors; N2 0 errors (max bar line 0.0000 units, max anchor 0.0000 sp over 4 beats); N3 0 violations in 77 rule checks
+rhythm (hand-built): 17 notes; N1 0 errors; N2 0 errors (max bar line 0.0000 units, max anchor 0.0000 sp over 17 beats); N3 0 violations in 186 rule checks
+tuplets (hand-built): 7 notes; N1 0 errors; N2 0 errors (max bar line 0.0000 units, max anchor 0.0000 sp over 7 beats); N3 0 violations in 101 rule checks
+rests (hand-built): 0 notes; N1 0 errors; N2 0 errors (max bar line 0.0000 units, max anchor 0.0000 sp over 7 beats); N3 0 violations in 28 rule checks
+feature_rich: 10 notes; N1 0 errors; N2 0 errors (max bar line 0.0000 units, max anchor 0.0000 sp over 13 beats); N3 0 violations in 149 rule checks
+techniques: 18 notes; N1 0 errors; N2 0 errors (max bar line 0.0000 units, max anchor 0.0000 sp over 10 beats); N3 0 violations in 174 rule checks
+small: 128 notes; N1 0 errors; N2 0 errors (max bar line 0.0000 units, max anchor 0.0000 sp over 64 beats); N3 0 violations in 2730 rule checks

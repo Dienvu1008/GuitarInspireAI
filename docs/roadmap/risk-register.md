@@ -20,7 +20,7 @@ Scale: Likelihood and impact are Low, Medium, High.
 | R-10 | MIDI import string assignment produces unplayable TAB | High | Low | Report and playability heuristic; user edits | 4 |
 | R-11 | Tuner unstable on low E or with noisy input | Medium | Medium | S3; window size tuning; clarity threshold | 5 |
 | R-12 | Mobile packaging and audio latency | Medium | Medium | S12 before Phase 7 | 7 |
-| R-13 | Engraving quality for standard notation consumes far more time than estimated | High | Medium | S11; consider third-party engine with license plan; keep TAB-first | 6c |
+| R-13 | Engraving quality for standard notation consumes far more time than estimated | Medium (lowered from High by the user, 2026-11-26, after 6c-5b; review at the 6c exit) | Medium (unchanged) | See the R-13 note below the table | 6c |
 | R-14 | Guitar Pro format and legal uncertainty | Medium | Medium | S10 done (2026-11-11): GP3 to GP5 5.00 read and GP5 written, checked against TuxGuitar 2.0.1 only. Mitigation: clean-room implementation (ADR-036 section 2), refusal of unverified layouts, and import reports. Open: no file written by Guitar Pro, no 5.10 file, brush direction, text encoding, and a legal review before a commercial release | 6d |
 | R-15 | AI features fail to reach useful quality | High | Medium | Candidates only; timeboxes; agreed quality thresholds | 9, 10 |
 | R-16 | License issues in dependencies or bundled data (SoundFont, model weights) | Medium (S7: Rust trees clean except optional MPL-2.0 `audio_thread_priority`; SoundFont choice pending) | High | ADR-015; cargo-deny in CI; own MMCSS call instead of MPL crate; FluidR3 GM (MIT) proposed; Dart audit in Phase 3; S9 for model weights | 0, 3, 9 |
@@ -29,3 +29,104 @@ Scale: Likelihood and impact are Low, Medium, High.
 | R-18 | Governance overhead slows a solo developer | Medium | Medium | Activate fitness functions per phase only; nightly for slow checks; review crate count at M5 | All |
 | R-19 | Web support harder than expected later | Medium | Low | FF-04 for domain crates; S6 optional | 11 |
 | R-20 | macOS minimum version from cpal (14.2) limits users | Medium | Low | Verify in port phase; Q-13 | Post-MVP |
+
+## R-13 note (2026-11-12, after S11)
+
+**Why it was High.**
+- Standard notation was rated "D, high effort" in the feasibility assessment ("engraving quality is hard").
+- The phase plan gives 6c 8 to 16 FTE weeks "[high uncertainty]", because engraving quality is a long tail.
+- The only fallback, Verovio, is LGPL-3.0 and outside ADR-015.
+
+**New evidence from S11** (`spikes/s11-notation/README.md` section 7):
+- An own engine met N1 to N3 and N8 on the MVP scope: treble 8vb, notes, rests, accidentals, key and time signatures, beams and tuplet numbers.
+- 229 of 229 accidentals agree with MuseScore 4.7.5.
+- 12 deliberate faults were each caught by the checks.
+- With a bar-plan cache, edit and layout on LARGE take 4.9 ms p99.
+
+This lowers the risk that the **MVP scope** cannot be built in our own engine.
+
+**Why likelihood stays High for now.** The risk is about **time**, and S11 gives no time evidence:
+- elapsed effort was not tracked;
+- pagination, Flutter paint cost and hit testing were not measured;
+- the review found six faults the first checks missed, so the long tail is real even inside the MVP.
+
+The user's rule is that likelihood is not lowered on a plan alone.
+
+**Impact:** Medium, unchanged.
+
+**Condition to lower to Medium.** Reviewed after 6c-3. All of these must hold:
+- actual effort for 6c-1 to 6c-3 is within their estimate (tracked from 6c-1);
+- Flutter painting with notation meets the ADR-041 decision 7 criteria;
+- no new class of engraving fault appeared that needed a model change.
+
+**Residual risk:**
+- spacing quality;
+- courtesy signatures and other engraving polish;
+- pagination;
+- the paint cost of dense notation;
+- the later long tail (slurs, articulations, multi-voice shared heads, other instruments).
+
+**Mitigation:**
+- MVP scope fixed by ADR-038 to ADR-041, with no scope growth during 6c;
+- engraving rules as tests that may only be extended (GR-14);
+- a review at 2x by eye in every slice;
+- a pagination checkpoint before the PDF export is committed to;
+- TAB-first stays;
+- an isolated third-party engine remains the fallback of ADR-018. It would need a license plan.
+
+### R-13 review after 6c-3 (2026-11-16, proposed; the decision is the user's)
+
+Against the three conditions for lowering likelihood to Medium:
+
+1. **Actual effort for 6c-1 to 6c-3 within their estimate: not assessable.** The user has not chosen the measure. Agent wall-clock time (about 3 hours) is not comparable with FTE weeks.
+2. **Flutter painting with notation meets the ADR-041 decision 7 criteria: partly.**
+   - TYPICAL meets 16 ms for edit and for scroll.
+   - LARGE meets 33 ms only in the fast machine state, and is accepted as an evidence gap.
+3. **No new class of engraving fault needing a model change: met.**
+   - Five faults were found and each was fixed locally with a test: two-voice rests, tuplet clearance, a check's column rule, the outline header, and the view cache key.
+   - None changed the staff model, the boundary or the cache design.
+
+**Decision (user, 2026-11-16): keep High.**
+
+**Condition 1 replaced.** Effort is no longer checked against time, by the user's choice of measure (c). The condition is now: the slices since the last review delivered their fixed scope with no scope cut and no criterion failed except accepted evidence gaps. Conditions 2 and 3 are unchanged.
+
+The next review point is after 6c-5a, the pagination checkpoint: the largest unmeasured item.
+
+### R-13 review after 6c-5a (2026-11-26, proposed; the decision is the user's)
+
+Against the three conditions for lowering likelihood to Medium (condition 1 as replaced on 2026-11-16):
+
+1. **Fixed scope delivered, no scope cut, no criterion failed except accepted gaps: met for 6c-4 and 6c-5a.**
+   - 6c-4 is closed, with H7 and H8 passed by the user.
+   - 6c-5a met PG1 to PG8 locally. PG9 is the user's decision.
+2. **Flutter painting with notation meets the ADR-041 decision 7 criteria: unchanged since 6c-3.** TYPICAL is met. LARGE remains an accepted evidence gap.
+3. **No new class of engraving fault needing a model change: met.**
+   - Pagination needed no change to the system model. It reads stave heights that the outline already computes.
+   - One open design question was found: the default staff size gives very large print. It is a choice of metrics for 6c-5b, not a model change.
+
+**Proposed: keep High until 6c-5b.** The PDF export is the last unmeasured item: embedding, determinism, and the user's Edge check. Lowering the likelihood before that would rest on half of 6c-5. The next review point is after 6c-5b.
+
+### R-13 review after 6c-5b (2026-11-26, proposed; the decision is the user's)
+
+1. **Fixed scope delivered, no scope cut, no criterion failed except accepted gaps: met, if PD9 passes.**
+   - 6c-5a was revised once by the user's choice (the print staff size), not by a failed criterion.
+   - 6c-5b met PD1 to PD8 locally. LARGE with 20 tracks exports in 2.8 s, which PD6 only requires to be reported.
+2. **Flutter painting with notation meets the ADR-041 decision 7 criteria: unchanged.** TYPICAL is met. LARGE remains the accepted evidence gap.
+3. **No new class of engraving fault needing a model change: met.** Two local faults were found and fixed with a test, neither changing the model:
+   - the final bar line crossing the content edge at a layout margin of 0;
+   - a test reader counting font descriptors as fonts.
+   Two gaps were found and recorded, not fixed: no track names in print, and markers repeated on continued parts.
+
+**Proposed:** lower the likelihood to **Medium** once the user's Edge check (PD9) passes. Keep High if it fails. The next review point is the 6c exit (6c-7; "6c-6" in the first version of this line was a slip).
+
+**Update (2026-11-26):** PD9 passed (user), so condition 1 is met for 6c-5b.
+
+**Decision (user, 2026-11-26): likelihood lowered to Medium.** The next review is at the 6c exit (6c-7).
+
+### R-13 review at the 6c exit (2026-11-27)
+
+- Condition 1: met.
+- Condition 2: not fully met. TYPICAL end to end within 16 ms in 6 of 10 runs after 6c-6; LARGE only in the fast machine state. Both are accepted evidence gaps.
+- Condition 3: met.
+
+**Decision (user, 2026-11-27): kept at Medium, not closed.** See [phase-6c-exit-report.md](phase-6c-exit-report.md) section 7. The next review is with the next notation work, or when gap (a) of that report is resolved.

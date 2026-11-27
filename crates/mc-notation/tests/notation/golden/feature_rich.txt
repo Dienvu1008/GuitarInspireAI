@@ -1,0 +1,143 @@
+layout width 1000.000 height 416.256
+system 0 y 0.000 h 416.256
+ stave Notation track 1 top 0.000 h 124.256
+  bar 0 x 61.472 w 70.160
+  bar 1 x 131.632 w 168.208
+  bar 2 x 299.840 w 72.800
+  bar 3 x 372.640 w 178.000
+  bar 4 x 550.640 w 152.368
+  line StaffLine 24.000 52.256 703.008 52.256 1.040
+  line StaffLine 24.000 60.256 703.008 60.256 1.040
+  line StaffLine 24.000 68.256 703.008 68.256 1.040
+  line StaffLine 24.000 76.256 703.008 76.256 1.040
+  line StaffLine 24.000 84.256 703.008 84.256 1.040
+  line BarLine 61.472 52.256 61.472 84.256 1.280
+  line Stem 103.192 49.600 103.192 76.256 0.960
+  line ThickBarLine 132.632 52.256 132.632 84.256 4.000
+  line BarLine 135.632 52.256 135.632 84.256 1.280
+  line LedgerLine 157.202 92.256 177.106 92.256 1.280
+  line LedgerLine 157.202 100.256 177.106 100.256 1.280
+  line LedgerLine 157.202 108.256 177.106 108.256 1.280
+  line Stem 171.394 46.912 171.394 20.256 0.960
+  line Stem 200.978 54.912 200.978 24.256 0.960
+  line Stem 221.966 50.912 221.966 24.256 0.960
+  line Stem 250.748 50.912 250.748 24.256 0.960
+  line BarLine 299.840 52.256 299.840 84.256 1.280
+  line BarLine 368.640 52.256 368.640 84.256 1.280
+  line ThickBarLine 371.640 52.256 371.640 84.256 4.000
+  line BarLine 372.640 52.256 372.640 84.256 1.280
+  line BarLine 546.160 52.256 546.160 84.256 1.280
+  line BarLine 550.640 52.256 550.640 84.256 1.280
+  line BarLine 699.008 52.256 699.008 84.256 1.280
+  line ThickBarLine 702.008 52.256 702.008 84.256 4.000
+  glyph gClef8vb 32.000 76.256
+  glyph timeSig4 69.472 60.256
+  glyph timeSig4 69.472 76.256
+  glyph noteheadBlack 102.712 48.256
+  glyph repeatDot 137.532 72.256
+  glyph repeatDot 137.532 64.256
+  glyph noteheadBlack 162.434 48.256
+  glyph augmentationDot 174.674 48.256
+  glyph noteheadBlack 192.018 56.256
+  glyph noteheadBlack 213.006 52.256
+  glyph noteheadBlack 241.788 52.256
+  glyph accidentalSharp 232.220 52.256
+  glyph restQuarter 269.198 52.256
+  glyph noteheadWhole 160.402 112.256
+  glyph tuplet3 216.567 20.000
+  glyph repeatDot 363.540 72.256
+  glyph repeatDot 363.540 64.256
+  glyph restWhole 326.728 60.256
+  glyph restWhole 457.128 60.256
+  glyph accidentalFlat 554.640 68.256
+  glyph accidentalFlat 563.072 56.256
+  glyph accidentalFlat 571.504 72.256
+  glyph timeSig6 594.368 60.256
+  glyph timeSig8 594.336 76.256
+  glyph restWhole 650.496 60.256
+  beam 200.978 26.256 250.748 26.256 4.000
+  tie 112.952 161.634 53.056 false
+  note 0:0:0 G5 pos 9 acc None NotTied displaced false
+  note 1:0:0 G5 pos 9 acc None TiedAcrossBarLine displaced false
+  note 1:0:1 E5 pos 7 acc None NotTied displaced false
+  note 1:0:2 F5 pos 8 acc None NotTied displaced false
+  note 1:0:3 F#5 pos 8 acc Some(1) NotTied displaced false
+  note 1:1:0 E3 pos -7 acc None NotTied displaced false
+ stave Tab track 1 top 124.256 h 100.000
+  bar 0 x 61.472 w 70.160
+  bar 1 x 131.632 w 168.208
+  bar 2 x 299.840 w 72.800
+  bar 3 x 372.640 w 178.000
+  bar 4 x 550.640 w 152.368
+  fret 3 107.432 28.000
+  fret 3t 167.154 28.000
+  fret 5 196.738 40.000
+  fret 6 217.726 40.000
+  fret 7 246.508 40.000
+  fret 0 167.154 88.000
+ stave Notation track 2 top 224.256 h 92.000
+  bar 0 x 61.472 w 70.160
+  bar 1 x 131.632 w 168.208
+  bar 2 x 299.840 w 72.800
+  bar 3 x 372.640 w 178.000
+  bar 4 x 550.640 w 152.368
+  line StaffLine 24.000 20.000 703.008 20.000 1.040
+  line StaffLine 24.000 28.000 703.008 28.000 1.040
+  line StaffLine 24.000 36.000 703.008 36.000 1.040
+  line StaffLine 24.000 44.000 703.008 44.000 1.040
+  line StaffLine 24.000 52.000 703.008 52.000 1.040
+  line BarLine 61.472 20.000 61.472 52.000 1.280
+  line ThickBarLine 132.632 20.000 132.632 52.000 4.000
+  line BarLine 135.632 20.000 135.632 52.000 1.280
+  line BarLine 299.840 20.000 299.840 52.000 1.280
+  line BarLine 368.640 20.000 368.640 52.000 1.280
+  line ThickBarLine 371.640 20.000 371.640 52.000 4.000
+  line LedgerLine 330.536 60.000 350.440 60.000 1.280
+  line LedgerLine 330.536 68.000 350.440 68.000 1.280
+  line LedgerLine 330.536 76.000 350.440 76.000 1.280
+  line LedgerLine 330.536 60.000 350.440 60.000 1.280
+  line BarLine 372.640 20.000 372.640 52.000 1.280
+  line BarLine 546.160 20.000 546.160 52.000 1.280
+  line BarLine 550.640 20.000 550.640 52.000 1.280
+  line BarLine 699.008 20.000 699.008 52.000 1.280
+  line ThickBarLine 702.008 20.000 702.008 52.000 4.000
+  glyph gClef8vb 32.000 44.000
+  glyph timeSig4 69.472 28.000
+  glyph timeSig4 69.472 44.000
+  glyph restWhole 102.920 28.000
+  glyph repeatDot 137.532 40.000
+  glyph repeatDot 137.532 32.000
+  glyph restWhole 216.224 28.000
+  glyph repeatDot 363.540 40.000
+  glyph repeatDot 363.540 32.000
+  glyph noteheadWhole 333.736 80.000
+  glyph noteheadWhole 333.736 60.000
+  glyph accidentalSharp 315.240 60.000
+  glyph noteheadWhole 333.736 48.000
+  glyph accidentalSharp 324.168 48.000
+  glyph noteheadWhole 333.736 36.000
+  glyph restQuarter 392.504 36.000
+  glyph restQuarter 424.904 36.000
+  glyph restQuarter 457.304 36.000
+  glyph restQuarter 489.704 36.000
+  glyph restQuarter 522.104 36.000
+  glyph accidentalFlat 554.640 36.000
+  glyph accidentalFlat 563.072 24.000
+  glyph accidentalFlat 571.504 40.000
+  glyph timeSig6 594.368 28.000
+  glyph timeSig8 594.336 44.000
+  glyph restWhole 650.496 28.000
+  note 2:0:0 E3 pos -7 acc None NotTied displaced false
+  note 2:0:0 C#4 pos -2 acc Some(1) NotTied displaced false
+  note 2:0:0 F#4 pos 1 acc Some(1) NotTied displaced false
+  note 2:0:0 B4 pos 4 acc None NotTied displaced false
+ stave Tab track 2 top 316.256 h 100.000
+  bar 0 x 61.472 w 70.160
+  bar 1 x 131.632 w 168.208
+  bar 2 x 299.840 w 72.800
+  bar 3 x 372.640 w 178.000
+  bar 4 x 550.640 w 152.368
+  fret 2 340.488 52.000
+  fret 2 340.488 64.000
+  fret 2 340.488 76.000
+  fret 0 340.488 88.000

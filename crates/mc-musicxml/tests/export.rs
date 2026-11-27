@@ -348,6 +348,47 @@ fn export(score: &Score) -> (String, MusicXmlReport) {
     export_musicxml(score).expect("export")
 }
 
+// ----------------------------------------------------------------------- T6
+
+/// ADR-040 section 6, T6: the export uses the shared spelling (option A). In F# major
+/// the sounding semitone 65 is the in-key E#4, not F4 with a natural.
+#[test]
+fn t6_in_key_e_sharp_in_f_sharp_major() {
+    let mut s = Score::new(
+        "Keys",
+        InstrumentSpec::Fretted(FrettedInstrument::standard_guitar()),
+        MasterBar::new(
+            TimeSignature::COMMON,
+            KeySignature::new(6, Mode::Major).unwrap(),
+        ),
+        Tempo::from_bpm(100).unwrap(),
+    )
+    .unwrap();
+    let t = s.track_at(0).unwrap().id();
+    let (b, _) = s
+        .insert_beat(t, 0, 0, 0, NoteValue::plain(BaseValue::WHOLE))
+        .unwrap();
+    let r = BeatRef {
+        track: t,
+        bar: 0,
+        voice: 0,
+        beat: b,
+    };
+    // First string (E4), fret 1: sounding semitone 65.
+    let pos = FretPosition {
+        string: StringIndex::new(1).unwrap(),
+        fret: Fret(1),
+    };
+    s.set_note(r, pos).unwrap();
+    let (xml, report) = export(&s);
+    check(&s, &xml, &report);
+    let doc = Document::parse(&xml).unwrap();
+    let pitch = doc.descendants().find(|n| n.has_tag_name("pitch")).unwrap();
+    assert_eq!(text(pitch, "step"), Some("E"));
+    assert_eq!(text(pitch, "alter"), Some("1"));
+    assert_eq!(text(pitch, "octave"), Some("4"));
+}
+
 // ----------------------------------------------------------------------- E2
 
 #[test]

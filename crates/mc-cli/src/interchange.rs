@@ -14,11 +14,93 @@ import a Guitar Pro file first and print its import report):
   export-midi <source> <out.mid>           write a Standard MIDI File and print the report
   export-gp <source> <out.gp5|.gp4|.gp3>   write Guitar Pro (version from the extension)
                                            and print the report
+  export-pdf <source> <out.pdf> [--paper a4|letter] [--spacing spacious|compact]
+             [--staves both|tab|notation] [--tracks N] [--title TEXT]
+                                           write PDF (ADR-041): the first N tracks (all by
+                                           default) with the given staves; prints the
+                                           pages and the embedded font subsets
 ";
+
+/// Options of `export-pdf`, from its flags.
+pub struct PdfOptions {
+    pub paper: Option<String>,
+    pub spacing: Option<String>,
+    pub staves: Option<String>,
+    pub tracks: Option<String>,
+    pub title: Option<String>,
+}
+
+pub fn export_pdf(spec: &str, out: &str, o: &PdfOptions) -> Result<(), String> {
+    use mc_app::notation::{PageSetup, PageSize, ShownTrack, StaffConfiguration, SystemSpacing};
+    let score = source(spec)?;
+    let size = match o.paper.as_deref().unwrap_or("a4") {
+        "a4" => PageSize::A4,
+        "letter" => PageSize::LETTER,
+        other => return Err(format!("--paper: '{other}' is not a4 or letter")),
+    };
+    let spacing = match o.spacing.as_deref().unwrap_or("spacious") {
+        "spacious" => SystemSpacing::Spacious,
+        "compact" => SystemSpacing::Compact,
+        other => return Err(format!("--spacing: '{other}' is not spacious or compact")),
+    };
+    let staves = match o.staves.as_deref().unwrap_or("both") {
+        "both" => StaffConfiguration::NOTATION_AND_TAB,
+        "tab" => StaffConfiguration::TAB,
+        "notation" => StaffConfiguration {
+            notation: true,
+            tab: false,
+        },
+        other => return Err(format!("--staves: '{other}' is not both, tab or notation")),
+    };
+    let count = match &o.tracks {
+        Some(n) => n
+            .parse()
+            .map_err(|_| format!("--tracks: '{n}' is not a number"))?,
+        None => usize::MAX,
+    };
+    let shown: Vec<ShownTrack> = score
+        .tracks()
+        .take(count)
+        .map(|t| ShownTrack {
+            track: t.id(),
+            staves,
+        })
+        .collect();
+    let setup = PageSetup {
+        system_spacing: spacing,
+        ..PageSetup::new(size)
+    };
+    let title = o.title.clone().unwrap_or_else(|| {
+        Path::new(spec.rsplit(':').next().unwrap_or(spec))
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or(spec)
+            .to_string()
+    });
+    let start = std::time::Instant::now();
+    let pdf = mc_pdf::export_pdf(&score, &shown, &setup, &title).map_err(|e| e.to_string())?;
+    let elapsed = start.elapsed();
+    std::fs::write(out, &pdf.bytes).map_err(|e| format!("{out}: {e}"))?;
+    println!(
+        "wrote {out}: {} page(s), {} track(s), {} bytes in {:.1} ms",
+        pdf.pages,
+        shown.len(),
+        pdf.bytes.len(),
+        elapsed.as_secs_f64() * 1e3
+    );
+    for f in &pdf.fonts {
+        println!(
+            "  embedded {} ({} glyphs, {} bytes)",
+            f.name, f.glyphs, f.bytes
+        );
+    }
+    Ok(())
+}
 
 fn source(spec: &str) -> Result<Score, String> {
     if let Some(name) = spec.strip_prefix("fixture:") {
         return Ok(match name {
+            "keys" => mc_app::fixtures::notation_keys(),
             "small" => mc_app::fixtures::reference(mc_app::fixtures::SMALL),
             "typical" => mc_app::fixtures::reference(mc_app::fixtures::TYPICAL),
             "large" => mc_app::fixtures::reference(mc_app::fixtures::LARGE),

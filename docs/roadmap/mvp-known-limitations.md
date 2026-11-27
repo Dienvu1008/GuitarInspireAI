@@ -82,7 +82,14 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   intermittent slow state was seen with code from before this feature, and its cause is
   not yet found (ADR-031). Typical scores (4 tracks, 150 bars) were within budget in
   every run of the last session. One machine only (ADR-025).
-- No standard notation, no PDF.
+- **Standard notation and PDF** (Phase 6c, [ADR-041](../architecture/decisions/ADR-041-notation-engine-metrics-cache-pdf.md)).
+  - Standard notation is shown above TAB, per track, and can be switched off. It is read-only: clicking places the cursor and selects, but notes are edited on TAB.
+  - File > Export PDF... exports what the view shows, on A4 or Letter, with Spacious or Compact spacing.
+  - Known limitations of Phase 6c, left until after 6c by the user (ADR-041 section 13, choices 4 and 5):
+    - The PDF has no track names, so the staves of a many-track system are not labelled.
+    - On a system split across pages, every track repeats the marker and bar number, as on screen.
+    - Two voices that cross put noteheads on top of each other at one position and onset. There is no collision rule for them.
+  - Evidence gaps (ADR-041 section 14): end to end in the app, LARGE with notation is not shown within budget. After 6c-6, TYPICAL with notation is within 16 ms in 6 of 10 runs on the reference machine (see the 6c exit report).
 - Effects are tie, let ring, dead note and, from Phase 6a-1 (ADR-035), accent, palm mute,
   string-percussive and a down or up stroke per beat. They are set in the inspector; there
   are no keyboard shortcuts for them yet. No lyrics.
@@ -156,7 +163,7 @@ Related documents: [README.md](README.md), [implementation-phases.md](implementa
   - "Guitar Pro" is a trademark of Arobas Music. GuitarInspireAI is not affiliated with or endorsed by Arobas Music; the name only describes file compatibility.
 - **MusicXML export** (Phase 6b-4, [ADR-033](../architecture/decisions/ADR-033-musicxml-export-adapter.md)): File > Export MusicXML... writes MusicXML 4.0 as an uncompressed `.musicxml` file. Its limits:
   - **Export only**: MusicXML files cannot be opened or imported.
-  - **TAB staves only**, one per track, as the app shows them. No standard-notation staff; standard notation is Phase 6c.
+  - **TAB staves only**, one per track. The standard-notation staff the app shows since Phase 6c is not exported to MusicXML.
   - Compressed `.mxl` is not offered.
   - Bars with too few or too many beats are written as they are, and the export message says so. A short voice is filled with a rest; an overfull bar keeps all its notes, and some readers may mark it as irregular. No note is ever cut.
   - The mixer settings (volume, pan, solo, mute) and the tempo factor are not exported. Every track is written.

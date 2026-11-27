@@ -10,6 +10,7 @@ import 'close_guard.dart';
 import 'guitar_pro_menu.dart';
 import 'midi_menu.dart';
 import 'musicxml_menu.dart';
+import 'pdf_menu.dart';
 import 'playback_wiring.dart';
 
 class GuitarInspireApp extends StatelessWidget {
@@ -183,6 +184,7 @@ class _MenuBar extends ConsumerWidget {
                 const Divider(),
                 ...buildMidiMenuItems(context, ref),
                 ...buildMusicXmlMenuItems(context, ref),
+                ...buildPdfMenuItems(context, ref),
                 ...buildGuitarProMenuItems(context, ref),
               ],
               child: const Text('File'),

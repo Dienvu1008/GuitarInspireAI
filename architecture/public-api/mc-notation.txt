@@ -1,4 +1,237 @@
 pub mod mc_notation
+pub mod mc_notation::smufl
+pub enum mc_notation::smufl::Anchor
+pub mc_notation::smufl::Anchor::StemDownNW
+pub mc_notation::smufl::Anchor::StemDownSW
+pub mc_notation::smufl::Anchor::StemUpNW
+pub mc_notation::smufl::Anchor::StemUpSE
+impl mc_notation::smufl::Anchor
+pub const mc_notation::smufl::Anchor::ALL: [mc_notation::smufl::Anchor; 4]
+pub const fn mc_notation::smufl::Anchor::name(self) -> &'static str
+impl core::clone::Clone for mc_notation::smufl::Anchor
+pub fn mc_notation::smufl::Anchor::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::smufl::Anchor
+impl core::cmp::PartialEq for mc_notation::smufl::Anchor
+pub fn mc_notation::smufl::Anchor::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::smufl::Anchor
+pub fn mc_notation::smufl::Anchor::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_notation::smufl::Anchor
+pub fn mc_notation::smufl::Anchor::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_notation::smufl::Anchor
+impl core::marker::StructuralPartialEq for mc_notation::smufl::Anchor
+impl core::marker::Freeze for mc_notation::smufl::Anchor
+impl core::marker::Send for mc_notation::smufl::Anchor
+impl core::marker::Sync for mc_notation::smufl::Anchor
+impl core::marker::Unpin for mc_notation::smufl::Anchor
+impl core::marker::UnsafeUnpin for mc_notation::smufl::Anchor
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::smufl::Anchor
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::smufl::Anchor
+#[repr(u8)] pub enum mc_notation::smufl::SmuflGlyph
+pub mc_notation::smufl::SmuflGlyph::AccidentalDoubleFlat
+pub mc_notation::smufl::SmuflGlyph::AccidentalDoubleSharp
+pub mc_notation::smufl::SmuflGlyph::AccidentalFlat
+pub mc_notation::smufl::SmuflGlyph::AccidentalNatural
+pub mc_notation::smufl::SmuflGlyph::AccidentalSharp
+pub mc_notation::smufl::SmuflGlyph::AugmentationDot
+pub mc_notation::smufl::SmuflGlyph::Flag128thDown
+pub mc_notation::smufl::SmuflGlyph::Flag128thUp
+pub mc_notation::smufl::SmuflGlyph::Flag16thDown
+pub mc_notation::smufl::SmuflGlyph::Flag16thUp
+pub mc_notation::smufl::SmuflGlyph::Flag256thDown
+pub mc_notation::smufl::SmuflGlyph::Flag256thUp
+pub mc_notation::smufl::SmuflGlyph::Flag32ndDown
+pub mc_notation::smufl::SmuflGlyph::Flag32ndUp
+pub mc_notation::smufl::SmuflGlyph::Flag64thDown
+pub mc_notation::smufl::SmuflGlyph::Flag64thUp
+pub mc_notation::smufl::SmuflGlyph::Flag8thDown
+pub mc_notation::smufl::SmuflGlyph::Flag8thUp
+pub mc_notation::smufl::SmuflGlyph::GClef8vb
+pub mc_notation::smufl::SmuflGlyph::NoteheadBlack
+pub mc_notation::smufl::SmuflGlyph::NoteheadHalf
+pub mc_notation::smufl::SmuflGlyph::NoteheadWhole
+pub mc_notation::smufl::SmuflGlyph::RepeatDot
+pub mc_notation::smufl::SmuflGlyph::Rest128th
+pub mc_notation::smufl::SmuflGlyph::Rest16th
+pub mc_notation::smufl::SmuflGlyph::Rest256th
+pub mc_notation::smufl::SmuflGlyph::Rest32nd
+pub mc_notation::smufl::SmuflGlyph::Rest64th
+pub mc_notation::smufl::SmuflGlyph::Rest8th
+pub mc_notation::smufl::SmuflGlyph::RestHalf
+pub mc_notation::smufl::SmuflGlyph::RestQuarter
+pub mc_notation::smufl::SmuflGlyph::RestWhole
+pub mc_notation::smufl::SmuflGlyph::TimeSig0
+pub mc_notation::smufl::SmuflGlyph::TimeSig1
+pub mc_notation::smufl::SmuflGlyph::TimeSig2
+pub mc_notation::smufl::SmuflGlyph::TimeSig3
+pub mc_notation::smufl::SmuflGlyph::TimeSig4
+pub mc_notation::smufl::SmuflGlyph::TimeSig5
+pub mc_notation::smufl::SmuflGlyph::TimeSig6
+pub mc_notation::smufl::SmuflGlyph::TimeSig7
+pub mc_notation::smufl::SmuflGlyph::TimeSig8
+pub mc_notation::smufl::SmuflGlyph::TimeSig9
+pub mc_notation::smufl::SmuflGlyph::Tuplet0
+pub mc_notation::smufl::SmuflGlyph::Tuplet1
+pub mc_notation::smufl::SmuflGlyph::Tuplet2
+pub mc_notation::smufl::SmuflGlyph::Tuplet3
+pub mc_notation::smufl::SmuflGlyph::Tuplet4
+pub mc_notation::smufl::SmuflGlyph::Tuplet5
+pub mc_notation::smufl::SmuflGlyph::Tuplet6
+pub mc_notation::smufl::SmuflGlyph::Tuplet7
+pub mc_notation::smufl::SmuflGlyph::Tuplet8
+pub mc_notation::smufl::SmuflGlyph::Tuplet9
+impl mc_notation::smufl::SmuflGlyph
+pub const mc_notation::smufl::SmuflGlyph::ALL: &'static [mc_notation::smufl::SmuflGlyph]
+pub const fn mc_notation::smufl::SmuflGlyph::codepoint(self) -> u32
+pub const fn mc_notation::smufl::SmuflGlyph::name(self) -> &'static str
+pub const fn mc_notation::smufl::SmuflGlyph::required_anchors(self) -> &'static [mc_notation::smufl::Anchor]
+impl mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::accidental(i8) -> mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::flag(u8, bool) -> mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::metrics(self) -> &'static mc_notation::smufl::GlyphMetrics
+pub fn mc_notation::smufl::SmuflGlyph::notehead(u8) -> mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::rest(u8) -> mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::time_digit(u8) -> mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::tuplet_digit(u8) -> mc_notation::smufl::SmuflGlyph
+impl core::clone::Clone for mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::smufl::SmuflGlyph
+impl core::cmp::Ord for mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::cmp(&self, &Self) -> core::cmp::Ordering
+impl core::cmp::PartialEq for mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::eq(&self, &Self) -> bool
+impl core::cmp::PartialOrd for mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::partial_cmp(&self, &Self) -> core::option::Option<core::cmp::Ordering>
+impl core::fmt::Debug for mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_notation::smufl::SmuflGlyph
+pub fn mc_notation::smufl::SmuflGlyph::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_notation::smufl::SmuflGlyph
+impl core::marker::StructuralPartialEq for mc_notation::smufl::SmuflGlyph
+impl core::marker::Freeze for mc_notation::smufl::SmuflGlyph
+impl core::marker::Send for mc_notation::smufl::SmuflGlyph
+impl core::marker::Sync for mc_notation::smufl::SmuflGlyph
+impl core::marker::Unpin for mc_notation::smufl::SmuflGlyph
+impl core::marker::UnsafeUnpin for mc_notation::smufl::SmuflGlyph
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::smufl::SmuflGlyph
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::smufl::SmuflGlyph
+pub struct mc_notation::smufl::EngravingDefaults
+pub mc_notation::smufl::EngravingDefaults::barline_separation: f32
+pub mc_notation::smufl::EngravingDefaults::beam_spacing: f32
+pub mc_notation::smufl::EngravingDefaults::beam_thickness: f32
+pub mc_notation::smufl::EngravingDefaults::leger_line_extension: f32
+pub mc_notation::smufl::EngravingDefaults::leger_line_thickness: f32
+pub mc_notation::smufl::EngravingDefaults::repeat_barline_dot_separation: f32
+pub mc_notation::smufl::EngravingDefaults::staff_line_thickness: f32
+pub mc_notation::smufl::EngravingDefaults::stem_thickness: f32
+pub mc_notation::smufl::EngravingDefaults::thick_barline_thickness: f32
+pub mc_notation::smufl::EngravingDefaults::thin_barline_thickness: f32
+pub mc_notation::smufl::EngravingDefaults::tie_endpoint_thickness: f32
+pub mc_notation::smufl::EngravingDefaults::tie_midpoint_thickness: f32
+impl core::clone::Clone for mc_notation::smufl::EngravingDefaults
+pub fn mc_notation::smufl::EngravingDefaults::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::smufl::EngravingDefaults
+pub fn mc_notation::smufl::EngravingDefaults::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::smufl::EngravingDefaults
+pub fn mc_notation::smufl::EngravingDefaults::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::smufl::EngravingDefaults
+impl core::marker::StructuralPartialEq for mc_notation::smufl::EngravingDefaults
+impl core::marker::Freeze for mc_notation::smufl::EngravingDefaults
+impl core::marker::Send for mc_notation::smufl::EngravingDefaults
+impl core::marker::Sync for mc_notation::smufl::EngravingDefaults
+impl core::marker::Unpin for mc_notation::smufl::EngravingDefaults
+impl core::marker::UnsafeUnpin for mc_notation::smufl::EngravingDefaults
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::smufl::EngravingDefaults
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::smufl::EngravingDefaults
+pub struct mc_notation::smufl::FontIdentity
+pub mc_notation::smufl::FontIdentity::json_sha256: &'static str
+pub mc_notation::smufl::FontIdentity::name: &'static str
+pub mc_notation::smufl::FontIdentity::otf_sha256: &'static str
+pub mc_notation::smufl::FontIdentity::version: &'static str
+impl core::clone::Clone for mc_notation::smufl::FontIdentity
+pub fn mc_notation::smufl::FontIdentity::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::smufl::FontIdentity
+impl core::cmp::PartialEq for mc_notation::smufl::FontIdentity
+pub fn mc_notation::smufl::FontIdentity::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::smufl::FontIdentity
+pub fn mc_notation::smufl::FontIdentity::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::smufl::FontIdentity
+impl core::marker::StructuralPartialEq for mc_notation::smufl::FontIdentity
+impl core::marker::Freeze for mc_notation::smufl::FontIdentity
+impl core::marker::Send for mc_notation::smufl::FontIdentity
+impl core::marker::Sync for mc_notation::smufl::FontIdentity
+impl core::marker::Unpin for mc_notation::smufl::FontIdentity
+impl core::marker::UnsafeUnpin for mc_notation::smufl::FontIdentity
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::smufl::FontIdentity
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::smufl::FontIdentity
+pub struct mc_notation::smufl::GlyphBox
+pub mc_notation::smufl::GlyphBox::ne: (f32, f32)
+pub mc_notation::smufl::GlyphBox::sw: (f32, f32)
+impl mc_notation::smufl::GlyphBox
+pub fn mc_notation::smufl::GlyphBox::height(&self) -> f32
+pub fn mc_notation::smufl::GlyphBox::width(&self) -> f32
+impl core::clone::Clone for mc_notation::smufl::GlyphBox
+pub fn mc_notation::smufl::GlyphBox::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::smufl::GlyphBox
+pub fn mc_notation::smufl::GlyphBox::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::smufl::GlyphBox
+pub fn mc_notation::smufl::GlyphBox::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::smufl::GlyphBox
+impl core::marker::StructuralPartialEq for mc_notation::smufl::GlyphBox
+impl core::marker::Freeze for mc_notation::smufl::GlyphBox
+impl core::marker::Send for mc_notation::smufl::GlyphBox
+impl core::marker::Sync for mc_notation::smufl::GlyphBox
+impl core::marker::Unpin for mc_notation::smufl::GlyphBox
+impl core::marker::UnsafeUnpin for mc_notation::smufl::GlyphBox
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::smufl::GlyphBox
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::smufl::GlyphBox
+pub struct mc_notation::smufl::GlyphMetrics
+pub mc_notation::smufl::GlyphMetrics::advance: f32
+pub mc_notation::smufl::GlyphMetrics::anchors: [core::option::Option<(f32, f32)>; 4]
+pub mc_notation::smufl::GlyphMetrics::bbox: mc_notation::smufl::GlyphBox
+pub mc_notation::smufl::GlyphMetrics::glyph_id: u16
+impl mc_notation::smufl::GlyphMetrics
+pub fn mc_notation::smufl::GlyphMetrics::anchor(&self, mc_notation::smufl::Anchor) -> core::option::Option<(f32, f32)>
+impl core::clone::Clone for mc_notation::smufl::GlyphMetrics
+pub fn mc_notation::smufl::GlyphMetrics::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::smufl::GlyphMetrics
+pub fn mc_notation::smufl::GlyphMetrics::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::smufl::GlyphMetrics
+pub fn mc_notation::smufl::GlyphMetrics::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::smufl::GlyphMetrics
+impl core::marker::StructuralPartialEq for mc_notation::smufl::GlyphMetrics
+impl core::marker::Freeze for mc_notation::smufl::GlyphMetrics
+impl core::marker::Send for mc_notation::smufl::GlyphMetrics
+impl core::marker::Sync for mc_notation::smufl::GlyphMetrics
+impl core::marker::Unpin for mc_notation::smufl::GlyphMetrics
+impl core::marker::UnsafeUnpin for mc_notation::smufl::GlyphMetrics
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::smufl::GlyphMetrics
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::smufl::GlyphMetrics
+pub const mc_notation::smufl::DEFAULTS: mc_notation::smufl::EngravingDefaults
+pub const mc_notation::smufl::FONT: mc_notation::smufl::FontIdentity
+pub enum mc_notation::EngravedLineKind
+pub mc_notation::EngravedLineKind::BarLine
+pub mc_notation::EngravedLineKind::LedgerLine
+pub mc_notation::EngravedLineKind::StaffLine
+pub mc_notation::EngravedLineKind::Stem
+pub mc_notation::EngravedLineKind::ThickBarLine
+impl core::clone::Clone for mc_notation::EngravedLineKind
+pub fn mc_notation::EngravedLineKind::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::EngravedLineKind
+impl core::cmp::PartialEq for mc_notation::EngravedLineKind
+pub fn mc_notation::EngravedLineKind::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::EngravedLineKind
+pub fn mc_notation::EngravedLineKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_notation::EngravedLineKind
+pub fn mc_notation::EngravedLineKind::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_notation::EngravedLineKind
+impl core::marker::StructuralPartialEq for mc_notation::EngravedLineKind
+impl core::marker::Freeze for mc_notation::EngravedLineKind
+impl core::marker::Send for mc_notation::EngravedLineKind
+impl core::marker::Sync for mc_notation::EngravedLineKind
+impl core::marker::Unpin for mc_notation::EngravedLineKind
+impl core::marker::UnsafeUnpin for mc_notation::EngravedLineKind
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::EngravedLineKind
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::EngravedLineKind
 pub enum mc_notation::GlyphKind
 pub mc_notation::GlyphKind::Accent
 pub mc_notation::GlyphKind::BarNumber
@@ -100,8 +333,13 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::LineKind
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::LineKind
 pub enum mc_notation::NotationError
 pub mc_notation::NotationError::InvalidMetrics(alloc::string::String)
+pub mc_notation::NotationError::InvalidPage(alloc::string::String)
+pub mc_notation::NotationError::NoStaves(mc_score::ids::TrackId)
 pub mc_notation::NotationError::NoTracks
 pub mc_notation::NotationError::Overflow
+pub mc_notation::NotationError::PageTooSmall
+pub mc_notation::NotationError::PageTooSmall::stave: usize
+pub mc_notation::NotationError::PageTooSmall::system: usize
 pub mc_notation::NotationError::StaleOutline
 pub mc_notation::NotationError::UnknownTrack(mc_score::ids::TrackId)
 impl core::clone::Clone for mc_notation::NotationError
@@ -122,6 +360,68 @@ impl core::marker::Unpin for mc_notation::NotationError
 impl core::marker::UnsafeUnpin for mc_notation::NotationError
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::NotationError
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::NotationError
+pub enum mc_notation::StaveKind
+pub mc_notation::StaveKind::Notation
+pub mc_notation::StaveKind::Tab
+impl core::clone::Clone for mc_notation::StaveKind
+pub fn mc_notation::StaveKind::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::StaveKind
+impl core::cmp::PartialEq for mc_notation::StaveKind
+pub fn mc_notation::StaveKind::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::StaveKind
+pub fn mc_notation::StaveKind::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_notation::StaveKind
+pub fn mc_notation::StaveKind::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_notation::StaveKind
+impl core::marker::StructuralPartialEq for mc_notation::StaveKind
+impl core::marker::Freeze for mc_notation::StaveKind
+impl core::marker::Send for mc_notation::StaveKind
+impl core::marker::Sync for mc_notation::StaveKind
+impl core::marker::Unpin for mc_notation::StaveKind
+impl core::marker::UnsafeUnpin for mc_notation::StaveKind
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::StaveKind
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::StaveKind
+pub enum mc_notation::SystemSpacing
+pub mc_notation::SystemSpacing::Compact
+pub mc_notation::SystemSpacing::Spacious
+impl core::clone::Clone for mc_notation::SystemSpacing
+pub fn mc_notation::SystemSpacing::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::SystemSpacing
+impl core::cmp::PartialEq for mc_notation::SystemSpacing
+pub fn mc_notation::SystemSpacing::eq(&self, &Self) -> bool
+impl core::default::Default for mc_notation::SystemSpacing
+pub fn mc_notation::SystemSpacing::default() -> Self
+impl core::fmt::Debug for mc_notation::SystemSpacing
+pub fn mc_notation::SystemSpacing::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::SystemSpacing
+impl core::marker::StructuralPartialEq for mc_notation::SystemSpacing
+impl core::marker::Freeze for mc_notation::SystemSpacing
+impl core::marker::Send for mc_notation::SystemSpacing
+impl core::marker::Sync for mc_notation::SystemSpacing
+impl core::marker::Unpin for mc_notation::SystemSpacing
+impl core::marker::UnsafeUnpin for mc_notation::SystemSpacing
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::SystemSpacing
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::SystemSpacing
+pub struct mc_notation::AnchorFact
+pub mc_notation::AnchorFact::bar: usize
+pub mc_notation::AnchorFact::beat: usize
+pub mc_notation::AnchorFact::voice: usize
+pub mc_notation::AnchorFact::x: f32
+impl core::clone::Clone for mc_notation::AnchorFact
+pub fn mc_notation::AnchorFact::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::AnchorFact
+pub fn mc_notation::AnchorFact::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::AnchorFact
+pub fn mc_notation::AnchorFact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::AnchorFact
+impl core::marker::StructuralPartialEq for mc_notation::AnchorFact
+impl core::marker::Freeze for mc_notation::AnchorFact
+impl core::marker::Send for mc_notation::AnchorFact
+impl core::marker::Sync for mc_notation::AnchorFact
+impl core::marker::Unpin for mc_notation::AnchorFact
+impl core::marker::UnsafeUnpin for mc_notation::AnchorFact
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::AnchorFact
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::AnchorFact
 pub struct mc_notation::BarLayout
 pub mc_notation::BarLayout::bar: usize
 pub mc_notation::BarLayout::diagnostic: bool
@@ -142,6 +442,88 @@ impl core::marker::Unpin for mc_notation::BarLayout
 impl core::marker::UnsafeUnpin for mc_notation::BarLayout
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::BarLayout
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::BarLayout
+pub struct mc_notation::Beam
+pub mc_notation::Beam::thickness: f32
+pub mc_notation::Beam::x1: f32
+pub mc_notation::Beam::x2: f32
+pub mc_notation::Beam::y1: f32
+pub mc_notation::Beam::y2: f32
+impl core::clone::Clone for mc_notation::Beam
+pub fn mc_notation::Beam::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Beam
+pub fn mc_notation::Beam::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Beam
+pub fn mc_notation::Beam::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::Beam
+impl core::marker::StructuralPartialEq for mc_notation::Beam
+impl core::marker::Freeze for mc_notation::Beam
+impl core::marker::Send for mc_notation::Beam
+impl core::marker::Sync for mc_notation::Beam
+impl core::marker::Unpin for mc_notation::Beam
+impl core::marker::UnsafeUnpin for mc_notation::Beam
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Beam
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Beam
+pub struct mc_notation::BeamFact
+pub mc_notation::BeamFact::band: mc_notation::Rect
+pub mc_notation::BeamFact::bar: usize
+pub mc_notation::BeamFact::beats: alloc::vec::Vec<usize>
+pub mc_notation::BeamFact::up: bool
+pub mc_notation::BeamFact::voice: usize
+impl core::clone::Clone for mc_notation::BeamFact
+pub fn mc_notation::BeamFact::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::BeamFact
+pub fn mc_notation::BeamFact::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::BeamFact
+pub fn mc_notation::BeamFact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::BeamFact
+impl core::marker::Freeze for mc_notation::BeamFact
+impl core::marker::Send for mc_notation::BeamFact
+impl core::marker::Sync for mc_notation::BeamFact
+impl core::marker::Unpin for mc_notation::BeamFact
+impl core::marker::UnsafeUnpin for mc_notation::BeamFact
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::BeamFact
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::BeamFact
+pub struct mc_notation::CourtesyFact
+pub mc_notation::CourtesyFact::bar: usize
+pub mc_notation::CourtesyFact::key: core::option::Option<mc_theory::key::KeySignature>
+pub mc_notation::CourtesyFact::time: core::option::Option<mc_theory::time::TimeSignature>
+pub mc_notation::CourtesyFact::x: f32
+impl core::clone::Clone for mc_notation::CourtesyFact
+pub fn mc_notation::CourtesyFact::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::CourtesyFact
+pub fn mc_notation::CourtesyFact::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::CourtesyFact
+pub fn mc_notation::CourtesyFact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::CourtesyFact
+impl core::marker::Freeze for mc_notation::CourtesyFact
+impl core::marker::Send for mc_notation::CourtesyFact
+impl core::marker::Sync for mc_notation::CourtesyFact
+impl core::marker::Unpin for mc_notation::CourtesyFact
+impl core::marker::UnsafeUnpin for mc_notation::CourtesyFact
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::CourtesyFact
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::CourtesyFact
+pub struct mc_notation::EngravedLine
+pub mc_notation::EngravedLine::kind: mc_notation::EngravedLineKind
+pub mc_notation::EngravedLine::thickness: f32
+pub mc_notation::EngravedLine::x1: f32
+pub mc_notation::EngravedLine::x2: f32
+pub mc_notation::EngravedLine::y1: f32
+pub mc_notation::EngravedLine::y2: f32
+impl core::clone::Clone for mc_notation::EngravedLine
+pub fn mc_notation::EngravedLine::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::EngravedLine
+pub fn mc_notation::EngravedLine::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::EngravedLine
+pub fn mc_notation::EngravedLine::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::EngravedLine
+impl core::marker::StructuralPartialEq for mc_notation::EngravedLine
+impl core::marker::Freeze for mc_notation::EngravedLine
+impl core::marker::Send for mc_notation::EngravedLine
+impl core::marker::Sync for mc_notation::EngravedLine
+impl core::marker::Unpin for mc_notation::EngravedLine
+impl core::marker::UnsafeUnpin for mc_notation::EngravedLine
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::EngravedLine
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::EngravedLine
 pub struct mc_notation::Glyph
 pub mc_notation::Glyph::kind: mc_notation::GlyphKind
 pub mc_notation::Glyph::width: f32
@@ -216,6 +598,7 @@ pub mc_notation::LayoutMetrics::time_signature_width: f32
 pub mc_notation::LayoutMetrics::width: f32
 impl mc_notation::LayoutMetrics
 pub fn mc_notation::LayoutMetrics::content_width(&self) -> f32
+pub fn mc_notation::LayoutMetrics::staff_space(&self) -> f32
 pub fn mc_notation::LayoutMetrics::validate(&self) -> core::result::Result<(), mc_notation::NotationError>
 impl core::clone::Clone for mc_notation::LayoutMetrics
 pub fn mc_notation::LayoutMetrics::clone(&self) -> Self
@@ -255,9 +638,111 @@ impl core::marker::Unpin for mc_notation::Line
 impl core::marker::UnsafeUnpin for mc_notation::Line
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Line
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::Line
+pub struct mc_notation::MusicGlyph
+pub mc_notation::MusicGlyph::glyph: mc_notation::smufl::SmuflGlyph
+pub mc_notation::MusicGlyph::x: f32
+pub mc_notation::MusicGlyph::y: f32
+impl core::clone::Clone for mc_notation::MusicGlyph
+pub fn mc_notation::MusicGlyph::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::MusicGlyph
+pub fn mc_notation::MusicGlyph::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::MusicGlyph
+pub fn mc_notation::MusicGlyph::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::MusicGlyph
+impl core::marker::StructuralPartialEq for mc_notation::MusicGlyph
+impl core::marker::Freeze for mc_notation::MusicGlyph
+impl core::marker::Send for mc_notation::MusicGlyph
+impl core::marker::Sync for mc_notation::MusicGlyph
+impl core::marker::Unpin for mc_notation::MusicGlyph
+impl core::marker::UnsafeUnpin for mc_notation::MusicGlyph
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::MusicGlyph
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::MusicGlyph
+pub struct mc_notation::NotationFacts
+pub mc_notation::NotationFacts::anchors: alloc::vec::Vec<mc_notation::AnchorFact>
+pub mc_notation::NotationFacts::bar_rests: alloc::vec::Vec<mc_notation::RestFact>
+pub mc_notation::NotationFacts::barlines: alloc::vec::Vec<f32>
+pub mc_notation::NotationFacts::beams: alloc::vec::Vec<mc_notation::BeamFact>
+pub mc_notation::NotationFacts::cancellations: alloc::vec::Vec<(usize, alloc::vec::Vec<mc_theory::pitch::Letter>)>
+pub mc_notation::NotationFacts::contents: alloc::vec::Vec<(usize, f32, f32)>
+pub mc_notation::NotationFacts::courtesy: alloc::vec::Vec<mc_notation::CourtesyFact>
+pub mc_notation::NotationFacts::key_signs: usize
+pub mc_notation::NotationFacts::notes: alloc::vec::Vec<mc_notation::NoteFact>
+pub mc_notation::NotationFacts::rests: alloc::vec::Vec<mc_notation::RestFact>
+pub mc_notation::NotationFacts::stems: alloc::vec::Vec<mc_notation::StemFact>
+pub mc_notation::NotationFacts::tuplets: alloc::vec::Vec<mc_notation::TupletFact>
+impl core::clone::Clone for mc_notation::NotationFacts
+pub fn mc_notation::NotationFacts::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::NotationFacts
+pub fn mc_notation::NotationFacts::eq(&self, &Self) -> bool
+impl core::default::Default for mc_notation::NotationFacts
+pub fn mc_notation::NotationFacts::default() -> Self
+impl core::fmt::Debug for mc_notation::NotationFacts
+pub fn mc_notation::NotationFacts::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::NotationFacts
+impl core::marker::Freeze for mc_notation::NotationFacts
+impl core::marker::Send for mc_notation::NotationFacts
+impl core::marker::Sync for mc_notation::NotationFacts
+impl core::marker::Unpin for mc_notation::NotationFacts
+impl core::marker::UnsafeUnpin for mc_notation::NotationFacts
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::NotationFacts
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::NotationFacts
+pub struct mc_notation::NotationStaff
+pub mc_notation::NotationStaff::beams: alloc::vec::Vec<mc_notation::Beam>
+pub mc_notation::NotationStaff::facts: mc_notation::NotationFacts
+pub mc_notation::NotationStaff::glyphs: alloc::vec::Vec<mc_notation::MusicGlyph>
+pub mc_notation::NotationStaff::lines: alloc::vec::Vec<mc_notation::EngravedLine>
+pub mc_notation::NotationStaff::lines_top: f32
+pub mc_notation::NotationStaff::staff_space: f32
+pub mc_notation::NotationStaff::ties: alloc::vec::Vec<mc_notation::Tie>
+impl core::clone::Clone for mc_notation::NotationStaff
+pub fn mc_notation::NotationStaff::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::NotationStaff
+pub fn mc_notation::NotationStaff::eq(&self, &Self) -> bool
+impl core::default::Default for mc_notation::NotationStaff
+pub fn mc_notation::NotationStaff::default() -> Self
+impl core::fmt::Debug for mc_notation::NotationStaff
+pub fn mc_notation::NotationStaff::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::NotationStaff
+impl core::marker::Freeze for mc_notation::NotationStaff
+impl core::marker::Send for mc_notation::NotationStaff
+impl core::marker::Sync for mc_notation::NotationStaff
+impl core::marker::Unpin for mc_notation::NotationStaff
+impl core::marker::UnsafeUnpin for mc_notation::NotationStaff
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::NotationStaff
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::NotationStaff
+pub struct mc_notation::NoteFact
+pub mc_notation::NoteFact::accidental: core::option::Option<mc_theory::pitch::Alter>
+pub mc_notation::NoteFact::accidental_box: core::option::Option<mc_notation::Rect>
+pub mc_notation::NoteFact::bar: usize
+pub mc_notation::NoteFact::beat: usize
+pub mc_notation::NoteFact::displaced: bool
+pub mc_notation::NoteFact::dots: alloc::vec::Vec<(f32, f32)>
+pub mc_notation::NoteFact::head: mc_notation::Rect
+pub mc_notation::NoteFact::ledgers: alloc::vec::Vec<mc_notation::EngravedLine>
+pub mc_notation::NoteFact::position: i32
+pub mc_notation::NoteFact::string: u8
+pub mc_notation::NoteFact::tie: mc_theory::notation::TieRole
+pub mc_notation::NoteFact::voice: usize
+pub mc_notation::NoteFact::written: mc_theory::pitch::SpelledPitch
+impl core::clone::Clone for mc_notation::NoteFact
+pub fn mc_notation::NoteFact::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::NoteFact
+pub fn mc_notation::NoteFact::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::NoteFact
+pub fn mc_notation::NoteFact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::NoteFact
+impl core::marker::Freeze for mc_notation::NoteFact
+impl core::marker::Send for mc_notation::NoteFact
+impl core::marker::Sync for mc_notation::NoteFact
+impl core::marker::Unpin for mc_notation::NoteFact
+impl core::marker::UnsafeUnpin for mc_notation::NoteFact
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::NoteFact
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::NoteFact
 pub struct mc_notation::OutlineSystem
+pub mc_notation::OutlineSystem::courtesy: f32
 pub mc_notation::OutlineSystem::end_bar: usize
 pub mc_notation::OutlineSystem::first_bar: usize
+pub mc_notation::OutlineSystem::header_extra: f32
 pub mc_notation::OutlineSystem::height: f32
 pub mc_notation::OutlineSystem::index: usize
 pub mc_notation::OutlineSystem::scale: f32
@@ -277,6 +762,121 @@ impl core::marker::Unpin for mc_notation::OutlineSystem
 impl core::marker::UnsafeUnpin for mc_notation::OutlineSystem
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::OutlineSystem
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::OutlineSystem
+pub struct mc_notation::Page
+pub mc_notation::Page::body: mc_notation::Rect
+pub mc_notation::Page::footer: mc_notation::Rect
+pub mc_notation::Page::items: alloc::vec::Vec<mc_notation::PageItem>
+pub mc_notation::Page::number: usize
+pub mc_notation::Page::title: core::option::Option<mc_notation::Rect>
+impl core::clone::Clone for mc_notation::Page
+pub fn mc_notation::Page::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Page
+pub fn mc_notation::Page::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Page
+pub fn mc_notation::Page::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::Page
+impl core::marker::Freeze for mc_notation::Page
+impl core::marker::Send for mc_notation::Page
+impl core::marker::Sync for mc_notation::Page
+impl core::marker::Unpin for mc_notation::Page
+impl core::marker::UnsafeUnpin for mc_notation::Page
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Page
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Page
+pub struct mc_notation::PageItem
+pub mc_notation::PageItem::height: f32
+pub mc_notation::PageItem::staves: core::ops::range::Range<usize>
+pub mc_notation::PageItem::system: usize
+pub mc_notation::PageItem::whole: bool
+pub mc_notation::PageItem::y: f32
+impl mc_notation::PageItem
+pub fn mc_notation::PageItem::continued(&self) -> bool
+impl core::clone::Clone for mc_notation::PageItem
+pub fn mc_notation::PageItem::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::PageItem
+pub fn mc_notation::PageItem::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::PageItem
+pub fn mc_notation::PageItem::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::PageItem
+impl core::marker::Freeze for mc_notation::PageItem
+impl core::marker::Send for mc_notation::PageItem
+impl core::marker::Sync for mc_notation::PageItem
+impl core::marker::Unpin for mc_notation::PageItem
+impl core::marker::UnsafeUnpin for mc_notation::PageItem
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::PageItem
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::PageItem
+pub struct mc_notation::PageSetup
+pub mc_notation::PageSetup::footer_height: f32
+pub mc_notation::PageSetup::margin: f32
+pub mc_notation::PageSetup::size: mc_notation::PageSize
+pub mc_notation::PageSetup::staff_scale: f32
+pub mc_notation::PageSetup::system_spacing: mc_notation::SystemSpacing
+pub mc_notation::PageSetup::title_height: f32
+impl mc_notation::PageSetup
+pub fn mc_notation::PageSetup::body(&self, usize) -> mc_notation::Rect
+pub fn mc_notation::PageSetup::content_width(&self) -> f32
+pub fn mc_notation::PageSetup::footer(&self) -> mc_notation::Rect
+pub fn mc_notation::PageSetup::metrics(&self) -> mc_notation::LayoutMetrics
+pub fn mc_notation::PageSetup::new(mc_notation::PageSize) -> Self
+pub fn mc_notation::PageSetup::title(&self) -> mc_notation::Rect
+impl core::clone::Clone for mc_notation::PageSetup
+pub fn mc_notation::PageSetup::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::PageSetup
+pub fn mc_notation::PageSetup::eq(&self, &Self) -> bool
+impl core::default::Default for mc_notation::PageSetup
+pub fn mc_notation::PageSetup::default() -> Self
+impl core::fmt::Debug for mc_notation::PageSetup
+pub fn mc_notation::PageSetup::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::PageSetup
+impl core::marker::StructuralPartialEq for mc_notation::PageSetup
+impl core::marker::Freeze for mc_notation::PageSetup
+impl core::marker::Send for mc_notation::PageSetup
+impl core::marker::Sync for mc_notation::PageSetup
+impl core::marker::Unpin for mc_notation::PageSetup
+impl core::marker::UnsafeUnpin for mc_notation::PageSetup
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::PageSetup
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::PageSetup
+pub struct mc_notation::PageSize
+pub mc_notation::PageSize::height: f32
+pub mc_notation::PageSize::width: f32
+impl mc_notation::PageSize
+pub const mc_notation::PageSize::A4: mc_notation::PageSize
+pub const mc_notation::PageSize::LETTER: mc_notation::PageSize
+impl core::clone::Clone for mc_notation::PageSize
+pub fn mc_notation::PageSize::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::PageSize
+pub fn mc_notation::PageSize::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::PageSize
+pub fn mc_notation::PageSize::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::PageSize
+impl core::marker::StructuralPartialEq for mc_notation::PageSize
+impl core::marker::Freeze for mc_notation::PageSize
+impl core::marker::Send for mc_notation::PageSize
+impl core::marker::Sync for mc_notation::PageSize
+impl core::marker::Unpin for mc_notation::PageSize
+impl core::marker::UnsafeUnpin for mc_notation::PageSize
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::PageSize
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::PageSize
+pub struct mc_notation::Pagination
+pub mc_notation::Pagination::metrics: mc_notation::LayoutMetrics
+pub mc_notation::Pagination::outline: mc_notation::ScoreOutline
+pub mc_notation::Pagination::pages: alloc::vec::Vec<mc_notation::Page>
+pub mc_notation::Pagination::setup: mc_notation::PageSetup
+impl mc_notation::Pagination
+pub fn mc_notation::Pagination::page_count(&self) -> usize
+impl core::clone::Clone for mc_notation::Pagination
+pub fn mc_notation::Pagination::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Pagination
+pub fn mc_notation::Pagination::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Pagination
+pub fn mc_notation::Pagination::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::Pagination
+impl core::marker::Freeze for mc_notation::Pagination
+impl core::marker::Send for mc_notation::Pagination
+impl core::marker::Sync for mc_notation::Pagination
+impl core::marker::Unpin for mc_notation::Pagination
+impl core::marker::UnsafeUnpin for mc_notation::Pagination
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Pagination
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Pagination
 pub struct mc_notation::Rect
 pub mc_notation::Rect::h: f32
 pub mc_notation::Rect::w: f32
@@ -301,6 +901,26 @@ impl core::marker::Unpin for mc_notation::Rect
 impl core::marker::UnsafeUnpin for mc_notation::Rect
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Rect
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::Rect
+pub struct mc_notation::RestFact
+pub mc_notation::RestFact::bar: usize
+pub mc_notation::RestFact::beat: usize
+pub mc_notation::RestFact::rect: mc_notation::Rect
+pub mc_notation::RestFact::voice: usize
+impl core::clone::Clone for mc_notation::RestFact
+pub fn mc_notation::RestFact::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::RestFact
+pub fn mc_notation::RestFact::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::RestFact
+pub fn mc_notation::RestFact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::RestFact
+impl core::marker::StructuralPartialEq for mc_notation::RestFact
+impl core::marker::Freeze for mc_notation::RestFact
+impl core::marker::Send for mc_notation::RestFact
+impl core::marker::Sync for mc_notation::RestFact
+impl core::marker::Unpin for mc_notation::RestFact
+impl core::marker::UnsafeUnpin for mc_notation::RestFact
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::RestFact
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::RestFact
 pub struct mc_notation::ScoreLayout
 pub mc_notation::ScoreLayout::height: f32
 pub mc_notation::ScoreLayout::systems: alloc::vec::Vec<mc_notation::ScoreSystem>
@@ -323,6 +943,7 @@ impl core::panic::unwind_safe::UnwindSafe for mc_notation::ScoreLayout
 pub struct mc_notation::ScoreOutline
 pub mc_notation::ScoreOutline::bar_count: usize
 pub mc_notation::ScoreOutline::height: f32
+pub mc_notation::ScoreOutline::staves: alloc::vec::Vec<mc_notation::StaffConfiguration>
 pub mc_notation::ScoreOutline::systems: alloc::vec::Vec<mc_notation::OutlineSystem>
 pub mc_notation::ScoreOutline::tracks: alloc::vec::Vec<mc_score::ids::TrackId>
 pub mc_notation::ScoreOutline::width: f32
@@ -359,7 +980,55 @@ impl core::marker::Unpin for mc_notation::ScoreSystem
 impl core::marker::UnsafeUnpin for mc_notation::ScoreSystem
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::ScoreSystem
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::ScoreSystem
+pub struct mc_notation::ShownTrack
+pub mc_notation::ShownTrack::staves: mc_notation::StaffConfiguration
+pub mc_notation::ShownTrack::track: mc_score::ids::TrackId
+impl mc_notation::ShownTrack
+pub const fn mc_notation::ShownTrack::tab(mc_score::ids::TrackId) -> Self
+impl core::clone::Clone for mc_notation::ShownTrack
+pub fn mc_notation::ShownTrack::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::ShownTrack
+impl core::cmp::PartialEq for mc_notation::ShownTrack
+pub fn mc_notation::ShownTrack::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::ShownTrack
+pub fn mc_notation::ShownTrack::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_notation::ShownTrack
+pub fn mc_notation::ShownTrack::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_notation::ShownTrack
+impl core::marker::StructuralPartialEq for mc_notation::ShownTrack
+impl core::marker::Freeze for mc_notation::ShownTrack
+impl core::marker::Send for mc_notation::ShownTrack
+impl core::marker::Sync for mc_notation::ShownTrack
+impl core::marker::Unpin for mc_notation::ShownTrack
+impl core::marker::UnsafeUnpin for mc_notation::ShownTrack
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::ShownTrack
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::ShownTrack
+pub struct mc_notation::StaffConfiguration
+pub mc_notation::StaffConfiguration::notation: bool
+pub mc_notation::StaffConfiguration::tab: bool
+impl mc_notation::StaffConfiguration
+pub const mc_notation::StaffConfiguration::NOTATION_AND_TAB: mc_notation::StaffConfiguration
+pub const mc_notation::StaffConfiguration::TAB: mc_notation::StaffConfiguration
+impl core::clone::Clone for mc_notation::StaffConfiguration
+pub fn mc_notation::StaffConfiguration::clone(&self) -> Self
+impl core::cmp::Eq for mc_notation::StaffConfiguration
+impl core::cmp::PartialEq for mc_notation::StaffConfiguration
+pub fn mc_notation::StaffConfiguration::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::StaffConfiguration
+pub fn mc_notation::StaffConfiguration::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for mc_notation::StaffConfiguration
+pub fn mc_notation::StaffConfiguration::hash<__H: core::hash::Hasher>(&self, &mut __H)
+impl core::marker::Copy for mc_notation::StaffConfiguration
+impl core::marker::StructuralPartialEq for mc_notation::StaffConfiguration
+impl core::marker::Freeze for mc_notation::StaffConfiguration
+impl core::marker::Send for mc_notation::StaffConfiguration
+impl core::marker::Sync for mc_notation::StaffConfiguration
+impl core::marker::Unpin for mc_notation::StaffConfiguration
+impl core::marker::UnsafeUnpin for mc_notation::StaffConfiguration
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::StaffConfiguration
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::StaffConfiguration
 pub struct mc_notation::Stave
+pub mc_notation::Stave::kind: mc_notation::StaveKind
 pub mc_notation::Stave::layout: mc_notation::SystemLayout
 pub mc_notation::Stave::strings: u8
 pub mc_notation::Stave::top: f32
@@ -378,6 +1047,29 @@ impl core::marker::Unpin for mc_notation::Stave
 impl core::marker::UnsafeUnpin for mc_notation::Stave
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Stave
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::Stave
+pub struct mc_notation::StemFact
+pub mc_notation::StemFact::bar: usize
+pub mc_notation::StemFact::beamed: bool
+pub mc_notation::StemFact::beat: usize
+pub mc_notation::StemFact::length_sp: f32
+pub mc_notation::StemFact::up: bool
+pub mc_notation::StemFact::voice: usize
+pub mc_notation::StemFact::x: f32
+impl core::clone::Clone for mc_notation::StemFact
+pub fn mc_notation::StemFact::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::StemFact
+pub fn mc_notation::StemFact::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::StemFact
+pub fn mc_notation::StemFact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::StemFact
+impl core::marker::StructuralPartialEq for mc_notation::StemFact
+impl core::marker::Freeze for mc_notation::StemFact
+impl core::marker::Send for mc_notation::StemFact
+impl core::marker::Sync for mc_notation::StemFact
+impl core::marker::Unpin for mc_notation::StemFact
+impl core::marker::UnsafeUnpin for mc_notation::StemFact
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::StemFact
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::StemFact
 pub struct mc_notation::SystemLayout
 pub mc_notation::SystemLayout::bars: alloc::vec::Vec<mc_notation::BarLayout>
 pub mc_notation::SystemLayout::glyphs: alloc::vec::Vec<mc_notation::Glyph>
@@ -385,6 +1077,7 @@ pub mc_notation::SystemLayout::height: f32
 pub mc_notation::SystemLayout::hits: alloc::vec::Vec<mc_notation::HitRegion>
 pub mc_notation::SystemLayout::index: usize
 pub mc_notation::SystemLayout::lines: alloc::vec::Vec<mc_notation::Line>
+pub mc_notation::SystemLayout::notation: mc_notation::NotationStaff
 pub mc_notation::SystemLayout::staff_top: f32
 pub mc_notation::SystemLayout::y: f32
 impl mc_notation::SystemLayout
@@ -429,8 +1122,61 @@ impl core::marker::Unpin for mc_notation::TabLayout
 impl core::marker::UnsafeUnpin for mc_notation::TabLayout
 impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::TabLayout
 impl core::panic::unwind_safe::UnwindSafe for mc_notation::TabLayout
+pub struct mc_notation::Tie
+pub mc_notation::Tie::end_thickness: f32
+pub mc_notation::Tie::height: f32
+pub mc_notation::Tie::mid_thickness: f32
+pub mc_notation::Tie::up: bool
+pub mc_notation::Tie::x1: f32
+pub mc_notation::Tie::x2: f32
+pub mc_notation::Tie::y: f32
+impl core::clone::Clone for mc_notation::Tie
+pub fn mc_notation::Tie::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::Tie
+pub fn mc_notation::Tie::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::Tie
+pub fn mc_notation::Tie::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for mc_notation::Tie
+impl core::marker::StructuralPartialEq for mc_notation::Tie
+impl core::marker::Freeze for mc_notation::Tie
+impl core::marker::Send for mc_notation::Tie
+impl core::marker::Sync for mc_notation::Tie
+impl core::marker::Unpin for mc_notation::Tie
+impl core::marker::UnsafeUnpin for mc_notation::Tie
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::Tie
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::Tie
+pub struct mc_notation::TupletFact
+pub mc_notation::TupletFact::bar: usize
+pub mc_notation::TupletFact::beats: alloc::vec::Vec<usize>
+pub mc_notation::TupletFact::number: u8
+pub mc_notation::TupletFact::rect: mc_notation::Rect
+pub mc_notation::TupletFact::voice: usize
+impl core::clone::Clone for mc_notation::TupletFact
+pub fn mc_notation::TupletFact::clone(&self) -> Self
+impl core::cmp::PartialEq for mc_notation::TupletFact
+pub fn mc_notation::TupletFact::eq(&self, &Self) -> bool
+impl core::fmt::Debug for mc_notation::TupletFact
+pub fn mc_notation::TupletFact::fmt(&self, &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for mc_notation::TupletFact
+impl core::marker::Freeze for mc_notation::TupletFact
+impl core::marker::Send for mc_notation::TupletFact
+impl core::marker::Sync for mc_notation::TupletFact
+impl core::marker::Unpin for mc_notation::TupletFact
+impl core::marker::UnsafeUnpin for mc_notation::TupletFact
+impl core::panic::unwind_safe::RefUnwindSafe for mc_notation::TupletFact
+impl core::panic::unwind_safe::UnwindSafe for mc_notation::TupletFact
+pub const mc_notation::FOOTER_HEIGHT_PT: f32
+pub const mc_notation::PAGE_MARGIN_PT: f32
+pub const mc_notation::PRINT_STAFF_SCALE: f32
+pub const mc_notation::SPACIOUS_SYSTEM_GAP_SP: f32
+pub const mc_notation::TAB_STRING_GAP_SP: f32
+pub const mc_notation::TITLE_HEIGHT_PT: f32
 pub fn mc_notation::layout_score(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreLayout, mc_notation::NotationError>
 pub fn mc_notation::layout_score_systems(&mc_score::score::Score, &mc_notation::ScoreOutline, core::ops::range::Range<usize>, &mc_notation::LayoutMetrics) -> core::result::Result<alloc::vec::Vec<mc_notation::ScoreSystem>, mc_notation::NotationError>
+pub fn mc_notation::layout_score_with(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreLayout, mc_notation::NotationError>
 pub fn mc_notation::layout_tab(&mc_score::score::Score, mc_score::ids::TrackId, &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::TabLayout, mc_notation::NotationError>
 pub fn mc_notation::outline_score(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
 pub fn mc_notation::outline_score_cached(&mc_score::score::Score, &[mc_score::ids::TrackId], &mc_notation::LayoutMetrics, &mut mc_notation::LayoutCache) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
+pub fn mc_notation::outline_score_cached_with(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics, &mut mc_notation::LayoutCache) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
+pub fn mc_notation::outline_score_with(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::LayoutMetrics) -> core::result::Result<mc_notation::ScoreOutline, mc_notation::NotationError>
+pub fn mc_notation::paginate(&mc_score::score::Score, &[mc_notation::ShownTrack], &mc_notation::PageSetup) -> core::result::Result<mc_notation::Pagination, mc_notation::NotationError>

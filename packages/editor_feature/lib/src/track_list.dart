@@ -31,11 +31,22 @@ class TrackList extends ConsumerWidget {
                   ),
                   // ADR-031: show or hide the track's stave. The active track is
                   // always shown, so its button is disabled.
-                  trailing: _ShowButton(
-                    track: t.id,
-                    name: t.name,
-                    shown: s.shownTracks.contains(t.id),
-                    active: t.id == s.activeTrack,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // ADR-041 section 9: standard notation above the TAB.
+                      _NotationButton(
+                        track: t.id,
+                        name: t.name,
+                        on: !s.notationOff.contains(t.id),
+                      ),
+                      _ShowButton(
+                        track: t.id,
+                        name: t.name,
+                        shown: s.shownTracks.contains(t.id),
+                        active: t.id == s.activeTrack,
+                      ),
+                    ],
                   ),
                   onTap: () =>
                       ref.read(editorProvider.notifier).selectTrack(t.id),
@@ -81,6 +92,31 @@ class TrackList extends ConsumerWidget {
           ),
         );
   }
+}
+
+/// Toggle for one track's standard notation staff (ADR-041 section 9).
+class _NotationButton extends ConsumerWidget {
+  const _NotationButton({
+    required this.track,
+    required this.name,
+    required this.on,
+  });
+
+  final int track;
+  final String name;
+  final bool on;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => IconButton(
+    key: ValueKey('notation-track-$track'),
+    tooltip: on ? 'Hide notation of $name' : 'Show notation of $name',
+    iconSize: 18,
+    visualDensity: VisualDensity.compact,
+    isSelected: on,
+    icon: const Icon(Icons.music_note_outlined),
+    selectedIcon: const Icon(Icons.music_note),
+    onPressed: () => ref.read(editorProvider.notifier).toggleNotation(track),
+  );
 }
 
 /// Eye toggle for one track's stave in the TAB view (ADR-031).

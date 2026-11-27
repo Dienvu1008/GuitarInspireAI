@@ -23,3 +23,8 @@ flutter:
     - family: NotoSansMono
       fonts:
         - asset: fonts/NotoSansMono-Variable.ttf
+    # Bravura 1.482, SMuFL music font, SIL OFL 1.1, bundled unmodified (ADR-037). The
+    # same file FF-35 checks against fonts/bravura/PROVENANCE.md.
+    - family: Bravura
+      fonts:
+        - asset: fonts/bravura/Bravura.otf

@@ -1,0 +1,20 @@
+[package]
+name = "mc-pdf"
+version = "0.1.0"
+description = "PDF export adapter: paints the paginated notation layout as vector PDF with the bundled fonts embedded (ADR-041 decision 5)."
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+[dependencies]
+mc-score.workspace = true
+mc-notation.workspace = true
+pdf-writer.workspace = true
+subsetter.workspace = true
+miniz_oxide.workspace = true
+skrifa.workspace = true
+[dev-dependencies]
+mc-score = { workspace = true, features = ["fixtures"] }
+# The S11 inputs and random scores of mc-notation's tests, included by path.
+mc-theory.workspace = true
+[lints]
+workspace = true

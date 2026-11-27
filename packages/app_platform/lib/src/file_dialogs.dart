@@ -26,6 +26,10 @@ abstract interface class FileDialogs {
     required String suggestedName,
   });
 
+  /// Pick a save location and write [bytes] as a `.pdf` file (ADR-041 section 12).
+  /// Returns the path written, or `null` if cancelled.
+  Future<String?> savePdf(List<int> bytes, {required String suggestedName});
+
   /// Pick a `.gp3`, `.gp4` or `.gp5` file and return its bytes, or `null` if
   /// cancelled (ADR-036).
   Future<List<int>?> pickGuitarProToImport();
@@ -49,6 +53,8 @@ const _projectFiles = XTypeGroup(
 );
 
 const _musicXmlFiles = XTypeGroup(label: 'MusicXML', extensions: ['musicxml']);
+
+const _pdfFiles = XTypeGroup(label: 'PDF', extensions: ['pdf']);
 
 // "Guitar Pro" names the format only (ADR-036 section 2).
 const _guitarProFiles = XTypeGroup(
@@ -103,6 +109,10 @@ final class SystemFileDialogs implements FileDialogs {
     List<int> bytes, {
     required String suggestedName,
   }) => _save(bytes, suggestedName, _musicXmlFiles, 'musicxml');
+
+  @override
+  Future<String?> savePdf(List<int> bytes, {required String suggestedName}) =>
+      _save(bytes, suggestedName, _pdfFiles, 'pdf');
 
   @override
   Future<List<int>?> pickGuitarProToImport() async {

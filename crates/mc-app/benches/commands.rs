@@ -273,6 +273,125 @@ fn notation_layout(c: &mut Criterion) {
         );
     }
 
+    // ADR-041 L11: the same, with notation above TAB on every shown track.
+    use mc_app::notation::{ShownTrack, StaffConfiguration, StaveKind};
+    for (name, shape, shown, budget) in [
+        ("L11 typical/4 tracks", TYPICAL, 4, "16 ms"),
+        ("L11 large/4 tracks", LARGE, 4, "33 ms"),
+        ("L11 large/20 tracks", LARGE, 20, "33 ms"),
+    ] {
+        let mut s = session(shape);
+        let b = middle_beat(&s);
+        let mut tracks: Vec<_> = s.score().tracks().map(|t| t.id()).take(shown).collect();
+        if !tracks.contains(&b.track) {
+            tracks[0] = b.track;
+        }
+        let shown: Vec<ShownTrack> = tracks
+            .iter()
+            .map(|t| ShownTrack {
+                track: *t,
+                staves: StaffConfiguration::NOTATION_AND_TAB,
+            })
+            .collect();
+        let mut samples = Vec::with_capacity(200);
+        for i in 0..200 {
+            let t = Instant::now();
+            edit(&mut s, b, 2000 + i);
+            let at = s
+                .score_outline_with(&shown, &metrics)
+                .expect("outline")
+                .systems
+                .iter()
+                .position(|x| (x.first_bar..x.end_bar).contains(&b.bar))
+                .expect("bar in a system");
+            let from = at.saturating_sub(1);
+            black_box(
+                s.score_systems_with(&shown, &metrics, from..from + 3)
+                    .expect("systems"),
+            );
+            samples.push(t.elapsed().as_nanos());
+        }
+        percentiles(
+            &format!("edit_and_score_relayout/{name} notation+TAB in view (budget {budget})"),
+            samples,
+        );
+        // Payload of one system with notation (counts; bytes are estimated in 6c-3).
+        let sys = s
+            .score_systems_with(&shown, &metrics, 0..1)
+            .expect("systems");
+        let (mut lines, mut glyphs, mut beams, mut tab_items) = (0, 0, 0, 0);
+        for st in &sys[0].staves {
+            match st.kind {
+                StaveKind::Notation => {
+                    lines += st.layout.notation.lines.len();
+                    glyphs += st.layout.notation.glyphs.len();
+                    beams += st.layout.notation.beams.len();
+                }
+                StaveKind::Tab => tab_items += st.layout.lines.len() + st.layout.glyphs.len(),
+            }
+        }
+        eprintln!(
+            "payload/{name} system 0 ({} bars): notation {lines} lines, {glyphs} glyphs, {beams} beams; TAB {tab_items} lines and glyphs",
+            sys[0].staves[0].layout.bars.len()
+        );
+    }
+
+    // ADR-041 PG7 and PR4: paginating what the view shows at A4 and the print staff
+    // size (0.6, section 11.2), and paginating plus laying out
+    // every system (the export's layout work before any PDF bytes), against the 2 s
+    // "open large project" budget as the reference for a one-off export.
+    use mc_app::notation::PageSetup;
+    for (name, shape, shown) in [
+        ("PG7 typical/4 tracks", TYPICAL, 4),
+        ("PG7 large/4 tracks", LARGE, 4),
+        ("PG7 large/20 tracks", LARGE, 20),
+    ] {
+        let s = session(shape);
+        let shown: Vec<ShownTrack> = s
+            .score()
+            .tracks()
+            .take(shown)
+            .map(|t| ShownTrack {
+                track: t.id(),
+                staves: StaffConfiguration::NOTATION_AND_TAB,
+            })
+            .collect();
+        let setup = PageSetup::default();
+        let (mut paginate, mut full) = (Vec::new(), Vec::new());
+        let mut pages = (0, 0, 0);
+        for _ in 0..10 {
+            let t = Instant::now();
+            let p = s.paginate(&shown, &setup).expect("pages");
+            paginate.push(t.elapsed().as_nanos());
+            let systems = mc_notation::layout_score_systems(
+                s.score(),
+                &p.outline,
+                0..p.outline.systems.len(),
+                &p.metrics,
+            )
+            .expect("systems");
+            full.push(t.elapsed().as_nanos());
+            let split = (0..systems.len())
+                .filter(|i| {
+                    p.pages
+                        .iter()
+                        .flat_map(|pg| &pg.items)
+                        .filter(|it| it.system == *i)
+                        .count()
+                        > 1
+                })
+                .count();
+            pages = (p.page_count(), systems.len(), split);
+            black_box(systems);
+        }
+        percentiles(&format!("paginate/{name} (reference 2 s)"), paginate);
+        percentiles(&format!("paginate_and_layout/{name} (reference 2 s)"), full);
+        eprintln!(
+            "pages/{name}: {} pages, {} systems, {} split systems (A4)",
+            pages.0, pages.1, pages.2
+        );
+    }
+
     let s = session(LARGE);
     let track = s.score().track_at(0).unwrap().id();
     let mut group = c.benchmark_group("notation");

@@ -92,6 +92,8 @@ impl core::panic::unwind_safe::RefUnwindSafe for mc_score::DomainEvent
 impl core::panic::unwind_safe::UnwindSafe for mc_score::DomainEvent
 pub enum mc_score::InstrumentSpec
 pub mc_score::InstrumentSpec::Fretted(mc_score::FrettedInstrument)
+impl mc_score::InstrumentSpec
+pub fn mc_score::InstrumentSpec::written_transposition(&self) -> mc_theory::notation::Transposition
 impl core::clone::Clone for mc_score::InstrumentSpec
 pub fn mc_score::InstrumentSpec::clone(&self) -> Self
 impl core::cmp::Eq for mc_score::InstrumentSpec

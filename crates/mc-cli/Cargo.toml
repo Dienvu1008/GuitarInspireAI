@@ -16,6 +16,7 @@ mc-project.workspace = true
 mc-midi.workspace = true
 mc-musicxml.workspace = true
 mc-guitarpro.workspace = true
+mc-pdf.workspace = true
 
 [lints]
 workspace = true

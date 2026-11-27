@@ -142,6 +142,17 @@ fn run(args: &[String]) -> Result<(), String> {
             &positional(rest, 0, "source")?,
             &positional(rest, 1, "output path")?,
         )?,
+        "export-pdf" => interchange::export_pdf(
+            &positional(rest, 0, "source")?,
+            &positional(rest, 1, "output path")?,
+            &interchange::PdfOptions {
+                paper: flag(rest, "--paper"),
+                spacing: flag(rest, "--spacing"),
+                staves: flag(rest, "--staves"),
+                tracks: flag(rest, "--tracks"),
+                title: flag(rest, "--title"),
+            },
+        )?,
         "new" => {
             let out = output_path(&positional(rest, 0, "output path")?);
             let bars = flag(rest, "--bars")
@@ -169,9 +180,10 @@ fn run(args: &[String]) -> Result<(), String> {
                 "large" => mc_app::fixtures::reference(mc_app::fixtures::LARGE),
                 "feature-rich" => mc_app::fixtures::feature_rich(),
                 "techniques" => mc_app::fixtures::techniques(),
+                "keys" => mc_app::fixtures::notation_keys(),
                 other => {
                     return Err(format!(
-                        "unknown fixture '{other}' (small, typical, large, feature-rich, techniques)"
+                        "unknown fixture '{other}' (small, typical, large, feature-rich, techniques, keys)"
                     ));
                 }
             };
