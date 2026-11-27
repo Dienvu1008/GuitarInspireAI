@@ -821,7 +821,9 @@ The S11 7.5 differences and ADR-041 section 9 choice 3 (the TAB rhythm, revisite
 - PD4 hashes: `feature_rich` `0xf471347aea5df19d` (18 202 bytes) and `keys` `0xf0dc0a0c5608b7ad` (16 435 bytes, the file the user reviewed). They are equal in debug and release.
 - The review material is in `Desktop\GuitarInspire-6c6-review\`: `before\`, `after\`, `goldens\` with diffs, and `golden-review.txt`.
 
-## 14. Slice 6c-7 benchmarks and exit report: acceptance criteria (Proposed 2026-11-27, pending the user; fixed before any code)
+## 14. Slice 6c-7 benchmarks and exit report: acceptance criteria (proposed and fixed 2026-11-27, before any work)
+
+**User decision (2026-11-27).** EX1 to EX9 approved; choices 1 to 5 as proposed.
 
 **Scope from the roadmap** (6c-7, 0.5 FTE weeks): benchmarks and the exit report. The phase ends with the user's acceptance and the merge to `main`, as for 6a, 6b and 6d.
 
