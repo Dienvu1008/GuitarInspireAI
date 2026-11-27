@@ -46,7 +46,8 @@ Phase 6d (no milestone of its own; part of M6 and later) was accepted on 2026-11
 - It was merged from `phase-6d-guitar-pro`.
 - Evidence: [phase-6d-exit-report.md](phase-6d-exit-report.md). Next: Phase 6c (standard notation and PDF, entry gate S11).
 
-Phase 6c (no milestone of its own; part of M6 and later) is pending the user's acceptance (proposed 2026-11-27).
+Phase 6c (no milestone of its own; part of M6 and later) was accepted on 2026-11-27.
 - It delivered standard notation above TAB (with read-only selection on it), and vector PDF export with the two bundled fonts embedded (ADR-037 to ADR-041). A new adapter crate `mc-pdf` was added.
-- The evidence gaps proposed as conditions of acceptance are listed in the exit report.
-- Evidence: [phase-6c-exit-report.md](phase-6c-exit-report.md).
+- Six evidence gaps are conditions of acceptance (exit report): TYPICAL and LARGE end to end with notation not shown within budget in every run; the Edge check on Windows only; the MuseScore comparison on the S11 inputs only; the weekly portability and fuzz jobs not yet run on the branch; and three known engraving limitations.
+- It was merged from `phase-6c-notation`.
+- Evidence: [phase-6c-exit-report.md](phase-6c-exit-report.md). Next: the user's choice of the next phase.

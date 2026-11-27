@@ -2,7 +2,7 @@
 
 Purpose: Evidence for Phase 6c (standard notation above TAB, and PDF export), the evidence gaps proposed as conditions of acceptance, and what comes next.
 
-Status: **Draft, pending the user's acceptance (EX9).** **Read "Known evidence gaps" before relying on this report.**
+Status: Final. Phase 6c accepted by the user on 2026-11-27, with the evidence gaps below as conditions of acceptance. **Read "Known evidence gaps" before relying on this report.**
 
 Related documents: [implementation-phases.md](implementation-phases.md), [milestones.md](milestones.md), [mvp-known-limitations.md](mvp-known-limitations.md), [risk-register.md](risk-register.md), [phase-6d-exit-report.md](phase-6d-exit-report.md), [ADR-037](../architecture/decisions/ADR-037-bravura-smufl-font.md) to [ADR-041](../architecture/decisions/ADR-041-notation-engine-metrics-cache-pdf.md), [S11 spike](../../spikes/s11-notation/README.md).
 
@@ -20,7 +20,7 @@ Spike S11 was the entry gate. ADR-037 to ADR-041 were then accepted. Every slice
 | 6c-5a | Pagination (A4 and Letter, title, page numbers, split systems) and a print staff size of 0.6 (one Revise by the user) | PG1 to PG9 and PR1 to PR5 met |
 | 6c-5b | Crate `mc-pdf`; `mc-cli export-pdf`; File > Export PDF... with paper and spacing | PD1 to PD9 met (PD9 the user's Edge check) |
 | 6c-6 | Engraving polish: spacing, courtesy signatures, key-change naturals and double bar lines, centred bar rests, ties, no TAB rhythm under notation | EP1 to EP9 met; goldens replaced after the user's review |
-| 6c-7 | Benchmarks, this report, the documents | EX1, EX3 to EX7 met; EX2 an accepted gap; EX8 and EX9 for the user |
+| 6c-7 | Benchmarks, this report, the documents, the merge | EX1, EX3 to EX9 met; EX2 an accepted gap |
 
 Per-criterion evidence and the user's decisions are in ADR-041 sections 8 to 14. This report does not repeat them.
 
@@ -121,6 +121,8 @@ Each was found by a planned test, a check rule or a review tool, and fixed with 
 
 ## 8. Closure
 
-Pending the user:
-- acceptance of Phase 6c with gaps (a) to (f) as conditions (EX9);
-- the merge of `phase-6c-notation` into `main` with `--no-ff` and the trailer `Architecture-Change: ADR-041`, then CI on the merge commit (EX8).
+Decisions (user, 2026-11-27):
+- Phase 6c is accepted, with gaps (a) to (f) on the record as conditions of acceptance (EX9).
+- `phase-6c-notation` is merged into `main` with `--no-ff`. The merge commit carries the trailer `Architecture-Change: ADR-041` (EX8). CI on the merge commit is checked after it is pushed.
+
+Next: Phase 6 is complete (6a, 6b, 6c and 6d). The next phase is the user's choice, from [implementation-phases.md](implementation-phases.md).
