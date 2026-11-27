@@ -45,3 +45,8 @@ Phase 6d (no milestone of its own; part of M6 and later) was accepted on 2026-11
 - Five evidence gaps are conditions of acceptance: the fuzz target not yet run; no file written by Guitar Pro itself; TuxGuitar's palm mute and let ring limit; GP5 5.10, GPX and GP7+ refused; and no legal review.
 - It was merged from `phase-6d-guitar-pro`.
 - Evidence: [phase-6d-exit-report.md](phase-6d-exit-report.md). Next: Phase 6c (standard notation and PDF, entry gate S11).
+
+Phase 6c (no milestone of its own; part of M6 and later) is pending the user's acceptance (proposed 2026-11-27).
+- It delivered standard notation above TAB (with read-only selection on it), and vector PDF export with the two bundled fonts embedded (ADR-037 to ADR-041). A new adapter crate `mc-pdf` was added.
+- The evidence gaps proposed as conditions of acceptance are listed in the exit report.
+- Evidence: [phase-6c-exit-report.md](phase-6c-exit-report.md).

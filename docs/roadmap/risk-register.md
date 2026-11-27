@@ -122,3 +122,11 @@ Against the three conditions for lowering likelihood to Medium (condition 1 as r
 **Update (2026-11-26):** PD9 passed (user), so condition 1 is met for 6c-5b.
 
 **Decision (user, 2026-11-26): likelihood lowered to Medium.** The next review is at the 6c exit (6c-7).
+
+### R-13 review at the 6c exit (2026-11-27)
+
+- Condition 1: met.
+- Condition 2: not fully met. TYPICAL end to end within 16 ms in 6 of 10 runs after 6c-6; LARGE only in the fast machine state. Both are accepted evidence gaps.
+- Condition 3: met.
+
+**Decision (user, 2026-11-27): kept at Medium, not closed.** See [phase-6c-exit-report.md](phase-6c-exit-report.md) section 7. The next review is with the next notation work, or when gap (a) of that report is resolved.

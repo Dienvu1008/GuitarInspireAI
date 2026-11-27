@@ -825,6 +825,8 @@ The S11 7.5 differences and ADR-041 section 9 choice 3 (the TAB rhythm, revisite
 
 **User decision (2026-11-27).** EX1 to EX9 approved; choices 1 to 5 as proposed.
 
+**EX2 decision (user, 2026-11-27).** TYPICAL end to end after 6c-6 is accepted as an **evidence gap**, as LARGE was in 6c-3. The threshold is unchanged, and R-13 is kept at Medium rather than closed (choice 3 does not apply). The measurements are recorded in the exit report, section "Known evidence gaps".
+
 **Scope from the roadmap** (6c-7, 0.5 FTE weeks): benchmarks and the exit report. The phase ends with the user's acceptance and the merge to `main`, as for 6a, 6b and 6d.
 
 **No new feature and no engine change in 6c-7.**

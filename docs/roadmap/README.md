@@ -20,6 +20,12 @@ A Windows desktop app that validates the architecture end to end and is useful w
 
 Effort to MVP: Phases 0 to 5, 19 to 31 FTE weeks (Phases 1 to 5: 17 to 28).
 
+Since the MVP (the table above is the MVP scope as planned):
+- Phase 6b added simultaneous multi-track display, the mixer and MusicXML export.
+- Phase 6a added the pattern engine.
+- Phase 6d added Guitar Pro GP3 to GP5 import and export.
+- Phase 6c added standard notation above TAB, with read-only selection on it, and vector PDF export (File > Export PDF..., A4 or Letter). See [phase-6c-exit-report.md](phase-6c-exit-report.md).
+
 ## 2. Minimum vs long-term
 
 | Area | Minimum viable implementation | Long-term direction |
