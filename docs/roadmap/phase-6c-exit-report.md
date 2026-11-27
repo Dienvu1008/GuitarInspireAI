@@ -123,6 +123,6 @@ Each was found by a planned test, a check rule or a review tool, and fixed with 
 
 Decisions (user, 2026-11-27):
 - Phase 6c is accepted, with gaps (a) to (f) on the record as conditions of acceptance (EX9).
-- `phase-6c-notation` is merged into `main` with `--no-ff`. The merge commit carries the trailer `Architecture-Change: ADR-041` (EX8). CI on the merge commit is checked after it is pushed.
+- `phase-6c-notation` is merged into `main` with `--no-ff`. The merge commit `5a97a19` carries the trailer `Architecture-Change: ADR-041` (EX8). CI on the merge commit passed (run #139).
 
 Next: Phase 6 is complete (6a, 6b, 6c and 6d). The next phase is the user's choice, from [implementation-phases.md](implementation-phases.md).
