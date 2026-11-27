@@ -821,6 +821,34 @@ The S11 7.5 differences and ADR-041 section 9 choice 3 (the TAB rhythm, revisite
 - PD4 hashes: `feature_rich` `0xf471347aea5df19d` (18 202 bytes) and `keys` `0xf0dc0a0c5608b7ad` (16 435 bytes, the file the user reviewed). They are equal in debug and release.
 - The review material is in `Desktop\GuitarInspire-6c6-review\`: `before\`, `after\`, `goldens\` with diffs, and `golden-review.txt`.
 
+## 14. Slice 6c-7 benchmarks and exit report: acceptance criteria (Proposed 2026-11-27, pending the user; fixed before any code)
+
+**Scope from the roadmap** (6c-7, 0.5 FTE weeks): benchmarks and the exit report. The phase ends with the user's acceptance and the merge to `main`, as for 6a, 6b and 6d.
+
+**No new feature and no engine change in 6c-7.**
+- A fault found while measuring is reported to the user first, with its cause.
+- A fix only goes in after the user's decision, with its own test.
+- No threshold is changed (decision 7).
+
+| Id | Criterion | Checked by |
+|---|---|---|
+| EX1 | **Benchmarks at the final state.** The whole `mc-app` bench (`commands`) and the PD6 export timing run in release on the reference machine, 3 times each because of its fast and slow states (ADR-031). Each budget of the phase is reported with its 3 p99 values, against its threshold: L11 (TYPICAL ≤ 16 ms, LARGE ≤ 33 ms), PG7 and PD6 (2 s reference, TYPICAL ≤ 2 s), and the earlier phase budgets the bench holds (edit and relayout, P1 to P3, chord voicings, PE-15). A budget missed in all 3 runs is a failure, reported and not hidden. | Bench and report |
+| EX2 | **End to end in the app** (choice 2). The `edit_latency` tool in profile mode, TYPICAL with notation, 3 runs: p99 ≤ 16 ms (H7's criterion), because 6c-6 changed the layout. LARGE stays the accepted evidence gap (6c-3). | Tool output |
+| EX3 | **Exit report** `docs/roadmap/phase-6c-exit-report.md`, with the structure of the 6d report: outcome per slice; commits; evidence gaps; faults found and fixed; fitness functions and governance; CI; closure. The gaps listed include at least: LARGE end to end; one machine; the Edge check only on Windows; the MuseScore comparison only on the S11 inputs; the known limitations of section 13 (crossing voices, no track names in print, repeated markers on continued parts). | Review |
+| EX4 | **Effort.** Per slice, agent time, the user's time where known, and calendar time, against the 9.5 to 15.5 FTE-week baseline. Measure (c) applies: this is a record, not a check. | Review |
+| EX5 | **R-13 at the exit** (choice 3): the three conditions reviewed for the whole of 6c, and a proposal for the user. | The user |
+| EX6 | **Documents.** The user-facing and roadmap documents state that standard notation and PDF exist: the README feature table, `mvp-known-limitations.md`, `milestones.md` (6c entry) and `implementation-phases.md` (6c closed). Docs links pass (FF-33). | Review and FF-33 |
+| EX7 | **Weekly checks.**<br>– The weekly jobs that can run locally are run on the branch: the public-API diff (FF-22) and `cargo xtask fitness wasm`. Coverage runs if `cargo-llvm-cov` is installed.<br>– The jobs that cannot run here are listed as gaps: portability on Linux and macOS, and fuzzing (no `workflow_dispatch` token, no libFuzzer on this machine). They first run on `main` after the merge. | Local runs and the list |
+| EX8 | **Merge** (choice 4). After the user accepts 6c, `phase-6c-notation` is merged into `main` with `--no-ff`. The merge commit carries `Architecture-Change: ADR-041`. CI on the merge commit is green. | CI |
+| EX9 | **The user's acceptance of Phase 6c**, with its gaps on record. | The user |
+
+**Choices for the user before work:**
+1. **Exit report language.** Proposed: English, like every document in `docs/`. The summary to the user stays in Vietnamese.
+2. **End to end.** Proposed: the agent runs the TYPICAL run 3 times. If the machine is in its slow state, the result is reported as such and the user may run it as for H7. Alternative: the user runs it, as in 6c-4.
+3. **R-13 at the exit.** Proposed: **close** the risk if EX1 and EX2 hold. 6c is delivered with no scope cut, and the remaining engraving work is in known limitations, not open slices. Alternative: keep it at Medium for the next notation work.
+4. **Merge.** Proposed: `--no-ff` into `main` after acceptance, as for 6a, 6b and 6d. `main` has no commit that the branch lacks, so there is no conflict to resolve.
+5. **Untracked files.** `.vscode/` and `app/out.json` are yours; they stay untracked and out of every commit.
+
 ## Alternatives
 
 - **Metrics measured in Dart** (ADR-018 as written). Rejected for notation: the PDF and tests also need them, and SMuFL already gives them in staff spaces.
